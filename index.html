@@ -215,7 +215,7 @@ const ABIL={
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
   sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
-  roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null},
+  roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null},
   regenerator:{name:"さいせいりょく",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
@@ -229,7 +229,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
   sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
-  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)"};
+  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ"};
 
 // ===== わざ =====
 const M={
@@ -246,6 +246,8 @@ const M={
   behemothblade:{name:"きょじゅうざん",type:"steel",cat:"phys",power:100,megaBonus:true},
   fireblast:{name:"だいもんじ",type:"fire",cat:"spec",power:110,burn:.3},
   flamethrower:{name:"かえんほうしゃ",type:"fire",cat:"spec",power:90},
+  magmastorm:{name:"マグマストーム",type:"fire",cat:"spec",power:120,accuracy:.85,trapTurns:3,trapDenom:8},
+  steelfever:{name:"鋼の暴熱",type:"steel",cat:"spec",power:130,accuracy:.8,trapTurns:6,trapDenom:4,switchLock:6},
   eruption:{name:"ふんか",type:"fire",cat:"spec",power:150,hpPower:true},
   thunderbolt:{name:"10まんボルト",type:"electric",cat:"spec",power:90,paralyze:.1},
   thunder:{name:"かみなり",type:"electric",cat:"spec",power:110},
@@ -280,7 +282,7 @@ const M={
   pyroball:{name:"かえんボール",type:"fire",cat:"phys",power:130,accuracy:.85},
   highjumpkick:{name:"とびひざげり",type:"fighting",cat:"phys",power:130,accuracy:.8,missRecoil:.25},
   psychic_hisui:{name:"サイコキネシス",type:"psychic",cat:"spec",power:90,targetDrop:{chance:.2,stats:{spd:-1}}},
-  shellarms:{name:"シェルアームズ",type:"water",cat:"spec",power:90,lowDef:true},
+  shellarms:{name:"シェルアームズ",type:"poison",cat:"spec",power:90,lowDef:true},
   hyakki:{name:"ひゃっきやこう",type:"ghost",cat:"spec",power:70,statusPower:2,burn:.5},
   flaresong:{name:"フレアソング",type:"fire",cat:"spec",power:50,selfBoost:{chance:1,stats:{spa:1}}},
   saltcure:{name:"しおづけ",type:"rock",cat:"phys",power:40,salt:true},
@@ -325,11 +327,13 @@ const SPECIES=[
  S("bakuphoonH","バクフーン(ヒスイ)","image/image/バクフーン(ヒスイ).gif",["fire","ghost"],{hp:73,atk:84,def:78,spa:119,spd:85,spe:95},"frisk",["fireblast","shadowball","focusblast","flamethrower"],[]),
  S("bangiras","バンギラス","image/image/バンギラス.gif",["rock","dark"],{hp:100,atk:134,def:110,spa:95,spd:100,spe:61},"sandstream",["stoneedge","crunch","earthquake","icefang"],
    [{stone:"bangirasite",stoneName:"バンギラスナイト",name:"メガバンギラス",img:"image/image/メガバンギラス.gif",types:["rock","dark"],base:{hp:100,atk:164,def:150,spa:95,spd:120,spe:71},abil:"sandstream"}]),
+ S("heatran","ヒードラン","image/image/ヒードラン.gif",["fire","steel"],{hp:91,atk:90,def:106,spa:130,spd:106,spe:77},"flashfire",["fireblast","magmastorm","earthpower","flashcannon"],
+   [{stone:"heatranite",stoneName:"ヒードランナイト",name:"メガヒードラン",img:"image/image/メガヒードラン.gif",types:["fire","steel"],base:{hp:91,atk:120,def:106,spa:175,spd:141,spe:67},abil:"magmaheat"}]),
  S("pelipper","ペリッパー","image/image/ペリッパー.gif",["water","flying"],{hp:60,atk:50,def:100,spa:95,spd:70,spe:65},"drizzle",["surf","hurricane","icebeam","airslash"],[]),
  S("pendor","ペンドラー","image/image/ペンドラー.gif",["bug","poison"],{hp:60,atk:100,def:89,spa:55,spd:69,spe:112},"speedboost",["megahorn","poisonjab","earthquake","rockslide"],
    [{stone:"pendorite",stoneName:"ペンドラナイト",name:"メガペンドラー",img:"image/image/メがペンドラー.gif",types:["bug","poison"],base:{hp:60,atk:130,def:99,spa:55,spd:79,spe:132},abil:"axarts"}]),
  S("marilli","マリルリ","image/image/マリルリ.gif",["water","fairy"],{hp:100,atk:50,def:80,spa:60,spd:80,spe:50},"hugepower",["playrough","liquidation","aquajet","crunch"],[]),
- S("yadoran","ヤドラン","image/image/ヤドラン.gif",["water","psychic"],{hp:110,atk:100,def:110,spa:100,spd:80,spe:30},"quickdraw",["surf","psychic","shellarms","icebeam"],[]),
+ S("yadoran","ヤドラン(ガラル)","image/image/ヤドラン.gif",["poison","psychic"],{hp:110,atk:95,def:110,spa:100,spd:80,spe:30},"quickdraw",["surf","psychic","shellarms","icebeam"],[]),
  S("ragulaaji","ラグラージ","image/image/ラグラージ.gif",["water","ground"],{hp:100,atk:110,def:90,spa:85,spd:90,spe:60},"damp",["liquidation","earthquake","stoneedge","icefang"],
    [{stone:"ragulaajite",stoneName:"ラグラージナイト",name:"メガラグラージ",img:"image/image/メガラグラージ.gif",types:["water","ground"],base:{hp:100,atk:150,def:110,spa:95,spd:110,spe:70},abil:"swiftswim"}]),
  S("lizardon","リザードン","image/image/リザードン.gif",["fire","flying"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"sunpower",["fireblast","airslash","focusblast","dpulse"],
@@ -342,7 +346,7 @@ const SPECIES=[
  S("lucario","ルカリオ","image/image/ルカリオ.gif",["fighting","steel"],{hp:70,atk:110,def:70,spa:115,spd:70,spe:90},"focus",["closecombat","flashcannon","psychic","quickattack"],
    [{stone:"lucarionite",stoneName:"ルカリオナイト",name:"メガルカリオ",img:"image/image/メガルカリオ.gif",types:["fighting","steel"],base:{hp:70,atk:145,def:88,spa:140,spd:70,spe:112},abil:"adaptability"},
     {stone:"lucarioniteZ",stoneName:"ルカリオZナイト",name:"メガルカリオZ",img:"image/image/メガルカリオZ.gif",types:["fighting","steel"],base:{hp:70,atk:100,def:70,spa:164,spd:70,spe:151},abil:"aurashield"}]),
- S("zacian","ザシアン","image/image/ザシアン.gif",["fairy"],{hp:92,atk:120,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"],
+ S("zacian","ザシアン","image/image/ザシアン.gif",["fairy"],{hp:92,atk:130,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"],
    [{stone:"rustedsword",stoneName:"くちたけん",name:"ザシアン(王)",img:"image/image/ザシアン(王).gif",types:["fairy","steel"],base:{hp:92,atk:160,def:115,spa:80,spd:115,spe:148},abil:"intrepidsword"}]),
  S("idaitou","イダイトウ","image/image/イダイトウ.gif",["water","ghost"],{hp:120,atk:112,def:65,spa:80,spd:75,spe:78},"swiftswim",["liquidation","shadowball","crunch","aquajet"],[]),
  S("loudbone","ラウドボーン","image/image/ラウドボーン.gif",["fire","ghost"],{hp:104,atk:75,def:100,spa:110,spd:75,spe:66},"unaware",["flaresong","shadowball","flamethrower","focusblast"],[]),
@@ -364,6 +368,7 @@ const LEARN={
   bakuphoon:["eruption","flamethrower","fireblast","focusblast","crunch","darkpulse","earthpower","thunderbolt"],
   bakuphoonH:["fireblast","psychic_hisui","hyakki","shadowball","focusblast","flamethrower"],
   bangiras:["stoneedge","crunch","earthquake","icefang","rockslide","darkpulse","fireblast","focusblast"],
+  heatran:["fireblast","flamethrower","magmastorm","earthpower","flashcannon","stealthrock","stoneedge","darkpulse","protect"],
   pelipper:["surf","hurricane","icebeam","airslash","hydropump","thunderbolt","energyball","flamethrower"],
   pendor:["megahorn","poisonjab","earthquake","rockslide","xscissor","sludgebomb","aquajet","icefang"],
   marilli:["playrough","liquidation","aquajet","crunch","waterfall","icefang","poisonjab","xscissor"],
@@ -384,7 +389,7 @@ const ABILS={
   ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
   gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
-  bangiras:["sandstream","sandforce"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
+  bangiras:["sandstream","sandforce"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"],
   lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"],
 };
@@ -399,10 +404,14 @@ function createBuild(){
 const builds={p1:createBuild(), p2:createBuild()};
 let trainOwner="p1";
 function saveGame(){localStorage.setItem("ritoGameSave",JSON.stringify({builds,party,party2,streak:Number(localStorage.getItem("ritoStreak")||0)}));}
-function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")||"null");if(s){if(s.builds)Object.assign(builds,s.builds);if(Array.isArray(s.party))party=s.party;if(Array.isArray(s.party2))party2=s.party2;}}catch(e){}}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")||"null");if(s){
+  if(s.builds) ["p1","p2"].forEach(owner=>{if(s.builds[owner]) Object.assign(builds[owner],s.builds[owner]);});
+  if(Array.isArray(s.party))party=s.party;if(Array.isArray(s.party2))party2=s.party2;
+}}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
-function spMoves(sp,owner="p1"){ return ownerBuild(owner)[sp.id].moves; }
-function spAbil(sp,owner="p1"){ return ABIL[ownerBuild(owner)[sp.id].ability]; }
+function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; return b[sp.id]; }
+function spMoves(sp,owner="p1"){ return buildOf(sp,owner).moves; }
+function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
 // ===== 持ち物（メガストーンはSPECIESから生成）=====
@@ -505,7 +514,7 @@ function renderParty(){
   // ナビ
   const nav=document.getElementById("partyNav");
   if(builderMode==='p1') nav.innerHTML=`<button class="btn" ${party.length===6?'':'disabled'} onclick="friendP1Done()">プレイヤー2へ → (${party.length}/6)</button> <button class="btn ghost" onclick="show('home')">やめる</button>`;
-  else if(builderMode==='p2') nav.innerHTML=`<button class="btn" ${party2.length===6?'':'disabled'} onclick="friendP2Done()">見せ合いへ → (${party2.length}/6)</button> <button class="btn ghost" onclick="openPartyBuilder('p1')">← P1へ</button>`;
+  else if(builderMode==='p2') nav.innerHTML=`<button class="btn" ${party2.length===6?'':'disabled'} onclick="friendP2Done()">見せ合いへ → (${party2.length}/6)</button> <button class="btn ghost" onclick="openPartyBuilder('p1')">← P1へ</button> <button class="btn ghost" onclick="show('home')">やめる</button>`;
   else nav.innerHTML=`<button class="btn ghost" onclick="show('home')">← もどる（保存）</button>`;
 }
 function toggleParty(i){
@@ -541,7 +550,7 @@ function renderTrainEdit(){
   const box=document.getElementById("trainEdit");
   if(trainSel<0){ box.classList.add("hidden"); box.innerHTML=""; return; }
   box.classList.remove("hidden");
-  const sp=SPECIES[trainSel], b=ownerBuild(trainOwner)[sp.id];
+  const sp=SPECIES[trainSel], b=buildOf(sp,trainOwner);
   let slots="";
   for(let s=0;s<4;s++){
     const opts=sp.learnset.map(k=>{
@@ -564,12 +573,12 @@ function renderTrainEdit(){
   </div>`;
 }
 function setTrainMove(slot,val){
-  const sp=SPECIES[trainSel], mv=ownerBuild(trainOwner)[sp.id].moves;
+  const sp=SPECIES[trainSel], mv=buildOf(sp,trainOwner).moves;
   const dup=mv.indexOf(val); if(dup!==-1&&dup!==slot) mv[dup]=mv[slot];
   mv[slot]=val; saveGame(); renderTrain();
 }
-function setTrainAbil(k){ ownerBuild(trainOwner)[SPECIES[trainSel].id].ability=k; saveGame(); renderTrain(); }
-function resetTrain(){ const sp=SPECIES[trainSel]; ownerBuild(trainOwner)[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; saveGame(); renderTrain(); }
+function setTrainAbil(k){ buildOf(SPECIES[trainSel],trainOwner).ability=k; saveGame(); renderTrain(); }
+function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=sp.moves.slice(); buildOf(sp,trainOwner).ability=sp.abil; saveGame(); renderTrain(); }
 
 // ===== 見せ合い → 3体選出 =====
 let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1;
@@ -664,6 +673,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.isMega=false; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.toxicTurns=0; p.flinched=false; p.turnMoved=false; p.quickDraw=false;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -749,6 +759,7 @@ function applyEntry(m,imgId,cb){
 // ===== ダメージ計算 =====
 function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="status"||move.power<=0) return {dmg:0,eff:1,stab:false};
+  if((defender.abilEff==="flashfire"&&move.type==="fire")||(defender.abilEff==="magmaheat"&&move.type==="ground")) return {dmg:0,eff:0,stab:false};
   let atkStage=(move.cat==="spec")?attacker.stages.spa:attacker.stages.atk;
   let defStage=(move.cat==="spec")?defender.stages.spd:defender.stages.def;
   if(defender.abilEff==="unaware") atkStage=0;
@@ -846,7 +857,11 @@ function openSwitch(side){  // 通常の交代（行動として）
   c.innerHTML=h;
 }
 function chooseMove(side,i){ submitAction(side,{type:"move",move:activeOf(side).moves[i]}); }
-function chooseSwitch(side,i){ submitAction(side,{type:"switch",idx:i}); }
+function chooseSwitch(side,i){
+  const mon=activeOf(side);
+  if(mon.switchLock>0){ pushLog(`  ・ ${mon.name} は ${mon.switchLock}ターン交代できない！`,"#ff7043"); renderMenu(side); return; }
+  submitAction(side,{type:"switch",idx:i});
+}
 function submitAction(side,action){
   turnAct[side]=action; clearCmd();
   if(side==="me"){
@@ -948,6 +963,11 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.doubleType&&defender.curHp>0){const second=calcDamage(attacker,defender,Object.assign({},move,{type:move.doubleType,doubleType:null}),false).dmg;defender.curHp=Math.max(0,defender.curHp-second);renderHp();pushLog(`  └ 2回目の攻撃！ ${second} ダメージ`);}
     if(defender.abilEff==="pepperguard"&&attacker.curHp>0&&defender.curHp>0) applyStatus(attacker,"burn",defender);
     if(move.salt&&defender.curHp>0){defender.salted=true;pushLog(`  ・ ${defender.name} は しおづけになった！`,"#7ad1ff");}
+    if(move.trapTurns&&defender.curHp>0){
+      defender.trapTurns=move.trapTurns; defender.trapDenom=move.trapDenom;
+      defender.switchLock=move.switchLock||0;
+      pushLog(`  ・ ${defender.name} は ${move.name} の熱に包まれた！`,"#ff7043");
+    }
     if(move.recoilDamage&&attacker.abilEff!=="damp"&&attacker.curHp>0){const r=Math.max(1,Math.floor(dmg*move.recoilDamage));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,"#ff7043");if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}
     if(res.stab) pushLog("  └ タイプ一致！");
     if(res.eff>1) pushLog(`  └ こうかは ばつぐんだ！（×${res.eff}）`,"#ff7043");
@@ -1075,6 +1095,8 @@ function doMega(mon,imgId,cb){
     mon.name=mg.name; mon.types=mg.types.slice(); mon.base=Object.assign({},mg.base);
     const ab=ABIL[mg.abil]; mon.abilName=ab.name; mon.abilEff=ab.eff; mon.isMega=true;
     mon.img=mg.img;                       // メガ後の見た目を保持（再描画でも解除されない）
+    if(mon.id==="heatran") mon.moves=mon.moves.map(m=>m.name==="マグマストーム"?M.steelfever:m);
+    if(mon.id==="zacian") mon.moves=mon.moves.map(m=>m.name==="アイアンヘッド"?M.behemothblade:m);
     mon.acted=0; mon.firstTurnReady=true;  // メガ進化後はであいがしらを再度使える
     img.src=IMG(mg.img);
     document.getElementById(imgId==="myImg"?"myName":"foeName").textContent=mon.name;
@@ -1150,7 +1172,7 @@ function cpuForcedSwitch(){
 }
 
 // ===== ターン終了処理 =====
-function applyResidual(mon,imgId){
+function applyResidual(mon,imgId,source){
   if(mon.fainted) return;
   let d=0, label="", color="#9fb3d6";
   if(mon.status==="burn"){ d=Math.max(1,Math.floor(mon.maxHp/16)); label="やけど"; color="#ff7043"; }
@@ -1162,10 +1184,22 @@ function applyResidual(mon,imgId){
     label="もうどく";
     color="#b061ff";
   }
+  if(source&&source.abilEff==="magmaheat"&&!mon.types.includes("fire")){
+    const denom=effMultiplier("fire",mon.types)>1?6:8;
+    d=Math.max(d,Math.max(1,Math.floor(mon.maxHp/denom)));
+    label="マグマのこうねつ";
+    color="#ff7043";
+  }
+  if(mon.trapTurns>0){
+    d=Math.max(d,Math.max(1,Math.floor(mon.maxHp/mon.trapDenom)));
+    label="マグマストームの熱";
+    color="#ff7043";
+  }
   if(mon.salted){d=Math.max(1,Math.floor(mon.maxHp/(mon.types.includes("steel")||mon.types.includes("water")?4:8)));label="しおづけ";color="#7ad1ff";}
   if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
   if(!d) return;
   mon.curHp=Math.max(0,mon.curHp-d);
+  if(mon.trapTurns>0) mon.trapTurns--;
   renderHp();
   pushLog(`  ・ ${mon.name} は ${label}で ${d} ダメージ！`,color);
   if(mon.curHp<=0) faintMon(mon,imgId);
@@ -1181,12 +1215,13 @@ function cpuForceReplace(cb){
   });
 }
 function endTurn(){
+  [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
   renderStages();
   [me,foe].forEach(m=>{if(m&&m.protectCooldown>0)m.protectCooldown--;if(m&&m.abilEff==="moody"&&!m.fainted)applyMoody(m);});
-  applyResidual(me,"myImg");
-  applyResidual(foe,"foeImg");
+  applyResidual(me,"myImg",foe);
+  applyResidual(foe,"foeImg",me);
   [me,foe].forEach(m=>{if(m&&!m.fainted&&(m.itemKey==="orb"||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
   if(grassTurns>0){
     [me,foe].forEach(m=>{if(m&&!m.fainted){const h=Math.max(1,Math.floor(m.maxHp/8));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ☘ ${m.name} はグラスフィールドで ${h} 回復！`,"#7ac74c");}});
