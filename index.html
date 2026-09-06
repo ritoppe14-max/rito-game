@@ -1,0 +1,1236 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポケモン対戦 - 6体パーティ & 3on3バトル</title>
+<style>
+  :root{
+    --bg:#0e1726; --panel:#16213a; --panel2:#1d2b4d; --line:#2c3e63;
+    --txt:#eaf1ff; --sub:#9fb3d6; --accent:#ffcb05; --blue:#3b6bd6; --mega:#b061ff;
+    --hp-green:#46d160; --hp-yellow:#f5c542; --hp-red:#ef4b4b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    background:radial-gradient(circle at 50% -10%,#1b2c4f,#0e1726 60%);color:var(--txt);min-height:100vh}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  h1{font-size:20px;text-align:center;margin:8px 0 4px}
+  h1 span{color:var(--accent)}
+  .sub{text-align:center;color:var(--sub);font-size:12px;margin-bottom:12px}
+  .hidden{display:none}.center{text-align:center}
+  .btn{background:var(--accent);color:#0e1726;border:none;font-weight:800;font-size:15px;padding:10px 24px;border-radius:30px;cursor:pointer;margin:6px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+  .btn.blue{background:var(--blue);color:#fff}
+  .btn.mega{background:linear-gradient(135deg,#8a2be2,#b061ff);color:#fff}
+  .btn.mega.armed{animation:megaGlow 1s infinite alternate}
+  @keyframes megaGlow{from{box-shadow:0 0 8px rgba(176,97,255,.5)}to{box-shadow:0 0 20px rgba(176,97,255,1)}}
+  .menu{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:24px}
+
+  /* dex grid */
+  .grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .mon-card{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:8px;width:128px;cursor:pointer;transition:.12s;text-align:center}
+  .mon-card:hover{border-color:var(--blue)}
+  .mon-card.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,203,5,.3)}
+  .mon-card.dim{opacity:.4}
+  .mon-card img{width:72px;height:72px;object-fit:contain;image-rendering:pixelated}
+  .mon-card .nm{font-size:12px;font-weight:700;margin-top:2px}
+  .types{display:flex;gap:4px;justify-content:center;margin:3px 0}
+  .type{font-size:10px;padding:1px 6px;border-radius:9px;color:#0e1726;font-weight:700}
+  .mini{font-size:10px;color:var(--sub)}
+  .order-badge{display:inline-block;background:var(--accent);color:#0e1726;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:800;line-height:18px}
+
+  /* party slots */
+  .slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+  .pslot{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px;width:150px;text-align:center}
+  .pslot img{width:56px;height:56px;object-fit:contain;image-rendering:pixelated}
+  select{background:#0c1322;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px;font-size:11px;font-family:inherit;width:100%;margin-top:4px}
+  select.stone{border-color:var(--mega)}
+
+  /* battle */
+  .field{background:linear-gradient(#243a66,#16213a);border:2px solid var(--line);border-radius:14px;padding:14px;position:relative}
+  .weatherBadge{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;padding:2px 12px;border-radius:12px;background:rgba(0,0,0,.35)}
+  .row{display:flex;align-items:center;justify-content:space-between;margin:6px 0}
+  .mon{display:flex;align-items:center;gap:12px}
+  .mon img{width:116px;height:116px;object-fit:contain;image-rendering:pixelated}
+  .info{background:rgba(0,0,0,.28);border-radius:10px;padding:8px 12px;min-width:225px}
+  .info .nm{font-weight:700;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+  .info .ab{font-size:11px;color:var(--sub)}
+  .info .stg{font-size:11px;color:var(--accent);font-weight:700;min-height:13px}
+  .dots{display:flex;gap:4px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--hp-green);border:1px solid #0c1322}
+  .dot.dead{background:#444}
+  .hpbar{height:9px;background:#0c1322;border-radius:6px;overflow:hidden;margin-top:5px}
+  .hpfill{height:100%;background:var(--hp-green);transition:width .5s,background .5s}
+  .hpnum{font-size:11px;color:var(--sub);text-align:right;margin-top:2px}
+  .hit{animation:shake .4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  .faint{opacity:.2;filter:grayscale(1)}
+  @keyframes megaPulse{0%{filter:none;transform:scale(1)}25%{filter:drop-shadow(0 0 14px #b061ff) drop-shadow(0 0 28px #8a2be2);transform:scale(1.18)}60%{filter:drop-shadow(0 0 22px #b061ff) brightness(1.5) saturate(1.6);transform:scale(1.1)}100%{filter:drop-shadow(0 0 6px #b061ff);transform:scale(1)}}
+  .mega-anim{animation:megaPulse 1s ease}
+  .log{background:#0c1322;border:2px solid var(--line);border-radius:12px;height:110px;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:12px}
+  .cmd{margin-top:10px}
+  .actrow{display:flex;gap:10px;justify-content:center}
+  .actrow .btn{flex:1;max-width:200px}
+  .moves{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .move{background:var(--panel2);border:2px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;text-align:left;color:var(--txt)}
+  .move:hover{border-color:var(--accent)}.move:disabled{opacity:.45;cursor:not-allowed}
+  .move .mn{font-weight:700;font-size:13px}
+  .move .md{font-size:11px;color:var(--sub);margin-top:2px;display:flex;justify-content:space-between;align-items:center}
+  .cat{font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700;color:#0e1726}
+  .cat.phys{background:#ff7043}.cat.spec{background:#42a5f5}.cat.status{background:#9fb3d6}
+  .switchrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .sw{background:var(--panel2);border:2px solid var(--line);border-radius:10px;padding:6px;width:120px;cursor:pointer;text-align:center}
+  .sw:hover{border-color:var(--accent)}.sw.dead{opacity:.35;cursor:not-allowed}.sw.active{border-color:var(--blue)}
+  .sw img{width:46px;height:46px;object-fit:contain;image-rendering:pixelated}
+  .sw .swhp{font-size:10px;color:var(--sub)}
+  .result{font-size:22px;font-weight:800;text-align:center;margin:10px 0}
+  /* type colors */
+  .t-normal{background:#a8a77a}.t-fire{background:#ee8130}.t-water{background:#6390f0}.t-electric{background:#f7d02c}
+  .t-grass{background:#7ac74c}.t-ice{background:#96d9d6}.t-fighting{background:#c22e28;color:#fff}.t-poison{background:#a33ea1;color:#fff}
+  .t-ground{background:#e2bf65}.t-flying{background:#a98ff3}.t-psychic{background:#f95587}.t-bug{background:#a6b91a}
+  .t-rock{background:#b6a136}.t-ghost{background:#735797;color:#fff}.t-dragon{background:#6f35fc;color:#fff}
+  .t-dark{background:#705746;color:#fff}.t-steel{background:#b7b7ce}.t-fairy{background:#d685ad}
+</style>
+
+<div class="wrap">
+  <h1>⚔ <span>ポケモン対戦</span> ⚔</h1>
+  <div class="sub">6体パーティを編成 → 見せ合い → 3体えらんで 3on3バトル（交代・天候あり）</div>
+
+  <div id="home">
+    <div class="grid" id="homeHero"></div>
+    <div class="menu">
+      <button class="btn blue" onclick="show('train')">🎓 ポケモンを育成する（技・特性）</button>
+      <button class="btn blue" onclick="openPartyBuilder('cpu')">🛠 パーティを編成する（6体）</button>
+      <button class="btn" id="goBattle" onclick="startCpu()" disabled>⚔ CPUとたたかう（要：6体）</button>
+      <label class="sub">NPCレベル <select id="npcLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <button class="btn ghost" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
+      <button class="btn ghost" onclick="showItemDex()">🎒 持ち物一覧</button>
+      <button class="btn ghost" onclick="showPokemonDex()">📖 ポケモン一覧</button>
+      <div class="sub" id="streakLabel">最大連勝記録：0勝</div>
+      <div class="sub" style="margin-top:14px">📖 ポケモン一覧</div>
+      <div class="grid" id="homeDex"></div>
+    </div>
+  </div>
+
+  <div id="train" class="hidden">
+    <div class="sub">育成したいポケモンをえらんで、技(4つ)と特性をカスタマイズ（1Pとフレンドで別々に保存）</div>
+    <div class="center" style="margin:10px 0 12px">
+      <button class="btn blue" id="trainP1Btn" onclick="setTrainOwner('p1')">1Pを育成</button>
+      <button class="btn ghost" id="trainP2Btn" onclick="setTrainOwner('p2')">フレンドを育成</button>
+    </div>
+    <div class="grid" id="trainGrid"></div>
+    <div id="trainEdit" class="hidden"></div>
+    <div class="center" style="margin-top:12px"><button class="btn ghost" onclick="show('home')">← もどる（保存）</button></div>
+  </div>
+
+  <div id="party" class="hidden">
+    <div class="sub" id="partyTitle">使う6体をえらんで、各ポケモンの持ち物を設定（メガストーンでメガシンカ可能）</div>
+    <div class="slots" id="partySlots"></div>
+    <div class="grid" id="dexGrid"></div>
+    <div class="center" id="partyNav" style="margin-top:12px"></div>
+  </div>
+
+  <div id="preview" class="hidden">
+    <div class="sub" style="color:var(--accent)" id="previewTopLabel">あいてのパーティ（6体）</div>
+    <div class="grid" id="foePreview"></div>
+    <div class="sub" style="margin-top:14px" id="previewMyLabel">出す3体をえらんでください</div>
+    <div class="grid" id="myPreview"></div>
+    <div class="center" style="margin-top:12px">
+      <button class="btn" id="startBtn" disabled>えらんだ3体で バトル！</button>
+      <button class="btn ghost" onclick="show('home')">← もどる</button>
+    </div>
+  </div>
+
+  <div id="battle" class="hidden">
+    <div class="field">
+      <div class="weatherBadge hidden" id="weatherBadge"></div>
+      <div class="row"><div class="dots" id="foeDots"></div>
+        <div class="mon" style="flex-direction:row-reverse">
+          <img id="foeImg"><div class="info">
+            <div class="nm"><span id="foeName"></span><span>Lv.50</span></div>
+            <div class="ab" id="foeAb"></div><div class="stg" id="foeStg"></div>
+            <div class="hpbar"><div class="hpfill" id="foeHp"></div></div>
+            <div class="hpnum" id="foeHpNum"></div>
+          </div></div>
+      </div>
+      <div class="row">
+        <div class="mon"><img id="myImg"><div class="info">
+            <div class="nm"><span id="myName"></span><span>Lv.50</span></div>
+            <div class="ab" id="myAb"></div><div class="stg" id="myStg"></div>
+            <div class="hpbar"><div class="hpfill" id="myHp"></div></div>
+            <div class="hpnum" id="myHpNum"></div>
+          </div></div>
+        <div class="dots" id="myDots"></div>
+      </div>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="cmd" id="cmd"></div>
+    <div class="center hidden" id="endArea">
+      <div class="result" id="resultTxt"></div>
+      <button class="btn ghost" onclick="show('home')">メニューにもどる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const IMGDATA = {"image/image/オーダイル.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///4QACPdSWilKjDqMzlq194zW/869Y//mjGtSAP+MhMXFxRAQEP///wAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA4ALAAAAABgAGAAAAT/0MlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/0CPINgTLBrE3WAxTOKMgwHSaYNKqbZltEkScLEZa3Q68XaMXzClKb5KvMd12gElq8uDYZtdp2zXC2N3FQJ5dFGIeUaBbnSBXGJ2d1aFiVuMhmWMeguYkmptlqJ2WoqdiZ9goYgNDZZke5iZg2+yYwQGBgSus46Jlay0mqi4uca7pLavwrWIxboNxrmwoqPMBQeVxQUFAQXR0lPA1YZeqUnYhcUEDAkBAbvSBkjaBPb2rJXnQevbDQkK3LWSp+seQV68GhGxJwGXPWOtEvz7Bk7eM3kJBTkhcODAQ4LS/wjAA5mrAMmM+3Zw7DitokUGARp8JHkwWBKOuYo1iHls3bt/AEkaLJkwpQ5wJqcFYCBzV0wCAAMmmKqAJrRWCKm4vPcOKsCYU8OKrQpyZcesWnOGVSCVqti3QQli6/gQq9EdMuHq3UvWIt2cHc+CAbq3cF+/HnUFfrgLC+HCYREgUJC07Lq/Ie/miKhXsmcEDbhZPebxXuV5jhV8Xg069GmLz+wFPlDgmWa8DVR/bsVNNEluyGbPBnfbxj0CDnDZdd37tbTmDUqbPRANOZDjgWvXJsCNeW+avVuZVkx9Wg/sHbVDbP6N/e/uc9M7JM6De8jKdrmH9/7+m/DAFRXHwv9MTV3lHXvIuQbeNwVxN1xLOnTDwDQMXMQee1O49JtMxtR21jSN4dDNUrowUGGHF4ZHwUUHsdgSiAKq0M0utTGVYop2aAiRiy2GeANWvdEo040UWTeBjvOUZJV4twkQYwY7xXTghVgZuaKOFa2TU0vf+KiBEU9isJN+2+0nXgaMHdSVkgYk5V1KkMSRgngVktkKBzOBtNNAuuT0U3OoXQCmL2FCWWGFd+IJ0gEYMfXTTw3YeFoqg/axAlZMecBjYOG0wtOeFOlpQR2MFKpBoh2wiAunBxEXGnhYDWMFEqji4OKqLNEk1WiuNRZKKwrdcGsujJLE1lQ8YqRfA+OMoZH/rQQFdJg8x4aV7H3LilLIHDTkOU1c1LZl7WhthpatNbZKZxtV1Op1LYqh9VqNqSNEN1tt5a5lAFviivUucNzx1p1MNv2YXpC9tdUvXFmSyU168WrXXm125eAwfN+sBZlEpP0HX8QTY4jDlMxJtXBkoCEcH20fTzzlNxZjGB4CbqG8W3g3LjswjkcFeWADkunG2mQK2Ikjxil6ObLAVAbNGltId+kzcDnTe+mNrUwWNNTNXQwkzl3XCsSQOOZG2dFEYozMRsiUSeXLYGMd6032VJY2reKVzTMVdQOM4t5HLpfhz1azwM073riIoNgbVAld4ShE6U03vuW0XL2AlgSzSg92IZ743Ce8+px2kEd+OQuviiYSO5kyE/qIIzJQgIml0xKlp1K27roJezrQO+O7i0AG8MEXb/zxyCev/PLMN+/889BHL/30KUQAADs=","image/image/ガブリアス.gif":"data:image/gif;base64,R0lGODlhYABgAMQAAAAAAP///706Qr1ze2s6WkJCjCkpUnt7zlpjrXN7hMXO1v/WGcWUEFoQAOZKMRAQEP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAABAALAAAAABgAGAAAAX/ICSOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcsl8FZ7NKKRwqEKlPIbWwDWcqNUDooDVMRboBQMx7o4KbEQV4S3bCul1fF/oGvZtdjRwaWqAgH18bA+CK099IgaEhXqHcVxPcYyNKGAHfVxsZwuWpYgIm5wlcHJiknFobKyyj08Pt2yhqKomkqyzf2d0YwW3C7dPXCLImam8I5K6dBDBtcYMD7XFI8zOz5G10RDZ2uWP3rffJ77sy7a3DwG+4eoumMncjPC38rW7M+bIMHFz4gGBgwcfLYqRyVIdTgkUEBhAMYCDP5pYKDQ1DWKAiRUbOHCwxxuJLhwv//FK0KAiAQUjBQhIZsDkPW2lHjZK8LEiTAcCGggoCe1mQG06dzY4KDJmUJk0uxydmrRRU6cNhMoERG5qOILfsorVKlOAg6hdj4KtR4JsWbN8QFEtmiABWwhuZY4keQhewGgGAgiu+y1T3r18LaUNx0awY7ucGiLIa3ZvKWaMGzse3AhMHAdur450GGAxxj+bA0C2Q+XzSK2iLQMSnA0ZRjpcFGxezYQwtT2IgwsHpJtfttOPDOjmHIVngtsIhEtHvEeBgsClkYezHkAB7x11n6/ged31dMRZKydmU1z7duvfcfB0jNsE4fkK2OyNLVym2NFxWIdROZfAx8N8grFRhf8yI/BkAHmu+XdeTI+IBciAG12iXHw1IGhdfgoewOB80MXUADwTzpTcb4hkqFJVNuB3HUp7dCEYiPqlw815KuLDYhwuqnSgY9dRk8wsuXQHSAMFTdcjJJFcEmQuPeBXxzxTCnkCfxSuCE0uWcIYY3cPHXWImCKMMR1SJ3nxikM+FAnOVBmpoKZ0xPhYwptn+sAblkjKslAKfxTggBaIApgnjNDVOMQ8puiYAhx4FIKGHpSKs2dOjwbK1Qm+TTHGKJaugaSmJHiK5g6N9gVqaaKOYSklcATACoOp9vkoR874Nt8DQJJaqma3JqUqEa0S1SCs+AGJwKykYHTjrSYEuqr/DskOumxpCCgpKBuW5kIsMKtcuIpAPHiqrQjNngJLLOIioEABtjr6hr33XgvQZXt66y4sNdIiGLn3ahmrvjKo+0+UpkiGyG30dkcwwx3FWvEO6jqTrbOewgGxxMA8dFsds0DZg6cap/SLIsMAqeqVVP54cbquUszRymNImZIfp4lwKhAof5lSy8T8mxNgVEKH7g+BpjKywkSfCTWYieAGHcI1NH3SkQ7Ds3HUDiUzzB884+oDkt4AWpOkRlpCE8tSku1xzUwru7WXvSBZji4NFSpVNOGYdHKde1qDAqDmvOlLG5gADorgg68LjTaQL/aX41wD5gvkPRB+bjKcY6aWwdp9yHVOERhB7sc2Koie+FerU476woUnx3k+lif390m0sE4E221KdXsJ+xSPpdklD496OL7TwLPJPnu+RNm23KB2tdIjYdTpNlBvEivK/yBNns0Pgojq4YOnWynl06BYGfNBOEa9tJtPtxT83Ihf+zPwxB57sMICebwzQOB1qDsQoo0ddASPISFQMNhJ311UQJ4HkYknEpwgChwEAQyOQwEZ1KB96hAPEopwByE8oQpXyMIWuvCFMIyhDGdIwxpiIQQAOw==","image/image/キラフロル.gif":"data:image/gif;base64,R0lGODlhYABgAPQAAAgGATQPDycfGy4rKCk0azJDSlFsdvLxISM/jSw3lyU7qSFJly5KtEF7tBlO1htB2CxexyJJ2hZL6xBb9SBS7VuSnVK734muqwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABgALAAAAABgAGAAAAX+ICaOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otBDAbrPVq/bjYanb2/ASm0Kxz+cREoIQb3B7En0OEn8PEY6CfBSFZwARFBJ1jY6BEpuOl4ISAJR8mA6eiAKqA6wDAgGwgpNfbROCnnyqAg6KoaGKrwETs1sACwMTl5t8AwEQgryOjHOKyaoBo1wAEAsLncsTzhOnnhFzdnYQlxPhA8UQ4Q4JCQoMEeG25Y52DtOME3UCuLsCgMGEAQsQKEzAAIIwCuXoWCCnD1AjCHcIMmAgIKFCBAsCOFhgz9NETfr+UkIwMOBCtikAFHTr+DFkwm4lpaXc6QijhQIvpcRMiFChzY8Kc/LcdM6khQoCqgD4WFThAKQKFSxlGqFOuQKsgMJEWnQBTaz0Us7xmQnlvjoVKgR1IqAmwpkesdbzxPakW5Or6gx80nGmLrNYP+7dxOvPzkgBLDAoIDiKgFZx49ZNrHhrOcgFBDSoM5cJm8wXUmvmnNXzJz5g0Yl9cjpu6ttxA7BGoNU1H4HNGjQAIJc26tsHDjSocAAx5wVbL1GAZQviAgNxSyMhXkF13AbJG1w4AJU1yWW3HHG8bAuaAwUKhjsBcKF75rgGknc/wLLVVaMLwNeKLq30kp4C88j+pJ0R9OFnwIMQRniBAYV1418rJEHAyy+8KBLBPAkqsOARxEVoYoQAEKCiigAywGGHFG0EIogcRdHGiSamuOKOSW3k40bwzShkAgiMuIQbSLJR144rIjDkkzQyMA8DRtJmYZNLMunklMJ16aWXTkZQpZVgMYkQj1CmOeWYUABQ5o5gIdCkmlBS6QUbTKq42ZZ0ggifnWAMkCcBrDCAYJ/zQAAoGDryCNJlhtbz5aTE0LLQkGapIhNOPy5QaRgA0HPojJvqYqoqbHbBRpBPwrcpSZ+awQYDAY4aYkKxpuEGAQWs6EYecfwK7LDEFmvsscgmq+yyzDbr7LPQRivttNQQVmvttdhmq+223HbrrbQhAAA7","image/image/グソクムシャ.gif":"data:image/gif;base64,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","image/image/サメハダー.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///+Vhcv8ALKcsRqeesOXc9ixGjSM1akZquRosRqenjf/cWP///wAAAAAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA0ALAAAAABgAGAAAAT/sMlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/8AVAhHkIRIJYhF3TBwOS6bzoIjams+qdYbNbrnIJ/Ub6x6UZJd5nFaHxdq28A2Xz6fZuB1lRu/5dE9+fyVHYocAhCZrYomKJIaHdY8iAAd4iJQjlpJUCo6aH5ySeqGinXmmp6iNqh2jrKCuGbCosrMWtba4tKyICqW8CLqdnMC8EsO+pHDBlMAHxMuTmtBn09POQQhiFwqH3NjL2j7cSJgS35fn4uNb4efsCgvx8e1ZAPmW5D3w8QoMGNRbQJBgNmuN8r0Tg2RewIIBIzLwNUSdr1vbwilIsECiR3qo/xBYxIZxmwIEHT0+ZAcuHMNAkkoGcaiSnj04h+rBzGQF4EOJNllmeakTU8wtAG2mDFgP57qiRo9GmVcPqFBO9fLdlCQS2LEiG3VKpIMVidZ867i6PPTVR9iiETFZSvApAdphG9muRdV2x9uiHRc0uvQJADAAR9A69fWvrw11UJ0YfDIXQAACltAqHjKEVWSvNyDrtHUJAIEAAzKr5jyMdc7IYRzDUGDgiVDS0QikNpyvMOthiF0/hc1mhuUC2IAnLMz89xB9zodvlenCcoAABpBLKmCgO3TO+YA771qggL7w44ErvJGvwPX32LvL727+u/Pz5cvrOc+fB2388wUYYNt9/AGQ34EF8AOEgQYoEEBhBRrmFTAIVniggkEA0CB3CWJHmwGGESDiiBMqYGF+GGZoWIP5BMAgAALEKMCINBJAYYUpTpXIJ5+YJ6OMCtRoYIXU2WFiPgT8KAAwD444JIJFGmmeAko66CCLTx4YpRxHhvjjlSBmmd96pvzXG4lYWkimKrRBKKE+ahqYox1y8scdfeXBqR8y+QiYHX4IzvlHhI6YiCMyHBgaKKKJ4pkgo4ne2Z2gvHw4KaQdWEopMrQ9immmm34q6qiklmrqqaimquqqrLbq6quPRAAAOw==","image/image/ドラピオン.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///9yNysFysHsjciwJLHI1coRPlT4jWNPK5ZWnsACEpxpPWP///wAAAAAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA0ALAAAAABgAGAAAAT/sMlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/8CgcEgsGo/IJAgAUMoQAAPU+YpKpxnshYlEIDDWgreJQQjIlqh2iDgM0JOwd3xBDN7bK1zYHhy+cQYGYnNahV54DAyBg3RsfndoVoULcwBeAgJ3dwcADAuLDXKOfJCRogiNXguVTAOZsJsDn6CogoSkcVw4AKayowuCvbCCmXe0rE2Th3CuBntVu71uv7dzAQUCBq+Z2duzrOGdgqqFZABuBp00akxu1H7jVwgB2HcGsAV3BQfh9QHyylkSde/AuhmXBEFBF69TqkIAv8mSeOBfPYfWDo3ZpO6gjITk/6AYNJhwji9ZKCsGoAfQikBLHEdCc6GGnDCZ5lDqlKUS4BtyuGDGJFmBya4UNW2KdGhyUyejRuE19LOMGbyOREUxeTizRFKFIi+ZdAWggNmzBXq9URuvpEa2A7AqA0moq4dCEr7qYTrGKNq/b8y6I6lxzNWRT1NlXCOC4dpJYMNaApCg8l8CmAkAwIzWaOGlBWXaxGXXwzSnTKTMC8skQYDKCc5mnj07bWXPVhEjpmvuhFqpfC11svg6rebNmJHTpuy6Hu6luvkGZdyYGnCxk0Ux+JegF1nMb5ZTJu5ceHTsGrUeDcH2em8J251TY6v2+G8AxBPk3v15YbrSGsAFD/9f0jSnjFQ7NYTfP+iZl1hh7nDiEXsDOvUHKfgdhQ6CEuq24GsN9nUOM44VBGCAPCm43np5bRjdi0yU9x4F6JUY2okXKIIOVLstMRiMrjyW3RaGodQRjhbEZ1ZIgyFZFFR+GfQLVBy4aGFWIDDQXHEhhUWCi9HpBEiALvIokwjx1ZOAAiG1woEiodD44kiyeLFBmqmR446TNLa2JpsKubnBgooUNaeUP0mRQZpqKqYQix8QooACiq0iaID1KBBni3PmqWiO+a3paC4gFABWlwhcuqgClW3aDpRb2fTpk0ZVNqmjyZBgqqyUUDeBJZMq0Mxqh8gqhVFlAHArOeEswCf/jZExU4ajzyjbTH9e8LrJVnbmVQiz4TwbB7YzWcEKk2lgqxRciUrBl1Ks+GraZ11FcS663aKi7rFvoOSSHSEOZAK3Ik5QqCgGhKMUInh4h+1GkfjLZH/ibmHUpHFut4i9vLZXlloEk/hLSja9AeEKDASraRwBaOoSkx0ekJaEsAY5MkrUmjykCikHK8lrk/4LRcxiTHMoh5eQTM4bPr+w3ZqS/CksMw3JDAV0h1ZjB842KRu0084VpTK3YBpU9DNHI0qVQlzr6Vp3YMNN6zk/mj3GsWmLphA13z5j4JgsMABpBmXPjF3Z573cxh+bWCKjEGCCbA7iD3bN+C8LqZXv9g8bwtVgzcWizW4k6vgLObsBPxxWghuazvnWU6puVes8QSfhAIDr4AbsnOwou2GdIMbJtiPBnjsOfPNEUnD0lqkb72/8ofbxNhhfdfBPhRiVh8XrdMl5O5S4OPcyQXnohounRHnFvpFP0o55w4g9osuDnwPiZr4ff/l174Z/DloaH7JSVjwRnQ9ZcYCRKBCDAGHhQEv6WUPPNteimhHOQ3T7w9duAEG5USBlmxqYQUjlNfYNLABdORhSEHCbNDjwfiisAXM8qAsemLAxMaQCDDKkwxjcsIdADKIQh0jEIhrxiEhMohKXyMQmOvGJUIyiFKdIxRlEAAA7","image/image/ドラミドロ.gif":"data:image/gif;base64,R0lGODlhYABgAPQAAAAAAHIRFEIaIEIiIUgpJXwsLSVAIXhFMTAjYUwyabolMqN3Wt5XXUuFJo3CTIJAnLpwzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABEALAAAAABgAGAAAAX+YCSOZGmeaKqubOu+cCzPdG3feK7vfO//OYMBSOQZHMOi8nZMLp8pJ6kJrZ6EpiPSyhVRpw5HQ9pdfkfacdl6jqSdinhgPh+sd0c1WpxUBBgMf4CAdndBW3tIdIOCjIY6bVoGfoBzg4OFjzRxbQpNlIGXjpqbgGcKDE2CjZV1pDOoqYgRqHmTDAWXloGvM4IGen+2cbqNAb0yjcBDwnzEg7mjyC+gnAbNY3HPxdMwqH/aQqYNAdrmfnPdMYIF4cIN5Od+AwcA6smAnL/Z5/T1977c4eKnLQA9APYAJisIqMCkgv4ECBggQGGycoLkGPR3oOOCBQktrhvkp6NJjx/+Q4p8sYqBAo4CTiJcGSNWxgELOsZEqJKmC5suce4E8M8nPkpCH/wj2nMAgRGZjIqwaTCnggchmYoYgDMTV6kjvh3AWY9BURFEJX4ECTWq0TkH1h5QcGCoRAFpBeQM+RXsCAIfDyiNiVIABAgI6+IVobenVJx7eZr8SOBwAqJ17TX2KwLwXhKJ41aGkOAw5ruOV3IN3FMygQcPSB+GgPcj3tQKPZtsXREBbNilIbzGirkez5kKjyMHvdj3gwSwhUNHYLz4bs4jtApwDnss7IS3E+OWylTA8Ad6BcBGEGFnduwmABCIqV6v7Qfs3cNPAUBv3Y+rSSTfePuplVNHA8D+Rs8C5hGI3U6ESQYdegzul8JiPLW3AD2/CVWgCfqRkKBg6wHAYEV+ScQYY2eJqBQE30Vg4okgkoBiL+6pGKIJ9MBInT0z0jiCiozduMRdd4H4D4QtmgBYAgkgoBVCa6GY3pAVKnHXWrYZmeN1KgAGI5BZ9XdiTjfaZ2QPBnIZmGIs1lUdCzhBwB5/p2Gp0w9tunmSThEut0Kd+LGQ2F0mrclDf/Yd+KdMDvK4gJ0v9Jeooi0gSaQKkj06pwyVYRWDdZqWamqji1WqnKAxiCklAggkoKqntLppW6RKAIbfc5bBYJ2ntjLIahk9TggdaXe6ENqftob3Cj0TPgccpb6kLmsSARlOQ8ABCXQk2Xo0rIorsdWVya2Fg44HQKHohptsu6MeAC8Nqc4Lw6b2Kttkvpzuy+8JxY07768Ct0vYSZj+e/CfCedLn6cNwxsTRQzv+S+LllZc18XtVUTYwXhZzHFxjSKE779E7aUmxyCmZCZbLGeXkoy2xSxzlivbrCGKM0Zsb8+M1azzlUH7PC/RRevccQlIx6yo0UpHLfXUVFctUggAOw==","image/image/バクフーン(ヒスイ).gif":"data:image/gif;base64,R0lGODlhYABgAPQAABcWDkY/X3pyTF9VfsFXYY+GWaCVY8Czd3Nols9yjubYjv/xntWE4O+w98vN0+zs6gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABAALAAAAABgAGAAAAX+ICSOZGmeaKqubOu+cMswcW3fNtPQeO//EN0OSCzKGgmecckcMRLJptSoSzSG0yxMKRLuuMEZWHsTg8Vdmvlq5c6uY3IZXtKpd1c2dOZsx+VbPG9nX3pIe4JPWIA9dl1IbpCHVoiPUIuMZXtdUZZ7UJd5b5dKaJkxM1FPSaMErlCuBKCzbU50pzV8q1ZIsb6/sqGlfLg4VaDAycGHmMXGVbEDAdMBA8mXwk7EziqECa7TA+Lj07+0omG33CfbQb3TCAjj89LXfmJf7euPpe8D8fHokSvnC5SXP/vc5fMHMCC9hggILkOXEIWXPeEgyhOokSAvfRXrCEkQYKNGgdL+AIgDCOBVs5AWr1STdlLcAQUKDsgLAKBnS1lYzMCMyROAAIg2FSxYmnMegG9A8VEcSgKaAJ0NxS04wHXpAXqrJuWZStVSAAVZByyQJ2/tynHHhOFDWLHK2X8bt7Z84IBrvK8DoAHFBHKoEAEL5i1dvJWr33/Q/IShC/PwUpuMcxZwjPXAsaCbyrK7gpjxAs0FcnK+ebCLKzWUQ84ofWBrgc04V9/0DAdAGtiiRXZBrDm3bpxoAzMQFyA4i20CjOrminyryZu+nccAoJp69dMIZgyofVqAdhezT+NsoHSxAiEMELjPfn6FF9MNmI5kQJ6p+fr25bHUDOCFdwgD7TH+RR+AFn1koHjKfcOAaTj9x6AJniESmCjiiFFaZgteOEIBC4jRIRwQYkZhiCJCUFpyHa6y3Dj9zddiCS8CFhhUyy2HQI1MHWBhi/3htJFyPdoEpFdDimiAezkd+VBXpul1owgkMpWblCsVV+UBLDKYpXrIYfVXbgIkuBiYV7oIZU7IxYncVV+GCeCH6qUmZ5wHpGYam1fiiZOee86pppWBUkhooar9aWd9eG6VJqO5jenVo+dFKqRSlCoQaXRtakocmXt+immmjIHJ6Wmk4gSAaaCGmuqrq3Ia56trGnWqc3iCmRmrc9YIZqw39hpprQrgulh0gBabaqTALkBnrjn+7corY9ACq+xS0VXbpptbeVUlt47mZm1wuAop7bgLvPpht962CQB5urJrVLiqctqss3qxe9q80nYb5LmiAeyrv/NexZ17+94478L+JtvToZp9CwHE/pJZZbyJZuyxgm0u+fG4FfM7ssfJ3ijyyRsTDFO2LNfZHIMrx7yiNNPUZ6nN7Ca7ksvOwMyze9H1NELOZdUcMcpgMhcO0IDs7N7SGVfrkDhQy5FtnBsfunHTAEkT3LGdlll10+RkrfWbZefmtZZoT6O2HLQWehOjVHYNptxz0333no4xmmbX1RoN6d9lTsfZVQnK2bB20k1X9Ly6TQo4sQAadZVjAigsgk9BoBtld9+4TJsqV6darhrmmdYmrE8tMMtV56Qzcm9pk9eg7OPogt5kDB/ybrELALc7/A2IeX68DUUv7/zz0EefSQgAOw==","image/image/バクフーン.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///0JalAghWlp7vSFCa//eAP/vlNbFc6WMSv+cAGtSKf9jAN4AABAQEP///yH+DihDKSB5YWtrdW4uY29tACH5BAEAAA8ALAAAAABgAGAAAAT/8MlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/8BOI9QYBlXGTPLRMCyPpQZjSU02FU/oxzplSqzFr8GpJYWZjOlQaiy6x9jyiI2eqrtu6ZjslXPCDQp3aXZpeQx7cWd+GoFFBoaEkWp6e2tdjBtNV5KEUoKVcEWgX26ZFU17nZKQiHtOnG6GpxapBoKrY66JqZOYtExFuwYOAw7HDAqvr8q3nVmngWPHDgLW1gPZy8vPwBIDEw3H1+Tk2tu4nnnQQQMC4OPX2eXlCeiri37uAtXyAwT96JGztwxXPn3WHBAggE3AwoACBRBMhM+UHHcKFzLcxy9iPWfP/9ZZPGJM40KOHD0KaAaSkkg5GU2WQ3CgJgKBLA2JPAjln0mGAmjWHEr0JrkxO3mW8bkwKNGnUI1K2klrX1OhCxZA3XpAylSqjFIKdRBAK1eiXgslVfojpYADCBY0CCD0bFc7stSAq0quZgIHDOwOZZNHAOG9pzhyTXDWTdci19i84/v2aYLLggc3MGoNMmJGZocuOFYktE0EdQfbJNdg8imzjB1kdRM6K2rUZwV+9mN2gQS5abTGvX37LGd5wI4F+G0oQdwFxFNvPe7a2wOyRegicBBd+tYF5XbTOnabO/TimQ+AR259AjXopqEyhroeW/sK0OHGJ7pfvbn7FJgVl/9d/YFXgAAFiAdMaAOeVSCCBSQI4AMCNsjVgxFKeB+DFl5IX4YROrDhabIJFl9cIBYgonUclkjgU9wlAOKK3lQoYn9PmcYdAinSSIuNFGamI2o91kiTcyI6kB6DO8qYoY+ZwLbddUIStSORMy54QAKjSaCkYA7Md8CVCDgZopbbJSnmWcf4xd1pKSpYxjHurWkXd2+eZqaG1sWY3phfFsUjiHLC5NefXN1W5I+IZnbbnlCWgWOjgj76ZKRBTErpUMSlGGE2he6g6aZwEbdnhqHmECipxpkapxarsjpddHtW90Osss46KIgI2toDrroS9ydqpx5o363ewVVqd8I6umuHr6BmA8SOnNJkLbPNZuakOyrCii2zXGZlW7JbfVoNpj6c922Zl7V7WVbOOSohnZKqS2u41OT7npB7ocvDuN3l20GbDqYqapkIo0bNCAR/N+dw59FrQsP8waTvCllVi5pvE5ZQW5n+djzwl1r9JfLEF5+s8sost+zyyzDHLPPMNNds8804AxEBADs=","image/image/バンギラス.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///wBKjEqc5iF7vXOcY63OnEpaOt7mztZSAJQpAMXFxXNzcxAQEP///wAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA4ALAAAAABgAGAAAAT/0MlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu77x1/L3gz2BoBHc/BNFY+R2OsQNCWaQ4l1BXksq8EqvZFFBKNRwajUNhXcCGxcWpoTBcmtnM9+kQn/qVZ19qeXomZ3+AaF+ChSkNfkR1i4tOlU6NHWSRapOdbZ1umBhSkQ0BC5+gqkuEoj6lDAFrq6porhp8tLpttrcaDXNOaGmpqwWtvhgNC2gBDQrQabpmlpfJE2cSzwkJCsDTxYvI1w3cCbnToL3XFMsJAejhuuvs7T+ps7tF4/XaX2zpjvXb0IBNvkmSNlUDMtABMXl00KDzhKehAzUQhykChYefr42T/45p/PZvjkiL2qRNGjmRCC+P7IaFlCjvC6FK/QIFDGfEC5hrZ1SqiggyKMZPMPUMkckxKNNcZwwmfYOO5Jym98ysXNPKmlKbi7hOa7kPW52pOBKSXKNzFdklPn9m4ZPKKh0CBATQersEoFwouer+u4vXKsKhxypSRcfH7gG8ePWqeltXINWrkYoMPjAAMgHDgsK1RHuDMdh/nAd0hgw6UqqWP0jTmBh4LR0BqiELkNzpqNaSRbzygH0sbOrdyAvXYotPnOXhIQdtVk3d82d1zGfxDFJwcETj1Kt75r3yIR11PBgwo8bW4fTwqz235lqQzkGbOxgsW+bMyDe6qcFnnf9ylEhlXjGysWBKALHkAYw0t+EmXmTIaSZOfQWhwVY8CarQID22AHMGAQMgZ6IAutlhk0gZOoTGemcswEAO9FggYhECWkeeIvVJNYEp+i3QXyEbNUBifOOp06OP2swIJCZVDZgiRx1xdUEDMzZSFYo6kueJhvYNw85EDZy42zwmiaSYK4qQmeReNvWIUYdpaebmlG5Rk+YZc0Jpx3k2RaYLHxMRRQydNVQFqE1egtJWKRoNgglJGaZDiWFODSNpIyCBFBBsaRzF5AYM0aBpnJayRYtB9Hm0lA2EfsNVTWGpuksl9Ql3EX6J1jorRKzydalGfsUmVDZN6IqCbXiw6qzgrYJU4hJRrCK0VKjShrJCVM4u+axYmVEiKrcGraKROC/E2u23UoXbm1TsurVmC7J6mxi7YvF1777xRkufDMDQ1xGY395IJYb4GnTPSTIQmuYwlkH8bGtpqpnwwIiCwABjos47UrsUNZvwPRlr3GBI3WYwUnfe/Wrgx/O68CEzWIqqEQgEK7zyOD2W3EEzMh4QwCk3lyDRwshyAKbPSg9DNNMSMDbqzzXGUDUJsfDRoBpCZ4lSB7HQPDTN/Hn99S8hju3fMmafDbYz7UDdz9Vu12333XjnrffefPft9994RwAAOw==","image/image/ペリッパー.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///8o1Rmpqe8rT7SNYhE+eynLK7Z7l////p//cPvawI8FyI4Q1I////wAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA4ALAAAAABgAGAAAAT/0MlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/8CgcEgsGo/IpPJYaBYA0CWrYEAgDoas4QmQmqjWMFabfXpFhbAaS2i3s92zp3BQWw/u/Dsu3wAIdXd4eoR8fRkDBGQBAVB/hASGhxcAAYuVjJV6kpOUWo0BAwADoAFtnJ0WAA0NBqCOpY2pHA0KCg2hjLqYsrMZtba3BI1Qub2+DgzKyqzBCgsLlaKkw8d9y8vO2s8NDNG64KhKygkJ2+cL3dDRq+DWSwzl5trr9fXB66u470oNjqv2/DlqAM2ZPWj7xEn5ZwgAAygED9brFkkOK1aUHDITAPGgsnSn/6SwmshQIwNWAlKmZNiM2ylJA2IOAFJrAbaby1Cq3JlyJL4Gef6R0jWzRy1sF3XyFFiSID2gkNzxu9EgAbOq826xlHduG0hIbRiF5IEVa9ezaBGCLWSUK9q36L6udaOQBtascPM+k5sn0aa25fTqXQfUrxvDbR76MCsYLkIGBBC3QawYcGPH6SBLjuxGWV27bi/HTWdzc6TEn2swFu0Voc3IpoIS8JYaNF7WtghD0xw7qM3aM1bjzr173UOxvoHbHk7cZr3jvek2ECJctETjmthSD8z6ej1M2oNUF+w9H/K/22+/XfBsr3fw4cWrP8u+fnlo8NFvX1+wvvv35wVVBP8AXdnTnn338QKJcjYQ2Nx9EOIXIF1FiMLefxFeJ9CEFA5BChQPZkgSHLqAxaAMBZToSIj3CUTGExx26AMdKbZRwEsAlMdUHABsUUZ+C854wJBObFFkSQxRYQCPPpI4oRMEmLEDHUNq0SMcS6rSpJI8UqEkjAFA+eWVABSQAxVVYlkGFaj0SGaWEvTYxJKVKNmklT/iQOUYc2KpUBduShIFoFTi+aKVNuxp6JJw+vFZmWmqqYWdJ46gqKRPSJlCj5HeKWmlIRS6Jp6gagDAkGOUQQajcMRwaqqsMlqqH6iSceWis/qx6q2OuNpprKo22kKZuObaQRO/3gqHsY4OGkU1Da/CqqywyFBSK67VchCtlb1mq+2peXoLwj/ilmvuueimq+667Lbr7rvwxivvvPTWa68UEQAAOw==","image/image/ペンドラー.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///8oVVf8gdaoLYN81n4orirVKykpKYFVggCs1QP/fFWAAAIAVFRUVFf///yH+DihDKSB5YWtrdW4uY29tACH5BAEAAA8ALAAAAABgAGAAAAT/8MlJq7046827/2AojmRpnmiqrmzrvnAsz3TZNHU+OsOt/x5eD0jUNAYGQ3FZ4RkOSqb0eTjgpK6b9mpxVA1DLMshGJh7vkryzBWryOdnWiI0t91vARWarheseC5eX3YSR3+AgS1eYGwPDnuJiit1ZlaDX3eTKHVUg2tDDAybKU5VUJBnPQxVo6QnmKiqA6xfrq8kkKcDlQMCp2C3uCKfvpW/hLcKy8tzwxiQAgINlXtltA4ODQncZdOaz3TS03V6hGcMdgmq0uDhDNJJQgbZvbR2s+3hXdPyvNpHKqXDx27aviZ6DIhywOCIGSHTVA0c8EWag4MUIN2a+K/BNXSW/wogISDgIkY6wjjOAklR5MiS7g6qFMBMQZkGAw+Y+WPR4EkKHGlyS4BAG7yQVYzp+ylBpQJuyxY8ZZDN0oECBUqOE4YxqIMEChwskJqg2BmtW5k+GEgzrIIFYp8moNLon5lxJn86YDYU7DJug7JRO2ZR7dehCJZl41b0gAMERVf6Kqn2EVQFTelBzgZ5IiIohQ2DncAgSUnIqIUgsmSAcuVsdOSdTt0oKWsBXF9fpPp4MyHboPOmwCml4WxMtU+FRnEDNxPjxx3bM6aitesLokTByGYx9VdRH2FWR4UB/PIxpmcj4HY0O3efJjyVt359keCSfRvmw3vCox7hpFUEYP8LDS02VFU7AXPeCP4NuNYpjskA3WFlPWFVHK05+EF6DpZ2ioalkIEfY7tQpBNF1oHYwRP0YBdPhNsJeCA9fhxAAEn1iZBEFR2O0+ILn9DT12JwnMVfCPU84NETA8JzJJDSjdgXe+NUqSJ2Hjrmn0LakcahDLtROCU5/lmUmwZOmuNYSbpI96CAMxQ4ZTeq1CPimS5W6UkcXzAE4ZUowCPmUB8Z+aQFOPH23ou90NUmjDF4NCg3Dg3wmQE4JkkBTpKZp9BKe1jHpIRSTulQiQmhdZGd9UiWzVGzhOojoLkYN2lZQtiGRIZWijILgjsZI5msC1LyRKkznmipgmhZ9FD/LwjaBi1yh45RBbLc0LUfWvTV4cdDy17VAzp0RFPtG6hgi1xB3HJoCS9WicSDTlcJQVVGIuaIrja3QiLYEXiJSACmmJZ0YTqf8fILRVoV1QVsQF5EzZy4Hminnq2ZlusfcNB7QElgZMiAw0vcSnGRkxU8sFYULQvPia01ZNrIiTFh8py96OEjt5aQIWqGBVODmc0Un5wPfbzq/F+qGltJaww3T2mPaU0LMLBsVxecr3NSPFZ0X5EdPTM10gxMgMAFN0tO15B9TVRRhU42jkeD4VWl3XPr+0Nv64GNWmfb3t0TboKrHfDTi/ytuOIo310mXmnevbXjiFOy+OWdFW5420mRb+V4ldQUwTfmqRU+eXedGx45yUCMTvpmgp8+m5M4MVTm1g2w3vrrjE8oODV/ayOPAk7aPs5mNvNeukXagF4UZMxA0qKm4OUe+hLAKy9ib81Ps9kyE/h7gTao6Z2DpK4vXk9qCOQOWY7id1F+5S08zpnyiYVVPvwakl+sDgArzPouxww6tO9cGdga/ShxDf7ZCXwZkdv1OpCvBb6BUrzYwVkqdxjzzeAwRbHgI+r0gd6UpWSa2kECHMLBFIpmhRmsTC4YM0EZEsOFNsyhDnfIwx768IdAZEIEAAA7","image/image/マリルリ.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///7kaI9w1RsHB09Pc9gksak+V7XKVwSNhpzV7yoS59o0AAP///wAAAAAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA0ALAAAAABgAGAAAAT/sMlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu73zv/8CgcEgsGo9DgwFZMxwOSqbM+YRKX4BqdXllZROGxJPbVWUNDOoBUL4o32TNmZF+stuSt3Ycv8zra3hKe4R3GE4JdAxigV1qhHuGF2KKVJJMYZAHCQAAYZwZTooMdm1wnagAo6AYWaOleBYAiYqsfgevjbEUs6u2vAkJAoqwuxRhq5cSswIDw6S/xg3IDMPRy4kDzovK0mEC4NfM2gOL19LTwtaXs+TW597q3BUAzdoCwd3o6eBwS+3kgsHbN2iPgXHO8u1z84hQsHADvWnaIzCisTAAFEzU0mmhBScG/wJopDgrksdjYzI6DNBQ10I1YJ4wstOp0MlpG2WWtPmS4sFMOV1KNFhppyZ9piDRataS5EUlYhYEWKDFgLamTqX4K8gogNc9CkbmtPgD66YnUqlOlDoVrEIkZmcG9fpVi0CkQIza3chWLd0AFMHgzbuTkye0XtU++Yu4bRUFAqNISbVsMV0tjCdWDCa5TJYDmRsrJgR5M583k0UHPZB2ExiBYquAYfJ5NWavFT9p6lOktm3WgDdDdTj4Rxa2jieW3gyqEyPDVwAQIFCArlrkVJlXlETZ83TqfwMU+D4dQTAE5d+ik06+vfv3xSeg7v2+PvwOBaHw9sHevv/4mShGFpoO/fnnXnehyLXJfvwZeGAq3BnyiVilxUegg9+h0oCGy3S04SzBhLWchQQWCF+EHWqIimHMkWjDJ508qAyENH4I4nZEQBUZjZHFgSCHzrUoBFec8faJGJJx2CE9N3oIREPqASMXgxkoGYRR0LWioItIQMhBTTrdJAKCYpZp5plopqnmmmy26eabcMYp55x01mnnnXjmqeeeDUQAADs=","image/image/メがキラフロル.gif":"data:image/gif;base64,R0lGODlhYABgAPMAAAAAACwjOw4fcx1IffVqdwlrgyNoli5Eom1WkR5gyU1s7iurpE+t3l2A/HbMyAAAACH5BAEAAA8ALAAAAABgAGAAAAT+8MlJq7046827/90hHkJZgmiqeknpvErMzONq32AbO3Evz7QDbkicJBK+ZBJIKzpXyJhISQU6RM9sSDo6UJez11VLxni7o+/PJHgJy/DHGT39zgTHhENQcBQKcWRzdF5KdwAAYW4vgIFOAgqEaUsnEogAYgWIjo+SXT4HABiXopydnnSlpqYChZGem6urraCEqrKsdba3Q3kJNbgWAJKxvb+uCkDAwZZoxThHagpiV2/MpLw20V9iPkHMWpCvSTBVTeBFkHTS3gxj6DjqhOw9YY1EbI7ykvQ/fvElfFQq0woVMirUGK0o8UmgADIFDR6c1i2Zu38pItZRcCnGQBX+RypoRNWjYruL9zyMlDKsyxE+KY40eDhhpEF2VhSqRBMjQUsRvmb8+ZCggVGaEgq+uiktJ8YOKzkeWEB1ga8EQP6kvFD0qEhXEifWY4DVwaWdDaWOSGA1j9OtFLp6pTCsFlMwZZGinaT2wFWsYS4+jWu0sN5mdu8qcLsHhc0YP/1ezfnnmYSiDgxfaMklrMuy2TgonfSzrVtFL0JjLjxzlGc6bi17qMuFIwCqQIMywIZhtWbXr9ceCT0brJfbwvOc3eDbaAsKJiZEDjucePHOfSUv5wBAQIPMvx+UmGsJkUSfslNMFxE5fYbu31m3Fh++wqVd1lWsb+n+/cz4hfn+NF59SUWHTX83TMdfDg8A8B94AToIIU1seNfAc6u0h6AFRfn0XwHyeQdhCwOy5lMwP+XXWwMOFtUHiM5h4lyJ8p14zYZcmdiHH4bJJR+EF6oITwY+JrAjjD4BadQLJgKAgJBDcsjajjyy6ON3QA6HwJZQRmmEVg1QCSIAWoHIZJNObhlAl16Kd+SOC2glRpw1IoJAAHgG8GSbKonpAFVU/gmjYRUKsOWefEK1owCIBAqofJDOZCibbZJiwKWY/AmoHkpGSumQA4R66agDEDCAAFUVwEZCI9qYqAWhijrqpaXWSuYfIZZw1XavPhDrALPOGqupoWZaZa68JvprsKT+/ursbQtkEqmkvcbKrAHOxnrgbQVQJe20HzHjrLDZDnBgt4BWFWdVjEx71GGcXBLsr9vygodWRqZa5h+d5nrjtlBdhW6cLeSxZL+shdurfRceMXABeuBhMJYIkyeLCApv0GKjm0YssUwHI8zoxVIoEN1spdzqiwMkfizXmZCKUujJRSAjWcvwUpASAEewnIfPOOv610sm8NUDzTbIU/LEDZO4rx9DNajHVUC7ui1DaSmB1TIZfeIF0z+y+hTPQONRdWhYG/3FEUI1otVehXwNctjURC3d1ES7bC8o/fQAGNQ6bUDLJFOp22lmCW2FiS8ym3CLOPzQU1YmO2EXiQ/+7mJpN12Ma7BP5Gr8HTh3PeiSRKSMwMW5chjYBDoVgLmj+ntxm366fNZogMhwrddOEuyxD8bdL0ud0QNVPbwLQrJJGadYT2yjhALP6xR+es5JO4/K0JyOPtsxaBCfBPbZD2LQEepSZcXsGh8BGzLkl+8Z93+zPzz4axXy6QfUn8d9VjjYHf5YVwae4Y8Q9APC/kZhQOUscHnuk0QCZ/DA95DCFA0M3wR3szD90A996VsAjjrIwA9Gb4Qk1N0lhsa8FCboQAvrQsY2MJTNuXACE0FaBvjFwxtWwHzwIx+/6uZDCgDRaOGiEdSKCB1d8MQhJggRVuzXQaV0Jmsms5BKYSjIxCY6cR5QLAEXuwidYxRvHYZQIBnL+JrJjHGNNTng9qLHQTiKJILni10Fe/WxOVJwjwsT2gd3A8gUmoCFKLQjXWCoyEZSIAIAOw==","image/image/メがペンドラー.gif":"data:image/gif;base64,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","image/image/メガオーダイル.gif":"data:image/gif;base64,R0lGODlhYABgAPQAAAAAAFwJIAMwXz5XbaFzIKwKQtkfWtsvXdwzWeAzRvpSWPtwbryXO//nCgJmtFN0keNviiKk6OPJhvz1u4Dd+Mf4+/7+/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABcALAAAAABgAGAAAAX+4CWOZGmeaKqubOu+cCzPdJ0Wdq7vhQLswOCrgED8hMjkqFc8Kp88RbEJrdoC0qnRyoVhtdSuePUFb8foUtnsTKcD5umh7e7C41N6vXpHFP6ARQcHAYWGAXtBgERFi4t4YYk0gAqVWYuDmQUHeHqSLX+WYIFmm52fMgCQpJBgnqgrqnisYAcLbLAxsqW0Wra4uTC7Wo94B1l5wcJxgJzGyGfKL8N+f87GCMiv0ijUvWact9HcLsPfceJ+5NNTxa2/7TjrN4yN57XpRQp/8yY90Pfw5cu2r5+IUKMCglkwsNI4bv94/WmlZYEEMz76MWHmDpKti2AyrtvIUWERhiD+tWyDRS1hR3QLJlyLtK6lPUcUGU5gxGllLpvVHNWDKYHnw5olhUJCyRORwREthQZk2sinNG9STcHcWfVpCXN/AmAKOUUnI6deSewCVKiXKARm/ViFiCwsArFatSCzaKrAXGUk2RrAm7No17QXSAYNYKCAWIwE4Rqu9hfW0MWNxV6zZIkqoMqfFFcrZGDBY4KcK8Usugi0pKhwGJv+l1p1TEeuX5eKDXcCltqqd7ZGLMIb75i/OaOcIDxsblQAdvXp/VuCdQnMmbNl/JwlAAfTkWcfrz0so+6wHFTo46C9AAHkmxcaFJ14CfXri+CvwP992Lb1oJcLfnDsF8F7FVD+IAAAn0VXn30lCGCBAxQEkAB+FDhggQUAKEiBgygUgpiIAjQgQIX4RaBhAxxS4KGLD44gFlpPiSVABQAkGIB6GW4IQIsvuvjhewLgtWMJjpETAAQ3CpkhjAAQKaQAEUTgpAAD4OVYBQ4sQQgsh4zQpJNkXnlglVa6iGUAg9xFAZcObPJlYjS+MQUiAlBY5p4CEPAemlcWWYiQFcj55SZ1cmHIBXdAAEEAGZ64J5nwSUAloJO6OJ01d9l5FxyOQirpqHoGmsAElqJZZaaatqVFolZMtySkQZZJpAALWHDdpWg66Gt0aWr6qqcHPAppr3kGagFDFiRwnQQEqAqgUB3+Ojnfomgs+aiQvUpgAZEB5Mqss9dFqyoBWi6CSLXWusjlGOoN6mKvAHi7LEP4NvusuedW6Aha0U36Lhf7JUhBlQ/WmwACCyfg8LPW8VslARL4y5YJ7JIp4AsYHoywWhCHHLGqEVBsnZawXpAxtxuz0PHBMUIl8r7tOVCyydb5m3Jxe0bQsgqlwpgCkRATYLSTOF9X4c48fxiwhz+fwON7Qq9wq6RCGj1zhrFwzfOJUZugngAigM0CAeMdbTSqW2fYZTdeqzyAgmHfpyDZHW7THtrx8c22yAQI2d4JAAzgROGGQ1E4ltElLjV/fmfHAHmAY+3i4F8dHrMSIKqMwn7+kTM3OeXlEjCA5YJ7tZ8AD8A33ujjlTvA7KNSHfc8+ynYOnmwZwet6bPnqCB/L76NO/EHPrC75H3P7nyOTd56Ozk8Vsm68q5PELnRzj9fAZHdn2i8NERWgOb12DPHt9HKdx88lu6fPn0w1xOZvPLpo00A/g/Eb7j/4lsH+mh3P/y9Z3/8i9+CADi/XAzwdNbjH/YSGD4qRYl2UmqgA1lHwAjyD339cx6vAHAgywWwH7dSFZUMSME/qapDWKPa+NZhM5KdqYQGdOELq2W/yxmkPR4jmQvtZ8OEBXFVM9wgELlFsh84aIedg8oRNZiI99DOSU2kg6+65qQkSgJ+Vhw44RZrkDEcXQVxvwoCu/jjRejUTS38iaMZIVQDBHGJAo6j4wwWR7vg6XGPhitc495okCMY8o/kCAEAOw==","image/image/メガガブリアス.gif":"data:image/gif;base64,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","image/image/メガガブリアスZ.gif":"data:image/gif;base64,R0lGODlhYABgAPMAABEREnEfFDA3U7ItNt5ELs2QFPnOI1tmgHqEjsTK0P39/AAAAAAAAAAAAAAAAAAAACH5BAEAAAsALAAAAABgAGAAAAT+cMlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt33iu77w5BL1gYPAL7obEAHCCQBhdgqgE+VsyFYInS3BAHATEqgWhSGS1Km73V7yQzZumEy0p2O3RaODAJwIwb2eAZFh0CwUGiXyLfAFgRAJ/FQEJZVJjhJZGeQsCiZ+LeQJUkZMEcgQElwtNCq4JcEECTQcAXIp8kQC2ugNRkhMBqcPDUZllsII8al9RBwbNAAa8krvAwalVwqnHsLFCvH65ebylGsJUVQQDhN7fR0gAYQO8BAr25BvC82FKp+7KdFBRIs/XLmL3fJnDsI9fvwBNkvVQQnGCtT/bhim8ZqGhw4f+TVQFlCCnCY+MbLhwpBBl3Ud+/lKdKelK08kkkH5h4PLoJcxtrWoiG5kDACk+KyXw7DkvXdNTQr0RLcrP2TUnS6M0dQoTKkAtBcNEk0QGQDNRkZT4BCkVRck5I8IOOECA0cWz5CRx/ahEztQQAmo2WdUhXUZGofIC2+sz418Qs1whkPmYArofxDQq/MWR8dqYM9/C9RCSWOUFGTNn22yNoefG3I7ZdPMWdSoqlAHZVp0tb2KiavlpDpNNWLd3FYIKnsxVZEAyo3ivI4f4d8ch0lVjfiNRQ5RKkgkwVrMqT2rTv6pXJzzlfPbt3Tl8TzDZZ55xeTDzpq5+/ciY2Q3+Y9xpFcwi3ktooUWPUaqJYlZ/6rGHmnvabUOgZS495EiCnFXTIH8QRvgfhcQQoQoHJV3GVwAXtWYKer84E2KEF5Ao4G21MXEMc2u1kQEAmTkoyozr1WijeFDVRJ8g89GX4UtW/EhMATLWUk6V6rU4FYCqCVNJMiN9h8BrUf5oQCqJMFOLArskiNRFIJD4AwLx1XjgR+J5IA0iZxaAWDXluEgClzci8FcTKppITJk70ZUIAbgsco2gKFA4QJ6YwHLZOpkxesEtkEKa5heSykCoiZ5+t490nhb4xaOi5vJnBxfaWSKmn67apXy5PBqpmrXIV6utGrUazKW76sbMLb/+ZrmBhCEAeGmriCK7aAZkGBoKH9CM4ywnriYlQmqe0pkAdp1iK9m2jPDUbi4PrqSSChm1al66GQSGRWLsPsiHAvAuNAFP4o5Q7znW4gqImu4y4+8BriAlsFJfFGzwbfpcmy+wzizrb00SA0rxxJUqzJCA3vm3bCSLgFxLsLb8QfALShSGcaOIkcPhv/u+fJbMFRtREQYP/7zAlSz/SzB5u3QStCEW+OugRQ6yG8l96T0NNQVIT9xm1qEg/SqlW0vwdRTTRB1zzl2/ylnZFXydSFJths0h2lPDzbUnBrwdN9N39+233lwLns/eBHfdIuFEo7VSoEcvTg3jF1xJ9+GbUetE+d+YI06y2ZpvPnDnnhccs+gDjyMu5I1bXDZ5nx9NetyuQ+3xj7OjbkHSWkcteNq65yurxdL0DXzwUW9LPN/HI8+1rMFqYIvgtVO+C6m1P1y99VZ28HDsujdNa3XbO//pu+Wb7yp5SKkvwoPsp+/+0UjBG/383gc7r/j4e2/2/f17n/wCSMACGvCACEygAhfIwAY68IE8iAAAOw==","image/image/メガクソクムシャ.gif":"data:image/gif;base64,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","image/image/メガサメハダー.gif":"data:image/gif;base64,R0lGODlhYABgANUAAAAAAP///+rq8aurxampw09AGgp2qwl1qQQqP/2XpOZ/jmQuOX84S6s1VykVHEkQJZuZr6qqxLi4z8nJ2dTU4kNEXAgjPREoOgUdLAVdjAVVgAdomQhxpRJ4qiyk3wp2qgx6rwY4UBGCuBuQyQlHYhw1NWRqZP/1lJqNQLyhTtGtRebAWvjUcV5NIdOxWDU1NRUVFf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADEALAAAAABgAGAAAAb/wJhwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otJqJWLuPFlH7TbcYDHP6GtE5hPRuCCIfHSSAaxYfByN5h2Z8ByAejY5kdgcihpWPIhokJpqbliwsKHKio6Qbk6hiCKQkBwehrV8WsAcdlLVbCCQrLCQfjLy2mcEcrMVcCBsGB8EbtMtZgoomGhu71FaXHLPE3FqXshnK4levKiEbBwbh6N2kpBkG5/FUtyvALB/3+FEEHdiQgaCIfwCfIADxTJaBg9sSMrGwQgWJDAf8TZPo5BapFRo+bOTIZkWKCipSoLAXkSSSZhs4yHTnYaTLIhZyWkDAE8G3/3ctOerMWcCDUaMj5PTkeTPG0BNQoxbgMKKqVasedgZdlhPpgQInWBQYK6Ks2bNmq+7ElxPq2LEZwhZAWxaE3btlNYhQa4Fb26hR54k1e7dwYQ5n1XIFDFWw4AKGDRsAQYLu3r6t/jZ2zLnAnc+gDVSui/cyKgsexm4mNZYz688fQI+ObHfv1jQWrhZw7Hm36wIfgiuaZTf05MkgRPxxlNuDWd/zPBto3VmWdRLGEcAIjjzToeaEC/ATm0H4BujRrc8Crf0DDBgOkS+vM8I5wztf06s/z/t67A89vXAAAgJmFFtyF9RhFwcbCCeLbwXEot5A6BXgn3svwGBBhge8gP+AepPNhwgJJJZYIoQaaDBhfo/JlAEJDTzwwgsrZKhCht/I8gEItw1xwY9A/ijiFCYIYOSRRkJopIknPkYiCyaY0MCMLGRYJQwrhJCjAboUEeSXb1WlAQZaVDAAAQRMoCYFuxWA5JsCQOemkS8+IOMLV16pggYYcaBBCAh8eVRVb4nHAgYWJLhFBRKciSYBA4ylJpxHGirWkRnIpB0MGGSoAY4MkhDAqFdZVeg8LWCgqBcVmOkoAQVAIIGatNJKAQVxXnqkljJp+gIHBMqkwagBCFBWfalRN4+qZTA6wLOPPjpArbQW4EIB1GazwbbabZDhBsMWK4AGHlCm7AolFDD/JBmMNvpsBPBGi2YEAzSKLbUIpMhnQRa8l8GbivxJQooY9BjGBRVMIIG7zzY8QASPxhstvfnqa7EGExw5wcAa7PSjI60mvPDCDpc8gKsP08vxxRqULEEFq6IS8sw0h5yAmRWgmXMFGbCswcITwCzOBQJcMIHRFySg9NI3K5DzAgTEmMHUVBcUQszcAOlA0kx3vUAFUDcAKUzbnpLQAgwo0PXaX0MN77NLGYwK0QyszXbEDr9M0gULPGD30gtAPW+99eq99wMmtLp2A4IPPuvLFTS1gAmjgs1A4I3PWwAFCEfeVAxgY/6wvGhCUEDCRX8uRAUFvEo6BCoUYMIAqaseoUMLJxQAsbytvQUB57bfnnsBsBJPXQEopJDC5gFg7RLurEXPmvJjTTuq8xxBz1kLBcRQ/bMSCNC87S3w1r0QF5QsPvYktcD9WEbMbnoB1we/xAVjuSDW+PYncYELAHQT//qHBPzNaYAENMIFcHUk9iUwBkbDFfAeWEBaIZCCREjYBCaIQSNo0IEYvEAEQBjCDprwhChMoQpXyMIWuvCFUQgCADs=","image/image/メガドラミドロ.gif":"data:image/gif;base64,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","image/image/メガバンギラス.gif":"data:image/gif;base64,R0lGODlhYABgAPMNAAAAABAQEDo4OUpaOpAoLMs1Me5QSHOcY63OnMXFxd7mzuLo1f7+/v///wAAAAAAACH5BAEAAA4ALAAAAABgAGAAAAT+0MlJq7046827/2AojmRpnmiqrmzrvuQAz+2AyHR+2rjui7yfEBQcGjWHBQJwbF6SS6d0AmVOpYPFwXptZrfdJhQcNo655d+YnPat0YN4vM0aHBCIgx4gz7Ndc048eISEen91NmhDd4V+h3svcXiLQlCFkAMCApUpNng9ZgqOh3GlcqElk36dKQepFQOjhlsCkI2EsCGfrDN3uhK2tAANDbiYrR+fe8kpAKAZAoYABsbHNwDNHKuROp+6z47ihNrbjd06AI2w4bxy16+oRLzoPnbQFe2rCMKYkNqo/CHKoW5dKj56xhWys6XZPlIDvR0L5KBgQoWgkvUZd6jci4L+jnpYTHixUKeNCv8JKpmHy8iLpu6wQYlR5S6KJSwik5AtJp6G6ljxwfjzVsQMKD1uyMYSzMtpQV9dIxWgasdsyngtUTpBzoWgw2wdEreOKIIADIHO27nrlAWwRfuRw/WQbICrN2kd5cBUj4CDE6XlIRdUK8e7DfMWTWxCrJ5QIEHJDNdyqFnEXCU87KhiJEW43+BarolZMypgm5mxeJmND+UbW4caHoe2Y0y6gWg+yvzhZceFQOvS/pd2ajyO9VYb/f2zdTaImBB3XM4S+V5n1EW3Rjb6rFHft6xfx75cXbiGuICClW4KPPXFyWGAH8CUUnrnQ6VPp87fpg/f9HH+8hNUBBRgmWNFgeccf7yhgN8mAAhAgDj0EWAAAWCNtdhIWE3Q2j8NtlCQAAYc05ABBvTkxz25xFFQMs51MckmKS5EzYWW2aHVMgdw8godFgxSC2UNYVjfDa/kMkwpAgCpGSiDPddcTywieY9hPd7SJB1VsviaKRTukSQo7d2C0xXLNDdVTdNBmdFyp502hDvTwaVXSNNptUV4i1F4piRJlLIHP7/Y2N0tdu5pFETX/LnCAAwwYINf24Vmo4n/pKdof+/dAMwJPSXQmocLGbgQWZnI5JR76uEH00eivpVLAbQKllJHDEjFRl/qdcVZjB910g4BxBL7GlkQZiMpYzz+ddjVMiGuBgqKBtB6LCm2QMgAANteR0+00t5AbbWUXZslM+j1eNI0ZQxFIoqmLhEvIY6l9U62zn7bbjYSUmsqANbu+NhjxenaED1koAJuTnbcaCGK2dA6IWyS2bIPweeaeBpnRri2FYrFFlvAxBQzNBt9CCF4Kx9yplPYEuPSOnJIhC7jZU+bVifewhboEYsjz9wo88whCbkdNkyxiqpqdfjhocbyykwyKaGpGFvDnILIMwaUoTypSZSEnFLVOX7IKn5bL6XpgORQMi/VUB2Js2cMpQ1CZOkhQ4l1RLJs3Csf+vfDSIb4wypzbCPnEod2e0D4mIhyeu3GCebD4RC3LxV8FYM008mx5c4KgfPA1KHsW1SDeD5eE55lt7irY05qc3xhtO4XJ9oU9E1LK9Jee492bGKLUrpDuWnDTkboGKKOj/nM8at3TGR5vZ1rnuBd8MFAAhcz35tFrKUBQALkQ7osoiHO17iDrUXKvemhi5B59EfgtwLL7/jupAnXNre/cuc4B/L+hwI7ROoVkeKBpNYHJG6JSnvcu0ECtkVA9lnBga2ZIAMrmK/4VfCDIAyhCEf4gwgAADs=","image/image/メガラグラージ.gif":"data:image/gif;base64,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","image/image/メガリザードンX.gif":"data:image/gif;base64,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","image/image/メガリザードンY.gif":"data:image/gif;base64,R0lGODlhYABgAPMAAAAAAAAuTQhCUoQxGeZCEM5SQv2ECu+EKf7LCu+1Wv+8b+/eeyFzlP3+/QAAAAAAACH5BAEAAA4ALAAAAABgAGAAAAT+0MlJq7046827/2AojmRpUkOqDmfrcutwzPShvjgYs5Ja/8BbbmhJBY2/glIJaDYLNSExJ6MpgbOlsynodp3XmQowfQ22YWvB6W27BWBothlKlTOA5YEJePvfaFo6NncYeVp/iX9xZB4yPIUWh2uKlX6HjRoFRmuRF5iWoW2YGZtiTJ5FTKKscKhFPwOvqT17fa2WAQGkFHIFulmdtLWUuIqZvBJQul0Be8LDMsV+DALV1bkVeZkOMgFtAbO00rdv19ahdNrC3oBKkKky5W7nDPbYi3gsy5fikXLzvNwbeO9PgA1k+PXjFqlKQGsEI+L7whCDwi72vrwDsYkEOXP+EiN6OejoV5uCcAh5gFKxA0CQIQmO/CDrG8SBKeFpsjXiJb2YIknS/BVAJAAxHeR5nBEQqEQBQkse1IUzJweAPZn+dBoxatJfE4oWPKoyA7kRHwVyleg1aQWx2JCaZZrV1sm1A3W15eAV7he5Fny1hKFVLd6ie0nozSgAik4eZ3voLDXn7tqpRMT+LSsLQBV2BwYHLmzYaeIXRTdnkhesSWTCoS1zPY0aIlnIZG19Fg1r2k3TqcTmCd0Ny5wPPjEeDp5xOAAFxqG5tFsauCe4hw5AByht8gYo0/Dao51D864sTBuA965BnuzZtDTDOcqSgfpn7C+kVS6ePOp7Taj+oUYC+fVWjnh5MTeccQAsQCBvE+z3W38KQheaHLYs4GBnhIWH4D3+uVDUcFWE1oSGCRAonX7U8ccWXASF2IJwNDRBQIMOquiPA+9IOGGCDsAIYnz2OEFAAw2mSGACS0hX4iowASnBYlIWglgAAxxJwIYpKNlkI9KswcUfIOqCAZUyznjQABo62AcASjIZhmfPPESNjHrFN8EWX8QpZ41QWsJAmsNcYFOfXv6wzShs0ENooRYcCqeSCwBRjjoSNNpMGQQQMIQuZ1BaaQ2riMbGox506ukQj6TY5qikiqYUpjmoOoQvCbwKK6lzQWiCraw+o+uuVrT0GhHA4gDeGsP+jloiTyjQxWmyLYTBRLM1xhrtirVS29M7apDB5rDZFksMty90akCnJmDZgCxf9oBtuUw9IcgUnSLg7QcAqIdlvBHOy5Rga+yYbr77JnXAv3wwNC65F7bGxCZ2DKEqAuuuG0K/6vFhyLBbhLsEEmUdjLC+ImwB4cMLkFynZz7EAknFJKhqgL4YrzrFwwM08G4WKxhnRcy+YqCqujdrXAbLWPYsC6kYNpmGiTUTsK66OReCY5sBvLuAa09OXS+tIlhtQMZJ60yEY7oGoOsaJO/QYwlmY3y23WoHy3KzclIM7yRNFqhB3XfnnLeyYjT7aorP1im1Y4JfQAAClFd+9R3+cuw9LONJbPJ45iFMXjnlCZsBtOIoNi7x42JEToHolbNbRtQD5Mo3gVi8kyLrrad6M+myTxH1JqLmyDkQunvZZBQF8mC14YUMT7yfSqremp/LMz/ZIykc3ZAaTFB/PPJriL+72EJUcWwhn0nthJ/W12l+nGLb8Cy6dwD+uMoLdg6ALvOjH4aSULQc6G9/FMgN+BqhlwAE8HxKSBHZaHFAgEVogPeiQAMdGMAJFkplKchgpqwlQkM1kH+Q2gC8DFbBM6RwbcHAn/449EIqhAsPCKzhCzAIIddYUIcmkMZxVOg+IJ6ga08zWAVWqEQjdgCJ72oiCq4gRSdq4H/veldGATGIPysipAFdKyCPCOjFEZBBjAMcYhmjhx41rnFp3dmDC994ByTaEUl0rOO77ijGPIYgjIDEox+n0IhCDvKQiEykIokQAQA7","image/image/ヤドラン.gif":"data:image/gif;base64,R0lGODlhYABgAPQAAD0uOmYiRF9Lblxja4t2a8B5h9F5qZJ40q+Shp+cr7K2vfGmsNDQrqWG4PWn1vyv4MbW3OHY6NTm6vPn+vf39wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABUALAAAAABgAGAAAAX+YCWOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2yz0KvgIT+NtNgUnjhroxrgDWakBZvJZXBPDGYX+ox98NdnMieACAAHhsYHyMcY4OAYOEbweGAH16jJWWe4F7AA6QkneHFBSXaZWmppeVfaGRowKVBqenBwi5CKqsrHEGwLGSAQ4NtawIExETEwgAq6ugsAHCo9QGuhHa29oI0KehDg8GoybJy8zpyt3erOEO5OUj5wDp9encuQAP7+PyIgi4ccMnEAG/cP7kBdQGQYHDhxAEbkPQL165gA4taTT0sKMCiuEsShIQQcHGkxr+EyQAkABkKJGDBBg6pbGATZvPUgpwCe+fgJWWbgotAACngggC3vX0qUCmTQMLoi4wcPMn0oMh/91BalOq1wUFBERMIADrS613IAj4KvXLhKZlzYqrNsoAyTFjFEAg+6Cv3Ad0JUEliW4d3Lh+lc79Z6AvXjB+I8sNBVheY8mYMSNMHLiLAXH8MoumjLmzls/9REd2MGDAg9atQ5vGgjq16r4DIKhVl1RUmdq2b+duKFZ308azq1z+K1x3w6bOB6xNPmU5c9XDnwuQICFBQwDUpVi/Lrm18+cKsq80EP5J79VKMQ+QoNf5QwmwIQwAvyWRGsWb4cYdfR4NiB9sgmD+4V8dAArInQIGRtidc2FoseAnAIYynIQSemdcG1b4x4c04cA2gF4JcBihfRGSQcUsaoxY4nwP6ubhebpxhyOEEiYIBYyZGBIKABHWZ19HOLIowXkrvagJAAxodF5TraVnImxGGmcfUFXMwgiUDITpDAC6bbckjd2luOQX9WWkUpMhPhnmnAyMWZxx3Kmpo1oPqcQSADBN0coBApxC55zO3MjjimW+6ScwtCFSKJS6HJpoAg5JOOVPb0oTaBSN5WSpLpaotOiAUzbq51nKgWbIobACYF6SSkrwxaqsVgfaA2DCOieZtE5poForhdMeEp/5BUAuvoZJpodgHJldoyT+HnsEasrW2WyUDvnHZqcp4WqtEcQoRakuzvyqkoiVOLqSu6AsMC655iKgAJ1jlsouS50aYEin8MxbRLnhLLAsugj/GWO7nS4QTk0C0+vAVMAcjDCpgDAMFDBRvVMAe1kEAMzI/p6E8SUbEfDxyFKNHPERIpNcscUpGYIwATLL/DISMedsM7o/50IAAYDm7LIW1xgNDFEWD+000XL0rHPIAQBWdSgUj2wHSoaQIHUwIZsSgNhmUexjCgUU3LFvVYxNgdtiv2PJC8hV3Rc1OwvB9UYx7ON21XCfjRYKz8Qd+OAu5KTRKYi/4KPgjUcu+eSUV2755ZhnrvnmnHfu+ecDXYQAADs=","image/image/ラグラージ.gif":"data:image/gif;base64,R0lGODlhYABgAMQAAAAAAP///8ZVcV4TL0I5QkxMhF5ehHuh40x7xpfG415xaKq9s+P27P+zL/Z7L3s5E////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAABAALAAAAABgAGAAAAX/ICSOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y6URAGAX4QvorsYGA4CsQgPSYbPpmx6vvyhC2vAd4+Ujemp+d38kgoR+hnKChX2LEIiJhICRdY+YZSKSdoprmnmKUZKFpYGXmI+gc3uXT6SelG98k52Qh617Y02cpbKojqZ5ua0ETL2xdrq2zKslgsR8x8DJdLSpwSnQuXrOR3rVpdS13rjRjUvIibPXvpTD0Xx75UPqnbO1mW3x8nDp42TwNXunLd42NUoE9gGDAIFCd/TMETsYUYhAhg3ZEQLjiQW4idwqArnYMOMyACU5/4q01K8Yt1tEZqFEcKAmOzUlU64Ed/AgrZU+ZDaseeDNAzg5U3qkxe0lzCEAHswkWvSBgwcEkoKJsw+Ny2IEiTyQ2gAl1aJly+a06qAtmLHDvOpy+nTH2LEOwKg9+6Bs3pJs2wpue/fBKaZfUdkR0reB4KhXzx5g+wDwYMKXCW+6Bq3nRsZg3NZ8UDMB38qWGzQIvLX1Zs5zl60TK5VmadNEkxawqlo13qsIWHFGBNYWUBuUURZAYHp50oy8e/uOiqCAOUUbFRqnnbfATJ0YAQgY0FZ6763VIWj0BKCmQ+zCgjR26z3lgAECBIDJP4Dt1uiqobQeIbm9F4588z0GwP9yANyHX34QDrDAXQsoIFVrM4HRTnvupZTPcTIk2JpbDToIIX8LpKiiAs85l9FWVGnFzGI/XMiVegDkpUCJD97HQIoKqLjAcw4RaaRDHMG3BBhBbuXjjxUKWSGR6B3pIXY00ragcwAowMCXYC7ApJQLFOCiVt8d6UhYQIzVG2ovYqgJGGSKqeaZDZmZEZYg1tCYm6S1aKYJAJDJwHcxFkmlgXbcWKN5Y3VopnUpFJoimIciEGluaWo11lZZ1uimaoS5R2kKZhaK6ZeQRUbUVDEGhhWbPfxJ2asq6OnQAqtGRSppNg0lWWBXheoDgFe5WtQJY+HpJaY53uUqrHwRdlf/XTkQexWwNplgFZ4IPMuqdNsGa9uwxPYpw26C3UWVN1Z12lCQYObYW6lFVXdAAvxSpa1hP5g52qYxwivvvLweum1f+G65L7+4jWYtXD0UIJlkDnm7XIdJBSlmY6sp26XFEEc8WbKa8WCxe7m9W84DK3NckscAkLtplwooQHK/uWmrbq62xXzusijELPPM7SXILc46X3xAQ+nusDGHTwtNz8ZnlZQqh5RxW1TOORst828/V5oRUUZfPXSB1lE98FlM52xWgUmNlXEOGaL9rgl6Op3x3AeI/SrYYGNk5d14g6E3riRwKTjRcz9uU9x3HPxc2WZnlNMqDLpdsAhTGR1zf+WgVn444jpshaOjir+6oHugOId14C4P1OjhmNfwHUawN57n5ueWkWR2oBPpYu40tLa5N2C4WN/moLtWwkxncskEhirsrh70LVCfk/VaqB69o9n/rnVGlSRv+Ivp34B9+/DHL//89Ndv//3456///vz37///AAygAAdIwAIuIQQAOw==","image/image/リザードン.gif":"data:image/gif;base64,R0lGODlhYABgALMAAAAAAP///yFzlAhCUu/ee//WEPelEO+1Wu+EKeZCEIQxGc5SQs7OzmNjY////wAAACH+DihDKSB5YWtrdW4uY29tACH5BAEAAA4ALAAAAABgAGAAAAT/0MlJq7046827/2AojmRpnmiqrmzrvnAsz3Rt32aC712iOz6esOIrBodI4xE5TBiMzGRBGd35DFOsbjlRKKoo76RYKBeeXIficPiCSes2xWmepuOLxVukWLDdQD5maFwACwgIfRRejIB7XYiAgglmSksAiIgLjJmZYlWMEgqeY1hYZ0WEE4adra55TKORsgibY3V2dEUUmK+NfZl5ejherqSldWhlab2IAM8D0dIDwMHDNLTGiURnuMs/i87T0QLl5dGHbAfXMbTPz4fHc6fJaWoIAOPm++cDfn8yZI2LxmrbHEGD7FwYlU8av4cC/GmCUQzBQGm9bI25MgicBYbT/yA+lMhuBa2L03o5CkTpWwaQDkXuk2iQBTCUKSNdSKCggAKPH/Hpk2mOpIs+OMdhWgmp5kKhIYmeO1QyBdKkGHU+dVoBZkyp0bSq6LMA6ziuTTV2PdQwKlF0tWyWNTsNbRdhTGW1/SoTbtUSZMd5SSp2LV5Ho+YOfRvW7ojA0sjupaZAmmM1wvKIMaR4IGO/VvMIzrNXL7oFAF5m1gz54mejJziPJh1ZU0PJqjPLxvl6QOERhgbijuZumuTUC/vA64yy7zSqsZlTIy0qU+qBeDE8qyXdtciBv0METykMQMWa2DVbaIaaHFZ+OKmX2E1wU+JOyCWkfJfXdsikM0kwGf86+cGhWEGuFOjAAO/g98xdtDk0QETNncMLdgrycaA2+CDXoDaopUZWe/8RBM1/642DWhhlNaONAu/Ew2Ety3k24WkhNhTRBXuteIJyM3qSWZC2dbcjZroRx+NzGQJHpDXCPAnVQLyslo9aqzCZAntsRCKjJkNKOeB6q2VXQVs+msDlAbUwkA2UMHKWx4zv5KNdmepdSCAK5kVJYwABGGPfKn3O6Uo25t2J50oNpammZogIAEAAX8rDiH1+BmMMU6Lg6eiVf5FQ6KWawCiLG2SNmGmQoRi22icOXNkkYIY6KOelnlZKpBf5qarbKrCYBCIACYyaa61SBtOrpx46+uP/sEVwpqqqyfLaSZq+mulAqHAY84wRnN0a5pPqeVHeIswKKGyCAkZLWqrIzohpnuGiu2gLtMiSJrE+GILcJnMSILDARGb2hZzLprtCRpoEkB+/fT6MwMAUExxkeb926imnaoL5joA/TZqIG4ZUbDIB8pKWsa/c5dnCx2r0oUAAnEh8ssl0FnMuZprU0rKz+JaHH7A3n7ypi7bdc+3PQJsEMGn8rTJx0Ti3gqA1SPec8QvLlfkw1TdbrRl7m2QNpnwwIGyuj5iAbbTVDBSkm6BbU0SvzW5XfW2+4bZS5gGzmvQMzV0hkrferaQKY9xQWmlDnOEYfnjFR7uZyHa5Aj5E/zYLTE6xzwlKe6zmQ3y5hucE64p15qTzUGkcqKt+7dOrsRE4DbrCfngbF6O2GgK2M5G7OmzcTDzvKXMGvDq3Y/Pi8dBDXw2IpB3fvPOCAhD99oDLfrb2tl+Pvd/Vc299vLOjBrj4NUzPtPrmM79q4w/uka3X4JsvZ61eP6JxrrzKn/RgdKy6geF+2orVM9TBCNsVcGePQCDHGmi9/SnMfxaEYHJ+Eatj4cN/wOqfCDI4J7aAsAFxc5Oq2HemMvmsaUxoQABQyAAaavADFnwhDJEwuLgFIG4wG2GuHAbCjwVRVJxx0wIYQClAsRCEOJyUEwE1w7hBkWtEBAATj3jFhRd56IldDKMYx0jGMprxjGhMoxrX+IIIAAA7"};
+const IMG=p=>IMGDATA[p]||encodeURI(p);
+const TYPE_JP={normal:"ノーマル",fire:"ほのお",water:"みず",electric:"でんき",grass:"くさ",ice:"こおり",
+  fighting:"かくとう",poison:"どく",ground:"じめん",flying:"ひこう",psychic:"エスパー",bug:"むし",
+  rock:"いわ",ghost:"ゴースト",dragon:"ドラゴン",dark:"あく",steel:"はがね",fairy:"フェアリー"};
+const STAT_JP={atk:"こうげき",spa:"とくこう",def:"ぼうぎょ",spd:"とくぼう",spe:"すばやさ"};
+const LEVEL=50;
+
+// ===== タイプ相性表（標準18タイプ）=====
+const TYPECHART={
+  normal:{rock:.5,ghost:0,steel:.5},
+  fire:{fire:.5,water:.5,grass:2,ice:2,bug:2,rock:.5,dragon:.5,steel:2},
+  water:{fire:2,water:.5,grass:.5,ground:2,rock:2,dragon:.5},
+  electric:{water:2,electric:.5,grass:.5,ground:0,flying:2,dragon:.5},
+  grass:{fire:.5,water:2,grass:.5,poison:.5,ground:2,flying:.5,bug:.5,rock:2,dragon:.5,steel:.5},
+  ice:{fire:.5,water:.5,grass:2,ice:.5,ground:2,flying:2,dragon:2,steel:.5},
+  fighting:{normal:2,ice:2,poison:.5,flying:.5,psychic:.5,bug:.5,rock:2,ghost:0,dark:2,steel:2,fairy:.5},
+  poison:{grass:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0,fairy:2},
+  ground:{fire:2,electric:2,grass:.5,poison:2,flying:0,bug:.5,rock:2,steel:2},
+  flying:{electric:.5,grass:2,fighting:2,bug:2,rock:.5,steel:.5},
+  psychic:{fighting:2,poison:2,psychic:.5,dark:0,steel:.5},
+  bug:{fire:.5,grass:2,fighting:.5,poison:.5,flying:.5,psychic:2,ghost:.5,dark:2,steel:.5,fairy:.5},
+  rock:{fire:2,ice:2,fighting:.5,ground:.5,flying:2,bug:2,steel:.5},
+  ghost:{normal:0,psychic:2,ghost:2,dark:.5},
+  dragon:{dragon:2,steel:.5,fairy:0},
+  dark:{fighting:.5,psychic:2,ghost:2,dark:.5,fairy:.5},
+  steel:{fire:.5,water:.5,electric:.5,ice:2,rock:2,steel:.5,fairy:2},
+  fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5},
+};
+function effMultiplier(t,def){let m=1;const r=TYPECHART[t]||{};for(const d of def)if(r[d]!==undefined)m*=r[d];return m;}
+function effLabel(e){if(e===0)return"こうかなし（×0）";if(e>=4)return"こうかばつぐん（×4）";if(e>1)return"こうかばつぐん（×"+e+"）";if(e<1)return"いまひとつ（×"+e+"）";return"等倍（×1）";}
+function stageMult(n){n=Math.max(-6,Math.min(6,n));return n>=0?(2+n)/2:2/(2-n);}
+
+// ===== 特性 =====
+const ABIL={
+  moody:{name:"ムラっけ",eff:"moody"}, pepperguard:{name:"とびだすはばねろ",eff:"pepperguard"},
+  intrepidsword:{name:"ふとうのけん",eff:"intrepidsword"},
+  pressure:{name:"プレッシャー",eff:null},
+  focus:{name:"せいしんりょく",eff:"focus"}, aurashield:{name:"はどうのぼうご",eff:"aurashield"},
+  unaware:{name:"てんねん",eff:"unaware"}, purifyingSalt:{name:"きよめのしお",eff:"purifyingSalt"},
+  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"},
+  hugepower:{name:"ちからもち",eff:"hugepower"}, swiftswim:{name:"すいすい",eff:"swiftswim"},
+  drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
+  drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
+  sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
+  roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null},
+  toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
+  emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null},
+  regenerator:{name:"さいせいりょく",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
+};
+const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",hugepower:"こうげき(物理)が2倍",
+  moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
+  intrepidsword:"登場時こうげき+1",
+  focus:"ひるまない",aurashield:"物理技のダメージを半減",
+  unaware:"相手の能力上昇を無効化",purifyingSalt:"ゴースト技を半減し状態異常無効",
+  swiftswim:"あめのときすばやさ2倍",drizzle:"登場時 あめを降らせる",sandstream:"登場時 すなあらしを起こす",
+  drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
+  sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
+  speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
+  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)"};
+
+// ===== わざ =====
+const M={
+  powergem:{name:"パワージェム",type:"rock",cat:"spec",power:80},
+  stoneedge:{name:"ストーンエッジ",type:"rock",cat:"phys",power:100,accuracy:.85,highCrit:true,critRate:.125,critMult:1.4},
+  rockslide:{name:"いわなだれ",type:"rock",cat:"phys",power:75,flinch:.2},
+  sludgewave:{name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.2},
+  sludgebomb:{name:"ヘドロばくだん",type:"poison",cat:"spec",power:90,poison:.2},
+  poisonjab:{name:"どくづき",type:"poison",cat:"phys",power:80,poison:.5},
+  earthpower:{name:"だいちのちから",type:"ground",cat:"spec",power:90,targetDrop:{chance:.2,stats:{spd:-1}}},
+  earthquake:{name:"じしん",type:"ground",cat:"phys",power:100},
+  flashcannon:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,selfBoost:{chance:.2,stats:{spd:1}}},
+  ironhead:{name:"アイアンヘッド",type:"steel",cat:"phys",power:80},
+  behemothblade:{name:"きょじゅうざん",type:"steel",cat:"phys",power:100,megaBonus:true},
+  fireblast:{name:"だいもんじ",type:"fire",cat:"spec",power:110,burn:.3},
+  flamethrower:{name:"かえんほうしゃ",type:"fire",cat:"spec",power:90},
+  eruption:{name:"ふんか",type:"fire",cat:"spec",power:150,hpPower:true},
+  thunderbolt:{name:"10まんボルト",type:"electric",cat:"spec",power:90,paralyze:.1},
+  thunder:{name:"かみなり",type:"electric",cat:"spec",power:110},
+  energyball:{name:"エナジーボール",type:"grass",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}},
+  meteor:{name:"りゅうせいぐん",type:"dragon",cat:"spec",power:130,selfDrop:{spa:-2}},
+  dpulse:{name:"ドラゴンパルス",type:"dragon",cat:"spec",power:85},
+  dragonclaw:{name:"ドラゴンクロー",type:"dragon",cat:"phys",power:80,cut:true},
+  surf:{name:"なみのり",type:"water",cat:"spec",power:90},
+  hydropump:{name:"ハイドロポンプ",type:"water",cat:"spec",power:110},
+  liquidation:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}},
+  waterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,flinch:.2},
+  aquajet:{name:"アクアジェット",type:"water",cat:"phys",power:40,prio:1},
+  icebeam:{name:"れいとうビーム",type:"ice",cat:"spec",power:90,freeze:.1},
+  icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2},
+  crunch:{name:"かみくだく",type:"dark",cat:"phys",power:80,targetDrop:{chance:.2,stats:{def:-1}}},
+  darkpulse:{name:"あくのはどう",type:"dark",cat:"spec",power:80},
+  firstimpression:{name:"であいがしら",type:"bug",cat:"phys",power:90,prio:5,firstTurnOnly:true},
+  xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
+  megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
+  closecombat:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
+  focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
+  nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
+  shadowclaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:70,cut:true},
+  suckerpunch:{name:"ふいうち",type:"dark",cat:"phys",power:70,prio:6,requiresAttack:true},
+  steelbeam:{name:"てっていこうせん",type:"steel",cat:"spec",power:140,recoilDamage:.5},
+  aurablast:{name:"はどうだん",type:"fighting",cat:"spec",power:90,accuracy:1},
+  psychic:{name:"サイコキネシス",type:"psychic",cat:"spec",power:90},
+  trialshine:{name:"とらいしん",type:"normal",cat:"phys",power:80},
+  leafblade:{name:"リーフブレード",type:"grass",cat:"phys",power:90,highCrit:true,critRate:.125},
+  quickattack:{name:"でんこうせっか",type:"normal",cat:"phys",power:40,prio:1},
+  drumattack:{name:"ドラムアタック",type:"grass",cat:"phys",power:85,targetDrop:{chance:1,stats:{spe:-1}},exclusive:"gorillander"},
+  pyroball:{name:"かえんボール",type:"fire",cat:"phys",power:130,accuracy:.85},
+  highjumpkick:{name:"とびひざげり",type:"fighting",cat:"phys",power:130,accuracy:.8,missRecoil:.25},
+  psychic_hisui:{name:"サイコキネシス",type:"psychic",cat:"spec",power:90,targetDrop:{chance:.2,stats:{spd:-1}}},
+  shellarms:{name:"シェルアームズ",type:"water",cat:"spec",power:90,lowDef:true},
+  hyakki:{name:"ひゃっきやこう",type:"ghost",cat:"spec",power:70,statusPower:2,burn:.5},
+  flaresong:{name:"フレアソング",type:"fire",cat:"spec",power:50,selfBoost:{chance:1,stats:{spa:1}}},
+  saltcure:{name:"しおづけ",type:"rock",cat:"phys",power:40,salt:true},
+  protect:{name:"まもる",type:"normal",cat:"status",power:0,prio:6,protect:true},
+  grassslide:{name:"グラススライダー",type:"grass",cat:"phys",power:70,grassPriority:true},
+  leechseed:{name:"やどりぎのたね",type:"grass",cat:"status",power:0,accuracy:.9,leech:true},
+  doublepepper:{name:"ダブルハバネロ",type:"grass",cat:"phys",power:45,doubleType:"fire"},
+  pepperextract:{name:"ハバネロエキス",type:"grass",cat:"spec",power:30,burnPower:4},
+  gravevisit:{name:"おはかまいり",type:"ghost",cat:"phys",power:50,faintBonus:30,maxPower:120},
+  shadowball:{name:"シャドーボール",type:"ghost",cat:"spec",power:80,targetDrop:{chance:.2,stats:{spd:-1}}},
+  hurricane:{name:"ぼうふう",type:"flying",cat:"spec",power:110},
+  airslash:{name:"エアスラッシュ",type:"flying",cat:"spec",power:75},
+  playrough:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
+  stealthrock:{name:"ステルスロック",type:"rock",cat:"status",power:0,hazard:"rocks"},
+  toxicspikes:{name:"どくびし",type:"poison",cat:"status",power:0,hazard:"toxicspikes"},
+  swordsdance:{name:"つるぎのまい",type:"normal",cat:"status",power:0,selfBoost:{atk:2}},
+};
+function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
+function statEffectStats(e){return e&&e.stats?e.stats:e;}
+function statEffectChance(e){return e&&e.chance!==undefined?e.chance:1;}
+function moveEffText(mv){const t=[];if(mv.hpPower)t.push("残りHPで威力変化（最大150・最低10）");if(mv.accuracy)t.push(`命中${Math.round(mv.accuracy*100)}%`);if(mv.prio)t.push(`優先度+${mv.prio}`);if(mv.cut)t.push("切る技");if(mv.firstTurnOnly)t.push("出てすぐのターンのみ");if(mv.highCrit)t.push(`急所率${Math.round((mv.critRate||.125)*1000)/10}%`);if(mv.critMult)t.push(`急所ダメージ${mv.critMult}倍`);if(mv.flinch)t.push(`${Math.round(mv.flinch*100)}%で相手を行動不能`);if(mv.freeze)t.push(`${Math.round(mv.freeze*100)}%でこおり`);if(mv.burn)t.push(`${Math.round(mv.burn*100)}%でやけど`);if(mv.poison)t.push(`${Math.round(mv.poison*100)}%でどく`);if(mv.paralyze)t.push(`${Math.round(mv.paralyze*100)}%でまひ`);if(mv.hazard==="rocks")t.push("交代で出た相手に最大HP1/10ダメージ");if(mv.hazard==="toxicspikes")t.push("交代してきた相手を毒にする。2回で猛毒");if(mv.selfBoost){const st=statEffectStats(mv.selfBoost),ch=statEffectChance(mv.selfBoost);t.push(`${ch<1?Math.round(ch*100)+"%で":""}自分の`+Object.keys(st).map(k=>STAT_JP[k]).join("・")+"↑");}if(mv.selfDrop)t.push("使用後 自分の"+Object.keys(mv.selfDrop).map(k=>STAT_JP[k]).join("・")+"↓");if(mv.targetDrop)t.push(`${Math.round(mv.targetDrop.chance*100)}%で相手の`+Object.keys(mv.targetDrop.stats).map(k=>STAT_JP[k]).join("・")+"↓");return t.join(" / ");}
+
+// ===== ポケモン（通常の本来特性・メガ形態）=====
+// メガストーン名：末尾の「ー」を取り「ナイト」＋メガ名の接尾文字
+function S(id,name,img,types,base,abil,moves,megas){return {id,name,img,types,base,abil,moves,megas:megas||[]};}
+const SPECIES=[
+ S("ohdairu","オーダイル","image/image/オーダイル.gif",["water"],{hp:85,atk:105,def:100,spa:79,spd:83,spe:78},"torrent",["waterfall","crunch","icefang","earthquake"],
+   [{stone:"ohdairite",stoneName:"オーダイルナイト",name:"メガオーダイル",img:"image/image/メガオーダイル.gif",types:["water"],base:{hp:85,atk:145,def:120,spa:79,spd:103,spe:98},abil:"dragonskin"}]),
+ S("gabarias","ガブリアス","image/image/ガブリアス.gif",["dragon","ground"],{hp:108,atk:130,def:95,spa:80,spd:85,spe:102},"sandveil",["earthquake","dragonclaw","stoneedge","meteor"],
+   [{stone:"gabariasite",stoneName:"ガブリアスナイト",name:"メガガブリアス",img:"image/image/メガガブリアス.gif",types:["dragon","ground"],base:{hp:108,atk:170,def:115,spa:120,spd:95,spe:92},abil:"sharpness"},
+    {stone:"gabariasiteZ",stoneName:"ガブリアスナイトZ",name:"メガガブリアスZ",img:"image/image/メガガブリアスZ.gif",types:["dragon","ground"],base:{hp:108,atk:180,def:115,spa:130,spd:95,spe:110},abil:"levitate"}]),
+ S("kirafurol","キラフロル","image/image/キラフロル.gif",["rock","poison"],{hp:83,atk:55,def:90,spa:130,spd:81,spe:86},"toxicdebris",["powergem","sludgewave","earthpower","energyball"],
+   [{stone:"kirafurolite",stoneName:"キラフロルナイト",name:"メガキラフロル",img:"image/image/メがキラフロル.gif",types:["rock","poison"],base:{hp:83,atk:75,def:95,spa:165,spd:110,spe:116},abil:"adaptability"}]),
+ S("gusoku","グソクムシャ","image/image/グソクムシャ.gif",["bug","water"],{hp:75,atk:125,def:140,spa:60,spd:90,spe:40},"emergencyexit",["firstimpression","liquidation","crunch","closecombat"],
+   [{stone:"gusokite",stoneName:"グソクムシャナイト",name:"メガグソクムシャ",img:"image/image/メガクソクムシャ.gif",types:["bug","steel"],base:{hp:75,atk:170,def:160,spa:60,spd:100,spe:55},abil:"armorhide"}]),
+ S("samehada","サメハダー","image/image/サメハダー.gif",["water","dark"],{hp:70,atk:120,def:40,spa:95,spd:40,spe:95},"speedboost",["liquidation","crunch","icefang","closecombat"],
+   [{stone:"samehadite",stoneName:"サメハダナイト",name:"メガサメハダー",img:"image/image/メガサメハダー.gif",types:["water","dark"],base:{hp:70,atk:140,def:70,spa:110,spd:65,spe:105},abil:"strongjaw"}]),
+ S("dorapion","ドラピオン","image/image/ドラピオン.gif",["poison","dark"],{hp:70,atk:90,def:110,spa:60,spd:75,spe:95},"sniper",["crunch","poisonjab","earthquake","xscissor"],[]),
+ S("doramidoro","ドラミドロ","image/image/ドラミドロ.gif",["poison","dragon"],{hp:65,atk:75,def:90,spa:97,spd:123,spe:44},"poisonpoint",["meteor","sludgebomb","surf","crunch"],
+   [{stone:"doramidolite",stoneName:"ドラミドロナイト",name:"メガドラミドロ",img:"image/image/メガドラミドロ.gif",types:["poison","dragon"],base:{hp:65,atk:97,def:123,spa:157,spd:152,spe:64},abil:"regenerator"}]),
+ S("bakuphoon","バクフーン","image/image/バクフーン.gif",["fire"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"blaze",["eruption","flamethrower","focusblast","crunch"],[]),
+ S("bakuphoonH","バクフーン(ヒスイ)","image/image/バクフーン(ヒスイ).gif",["fire","ghost"],{hp:73,atk:84,def:78,spa:119,spd:85,spe:95},"frisk",["fireblast","shadowball","focusblast","flamethrower"],[]),
+ S("bangiras","バンギラス","image/image/バンギラス.gif",["rock","dark"],{hp:100,atk:134,def:110,spa:95,spd:100,spe:61},"sandstream",["stoneedge","crunch","earthquake","icefang"],
+   [{stone:"bangirasite",stoneName:"バンギラスナイト",name:"メガバンギラス",img:"image/image/メガバンギラス.gif",types:["rock","dark"],base:{hp:100,atk:164,def:150,spa:95,spd:120,spe:71},abil:"sandstream"}]),
+ S("pelipper","ペリッパー","image/image/ペリッパー.gif",["water","flying"],{hp:60,atk:50,def:100,spa:95,spd:70,spe:65},"drizzle",["surf","hurricane","icebeam","airslash"],[]),
+ S("pendor","ペンドラー","image/image/ペンドラー.gif",["bug","poison"],{hp:60,atk:100,def:89,spa:55,spd:69,spe:112},"speedboost",["megahorn","poisonjab","earthquake","rockslide"],
+   [{stone:"pendorite",stoneName:"ペンドラナイト",name:"メガペンドラー",img:"image/image/メがペンドラー.gif",types:["bug","poison"],base:{hp:60,atk:130,def:99,spa:55,spd:79,spe:132},abil:"axarts"}]),
+ S("marilli","マリルリ","image/image/マリルリ.gif",["water","fairy"],{hp:100,atk:50,def:80,spa:60,spd:80,spe:50},"hugepower",["playrough","liquidation","aquajet","crunch"],[]),
+ S("yadoran","ヤドラン","image/image/ヤドラン.gif",["water","psychic"],{hp:110,atk:100,def:110,spa:100,spd:80,spe:30},"quickdraw",["surf","psychic","shellarms","icebeam"],[]),
+ S("ragulaaji","ラグラージ","image/image/ラグラージ.gif",["water","ground"],{hp:100,atk:110,def:90,spa:85,spd:90,spe:60},"damp",["liquidation","earthquake","stoneedge","icefang"],
+   [{stone:"ragulaajite",stoneName:"ラグラージナイト",name:"メガラグラージ",img:"image/image/メガラグラージ.gif",types:["water","ground"],base:{hp:100,atk:150,def:110,spa:95,spd:110,spe:70},abil:"swiftswim"}]),
+ S("lizardon","リザードン","image/image/リザードン.gif",["fire","flying"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"sunpower",["fireblast","airslash","focusblast","dpulse"],
+   [{stone:"lizardoniteX",stoneName:"リザードンナイトX",name:"メガリザードンX",img:"image/image/メガリザードンX.gif",types:["fire","dragon"],base:{hp:78,atk:130,def:111,spa:130,spd:85,spe:100},abil:"adaptability"},
+    {stone:"lizardoniteY",stoneName:"リザードンナイトY",name:"メガリザードンY",img:"image/image/メガリザードンY.gif",types:["fire","flying"],base:{hp:78,atk:104,def:78,spa:159,spd:115,spe:100},abil:"drought"}]),
+ S("gorillander","ゴリランダー","image/image/ゴリランダー.gif",["grass"],{hp:100,atk:125,def:90,spa:60,spd:70,spe:85},"grassmaker",["drumattack","grassslide","crunch","rockslide"],[]),
+ S("cinderace","エースバーン","image/image/エースバーン.gif",["fire"],{hp:80,atk:116,def:75,spa:65,spd:75,spe:119},"blaze",["pyroball","highjumpkick","crunch","flamethrower"],[]),
+ S("absol","アブソル","image/image/アブソル.gif",["dark"],{hp:65,atk:130,def:60,spa:75,spd:60,spe:75},"pressure",["crunch","megahorn","icefang","quickattack"],
+   [{stone:"absolzite",stoneName:"アブソルZナイト",name:"メガアブソルZ",img:"image/image/メガアブソルZ.gif",types:["dark"],base:{hp:65,atk:150,def:60,spa:115,spd:60,spe:115},abil:"sharpness"}]),
+ S("lucario","ルカリオ","image/image/ルカリオ.gif",["fighting","steel"],{hp:70,atk:110,def:70,spa:115,spd:70,spe:90},"focus",["closecombat","flashcannon","psychic","quickattack"],
+   [{stone:"lucarionite",stoneName:"ルカリオナイト",name:"メガルカリオ",img:"image/image/メガルカリオ.gif",types:["fighting","steel"],base:{hp:70,atk:145,def:88,spa:140,spd:70,spe:112},abil:"adaptability"},
+    {stone:"lucarioniteZ",stoneName:"ルカリオZナイト",name:"メガルカリオZ",img:"image/image/メガルカリオZ.gif",types:["fighting","steel"],base:{hp:70,atk:100,def:70,spa:164,spd:70,spe:151},abil:"aurashield"}]),
+ S("zacian","ザシアン","image/image/ザシアン.gif",["fairy"],{hp:92,atk:120,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"],
+   [{stone:"rustedsword",stoneName:"くちたけん",name:"ザシアン(王)",img:"image/image/ザシアン(王).gif",types:["fairy","steel"],base:{hp:92,atk:160,def:115,spa:80,spd:115,spe:148},abil:"intrepidsword"}]),
+ S("idaitou","イダイトウ","image/image/イダイトウ.gif",["water","ghost"],{hp:120,atk:112,def:65,spa:80,spd:75,spe:78},"swiftswim",["liquidation","shadowball","crunch","aquajet"],[]),
+ S("loudbone","ラウドボーン","image/image/ラウドボーン.gif",["fire","ghost"],{hp:104,atk:75,def:100,spa:110,spd:75,spe:66},"unaware",["flaresong","shadowball","flamethrower","focusblast"],[]),
+ S("garganacl","キョジオーン","image/image/キョジオーン.gif",["rock"],{hp:100,atk:100,def:130,spa:45,spd:90,spe:35},"purifyingSalt",["saltcure","stoneedge","earthquake","ironhead"],[]),
+ S("scovillain","スコヴィラン","image/image/スコヴィラン.gif",["grass","fire"],{hp:65,atk:108,def:65,spa:108,spd:65,spe:75},"moody",["flamethrower","energyball","crunch","rockslide"],
+   [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:138,def:85,spa:138,spd:85,spe:75},abil:"pepperguard"}]),
+];
+const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
+
+// ===== 育成用：技プール(learnset)と特性候補(abils) =====
+const LEARN={
+  ohdairu:["waterfall","liquidation","crunch","icefang","earthquake","aquajet","dragonclaw","icebeam"],
+  gabarias:["earthquake","dragonclaw","stoneedge","crunch","meteor","fireblast","rockslide","icefang","poisonjab","stealthrock","swordsdance"],
+  kirafurol:["powergem","sludgewave","earthpower","energyball","sludgebomb","flashcannon","thunderbolt","icebeam","stealthrock","toxicspikes"],
+  gusoku:["firstimpression","liquidation","crunch","closecombat","xscissor","aquajet","earthquake","rockslide"],
+  samehada:["liquidation","crunch","icefang","closecombat","waterfall","aquajet","poisonjab","darkpulse"],
+  dorapion:["crunch","poisonjab","earthquake","xscissor","darkpulse","icefang","aquajet","rockslide"],
+  doramidoro:["meteor","sludgebomb","surf","crunch","dpulse","sludgewave","hydropump","focusblast"],
+  bakuphoon:["eruption","flamethrower","fireblast","focusblast","crunch","darkpulse","earthpower","thunderbolt"],
+  bakuphoonH:["fireblast","psychic_hisui","hyakki","shadowball","focusblast","flamethrower"],
+  bangiras:["stoneedge","crunch","earthquake","icefang","rockslide","darkpulse","fireblast","focusblast"],
+  pelipper:["surf","hurricane","icebeam","airslash","hydropump","thunderbolt","energyball","flamethrower"],
+  pendor:["megahorn","poisonjab","earthquake","rockslide","xscissor","sludgebomb","aquajet","icefang"],
+  marilli:["playrough","liquidation","aquajet","crunch","waterfall","icefang","poisonjab","xscissor"],
+  yadoran:["surf","psychic","shellarms","icebeam","flamethrower","hydropump","thunderbolt","energyball","focusblast"],
+  ragulaaji:["liquidation","earthquake","stoneedge","icefang","waterfall","aquajet","rockslide","icebeam"],
+  lizardon:["fireblast","airslash","focusblast","dpulse","flamethrower","dragonclaw","earthquake","crunch"],
+  gorillander:["drumattack","grassslide","crunch","earthquake","rockslide","leafblade","energyball"],
+  cinderace:["pyroball","highjumpkick","crunch","flamethrower","fireblast","quickattack"],
+  absol:["crunch","megahorn","icefang","quickattack","stoneedge","poisonjab","darkpulse","xscissor","nightslash","shadowclaw","suckerpunch"],
+  lucario:["closecombat","flashcannon","psychic","quickattack","earthquake","stoneedge","darkpulse","focusblast","steelbeam","aurablast"],
+  zacian:["closecombat","crunch","stoneedge","quickattack","ironhead","playrough"],
+  idaitou:["liquidation","shadowball","crunch","aquajet","gravevisit","hydropump","icebeam","darkpulse"],
+  loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
+  garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
+  scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
+};
+const ABILS={
+  ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
+  gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
+  doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
+  bangiras:["sandstream","sandforce"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
+  marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"],
+};
+SPECIES.forEach(sp=>{ sp.learnset=LEARN[sp.id]; if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); sp.abils=ABILS[sp.id]; });
+
+// 育成内容（セッション保持）：1Pとフレンドで技4つ・特性を別々に保存
+function createBuild(){
+  const b={};
+  SPECIES.forEach(sp=>{ b[sp.id]={ moves:sp.moves.slice(), ability:sp.abil }; });
+  return b;
+}
+const builds={p1:createBuild(), p2:createBuild()};
+let trainOwner="p1";
+function saveGame(){localStorage.setItem("ritoGameSave",JSON.stringify({builds,party,party2,streak:Number(localStorage.getItem("ritoStreak")||0)}));}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")||"null");if(s){if(s.builds)Object.assign(builds,s.builds);if(Array.isArray(s.party))party=s.party;if(Array.isArray(s.party2))party2=s.party2;}}catch(e){}}
+function ownerBuild(owner){ return builds[owner]||builds.p1; }
+function spMoves(sp,owner="p1"){ return ownerBuild(owner)[sp.id].moves; }
+function spAbil(sp,owner="p1"){ return ABIL[ownerBuild(owner)[sp.id].ability]; }
+function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
+
+// ===== 持ち物（メガストーンはSPECIESから生成）=====
+const ITEMS={
+  none:{name:"なし",desc:"持ち物なし"},
+  weakness:{name:"じゃくてんほけん",desc:"弱点技を受けると こうげき・とくこう+2(×2)"},
+  life:{name:"せいめいほけん",desc:"はじめて弱点技を受けるとき ダメージ3/4軽減・HP29%回復・ぼうぎょ・とくぼう+1"},
+  sitrus:{name:"おぼんのみ",desc:"HPが50%以下になると 一度だけ最大HPの1/4回復"},
+  orb:{name:"いのちのたま",desc:"技の威力1.3倍。毎ターンHP1/10減少"},
+  band:{name:"こだわりハチマキ",desc:"物理技の威力1.3倍"},
+  specs:{name:"こだわりメガネ",desc:"特殊技の威力1.3倍"},
+  sash:{name:"きあいのタスキ",desc:"HP満タンなら攻撃を受けてもHP1で耐える"},
+  cloak:{name:"おんみつマント",desc:"技の追加効果を無効化"},
+  boots:{name:"あつぞこブーツ",desc:"ステルスロック・どくびしを無効化"},
+  eject:{name:"だっしゅつボタン",desc:"攻撃を受けると交代"},
+  ejectpack:{name:"だっしゅつパック",desc:"能力が下がると交代"},
+  redguard:{name:"レッドガード",desc:"攻撃を受けると攻撃相手を交代"},
+  elemental:{name:"エレメンタルロック",desc:"天候の継続ターンを3ターン延長"},
+  lightstone:{name:"かるいし",desc:"攻撃・素早さ1.1倍"},
+  scarf:{name:"こだわりスカーフ",desc:"素早さ実数値1.5倍。毎ターンHP1/10減少"},
+};
+SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.stoneName,desc:`${sp.name}専用。${mg.name}にメガシンカ`,mega:si,form:fi}; }));
+
+// ===== 編成データ（保持）=====
+let party=[], party2=[], curParty=null, builderMode='cpu'; // P1=party / P2=party2
+loadGame();
+
+function show(id){["home","party","train","preview","battle"].forEach(s=>document.getElementById(s).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="party")renderParty();if(id==="home")renderHome();if(id==="train")renderTrain();}
+function typeTags(types){return types.map(t=>`<span class="type t-${t}">${TYPE_JP[t]}</span>`).join("");}
+function pickOne(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function sampleFour(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a.slice(0,4);
+}
+
+document.getElementById("homeHero").innerHTML="";
+function renderHome(){
+  document.getElementById("streakLabel").textContent=`最大連勝記録：${Number(localStorage.getItem("ritoMaxStreak")||0)}勝`;
+  document.getElementById("goBattle").disabled = party.length!==6;
+  document.getElementById("goBattle").textContent = party.length===6?"⚔ たたかう":`⚔ たたかう（あと${6-party.length}体）`;
+  const hero=document.getElementById("homeHero");
+  hero.innerHTML = party.length? party.map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${ITEMS[p.item].name}</div></div>`).join("")
+    : `<div class="sub">まだパーティがありません。「パーティを編成する」から6体えらんでね。</div>`;
+  document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`).join("");
+}
+function showDexInfo(i){
+  const sp=SPECIES[i], lines=[`【${sp.name}】`,`特性：${ABIL[sp.abil]?.name||sp.abil}`,`説明：${ABDESC[sp.abil]||""}`];
+  if(sp.megas.length) sp.megas.forEach(m=>lines.push(`${m.name}：${ABIL[m.abil]?.name||m.abil}（${ABDESC[m.abil]||""}）`));
+  alert(lines.join("\n"));
+}
+function showPokemonDex(){ document.getElementById("homeDex").scrollIntoView({behavior:"smooth"}); }
+function showItemDex(){ alert(Object.values(ITEMS).filter(i=>i.name!=="なし").map(i=>`【${i.name}】${i.desc}`).join("\n")); }
+renderHome();
+
+// ===== パーティ編成 =====
+function openPartyBuilder(m){ builderMode=m; curParty=(m==='p2')?party2:party; show('party'); }
+function startCpu(){ mode='cpu'; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
+function startFriendSetup(){ mode='friend'; party2=[]; openPartyBuilder('p1'); }
+function friendP1Done(){ if(party.length===6) openPartyBuilder('p2'); }
+function friendP2Done(){ if(party2.length===6) startFriendSelect(); }
+function renderParty(){
+  if(!curParty) curParty=party;
+  const owner=ownerForBuilder();
+  document.getElementById("partyTitle").textContent =
+    builderMode==='p1' ? "プレイヤー1のパーティ：6体えらんで持ち物を設定" :
+    builderMode==='p2' ? "プレイヤー2のパーティ：6体えらんで持ち物を設定" :
+    "使う6体をえらんで、各ポケモンの持ち物を設定（メガストーンでメガシンカ可能）";
+  const slots=document.getElementById("partySlots");
+  slots.innerHTML="";
+  for(let i=0;i<6;i++){
+    if(curParty[i]){
+      const sp=SPECIES[curParty[i].sp];
+      // 持ち物一覧に登録されている全アイテムを選択可能にする。
+      // メガストーン／ナイトもITEMSへ自動登録されているため、ここで一緒に表示する。
+      const itemKeys=Object.keys(ITEMS).filter(k=>!ITEMS[k].mega||ITEMS[k].mega===curParty[i].sp);
+      slots.innerHTML+=`<div class="pslot">
+        <img src="${IMG(sp.img)}"><div style="font-size:12px;font-weight:700">${sp.name}</div>
+        <div class="mini">特性：${spAbil(sp,owner).name}</div>
+        <select onchange="setItem(${i},this.value)" class="${ITEMS[curParty[i].item].mega?'stone':''}">
+          ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
+        </select>
+        <button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:4px" onclick="removeParty(${i})">はずす</button>
+      </div>`;
+    }else{
+      slots.innerHTML+=`<div class="pslot" style="opacity:.5"><div style="font-size:34px;color:var(--line)">＋</div><div class="mini">空き</div></div>`;
+    }
+  }
+  const g=document.getElementById("dexGrid"); g.innerHTML="";
+  SPECIES.forEach((sp,i)=>{
+    const inParty=curParty.some(p=>p.sp===i);
+    const full=curParty.length>=6;
+    g.innerHTML+=`<div class="mon-card ${inParty?'sel':''} ${(!inParty&&full)?'dim':''}" onclick="toggleParty(${i})">
+      <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div>
+      <div class="types">${typeTags(sp.types)}</div>
+      <div class="mini">${spAbil(sp,owner).name}</div>
+      <div class="mini">${sp.megas.length?'★メガ可':''}</div>
+    </div>`;
+  });
+  // ナビ
+  const nav=document.getElementById("partyNav");
+  if(builderMode==='p1') nav.innerHTML=`<button class="btn" ${party.length===6?'':'disabled'} onclick="friendP1Done()">プレイヤー2へ → (${party.length}/6)</button> <button class="btn ghost" onclick="show('home')">やめる</button>`;
+  else if(builderMode==='p2') nav.innerHTML=`<button class="btn" ${party2.length===6?'':'disabled'} onclick="friendP2Done()">見せ合いへ → (${party2.length}/6)</button> <button class="btn ghost" onclick="openPartyBuilder('p1')">← P1へ</button>`;
+  else nav.innerHTML=`<button class="btn ghost" onclick="show('home')">← もどる（保存）</button>`;
+}
+function toggleParty(i){
+  const idx=curParty.findIndex(p=>p.sp===i);
+  if(idx>=0){ curParty.splice(idx,1); }
+  else if(curParty.length<6){ curParty.push({sp:i,item:"none"}); }
+  saveGame(); renderParty();
+}
+function removeParty(slot){ curParty.splice(slot,1); saveGame(); renderParty(); }
+function setItem(slot,val){ curParty[slot].item=val; saveGame(); renderParty(); }
+
+// ===== 育成（技・特性）=====
+let trainSel=-1;
+function setTrainOwner(owner){
+  trainOwner=owner;
+  trainSel=-1;
+  renderTrain();
+}
+function renderTrain(){
+  document.getElementById("trainP1Btn").className=trainOwner==="p1"?"btn blue":"btn ghost";
+  document.getElementById("trainP2Btn").className=trainOwner==="p2"?"btn blue":"btn ghost";
+  const g=document.getElementById("trainGrid"); g.innerHTML="";
+  SPECIES.forEach((sp,i)=>{
+    g.innerHTML+=`<div class="mon-card ${trainSel===i?'sel':''}" onclick="selectTrain(${i})">
+      <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div>
+      <div class="types">${typeTags(sp.types)}</div>
+      <div class="mini">${trainOwner==="p1"?"1P":"フレンド"} 特性:${spAbil(sp,trainOwner).name}</div></div>`;
+  });
+  renderTrainEdit();
+}
+function selectTrain(i){ trainSel=i; renderTrain(); }
+function renderTrainEdit(){
+  const box=document.getElementById("trainEdit");
+  if(trainSel<0){ box.classList.add("hidden"); box.innerHTML=""; return; }
+  box.classList.remove("hidden");
+  const sp=SPECIES[trainSel], b=ownerBuild(trainOwner)[sp.id];
+  let slots="";
+  for(let s=0;s<4;s++){
+    const opts=sp.learnset.map(k=>{
+      const used=b.moves.includes(k)&&b.moves[s]!==k;
+      return `<option value="${k}" ${b.moves[s]===k?'selected':''} ${used?'disabled':''}>${M[k].name}（${TYPE_JP[M[k].type]}/${catLabel(M[k])} 威${M[k].power}）</option>`;
+    }).join("");
+    slots+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span class="mini" style="width:16px">${s+1}</span>
+      <select onchange="setTrainMove(${s},this.value)">${opts}</select></div>`;
+  }
+  const abilOpts=sp.abils.map(k=>`<label style="display:block;background:var(--panel2);border:1px solid ${b.ability===k?'var(--accent)':'var(--line)'};border-radius:8px;padding:6px 9px;margin-bottom:5px;cursor:pointer;font-size:12px">
+      <input type="radio" name="abil" ${b.ability===k?'checked':''} onclick="setTrainAbil('${k}')"> ${ABIL[k].name}<span class="mini" style="display:block;margin-left:20px">${ABDESC[k]||''}</span></label>`).join("");
+  box.innerHTML=`<div style="max-width:420px;margin:10px auto 0;background:var(--panel);border:2px solid var(--accent);border-radius:14px;padding:14px;text-align:left">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <img src="${IMG(sp.img)}" style="width:60px;height:60px;image-rendering:pixelated">
+      <div><div style="font-weight:700;font-size:15px">${trainOwner==="p1"?"1P":"フレンド"}：${sp.name}</div><div class="types">${typeTags(sp.types)}</div></div></div>
+    <div class="mini" style="margin-bottom:8px">種族値 HP${sp.base.hp} こう${sp.base.atk} ぼう${sp.base.def} 特こう${sp.base.spa} 特ぼう${sp.base.spd} 素${sp.base.spe}</div>
+    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}
+    <div style="font-weight:700;font-size:13px;margin:10px 0 6px">特性</div>${abilOpts}
+    <div class="center"><button class="btn ghost" style="font-size:12px;padding:4px 14px" onclick="resetTrain()">初期設定にもどす</button></div>
+  </div>`;
+}
+function setTrainMove(slot,val){
+  const sp=SPECIES[trainSel], mv=ownerBuild(trainOwner)[sp.id].moves;
+  const dup=mv.indexOf(val); if(dup!==-1&&dup!==slot) mv[dup]=mv[slot];
+  mv[slot]=val; saveGame(); renderTrain();
+}
+function setTrainAbil(k){ ownerBuild(trainOwner)[SPECIES[trainSel].id].ability=k; saveGame(); renderTrain(); }
+function resetTrain(){ const sp=SPECIES[trainSel]; ownerBuild(trainOwner)[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; saveGame(); renderTrain(); }
+
+// ===== 見せ合い → 3体選出 =====
+let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1;
+function enterPreview(){   // CPU戦
+  if(party.length!==6) return;
+  buildCpuParty();
+  selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, label:"あなたのパーティ — 出す3体をえらぶ（選んだ順に先発）",
+    cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
+  show("preview"); renderPreview();
+}
+function startFriendSelect(){  // フレンド戦：6体を見せ合ってからP1→P2の順に3体選出
+  selCtx={ src:party, owner:"p1", sel:[], reveal:party2, label:"プレイヤー1 — 相手の6体を確認して、出す3体をえらぶ（選んだ順に先発）",
+    cb:()=>{ const p1=selCtx.sel.slice();
+      selCtx={ src:party2, owner:"p2", sel:[], reveal:party, label:"プレイヤー2 — 相手の6体を確認して、出す3体をえらぶ（選んだ順に先発）",
+        cb:()=>{ const p2=selCtx.sel.slice(); startBattleWith(party,p1,party2,p2); } };
+      renderPreview();
+    } };
+  show("preview"); renderPreview();
+}
+function buildCpuParty(){
+  // ランダムに6体
+  const pool=SPECIES.map((_,i)=>i);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const picks=pool.slice(0,6);
+  cpuParty=picks.map(si=>{
+    const sp=SPECIES[si];
+    const opts=["none","weakness","life","sitrus","orb","band","specs","sash","scarf",...sp.megas.map(m=>m.stone)];
+    return {sp:si, item:opts[Math.floor(Math.random()*opts.length)]};
+  });
+  // ラグラージ＆ペリッパーが居れば、ラグラージは確定でラグラージナイト
+  const rag=cpuParty.find(p=>SPECIES[p.sp].id==="ragulaaji");
+  const pel=cpuParty.find(p=>SPECIES[p.sp].id==="pelipper");
+  if(rag&&pel){ rag.item="ragulaajite"; }
+}
+function renderPreview(){
+  const top=document.getElementById("previewTopLabel"), foeP=document.getElementById("foePreview");
+  if(selCtx.reveal){
+    top.style.display=""; foeP.style.display="";
+    top.textContent="あいてのパーティ（6体）";
+    foeP.innerHTML=selCtx.reveal.map(p=>{const sp=SPECIES[p.sp];return `<div class="mon-card" style="cursor:default"><img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">${mode==='cpu'?"持ち物：？？？":(ITEMS[p.item].mega?'★'+ITEMS[p.item].name:'特性ランダム')}</div></div>`;}).join("");
+  }else{ top.style.display="none"; foeP.style.display="none"; }
+  document.getElementById("previewMyLabel").textContent=selCtx.label;
+  const my=document.getElementById("myPreview"); my.innerHTML="";
+  selCtx.src.forEach((p,i)=>{
+    const sp=SPECIES[p.sp], order=selCtx.sel.indexOf(i);
+    my.innerHTML+=`<div class="mon-card ${order>=0?'sel':''}" onclick="toggleSel(${i})">
+      ${order>=0?`<div class="order-badge">${order+1}</div>`:''}
+      <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div>
+      <div class="mini">${ITEMS[p.item].mega?'★'+ITEMS[p.item].name:spAbil(sp,selCtx.owner).name}</div></div>`;
+  });
+  document.getElementById("startBtn").disabled = selCtx.sel.length!==3;
+}
+function toggleSel(i){
+  const k=selCtx.sel.indexOf(i);
+  if(k>=0) selCtx.sel.splice(k,1);
+  else if(selCtx.sel.length<3) selCtx.sel.push(i);
+  renderPreview();
+}
+function cpuSelect3(){
+  const ids=cpuParty.map(p=>SPECIES[p.sp].id);
+  const ragI=ids.indexOf("ragulaaji"), pelI=ids.indexOf("pelipper");
+  if(ragI>=0 && pelI>=0){
+    const others=cpuParty.map((_,i)=>i).filter(i=>i!==ragI&&i!==pelI);
+    const third=others[Math.floor(Math.random()*others.length)];
+    // ペリッパー先発→雨を降らせてからラグラージへ交代
+    cpuSel = [pelI,ragI,third];
+  }else{
+    const arr=cpuParty.map((_,i)=>i);
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    cpuSel=arr.slice(0,3);
+  }
+}
+document.getElementById("startBtn").onclick=()=>{ if(selCtx && selCtx.sel.length===3) selCtx.cb(); };
+
+// ===== バトル =====
+let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, grassTurns=0;
+let mode='cpu', megaArm={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
+function emptyHazards(){return {me:{rocks:false,toxicSpikes:0,toxicCorrosion:false},foe:{rocks:false,toxicSpikes:0,toxicCorrosion:false}};}
+let hazards=emptyHazards();
+function makeMon(sp_i, itemKey, owner="p1"){
+  const sp=SPECIES[sp_i];
+  const p={ id:sp.id, name:sp.name, img:sp.img, types:sp.types.slice(), base:Object.assign({},sp.base) };
+  if(owner==="cpu"&&npcLevel>=5) for(const k of Object.keys(p.base)) p.base[k]*=1.1;
+  const abilityKey=owner==="cpu" ? pickOne(sp.abils) : ownerBuild(owner)[sp.id].ability;
+  const moveKeys=owner==="cpu" ? sampleFour(sp.learnset) : ownerBuild(owner)[sp.id].moves;
+  const ab=ABIL[abilityKey]; p.abilName=ab.name; p.abilEff=ab.eff;
+  p.moves=moveKeys.map(k=>M[k]);
+  p.itemKey=itemKey||"none";
+  const it=ITEMS[p.itemKey];
+  p.stoneMatches = !!(it&&it.mega===sp_i);
+  p.megaForm = p.stoneMatches ? sp.megas[it.form] : null;
+  p.isMega=false; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.toxicTurns=0; p.flinched=false; p.turnMoved=false; p.quickDraw=false;
+  p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+  p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
+  p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5); p.curHp=p.maxHp;  // HP実数値1.5倍
+  return p;
+}
+function startBattleWith(p1party,p1sel,p2party,p2sel){
+  const foeOwner=mode==="friend" ? "p2" : "cpu";
+  myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
+  foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
+  myA=0; foeA=0; me=myTeam[0]; foe=foeTeam[0];
+  busy=false; megaArm={me:false,foe:false}; weather=null; grassTurns=0; hazards=emptyHazards();
+  show("battle");
+  document.getElementById("endArea").classList.add("hidden");
+  document.getElementById("log").innerHTML="";
+  ["myImg","foeImg"].forEach(id=>document.getElementById(id).classList.remove("faint","mega-anim"));
+  renderActive(); renderWeather();
+  pushLog(mode==='friend'?`▶ プレイヤー2は ${foe.name} を くりだした！`:`▶ あいては ${foe.name} を くりだした！`);
+  pushLog(mode==='friend'?`▶ プレイヤー1は ${me.name} を くりだした！`:`▶ ゆけ！ ${me.name}！`);
+  const open=()=>applyEntry(foe,"foeImg",()=>applyEntry(me,"myImg",()=>{ nextTurn(); }));
+  if(foe.id==="zacian"&&foe.stoneMatches) transformZacian(foe,"foeImg",open);
+  else if(me.id==="zacian"&&me.stoneMatches) transformZacian(me,"myImg",open);
+  else open();
+}
+function renderActive(){
+  document.getElementById("myImg").src=IMG(me.img);
+  document.getElementById("foeImg").src=IMG(foe.img);
+  document.getElementById("myImg").classList.toggle("faint",me.fainted);
+  document.getElementById("foeImg").classList.toggle("faint",foe.fainted);
+  document.getElementById("myName").textContent=me.name;
+  document.getElementById("foeName").textContent=foe.name;
+  setAbLine(); renderHp(); renderStages(); renderDots();
+}
+function setAbLine(){const it=(m,side)=>(side==='foe'&&(mode==='cpu'||mode==='friend'))?"":(m.itemKey!=="none"?" ／ "+ITEMS[m.itemKey].name:"");
+  document.getElementById("myAb").textContent="特性："+me.abilName+it(me,"me");
+  document.getElementById("foeAb").textContent="特性："+foe.abilName+it(foe,"foe");}
+function renderHp(){for(const[m,f,n]of[[me,"myHp","myHpNum"],[foe,"foeHp","foeHpNum"]]){const el=document.getElementById(f),pc=Math.max(0,m.curHp/m.maxHp*100);el.style.width=pc+"%";el.style.background=pc>50?"var(--hp-green)":pc>20?"var(--hp-yellow)":"var(--hp-red)";document.getElementById(n).textContent=`${Math.max(0,m.curHp)} / ${m.maxHp}`;}}
+function stgText(m){const p=[];for(const k of["atk","spa","def","spd","spe"]){const s=m.stages[k];if(s)p.push(`${STAT_JP[k]}${s>0?"+":""}${s}`);}const a=[];if(p.length)a.push("能力 "+p.join(" "));if(m.status)a.push("状態 "+statusName(m.status));return a.join(" / ");}
+function statusName(s){return s==="freeze"?"こおり":s==="burn"?"やけど":s==="poison"?"どく":s==="toxic"?"もうどく":s==="paralyze"?"まひ":"";}
+function renderStages(){document.getElementById("myStg").textContent=stgText(me);document.getElementById("foeStg").textContent=stgText(foe);}
+function renderDots(){
+  const mk=(team)=>team.map(m=>`<div class="dot ${m.fainted?'dead':''}"></div>`).join("");
+  document.getElementById("myDots").innerHTML=mk(myTeam);
+  document.getElementById("foeDots").innerHTML=mk(foeTeam);
+}
+function renderWeather(){
+  const b=document.getElementById("weatherBadge");
+  if(!weather){b.classList.add("hidden");return;}
+  b.classList.remove("hidden");
+  const map={rain:["🌧 あめ","#6390f0"],sand:["🏜 すなあらし","#b6a136"],sun:["☀ ひざし","#ee8130"]};
+  b.textContent=map[weather][0]; b.style.color=map[weather][1];
+}
+function pushLog(t,c){const l=document.getElementById("log");const d=document.createElement("div");d.textContent=t;if(c){d.style.color=c;d.style.fontWeight="700";}l.appendChild(d);l.scrollTop=l.scrollHeight;}
+
+// ===== 天候・登場特性 =====
+function setWeather(w,msg){ if(weather!==w){ weather=w; pushLog("  ☁ "+msg,"#7ad1ff"); renderWeather(); } }
+function applyMoody(m){
+  if(!m||m.fainted||m.abilEff!=="moody") return;
+  const keys=["atk","def","spa","spd","spe"];
+  const up=keys[Math.floor(Math.random()*keys.length)];
+  let down=keys[Math.floor(Math.random()*keys.length)];
+  while(down===up) down=keys[Math.floor(Math.random()*keys.length)];
+  m.stages[up]=Math.min(6,m.stages[up]+2);
+  m.stages[down]=Math.max(-6,m.stages[down]-1);
+  pushLog(`  ・ ${m.name} のムラっけ！ ${STAT_JP[up]}↑ ${STAT_JP[down]}↓`,"#ffcb05");
+  renderStages();
+}
+function applyEntry(m,imgId,cb){
+  let did=false;
+  if(m.abilEff==="moody"&&!m.moodyEntryDone){ m.moodyEntryDone=true; applyMoody(m); }
+  if(m.abilEff==="intrepidsword"&&!m.noIntrepid){m.stages.atk=Math.min(6,m.stages.atk+1);renderStages();pushLog(`  ★ ${m.name} の ふとうのけん！ こうげきが上がった！`,"#ff7043");}
+  if(m.abilEff==="grassmaker"){ grassTurns=5; pushLog("  ☘ グラスフィールドが広がった！","#7ac74c"); did=true; }
+  if(m.abilEff==="drizzle"){ setWeather("rain","あめが ふりはじめた！"); did=true; }
+  else if(m.abilEff==="sandstream"){ setWeather("sand","すなあらしが ふきはじめた！"); did=true; }
+  else if(m.abilEff==="drought"){ setWeather("sun","ひざしが つよくなった！"); did=true; }
+  if(m.abilEff==="frisk"){
+    const target=m===me?foe:me;
+    if(target&&target.moves&&target.moves.length){
+      const mv=pickOne(target.moves);
+      pushLog(`  ★ ${m.name} の おみとおし！ ${target.name} の技は ${mv.name}！`,"#7ad1ff");
+    }
+  }
+  setTimeout(cb, did?700:0);
+}
+
+// ===== ダメージ計算 =====
+function calcDamage(attacker,defender,move,isCrit){
+  if(move.cat==="status"||move.power<=0) return {dmg:0,eff:1,stab:false};
+  let atkStage=(move.cat==="spec")?attacker.stages.spa:attacker.stages.atk;
+  let defStage=(move.cat==="spec")?defender.stages.spd:defender.stages.def;
+  if(defender.abilEff==="unaware") atkStage=0;
+  if(attacker.abilEff==="unaware") defStage=0;
+  if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
+  let atkStat=((move.cat==="spec")?attacker.base.spa:attacker.base.atk)*stageMult(atkStage);
+  let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
+  if(move.lowDef){
+    const physDef=defender.base.def*stageMult(defender.stages.def);
+    const specDef=defender.base.spd*stageMult(defender.stages.spd);
+    defStat=Math.min(physDef,specDef);
+  }
+  if(attacker.abilEff==="hugepower"&&move.cat==="phys") atkStat*=2;            // ちからもち
+  if(attacker.abilEff==="sheerforce"&&sheerForceBoosts(move)) atkStat*=1.3;    // ちからずく
+  if(attacker.status==="burn"&&move.cat==="phys") atkStat*=0.5;                // やけど
+  if(weather==="sand"&&defender.types.includes("rock")&&move.cat==="spec") defStat*=1.5; // 砂:いわ特防↑
+  let stab=attacker.abilEff==="libero"?1.2:(attacker.types.includes(move.type)?1.3:1.0);
+  if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
+  // ふんか：残りHPの割合で威力が変化（最大150、最低10）
+  let movePower=move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power;
+  if(move.statusPower&&defender.status) movePower*=move.statusPower;
+  if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
+  let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
+  let dmg=(attack/defense)*42;
+  const eff=effMultiplier(move.type,defender.types); dmg*=eff;
+  // 天候によるタイプ補正
+  if(weather==="rain"){ if(move.type==="water")dmg*=1.5; else if(move.type==="fire")dmg*=0.5; }
+  else if(weather==="sun"){ if(move.type==="fire")dmg*=1.5; else if(move.type==="water")dmg*=0.5; }
+  if(attacker.abilEff==="sunpower"&&weather==="sun"&&move.cat==="spec") dmg*=1.5;
+  // ピンチ特性（HP1/3以下）
+  const low=attacker.curHp<=attacker.maxHp/3;
+  if(low&&((attacker.abilEff==="torrent"&&move.type==="water")||(attacker.abilEff==="blaze"&&move.type==="fire"))) dmg*=1.5;
+  if(attacker.abilEff==="sandforce") dmg*=1.2;
+  if(move.megaBonus&&defender.isMega) dmg*=2;
+  if(attacker.itemKey==="orb") dmg*=1.3;
+  if(attacker.itemKey==="band"&&move.cat==="phys") dmg*=1.3;
+  if(attacker.itemKey==="specs"&&move.cat==="spec") dmg*=1.3;
+  if(attacker.itemKey==="lightstone"){ atkStat*=1.1; dmg*=1.1; }
+  if(defender.abilEff==="aurashield"&&move.cat==="phys") dmg*=0.5;
+  if(defender.abilEff==="purifyingSalt"&&move.type==="ghost") dmg*=0.5;
+  if(grassTurns>0&&move.type==="grass") dmg*=1.3;
+  if(isCrit) dmg*=move.critMult||1.5;
+  else{ if(defender.abilEff==="multiscale"&&defender.curHp===defender.maxHp) dmg*=0.5; }
+  return {dmg: eff===0?0:Math.max(1,Math.floor(dmg)), eff, stab:stab>1};
+}
+function sheerForceBoosts(move){return !!(move.targetDrop||move.flinch||move.freeze||move.burn||move.poison||move.paralyze||(move.selfBoost&&move.selfBoost.chance));}
+function effSpeed(m){let s=m.base.spe*stageMult(m.stages.spe||0);if(m.status==="paralyze")s*=0.5;if(m.abilEff==="swiftswim"&&weather==="rain")s*=2;if(m.itemKey==="lightstone")s*=1.1;if(m.itemKey==="scarf")s*=1.5;return s;}
+
+// ===== コマンドUI（side対応：me=プレイヤー1, foe=CPU/プレイヤー2）=====
+function clearCmd(){document.getElementById("cmd").innerHTML="";}
+function activeOf(s){return s==="me"?me:foe;}
+function teamOf(s){return s==="me"?myTeam:foeTeam;}
+function activeIdxOf(s){return s==="me"?myA:foeA;}
+function imgOf(s){return s==="me"?"myImg":"foeImg";}
+function sideLabel(s){return mode==='friend'?(s==="me"?"プレイヤー1":"プレイヤー2"):(s==="me"?"あなた":"あいて");}
+
+function nextTurn(){ turnAct={me:null,foe:null}; requestAction("me"); }
+function requestAction(side){ inputSide=side; busy=false; renderMenu(side); }
+function renderMenu(side){
+  const m=activeOf(side), c=document.getElementById("cmd");
+  const head = mode==='friend' ? `<div class="center sub">▼ ${sideLabel(side)} の ばん（${m.name}）</div>` : "";
+  const megaBtn = (!m.isMega && m.stoneMatches) ?
+    `<button class="btn mega ${megaArm[side]?'armed':''}" onclick="toggleMega('${side}')">${megaArm[side]?'✨ メガ準備OK':'🔮 メガシンカ'}</button>` : "";
+  c.innerHTML=`${head}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
+     <button class="btn ghost" onclick="openSwitch('${side}')">こうたい</button></div>
+     <div class="center">${megaBtn}</div>`;
+}
+function toggleMega(side){ if(busy)return; megaArm[side]=!megaArm[side]; renderMenu(side); }
+document.addEventListener("keydown",e=>{
+  if(document.getElementById("battle").classList.contains("hidden")||busy||!me||me.isMega||!me.stoneMatches)return;
+  const k=e.key.toLowerCase();
+  const isZ=me.itemKey.endsWith("z"), isCharizard=me.id==="lizardon";
+  if((k===" "&&!isZ&&!isCharizard)||(k==="z"&&isZ)||(isCharizard&&(k==="x"||k==="y"))){e.preventDefault();megaArm.me=true;renderMenu("me");}
+});
+function openMoves(side){
+  const m=activeOf(side), opp=activeOf(side==="me"?"foe":"me"), c=document.getElementById("cmd"); let h='<div class="moves">';
+  m.moves.forEach((mv,i)=>{
+    const efx=moveEffText(mv);
+    h+=`<button class="move" title="${mv.name}｜${TYPE_JP[mv.type]}・${catLabel(mv)}／威力${mv.power}\n${mv.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(mv.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="chooseMove('${side}',${i})">
+      <div class="mn">${mv.name}${mv.prio?` <span style="color:#7ad1ff;font-size:11px">⏫+${mv.prio}</span>`:''}</div>
+      <div class="md"><span class="type t-${mv.type}" style="font-size:10px">${TYPE_JP[mv.type]}</span>
+      <span class="cat ${mv.cat}">${catLabel(mv)}</span><span>威力${mv.power}</span></div>
+      ${efx?`<div style="font-size:10px;color:var(--sub);margin-top:2px">${efx}</div>`:''}</button>`;
+  });
+  h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
+  c.innerHTML=h;
+}
+function openSwitch(side){  // 通常の交代（行動として）
+  const team=teamOf(side), ai=activeIdxOf(side), c=document.getElementById("cmd"); let h='<div class="switchrow">';
+  team.forEach((m,i)=>{const dead=m.fainted, active=(i===ai);
+    h+=`<div class="sw ${dead?'dead':''} ${active?'active':''}" ${(!dead&&!active)?`onclick="chooseSwitch('${side}',${i})"`:''}>
+      <img src="${IMG(m.img)}"><div style="font-size:11px;font-weight:700">${m.name}</div>
+      <div class="swhp">${m.fainted?'ひんし':`${m.curHp}/${m.maxHp}`}${active?' (出てる)':''}</div>${mode==='friend'&&side===inputSide?`<div class="mini">${ITEMS[m.itemKey].name}</div>`:''}</div>`;});
+  h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
+  c.innerHTML=h;
+}
+function chooseMove(side,i){ submitAction(side,{type:"move",move:activeOf(side).moves[i]}); }
+function chooseSwitch(side,i){ submitAction(side,{type:"switch",idx:i}); }
+function submitAction(side,action){
+  turnAct[side]=action; clearCmd();
+  if(side==="me"){
+    if(mode==='cpu'){ turnAct.foe=cpuChoose(); doResolve(); }
+    else handoff("foe");
+  }else doResolve();
+}
+function handoff(side){
+  const c=document.getElementById("cmd");
+  c.innerHTML=`<div class="center" style="margin:10px 0">
+    <div class="sub">${sideLabel(side)} に かわってください</div>
+    <button class="btn blue" onclick="requestAction('${side}')">▶ ${sideLabel(side)} の ばん</button></div>`;
+}
+
+// ===== ターン解決 =====
+function series(tasks,done){let i=0;const nx=()=>{ if(i>=tasks.length){done();return;} tasks[i++](nx); };nx();}
+function doResolve(){
+  busy=true; clearCmd();
+  me.protectActive=false; foe.protectActive=false;
+  me.turnMoved=false; foe.turnMoved=false; me.flinched=false; foe.flinched=false;
+  const A=turnAct.me, B=turnAct.foe;
+  const phaseSwitch=(next)=>{const t=[];
+    if(A.type==="switch") t.push(cb=>doSwitch("me",A.idx,cb));
+    if(B.type==="switch") t.push(cb=>doSwitch("foe",B.idx,cb));
+    series(t,next);};
+  const phaseMega=(next)=>{const t=[];
+    if(A.type==="move"&&megaArm.me&&me.stoneMatches&&!me.isMega){megaArm.me=false;t.push(cb=>doMega(me,"myImg",cb));}
+    const cpuRainMega=mode==='cpu'&&B.type==="switch"&&foe.id==="ragulaaji"&&weather==="rain";
+    if(foe.stoneMatches&&!foe.isMega&&((B.type==="move"&&(mode==='cpu'||megaArm.foe))||cpuRainMega)){megaArm.foe=false;t.push(cb=>doMega(foe,"foeImg",cb));}
+    series(t,next);};
+  const phaseAttack=(next)=>{
+    const movers=[];
+    if(A.type==="move") movers.push({who:"me",move:A.move,mon:me});
+    if(B.type==="move") movers.push({who:"foe",move:B.move,mon:foe});
+    movers.forEach(m=>{ if(m.mon.abilEff==="quickdraw"&&Math.random()<.2){m.quickDraw=true;pushLog(`  ★ ${m.mon.name} の クイックドロウ！ 優先度が上がった！`,"#ffcb05");} });
+    movers.sort((a,b)=>{const pa=(a.move.prio||0)+(a.move.grassPriority&&grassTurns>0?4:0)+(a.quickDraw?2:0),pb=(b.move.prio||0)+(b.move.grassPriority&&grassTurns>0?4:0)+(b.quickDraw?2:0);if(pa!==pb)return pb-pa;return effSpeed(activeOf(b.who))-effSpeed(activeOf(a.who));});
+    runAttacks(movers,0,next);
+  };
+  phaseSwitch(()=>phaseMega(()=>phaseAttack(()=>endTurn())));
+}
+function runAttacks(movers,i,done){
+  if(i>=movers.length){done();return;}
+  const m=movers[i], atk=activeOf(m.who), def=activeOf(m.who==="me"?"foe":"me"), defImg=m.who==="me"?"foeImg":"myImg";
+  if(atk!==m.mon){ runAttacks(movers,i+1,done); return; }
+  if(atk.fainted){ runAttacks(movers,i+1,done); return; }
+  if(def.fainted){ runAttacks(movers,i+1,done); return; }
+  if(atk.flinched&&atk.abilEff!=="focus"){ atk.flinched=false; atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は ひるんで 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450); return; }
+  if(atk.status==="freeze"){
+    if(Math.random()<0.25){ atk.status=null; renderStages(); pushLog(`  └ ${atk.name} の こおりが とけた！`,"#7ad1ff"); }
+    else { atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は こおって 動けない！`,"#9fb3d6");runAttacks(movers,i+1,done);},450); return; }
+  }
+  if(atk.status==="paralyze"&&Math.random()<0.2){
+    atk.firstTurnReady=false;
+    setTimeout(()=>{pushLog(`  └ ${atk.name} は しびれて 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450);
+    return;
+  }
+  atk.turnMoved=true;
+  const defSide=m.who==="me"?"foe":"me";
+  if(m.move.requiresAttack&&(!turnAct[defSide]||turnAct[defSide].type!=="move")){
+    pushLog(`  └ ${atk.name} の ふいうちは しっぱいした！`,"#9fb3d6");
+    runAttacks(movers,i+1,done); return;
+  }
+  attack(atk,def,m.move,defImg,()=>{ tryEmergencyExit(defSide,def,()=>runAttacks(movers,i+1,done)); });
+}
+function attack(attacker,defender,move,defImgId,cb){
+  const acted=attacker.acted||0; attacker.acted=acted+1;
+  const canFirstTurn=attacker.firstTurnReady!==false;
+  attacker.firstTurnReady=false;
+  pushLog(`${attacker.name} の ${move.name}！`);
+  if(move.protect){
+    if(attacker.protectCooldown>0){setTimeout(()=>{pushLog("  └ まもるは連続で使えない！","#9fb3d6");cb();},350);return;}
+    attacker.protectActive=true; attacker.protectCooldown=2;
+    setTimeout(()=>{pushLog(`  └ ${attacker.name} は身を守った！`,"#7ad1ff");cb();},350); return;
+  }
+  if(move.leech){setTimeout(()=>{defender.leechSource=attacker;pushLog(`  └ ${defender.name} に ヤドリギが ついた！`,"#7ad1ff");cb();},450);return;}
+  if(defender.protectActive){setTimeout(()=>{pushLog(`  └ ${defender.name} は攻撃から身を守った！`,"#7ad1ff");cb();},350);return;}
+  if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
+  if(move.accuracy&&Math.random()>move.accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,"#ff7043");if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
+  if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
+  if(move.hazard){
+    const targetSide=defender===me?"me":"foe";
+    setTimeout(()=>{
+      setHazard(targetSide,move.hazard,attacker);
+      cb();
+    },450);
+    return;
+  }
+  const isCrit=Math.random()<(move.critRate||(move.highCrit?0.125:0.066));
+  const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
+  const res=calcDamage(attacker,defender,calcMove,isCrit);
+  const sheer=attacker.abilEff==="sheerforce"&&sheerForceBoosts(move), extraBlocked=defender.itemKey==="cloak";
+  if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
+  let dmg=res.dmg, lifeTrigger=false;
+  if(defender.itemKey==="sash"&&!defender.usedSash&&defender.curHp===defender.maxHp&&dmg>=defender.curHp){dmg=defender.curHp-1;defender.usedSash=true;pushLog(`  ★ ${defender.name} の きあいのタスキ！ HP1で耐えた！`,"#7ad1ff");}
+  if(defender.itemKey==="life"&&!defender.usedLife&&res.eff>1){ dmg=Math.max(1,Math.floor(dmg*3/4)); lifeTrigger=true; }
+  setTimeout(()=>{
+    const img=document.getElementById(defImgId); img.classList.add("hit"); setTimeout(()=>img.classList.remove("hit"),400);
+    defender.curHp=Math.max(0,defender.curHp-dmg); renderHp();
+    if(move.doubleType&&defender.curHp>0){const second=calcDamage(attacker,defender,Object.assign({},move,{type:move.doubleType,doubleType:null}),false).dmg;defender.curHp=Math.max(0,defender.curHp-second);renderHp();pushLog(`  └ 2回目の攻撃！ ${second} ダメージ`);}
+    if(defender.abilEff==="pepperguard"&&attacker.curHp>0&&defender.curHp>0) applyStatus(attacker,"burn",defender);
+    if(move.salt&&defender.curHp>0){defender.salted=true;pushLog(`  ・ ${defender.name} は しおづけになった！`,"#7ad1ff");}
+    if(move.recoilDamage&&attacker.abilEff!=="damp"&&attacker.curHp>0){const r=Math.max(1,Math.floor(dmg*move.recoilDamage));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,"#ff7043");if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}
+    if(res.stab) pushLog("  └ タイプ一致！");
+    if(res.eff>1) pushLog(`  └ こうかは ばつぐんだ！（×${res.eff}）`,"#ff7043");
+    else if(res.eff<1) pushLog(`  └ こうかは いまひとつのようだ…（×${res.eff}）`,"#9fb3d6");
+    if(isCrit) pushLog("  └ きゅうしょに あたった！","#ffcb05");
+    pushLog(`  └ ${dmg} ダメージ`);
+    if(defender.curHp>0){
+      if(lifeTrigger){defender.usedLife=true;const h=Math.floor(defender.maxHp*0.29);defender.curHp=Math.min(defender.maxHp,defender.curHp+h);defender.stages.def=Math.min(6,defender.stages.def+1);defender.stages.spd=Math.min(6,defender.stages.spd+1);renderHp();renderStages();pushLog(`  ★ ${defender.name} の せいめいほけん！ HP${h}回復・ぼうぎょとくぼうUP！`,"#46d160");}
+      else if(defender.itemKey==="weakness"&&!defender.usedWP&&res.eff>1){defender.usedWP=true;defender.stages.atk=Math.min(6,defender.stages.atk+2);defender.stages.spa=Math.min(6,defender.stages.spa+2);renderStages();pushLog(`  ★ ${defender.name} の じゃくてんほけん！ こうげき・とくこうUP！`,"#ff7043");}
+      if(defender.itemKey==="sitrus"&&!defender.usedSitrus&&defender.curHp<=defender.maxHp/2){
+        defender.usedSitrus=true;
+        const h=Math.floor(defender.maxHp/4);
+        defender.curHp=Math.min(defender.maxHp,defender.curHp+h);
+        renderHp();
+        pushLog(`  ★ ${defender.name} の おぼんのみ！ HP${h}回復！`,"#46d160");
+      }
+    }
+    if(!sheer&&move.freeze&&defender.curHp>0&&Math.random()<move.freeze) applyStatus(defender,"freeze",attacker);
+    if(!sheer&&move.burn&&defender.curHp>0&&Math.random()<move.burn) applyStatus(defender,"burn",attacker);
+    if(!sheer&&move.poison&&defender.curHp>0&&Math.random()<move.poison) applyStatus(defender,"poison",attacker);
+    if(!sheer&&move.paralyze&&defender.curHp>0&&Math.random()<move.paralyze) applyStatus(defender,"paralyze",attacker);
+    if(!sheer&&move.flinch&&defender.curHp>0&&!defender.turnMoved&&hasPendingMove(defender)&&Math.random()<move.flinch){
+      defender.flinched=true;
+      pushLog(`  ・ ${defender.name} は ひるんだ！`,"#ffcb05");
+    }
+    if(!sheer&&move.targetDrop&&defender.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(defender,move.targetDrop.stats);
+    if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
+    if(move.selfDrop) applyDrop(attacker,move.selfDrop);
+    if(defender.curHp<=0&&!defender.fainted) faintMon(defender,defImgId);
+    if(move.cat==="phys"&&defender.abilEff==="toxicdebris"&&defender.curHp>0){
+      setHazard(attacker===me?"me":"foe","toxicspikes",defender);
+    }
+    if(move.cat==="phys"&&defender.abilEff==="roughskin"&&attacker.curHp>0){
+      const rh=Math.max(1,Math.floor(attacker.maxHp/8));
+      attacker.curHp=Math.max(0,attacker.curHp-rh);
+      renderHp();
+      pushLog(`  ★ ${defender.name} の さめはだ！ ${attacker.name} に ${rh} ダメージ！`,"#ff7043");
+      if(attacker.curHp<=0) faintMon(attacker,attacker===me?"myImg":"foeImg");
+    }
+    cb();
+  },480);
+}
+function canStatus(mon,status,source){
+  if(mon.abilEff==="purifyingSalt") return false;
+  if(mon.status) return false;
+  if(status==="burn"&&mon.types.includes("fire")) return false;
+  if(status==="freeze"&&mon.types.includes("ice")) return false;
+  if((status==="poison"||status==="toxic")&&(mon.types.includes("poison")||mon.types.includes("steel"))&&(!source||source.abilEff!=="corrosion")) return false;
+  return true;
+}
+function applyStatus(mon,status,source){
+  if(!canStatus(mon,status,source)){
+    if(!mon.status) pushLog(`  ・ ${mon.name} には ${statusName(status)}が 効かない！`,"#9fb3d6");
+    return false;
+  }
+  mon.status=status;
+  mon.toxicTurns=0;
+  renderStages();
+  const txt=status==="freeze"?"こおってしまった":status==="burn"?"やけどを おった":status==="poison"?"どくを あびた":status==="toxic"?"もうどくを あびた":"まひしてしまった";
+  pushLog(`  ・ ${mon.name} は ${txt}！`,status==="burn"?"#ff7043":(status==="poison"||status==="toxic")?"#b061ff":status==="paralyze"?"#ffcb05":"#7ad1ff");
+  return true;
+}
+function tryStatEffect(mon,effect){
+  const ch=statEffectChance(effect);
+  if(Math.random()<ch) applyDrop(mon,statEffectStats(effect));
+}
+function setHazard(side,type,setter){
+  const h=hazards[side];
+  if(type==="rocks"){
+    if(h.rocks) pushLog("  └ すでに ステルスロックが ただよっている！","#9fb3d6");
+    else{ h.rocks=true; pushLog(`  └ ${sideLabel(side)} の場に とがった岩が ただよいはじめた！`,"#b6a136"); }
+    return;
+  }
+  if(type==="toxicspikes"){
+    if(h.toxicSpikes>=2) pushLog("  └ すでに どくびしが たくさん まかれている！","#9fb3d6");
+    else{
+      h.toxicSpikes++;
+      if(setter&&setter.abilEff==="corrosion") h.toxicCorrosion=true;
+      pushLog(`  └ ${sideLabel(side)} の場に どくびしが まかれた！（${h.toxicSpikes}回）`,"#b061ff");
+    }
+  }
+}
+function faintMon(mon,imgId){
+  if(mon.fainted) return;
+  mon.fainted=true;
+  pushLog(`💥 ${mon.name} は たおれた！`);
+  document.getElementById(imgId).classList.add("faint");
+  renderDots();
+}
+function hasPendingMove(mon){
+  const side=mon===me?"me":"foe";
+  return turnAct[side]&&turnAct[side].type==="move";
+}
+function applyDrop(mon,stats){for(const k in stats){const d=stats[k],b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}renderStages();}
+
+// ききかいひ：攻撃後にHPが半分以下になったら自動で交代する。
+// この関数を通らずに次の攻撃へ進むと、攻撃完了後に例外が発生して
+// ターン処理が止まってしまうため、交代しない場合も必ず cb() を呼ぶ。
+function tryEmergencyExit(side,mon,cb){
+  if(mon.fainted||mon.abilEff!=="emergencyexit"||mon.curHp>mon.maxHp/2){ cb(); return; }
+  const team=teamOf(side), current=activeIdxOf(side);
+  const next=team.findIndex((p,i)=>i!==current&&!p.fainted);
+  if(next<0){ cb(); return; }
+  pushLog(`  ★ ${mon.name} の ききかいひ！` ,"#ffcb05");
+  if(mode==='cpu'&&side==='foe') doSwitch(side,next,cb);
+  else requestForcedSwitch(side,cb);
+}
+
+// ===== メガシンカ =====
+function transformZacian(mon,imgId,cb){
+  const form=mon.megaForm;
+  mon.name=form.name; mon.types=form.types.slice(); mon.base=Object.assign({},form.base);
+  const ab=ABIL[form.abil]; mon.abilName=ab.name; mon.abilEff=ab.eff; mon.isMega=true;
+  mon.img=form.img; mon.moves=mon.moves.map(m=>m.name==="アイアンヘッド"?M.behemothblade:m);
+  const img=document.getElementById(imgId); img.src=IMG(form.img);
+  document.getElementById(imgId==="myImg"?"myName":"foeName").textContent=mon.name;
+  renderHp(); renderStages(); pushLog(`⚔ ${mon.name} に フォルムチェンジした！` ,"#ffcb05");
+  setTimeout(()=>applyEntry(mon,imgId,cb),700);
+}
+function doMega(mon,imgId,cb){
+  const mg=mon.megaForm, old=mon.name;
+  pushLog(`✨ ${old} は 紫の殻に包まれた…！`,"#b061ff");
+  const img=document.getElementById(imgId); img.classList.add("mega-anim");
+  setTimeout(()=>{
+    mon.name=mg.name; mon.types=mg.types.slice(); mon.base=Object.assign({},mg.base);
+    const ab=ABIL[mg.abil]; mon.abilName=ab.name; mon.abilEff=ab.eff; mon.isMega=true;
+    mon.img=mg.img;                       // メガ後の見た目を保持（再描画でも解除されない）
+    mon.acted=0; mon.firstTurnReady=true;  // メガ進化後はであいがしらを再度使える
+    img.src=IMG(mg.img);
+    document.getElementById(imgId==="myImg"?"myName":"foeName").textContent=mon.name;
+    setAbLine(); renderHp(); renderStages();
+    pushLog(`✨ ${old} は ${mg.name} に メガシンカした！`,"#b061ff");
+    // メガ後の特性が天候を呼ぶ場合（ひでり等）
+    applyEntry(mon,imgId,()=>{ img.classList.remove("mega-anim"); cb(); });
+  },1000);
+}
+
+// ===== 交代 =====
+function doSwitch(side,idx,cb){
+  megaArm[side]=false;
+  if(side==="me"){
+    const out=me; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
+    myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false;
+    pushLog(`${out.name} を ひっこめて ${me.name}！`);
+    renderActive();
+    applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
+  }else{
+    const out=foe; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
+    foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false;
+    pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
+    renderActive();
+    applyHazards("foe",()=>{ if(foe.fainted) cb(); else applyEntry(foe,"foeImg",cb); });
+  }
+}
+function applyHazards(side,cb){
+  const mon=activeOf(side), h=hazards[side], tasks=[];
+  if(mon.fainted){ cb(); return; }
+  if(mon.itemKey==="boots"){ cb(); return; }
+  if(h.rocks) tasks.push(next=>setTimeout(()=>{
+    const d=Math.max(1,Math.floor(mon.maxHp/10));
+    mon.curHp=Math.max(0,mon.curHp-d);
+    renderHp();
+    pushLog(`  ▲ ${mon.name} に ステルスロックが ささった！ ${d} ダメージ！`,"#b6a136");
+    if(mon.curHp<=0) faintMon(mon,imgOf(side));
+    next();
+  },420));
+  if(h.toxicSpikes>0) tasks.push(next=>setTimeout(()=>{
+    if(!mon.fainted){
+      const src={abilEff:h.toxicCorrosion?"corrosion":null};
+      applyStatus(mon,h.toxicSpikes>=2?"toxic":"poison",src);
+    }
+    next();
+  },300));
+  if(!tasks.length) cb(); else series(tasks,cb);
+}
+
+// ===== CPU思考 =====
+function cpuChoose(){
+  // ペリッパー先発→雨が降ったらラグラージに交代
+  if(foe.id==="pelipper"&&foe.acted>=1&&weather==="rain"){
+    const ri=foeTeam.findIndex(m=>m.id==="ragulaaji"&&!m.fainted);
+    if(ri>=0&&ri!==foeA) return {type:"switch",idx:ri};
+  }
+  let cand=foe.moves.filter(mv=>!(mv.firstTurnOnly&&(foe.acted||0)>0));
+  if(!cand.length)cand=foe.moves;
+  if(Math.random()<Math.max(.02,.18-npcLevel*.025)) return {type:"move",move:cand[Math.floor(Math.random()*cand.length)]};
+  let best=cand[0],bd=-1;
+  for(const mv of cand){const d=calcDamage(foe,me,mv,false).dmg;if(d>bd){bd=d;best=mv;}}
+  return {type:"move",move:best};
+}
+function cpuForcedSwitch(){
+  const alive=foeTeam.map((m,i)=>i).filter(i=>!foeTeam[i].fainted&&i!==foeA);
+  if(!alive.length) return -1;
+  // 一番ダメージを通せる相手を選ぶ
+  let best=alive[0],bs=-1;
+  for(const i of alive){let mx=0;for(const mv of foeTeam[i].moves){const d=calcDamage(foeTeam[i],me,mv,false).dmg*effMultiplier(mv.type,me.types?me.types:[]);if(d>mx)mx=d;}if(mx>bs){bs=mx;best=i;}}
+  return best;
+}
+
+// ===== ターン終了処理 =====
+function applyResidual(mon,imgId){
+  if(mon.fainted) return;
+  let d=0, label="", color="#9fb3d6";
+  if(mon.status==="burn"){ d=Math.max(1,Math.floor(mon.maxHp/16)); label="やけど"; color="#ff7043"; }
+  else if(mon.status==="poison"){ d=Math.max(1,Math.floor(mon.maxHp/8)); label="どく"; color="#b061ff"; }
+  else if(mon.status==="toxic"){
+    mon.toxicTurns=(mon.toxicTurns||0)+1;
+    const denom=[8,6,4,3,2,1][Math.min(mon.toxicTurns-1,5)];
+    d=Math.max(1,Math.floor(mon.maxHp/denom));
+    label="もうどく";
+    color="#b061ff";
+  }
+  if(mon.salted){d=Math.max(1,Math.floor(mon.maxHp/(mon.types.includes("steel")||mon.types.includes("water")?4:8)));label="しおづけ";color="#7ad1ff";}
+  if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
+  if(!d) return;
+  mon.curHp=Math.max(0,mon.curHp-d);
+  renderHp();
+  pushLog(`  ・ ${mon.name} は ${label}で ${d} ダメージ！`,color);
+  if(mon.curHp<=0) faintMon(mon,imgId);
+}
+function cpuForceReplace(cb){
+  const ni=cpuForcedSwitch();
+  if(ni<0) return finish(true);
+  doSwitch("foe",ni,()=>{
+    if(foe.fainted){
+      if(!foeTeam.some(m=>!m.fainted)) finish(true);
+      else cpuForceReplace(cb);
+    }else cb();
+  });
+}
+function endTurn(){
+  // かそく：すばやさ+1
+  [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
+  renderStages();
+  [me,foe].forEach(m=>{if(m&&m.protectCooldown>0)m.protectCooldown--;if(m&&m.abilEff==="moody"&&!m.fainted)applyMoody(m);});
+  applyResidual(me,"myImg");
+  applyResidual(foe,"foeImg");
+  [me,foe].forEach(m=>{if(m&&!m.fainted&&(m.itemKey==="orb"||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
+  if(grassTurns>0){
+    [me,foe].forEach(m=>{if(m&&!m.fainted){const h=Math.max(1,Math.floor(m.maxHp/8));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ☘ ${m.name} はグラスフィールドで ${h} 回復！`,"#7ac74c");}});
+    renderHp(); grassTurns--;
+  }
+  // ひんしの入れ替え
+  const foeDead=foe.fainted, meDead=me.fainted;
+  if(!foeTeam.some(m=>!m.fainted)){ return finish(true); }
+  if(!myTeam.some(m=>!m.fainted)){ return finish(false); }
+  // me側の補充 → 完了したら次のターン
+  const replaceMe=()=>{ meDead ? requestForcedSwitch("me", nextTurn) : nextTurn(); };
+  // foe側の補充（CPUは自動 / フレンドはP2が選ぶ）
+  if(foeDead){
+    if(mode==='cpu') cpuForceReplace(replaceMe);
+    else requestForcedSwitch("foe", replaceMe);
+  } else replaceMe();
+}
+// 強制交代：そのsideの生きているポケモンを選ぶ（このターンは攻撃なし）
+function requestForcedSwitch(side,cb){
+  busy=true; inputSide=side; forcedCb=cb;
+  const team=teamOf(side), ai=activeIdxOf(side), c=document.getElementById("cmd");
+  let h=`<div class="center sub">${sideLabel(side)}：つぎの ポケモンを えらんでください</div><div class="switchrow">`;
+  team.forEach((m,i)=>{const dead=m.fainted, active=(i===ai);
+    h+=`<div class="sw ${dead?'dead':''} ${active?'active':''}" ${(!dead&&!active)?`onclick="pickForced('${side}',${i})"`:''}>
+      <img src="${IMG(m.img)}"><div style="font-size:11px;font-weight:700">${m.name}</div>
+      <div class="swhp">${m.fainted?'ひんし':`${m.curHp}/${m.maxHp}`}</div></div>`;});
+  h+='</div>';
+  c.innerHTML=h;
+}
+function pickForced(side,i){
+  clearCmd();
+  const cb=forcedCb; forcedCb=null;
+  doSwitch(side,i,()=>{
+    if(activeOf(side).fainted&&teamOf(side).some(m=>!m.fainted)) requestForcedSwitch(side,cb);
+    else cb();
+  });
+}
+function finish(meWon){
+  busy=true; clearCmd();
+  if(mode==='cpu'&&npcLevel===5){let n=Number(localStorage.getItem("ritoStreak")||0);n=meWon?n+1:0;const best=Math.max(Number(localStorage.getItem("ritoMaxStreak")||0),n);localStorage.setItem("ritoStreak",String(n));localStorage.setItem("ritoMaxStreak",String(best));saveGame();}
+  document.getElementById("endArea").classList.remove("hidden");
+  const r=document.getElementById("resultTxt");
+  if(mode==='friend') r.textContent = meWon?"🏆 プレイヤー1の勝ち！":"🏆 プレイヤー2の勝ち！";
+  else r.textContent = meWon?"🏆 あなたの勝ち！":"😵 あなたの負け…";
+  r.style.color=meWon?"var(--accent)":"var(--hp-red)";
+}
+</script>
