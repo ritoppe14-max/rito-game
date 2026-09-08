@@ -110,6 +110,7 @@
       <button class="btn mega" onclick="startLunaticStage2()"><img src="image/image/メガボーマンダ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ2</button>
       <button class="btn mega" onclick="startLunaticStage3()"><img src="image/image/メガヒードラン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ3</button>
       <button class="btn mega" onclick="startLunaticStage4()"><img src="image/image/メガダークライ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ4</button>
+      <button class="btn mega" onclick="startLunaticStage5()"><img src="image/image/メガレックウザ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ5</button>
       <button class="btn mega" onclick="startDynamaxUnlockStage()"><img src="image/image/ムゲンダイナ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ダイマックス解放</button>
       <label class="sub">NPCレベル <select id="npcLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
       <button class="btn ghost" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
@@ -230,7 +231,7 @@ const ABIL={
   roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null}, clearbody:{name:"クリアボディ",eff:null}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"},
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
-  emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
+  emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
 };
 const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",hugepower:"こうげき(物理)が2倍",
@@ -242,7 +243,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
   sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",clearbody:"相手の技で能力ランクを下げられない",poisonheal:"どく・もうどく状態のとき毎ターン最大HPの1/7回復",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
-  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
+  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
 
 // ===== わざ =====
 const M={
@@ -268,6 +269,7 @@ const M={
   thunder:{name:"かみなり",type:"electric",cat:"spec",power:110},
   energyball:{name:"エナジーボール",type:"grass",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}},
   meteor:{name:"りゅうせいぐん",type:"dragon",cat:"spec",power:130,selfDrop:{spa:-2}},
+  rayascension:{name:"ガリョウテンセイ",type:"flying",cat:"phys",power:0,selfBoost:{chance:1,stats:{atk:1}},selfDrop:{def:-1,spd:-1}},
   hydreigonmeteor:{name:"りゅうせいぐん",type:"dragon",cat:"spec",power:120,hydreigonMeteor:true},
   dragonrage2:{name:"りゅうのいごり",type:"dragon",cat:"phys",power:120,selfDrop:{atk:-1}},
   dpulse:{name:"ドラゴンパルス",type:"dragon",cat:"spec",power:85},
@@ -278,11 +280,14 @@ const M={
   takedown:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33},
   outrage:{name:"げきりん",type:"dragon",cat:"phys",power:120,outrage:true},
   roost:{name:"はねやすめ",type:"flying",cat:"status",power:0,roost:true},
+  recover:{name:"じこさいせい",type:"normal",cat:"status",power:0,recover:.50},
+  softboiled:{name:"タマゴうみ",type:"normal",cat:"status",power:0,recover:.50},
   surf:{name:"なみのり",type:"water",cat:"spec",power:90},
   hydropump:{name:"ハイドロポンプ",type:"water",cat:"spec",power:110},
   liquidation:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}},
   waterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,flinch:.2},
   aquajet:{name:"アクアジェット",type:"water",cat:"phys",power:40,prio:1,percentDamage:.10},
+  extremespeed:{name:"しんそく",type:"normal",cat:"phys",power:80,prio:2},
   icebeam:{name:"れいとうビーム",type:"ice",cat:"spec",power:90,freeze:.1},
   icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2},
   icepunch:{name:"れいとうパンチ",type:"ice",cat:"phys",power:75},
@@ -356,10 +361,15 @@ const SPECIES=[
  S("sableye","ヤミラミ","image/image/ヤミラミ.gif",["dark","ghost"],{hp:50,atk:75,def:75,spa:65,spd:65,spe:50},"prankster",["protect","substitute","toxic","suckerpunch"]),
  S("orthworm","ミミズズ","image/image/ミミズズ.gif",["steel"],{hp:70,atk:85,def:145,spa:60,spd:55,spe:65},"eartheater",["ironhead","earthquake","stealthrock","spikes"]),
  S("mimikyu","ミミッキュ","image/image/ミミッキュ.gif",["ghost","fairy"],{hp:55,atk:90,def:80,spa:50,spd:105,spe:96},"disguise",["playrough","swordsdance","shadowsneak","shadowclaw","playtogether"]),
+ S("chansey","ラッキー","image/image/ラッキー.gif",["normal"],{hp:250,atk:5,def:5,spa:35,spd:105,spe:50},"pressure",["softboiled","toxic","thunderwave","protect"]),
+ S("porygon2","ポリゴン2","image/image/ポリゴン2.gif",["normal"],{hp:85,atk:80,def:90,spa:105,spd:95,spe:60},"pressure",["recover","thunderbolt","icebeam","protect"]),
+ S("toxapex","ドヒドイデ","image/image/ドヒドイデ.gif",["poison","water"],{hp:50,atk:63,def:152,spa:53,spd:142,spe:35},"regenerator",["recover","toxic","sludgebomb","protect"]),
  S("darkrai","ダークライ","image/image/ダークライ.gif",["dark"],{hp:70,atk:90,def:90,spa:135,spd:90,spe:125},"pressure",["darkpulse","shadowball","focusblast","darkhole","sludgebomb"],
    [{stone:"darkrainite",stoneName:"ダークライナイト",name:"メガダークライ",img:"image/image/メガダークライ.gif",types:["dark"],base:{hp:130,atk:100,def:110,spa:165,spd:130,spe:155},abil:"nightmarez"}]),
  S("hydreigon","サザンドラ","image/image/サザンドラ.gif",["dark","dragon"],{hp:92,atk:105,def:90,spa:125,spd:90,spe:98},"levitate",["hydreigoncrunch","hydreigonironhead","hydreigonmeteor","dragonrage2"],
    [{stone:"hydreigonite",stoneName:"サザンドラナイト",name:"メガサザンドラ",img:"image/image/メガサザンドラX.png",types:["dark","dragon"],base:{hp:92,atk:145,def:108,spa:145,spd:108,spe:102},abil:"contrary"}]),
+ S("rayquaza","レックウザ","image/image/レックウザ.gif",["dragon","flying"],{hp:105,atk:150,def:90,spa:150,spd:90,spe:95},"aerolock",["rayascension","dragonclaw","airslash","earthquake"],
+   [{stone:"rayquazanite",stoneName:"レックウザナイト",name:"メガレックウザ",img:"image/image/メガレックウザ.gif",types:["dragon","flying"],base:{hp:105,atk:180,def:100,spa:180,spd:100,spe:115},abil:"aerolock"}]),
  S("ohdairu","オーダイル","image/image/オーダイル.gif",["water"],{hp:85,atk:105,def:100,spa:79,spd:83,spe:78},"torrent",["waterfall","crunch","icefang","earthquake"],
    [{stone:"ohdairite",stoneName:"オーダイルナイト",name:"メガオーダイル",img:"image/image/メガオーダイル.gif",types:["water","dragon"],base:{hp:85,atk:165,def:120,spa:79,spd:93,spe:88},abil:"dragonskin"}]),
  S("gabarias","ガブリアス","image/image/ガブリアス.gif",["dragon","ground"],{hp:108,atk:130,def:95,spa:80,spd:85,spe:102},"sandveil",["earthquake","dragonclaw","stoneedge","meteor"],
@@ -423,7 +433,11 @@ const LEARN={
   sableye:["protect","substitute","toxic","suckerpunch","crunch","fakeout","quickattack","shadowball"],
   orthworm:["ironhead","earthquake","stealthrock","spikes","rockslide","protect","toxic","stoneedge"],
   darkrai:["darkpulse","shadowball","focusblast","darkhole","sludgebomb","calmMind","nastyPlot","psychic","icebeam","thunderbolt"],
+  chansey:["softboiled","toxic","protect","icebeam","thunderbolt"],
+  porygon2:["recover","thunderbolt","icebeam","protect","toxic"],
+  toxapex:["recover","toxic","sludgebomb","protect","icebeam"],
   hydreigon:["hydreigoncrunch","hydreigonironhead","hydreigonmeteor","dragonrage2","darkpulse","dpulse","flamethrower","earthpower","protect"],
+  rayquaza:["rayascension","dragonclaw","airslash","earthquake","protect"],
   ohdairu:["waterfall","liquidation","crunch","icefang","earthquake","aquajet","dragonclaw","icebeam","takedown","dragondance"],
   gabarias:["earthquake","dragonclaw","stoneedge","crunch","meteor","fireblast","rockslide","icefang","poisonjab","stealthrock","swordsdance"],
   kirafurol:["powergem","sludgewave","earthpower","energyball","sludgebomb","flashcannon","thunderbolt","icebeam","stealthrock","toxicspikes"],
@@ -499,6 +513,7 @@ const ITEMS={
   firstbell:{name:"さきがけベル",desc:"相手を状態異常にすると最大HPの30%回復"},
   gritbelt:{name:"ふんばりベルト",desc:"状態異常になったとき最大HPの50%回復"},
   steadydice:{name:"せいじょうダイス",desc:"連続技を必中・3回固定。追加で最大HPの10%ダメージ"},
+  eviolite:{name:"しんかのきせき",desc:"未進化ポケモンの防御・特防1.5倍"},
   band:{name:"こだわりハチマキ",desc:"物理技の威力1.3倍"},
   specs:{name:"こだわりメガネ",desc:"特殊技の威力1.3倍"},
   sash:{name:"きあいのタスキ",desc:"HP満タンなら攻撃を受けてもHP1で耐える"},
@@ -554,6 +569,7 @@ function startLunaticStage(){ mode='lunatic'; lunaticStage=true; npcLevel=10; en
 function startLunaticStage2(){ mode='lunatic2'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage3(){ mode='lunatic3'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage4(){ mode='lunatic4'; lunaticStage=true; npcLevel=10; enterPreview(); }
+function startLunaticStage5(){ mode='lunatic5'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startDynamaxUnlockStage(){ mode='dynamaxUnlock'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startFriendSetup(){ mode='friend'; party2=[]; openPartyBuilder('p1'); }
 function friendP1Done(){ if(party.length===6) openPartyBuilder('p2'); }
@@ -607,6 +623,7 @@ function toggleParty(i){
   if(SPECIES[i].id==="salamence"&&localStorage.getItem("ritoLunatic2Clear")!=="1"){ alert("ルナティックステージ2をクリアするまでボーマンダは使用できません。"); return; }
   if(SPECIES[i].id==="heatran"&&localStorage.getItem("ritoLunatic3Clear")!=="1"){ alert("ルナティックステージ3をクリアするまでヒードランは使用できません。"); return; }
   if(SPECIES[i].id==="darkrai"&&localStorage.getItem("ritoLunatic4Clear")!=="1"){ alert("ルナティックステージ4をクリアするまでダークライは使用できません。"); return; }
+  if(SPECIES[i].id==="rayquaza"&&localStorage.getItem("ritoLunatic5Clear")!=="1"){ alert("ルナティックステージ5をクリアするまでレックウザは使用できません。"); return; }
   const idx=curParty.findIndex(p=>p.sp===i);
   if(idx>=0){ curParty.splice(idx,1); }
   else if(curParty.length<6){ curParty.push({sp:i,item:"none"}); }
@@ -673,7 +690,7 @@ function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=
 let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false;
 function enterPreview(){   // CPU戦
   if(party.length!==6) return;
-  if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
+  if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic5') buildLunaticParty5(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
   selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, label:"あなたのパーティ — 出す3体をえらぶ（選んだ順に先発）",
     cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
   show("preview"); renderPreview();
@@ -706,6 +723,9 @@ function buildLunaticParty4(){
     {sp:SP_BY_ID.darkrai,item:"darkrainite",moves:["calmMind","darkhole","shadowball","psychic"]}
   ];
 }
+function buildLunaticParty5(){
+  cpuParty=[{sp:SP_BY_ID.rayquaza,item:"rayquazanite",moves:["rayascension","extremespeed","dragondance","meteor"]}];
+}
 function buildDynamaxUnlockParty(){
   cpuParty=[{sp:SP_BY_ID.eternatus,item:"none",moves:["sludgewave","dpulse","flamethrower","earthpower"]}];
 }
@@ -727,9 +747,10 @@ function buildCpuParty(){
     const sp=SPECIES[si];
     let item="none";
     if(sp.id==="zacian") item="rustedsword";
+    else if((sp.id==="chansey"||sp.id==="porygon2")&&Math.random()<.95) item="eviolite";
     else if(sp.megas.length&&Math.random()<.70) item=pickOne(sp.megas).stone;
     else {
-      const opts=["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice"];
+      const opts=["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"];
       item=pickOne(opts);
     }
     return {sp:si, item};
@@ -764,8 +785,9 @@ function toggleSel(i){
   renderPreview();
 }
 function cpuSelect3(){
-  if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'){
+  if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'){
     if(mode==='lunatic3'||mode==='lunatic4'){ cpuSel=[0,1,2]; return; }
+    if(mode==='lunatic5'){ cpuSel=[0]; return; }
     cpuSel=Math.random()<.80 ? [0,1,2] : [1,0,2];
     return;
   }
@@ -785,7 +807,7 @@ function cpuSelect3(){
 document.getElementById("startBtn").onclick=()=>{ if(selCtx && selCtx.sel.length===3) selCtx.cb(); };
 
 // ===== バトル =====
-let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0;
+let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0, rayMegaBlocked=false, rayMegaActive=false;
 let mode='cpu', megaArm={me:false,foe:false}, maxArm={me:false,foe:false}, maxUsed={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
 function emptyHazards(){return {me:{rocks:false,spikes:0,toxicSpikes:0,toxicCorrosion:false},foe:{rocks:false,spikes:0,toxicSpikes:0,toxicCorrosion:false}};}
 let hazards=emptyHazards();
@@ -801,7 +823,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.itemKey=itemKey||"none";
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
-  p.megaForm = p.stoneMatches ? sp.megas[it.form] : null;
+  p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
   p.isMega=false; p.isDynamax=false; p.isGigantamax=false; p.dynamaxTurns=0; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.toxicTurns=0; p.flinched=false; p.turnMoved=false; p.hitBeforeMove=false; p.usedDisguise=false; p.usedPlayTogether=false; p.usedFirstBell=false; p.usedGritBelt=false; p.quickDraw=false;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
@@ -813,10 +835,14 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
   const foeOwner=mode==="friend" ? "p2" : "cpu";
   myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
   foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
-  if(mode==="lunatic"||mode==="lunatic2"||mode==="lunatic3"||mode==="lunatic4"||mode==="dynamaxUnlock") foeTeam.forEach((mon,i)=>{
+  if(mode==="lunatic"||mode==="lunatic2"||mode==="lunatic3"||mode==="lunatic4"||mode==="lunatic5"||mode==="dynamaxUnlock") foeTeam.forEach((mon,i)=>{
     // 先発順や配列位置ではなくポケモンIDで固定データを割り当てる
     const fixed=p2party.find(p=>SPECIES[p.sp].id===mon.id)||p2party[p2sel[i]];
     mon.moves=fixed.moves.map(k=>M[k]);
+    if(mode==="lunatic5"){
+      mon.maxHp*=2; mon.curHp=mon.maxHp;
+      mon.moves=mon.moves.map(m=>m.name==="ガリョウテンセイ"?Object.assign({},m,{chargedPower:140}):m);
+    }
     if(mon.id==="zacian") mon.itemKey="rustedsword";
     if(mode==="lunatic2"&&mon.id==="marilli"){mon.abilName=ABIL.hugepower.name;mon.abilEff=ABIL.hugepower.eff;}
     if(mode==="lunatic2"&&mon.id==="salamence"){
@@ -829,7 +855,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
     }
   });
   myA=0; foeA=0; me=myTeam[0]; foe=foeTeam[0];
-  busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; maxUsed={me:false,foe:false}; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
+  busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; maxUsed={me:false,foe:false}; rayMegaBlocked=false; rayMegaActive=false; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
   show("battle");
   document.getElementById("endArea").classList.add("hidden");
   document.getElementById("log").innerHTML="";
@@ -913,7 +939,7 @@ function applyEntry(m,imgId,cb){
 
 // ===== ダメージ計算 =====
 function calcDamage(attacker,defender,move,isCrit){
-  if(move.cat==="status"||move.power<=0) return {dmg:0,eff:1,stab:false};
+  if(move.cat==="status"||((move.chargedPower!==undefined?move.chargedPower:move.power)<=0)) return {dmg:0,eff:1,stab:false};
   if(defender.abilEff==="disguise"&&!defender.usedDisguise)return {dmg:0,eff:0,stab:false,disguise:true};
   const skinType=attacker.abilEff==="aerilate"?"flying":attacker.abilEff==="dragonskin"?"dragon":null;
   const moveType=skinType&&move.type==="normal"?skinType:move.type;
@@ -925,6 +951,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:attacker.base.atk)*stageMult(atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
+  if(defender.itemKey==="eviolite"&&!defender.isMega)defStat*=1.5;
   if(move.lowDef){
     const physDef=defender.base.def*stageMult(defender.stages.def);
     const specDef=defender.base.spd*stageMult(defender.stages.spd);
@@ -939,7 +966,7 @@ function calcDamage(attacker,defender,move,isCrit){
   let stab=attacker.abilEff==="libero"?1.2:(attacker.types.includes(moveType)?1.3:1.0);
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
-  let movePower=move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power;
+  let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
   if(move.statusPower&&defender.status) movePower*=move.statusPower;
   if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
@@ -998,7 +1025,8 @@ function movePriority(mon,move){
 const MAX_MOVE_NAMES={normal:"ダイノーマル",fire:"ダイホノオ",water:"ダイウォーター",electric:"ダイサンダー",grass:"ダイリーフ",ice:"ダイアイス",fighting:"ダイナックル",poison:"ダイアシッド",ground:"ダイアース",flying:"ダイジェット",psychic:"ダイサイコ",bug:"ダイワーム",rock:"ダイロック",ghost:"ダイオバケ",dragon:"ダイドラゴン",dark:"ダイアーク",steel:"ダイスチル",fairy:"ダイフェアリー"};
 function maxMoveFor(mon,move){
   if(!mon.isDynamax)return move;
-  if(move.cat==="status"||move.power<=0)return Object.assign({},move,{name:"ダイフォール",maxMove:true,protect:true,power:0});
+  const sourcePower=move.chargedPower!==undefined?move.chargedPower:move.power;
+  if(move.cat==="status"||sourcePower<=0)return Object.assign({},move,{name:"ダイフォール",maxMove:true,protect:true,power:0});
   let name=MAX_MOVE_NAMES[move.type]||"ダイマックスわざ", extra={};
   if(mon.isGigantamax){
     if(mon.id==="cinderace"&&move.name==="かえんボール") {name="キョダイカキュウ";extra.ignoreAbility=true;}
@@ -1009,10 +1037,10 @@ function maxMoveFor(mon,move){
     else if(mon.id==="lizardon"&&move.type==="fire"){name="キョダイゴクエン";extra.weakBoost=4/3;}
     if(mon.id==="darkrai"&&move.name==="ダークホール"){name="キョダイスイマ";extra.percentDamage=.10;extra.hypersleep=true;extra.hypersleepPower=2;}
   }
-  const multiPower=move.multiHit?(move.power*(move.multiHit===5?3:move.multiHit)):move.power;
+  const multiPower=move.multiHit?(sourcePower*(move.multiHit===5?3:move.multiHit)):sourcePower;
   let power=extra.hypersleep&&move.cat!=="status"&&move.type==="dark"?140:Math.min(140,Math.max(90,multiPower+30));
   if(mon.id==="lizardon"&&mon.isGigantamax&&mon.name.includes("X")||mon.id==="lizardon"&&mon.isGigantamax&&mon.name.includes("Y")){if(mon.dynamaxTurns===1)power=Math.floor(power*2/3);}
-  const max=Object.assign({},move,extra,{name,power,_baseMove:move,maxMove:true});
+  const max=Object.assign({},move,extra,{name,power,chargedPower:undefined,_baseMove:move,maxMove:true});
   if(!extra.targetDrop)delete max.targetDrop; delete max.selfBoost; delete max.selfDrop;
   return max;
 }
@@ -1054,21 +1082,23 @@ function teamOf(s){return s==="me"?myTeam:foeTeam;}
 function activeIdxOf(s){return s==="me"?myA:foeA;}
 function imgOf(s){return s==="me"?"myImg":"foeImg";}
 function sideLabel(s){return mode==='friend'?(s==="me"?"プレイヤー1":"プレイヤー2"):(s==="me"?"あなた":"あいて");}
+function hasRayAscension(mon){return !!(mon&&mon.id==="rayquaza"&&mon.moves.some(m=>m&&m.name==="ガリョウテンセイ"));}
+function canRayMega(mon){return hasRayAscension(mon)&&!rayMegaBlocked&&!rayMegaActive&&!mon.isMega&&!mon.isDynamax;}
 
 function nextTurn(){ turnAct={me:null,foe:null}; requestAction("me"); }
 function requestAction(side){ inputSide=side; busy=false; renderMenu(side); }
 function renderMenu(side){
   const m=activeOf(side), c=document.getElementById("cmd");
   const head = mode==='friend' ? `<div class="center sub">▼ ${sideLabel(side)} の ばん（${m.name}）</div>` : "";
-  const megaBtn = (!m.isMega && m.stoneMatches) ?
+  const megaBtn = (!rayMegaActive && (((!m.isMega && m.stoneMatches) || canRayMega(m)))) ?
     `<button class="btn mega ${megaArm[side]?'armed':''}" onclick="toggleMega('${side}')">${megaArm[side]?'✨ メガ準備OK':'🔮 メガシンカ'}</button>` : "";
-  const maxBtn = (localStorage.getItem("ritoDynamaxClear")==="1" && !maxUsed[side] && !m.isDynamax && m.id!=="zacian" && m.id!=="eternatus" && (!m.isMega || GMAX_IDS.has(m.id)) && m.dynamaxTurns===0) ?
+  const maxBtn = (localStorage.getItem("ritoDynamaxClear")==="1" && !rayMegaActive && !maxUsed[side] && !m.isDynamax && m.id!=="zacian" && m.id!=="eternatus" && (!m.isMega || GMAX_IDS.has(m.id)) && m.dynamaxTurns===0) ?
     `<button class="btn mega ${maxArm[side]?'armed':''}" onclick="toggleMax('${side}')">${maxArm[side]?'✨ マックス準備OK':'🟥 マックス'}</button>` : "";
   c.innerHTML=`${head}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
      <button class="btn ghost" onclick="openSwitch('${side}')">こうたい</button></div>
      <div class="center">${megaBtn}${maxBtn}</div>`;
 }
-function toggleMega(side){ if(busy)return; const m=activeOf(side); megaArm[side]=!megaArm[side]; if(megaArm[side]&&(!m||!GMAX_IDS.has(m.id)))maxArm[side]=false; renderMenu(side); }
+function toggleMega(side){ if(busy)return; const m=activeOf(side); if(m&&m.id==="rayquaza"&&!canRayMega(m))return; megaArm[side]=!megaArm[side]; if(megaArm[side]&&(!m||(!GMAX_IDS.has(m.id)&&m.id!=="rayquaza")))maxArm[side]=false; renderMenu(side); }
 function toggleMax(side){ if(busy)return; const m=activeOf(side); maxArm[side]=!maxArm[side]; if(maxArm[side]&&(!m||!GMAX_IDS.has(m.id)))megaArm[side]=false; renderMenu(side); }
 document.addEventListener("keydown",e=>{
   if(document.getElementById("battle").classList.contains("hidden")||busy||!me||me.isMega||!me.stoneMatches)return;
@@ -1098,7 +1128,16 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} submitAction(side,{type:"move",move:mv}); }
+function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
+function startRayCharge(side,mv){
+  if(busy)return; busy=true; let power=0, finished=false;
+  const c=document.getElementById("cmd");
+  const finish=()=>{if(finished)return;finished=true;clearInterval(timer);window.removeEventListener("keydown",tap);busy=false;submitAction(side,{type:"move",move:Object.assign({},mv,{chargedPower:power})});};
+  const tap=e=>{if(e&&e.type==="keydown"){if(e.repeat||e.code!=="Space")return;e.preventDefault();}if(finished)return;power=Math.min(140,power+5);const b=document.getElementById("rayChargeBtn");if(b)b.textContent=`ガリョウテンセイ（威力${power}）`;};
+  const timer=setInterval(()=>{if(!finished&&Date.now()-started>=5000)finish();},50),started=Date.now();
+  c.innerHTML=`<div class="center sub">ガリョウテンセイの威力をためる（5秒）</div><button class="btn mega" id="rayChargeBtn" onclick="window.__rayChargeTap()">ガリョウテンセイ（威力0）</button>`;
+  window.__rayChargeTap=()=>tap({type:"click"}); window.addEventListener("keydown",tap);
+}
 function chooseSwitch(side,i){
   const mon=activeOf(side);
   if(mon.switchLock>0){ pushLog(`  ・ ${mon.name} は ${mon.switchLock}ターン交代できない！`,"#ff7043"); renderMenu(side); return; }
@@ -1107,7 +1146,7 @@ function chooseSwitch(side,i){
 function submitAction(side,action){
   turnAct[side]=action; clearCmd();
   if(side==="me"){
-    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock'){ turnAct.foe=cpuChoose(); doResolve(); }
+    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){ turnAct.foe=cpuChoose(); doResolve(); }
     else handoff("foe");
   }else doResolve();
 }
@@ -1130,13 +1169,13 @@ function doResolve(){
     if(B.type==="switch") t.push(cb=>doSwitch("foe",B.idx,cb));
     series(t,next);};
   const phaseMega=(next)=>{const t=[];
-    if(A.type==="move"&&megaArm.me&&me.stoneMatches&&!me.isMega){megaArm.me=false;t.push(cb=>doMega(me,"myImg",cb));}
-    const cpuRainMega=(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock')&&B.type==="switch"&&foe.id==="ragulaaji"&&weather==="rain";
-    if(foe.stoneMatches&&!foe.isMega&&((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock')||megaArm.foe||cpuRainMega)){megaArm.foe=false;t.push(cb=>doMega(foe,"foeImg",cb));}
+    if(!rayMegaActive&&A.type==="move"&&megaArm.me&&((me.stoneMatches&&!me.isMega)||(canRayMega(me)))){megaArm.me=false;t.push(cb=>doMega(me,"myImg",cb));}
+    const cpuRainMega=(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&B.type==="switch"&&foe.id==="ragulaaji"&&weather==="rain";
+    if(!rayMegaActive&&foe.stoneMatches&&!foe.isMega&&((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')||megaArm.foe||cpuRainMega)){megaArm.foe=false;t.push(cb=>doMega(foe,"foeImg",cb));}
     series(t,next);};
   const phaseMax=(next)=>{const t=[];
-    if(A.type==="move"&&maxArm.me&&!me.isDynamax&&me.id!=="zacian"&&me.id!=="eternatus"&&(!me.isMega||GMAX_IDS.has(me.id))){maxArm.me=false;t.push(cb=>doDynamax(me,"myImg",cb));}
-    if(B.type==="move"&&maxArm.foe&&!foe.isDynamax&&foe.id!=="zacian"&&foe.id!=="eternatus"&&(!foe.isMega||GMAX_IDS.has(foe.id))){maxArm.foe=false;t.push(cb=>doDynamax(foe,"foeImg",cb));}
+    if(!rayMegaActive&&A.type==="move"&&maxArm.me&&!me.isDynamax&&me.id!=="zacian"&&me.id!=="eternatus"&&(!me.isMega||GMAX_IDS.has(me.id))){maxArm.me=false;t.push(cb=>doDynamax(me,"myImg",cb));}
+    if(!rayMegaActive&&B.type==="move"&&maxArm.foe&&!foe.isDynamax&&foe.id!=="zacian"&&foe.id!=="eternatus"&&(!foe.isMega||GMAX_IDS.has(foe.id))){maxArm.foe=false;t.push(cb=>doDynamax(foe,"foeImg",cb));}
     series(t,next);
   };
   const phaseAttack=(next)=>{
@@ -1251,6 +1290,10 @@ function attack(attacker,defender,move,defImgId,cb){
       if(attacker.types.includes("flying")){attacker.roostedTypes=attacker.types.slice();attacker.types=attacker.types.filter(t=>t!=="flying");}
       renderHp(); pushLog(`  └ ${attacker.name} は HP${h}回復し、はねやすめを 使った！`,"#46d160"); cb();
     },450);
+    return;
+  }
+  if(move.recover){
+    setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*move.recover));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復した！`,"#46d160");cb();},450);
     return;
   }
   if(move.substitute){
@@ -1439,12 +1482,13 @@ function tryEmergencyExit(side,mon,cb){
   const next=team.findIndex((p,i)=>i!==current&&!p.fainted);
   if(next<0){ cb(); return; }
   pushLog(`  ★ ${mon.name} の ききかいひ！` ,"#ffcb05");
-    if((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock')&&side==='foe') doSwitch(side,next,cb);
+    if((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&side==='foe') doSwitch(side,next,cb);
   else requestForcedSwitch(side,cb);
 }
 
 // ===== メガシンカ =====
 function doDynamax(mon,imgId,cb){
+  if(mon.id!=="rayquaza")rayMegaBlocked=true;
   const wasGmax=GMAX_IDS.has(mon.id);
   maxUsed[mon===me?"me":"foe"]=true;
   mon.isDynamax=true; mon.isGigantamax=wasGmax; mon.dynamaxTurns=3;
@@ -1478,6 +1522,7 @@ function transformZacian(mon,imgId,cb){
   setTimeout(()=>applyEntry(mon,imgId,cb),700);
 }
 function doMega(mon,imgId,cb){
+  if(mon.id==="rayquaza")rayMegaActive=true; else rayMegaBlocked=true;
   const mg=mon.megaForm, old=mon.name;
   pushLog(`✨ ${old} は 紫の殻に包まれた…！`,"#b061ff");
   const img=document.getElementById(imgId); img.classList.add("mega-anim");
@@ -1564,7 +1609,7 @@ function cpuChoose(){
   const valid=cand.filter(mv=>mv.cat==="status"||calcDamage(foe,me,mv,false).eff!==0);
   if(valid.length)cand=valid;
   const weak=cand.filter(mv=>calcDamage(foe,me,mv,false).eff>1);
-  if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock'){
+  if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){
     let best=cand[0],bs=-1;
     for(const mv of cand){
       const hit=mv.accuracy||1, eff=effMultiplier(mv.type,me.types);
@@ -1684,7 +1729,7 @@ function endTurn(){
   const replaceMe=()=>{ meDead ? requestForcedSwitch("me", nextTurn) : nextTurn(); };
   // foe側の補充（CPUは自動 / フレンドはP2が選ぶ）
   if(foeDead){
-    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='dynamaxUnlock') cpuForceReplace(replaceMe);
+    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock') cpuForceReplace(replaceMe);
     else requestForcedSwitch("foe", replaceMe);
   } else replaceMe();
 }
@@ -1714,6 +1759,7 @@ function finish(meWon){
   if(mode==='lunatic2'&&meWon) localStorage.setItem("ritoLunatic2Clear","1");
   if(mode==='lunatic3'&&meWon) localStorage.setItem("ritoLunatic3Clear","1");
   if(mode==='lunatic4'&&meWon) localStorage.setItem("ritoLunatic4Clear","1");
+  if(mode==='lunatic5'&&meWon) localStorage.setItem("ritoLunatic5Clear","1");
   if(mode==='dynamaxUnlock'&&meWon) localStorage.setItem("ritoDynamaxClear","1");
   if(mode==='cpu'&&npcLevel===5){let n=Number(localStorage.getItem("ritoStreak")||0);n=meWon?n+1:0;const best=Math.max(Number(localStorage.getItem("ritoMaxStreak")||0),n);localStorage.setItem("ritoStreak",String(n));localStorage.setItem("ritoMaxStreak",String(best));saveGame();}
   document.getElementById("endArea").classList.remove("hidden");
