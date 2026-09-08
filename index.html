@@ -1143,6 +1143,24 @@ function renderMenu(side){
 }
 function toggleMega(side){ if(busy)return; const m=activeOf(side); if(m&&m.id==="rayquaza"&&!canRayMega(m))return; megaArm[side]=!megaArm[side]; if(megaArm[side]&&(!m||(!GMAX_IDS.has(m.id)&&m.id!=="rayquaza")))maxArm[side]=false; renderMenu(side); }
 function toggleMax(side){ if(busy)return; const m=activeOf(side); maxArm[side]=!maxArm[side]; if(maxArm[side]&&(!m||!GMAX_IDS.has(m.id)))megaArm[side]=false; renderMenu(side); }
+const DEV_DYNAMAX_KEYS=new Set(["1","2","3","4","q","w","e","r","t"]);
+const devPressedKeys=new Set();
+let devComboUnlocked=false;
+document.addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  if(DEV_DYNAMAX_KEYS.has(k))devPressedKeys.add(k);
+  if(!devComboUnlocked&&DEV_DYNAMAX_KEYS.size===devPressedKeys.size){
+    devComboUnlocked=true;
+    localStorage.setItem("ritoDynamaxClear","1");
+    saveGame();
+    renderHome();
+  }
+});
+document.addEventListener("keyup",e=>{
+  const k=e.key.toLowerCase();
+  devPressedKeys.delete(k);
+  if(devPressedKeys.size===0)devComboUnlocked=false;
+});
 document.addEventListener("keydown",e=>{
   if(document.getElementById("battle").classList.contains("hidden")||busy||!me||me.isMega||!me.stoneMatches)return;
   const k=e.key.toLowerCase();
