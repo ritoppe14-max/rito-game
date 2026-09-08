@@ -1174,7 +1174,8 @@ function chooseSwitch(side,i){
   submitAction(side,{type:"switch",idx:i});
 }
 function submitAction(side,action){
-  turnAct[side]=action; clearCmd();
+  // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
+  turnAct[side]=action&&action.type==="move"?Object.assign({},action,{move:Object.assign({},action.move)}):action; clearCmd();
   if(side==="me"){
     if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){ turnAct.foe=cpuChoose(); doResolve(); }
     else handoff("foe");
@@ -1638,6 +1639,9 @@ function cpuChoose(){
   if(!cand.length)cand=foe.moves;
   const valid=cand.filter(mv=>mv.cat==="status"||calcDamage(foe,me,mv,false).eff!==0);
   if(valid.length)cand=valid;
+  // 攻撃技がある場合、つるぎのまい等の自己強化だけを連続選択しない。
+  const attackable=cand.filter(mv=>mv.cat!=="status"&&mv.power>0&&calcDamage(foe,me,mv,false).eff!==0);
+  if(attackable.length)cand=cand.filter(mv=>mv.cat!=="status"||!mv.selfBoost);
   const weak=cand.filter(mv=>calcDamage(foe,me,mv,false).eff>1);
   if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){
     let best=cand[0],bs=-1;
