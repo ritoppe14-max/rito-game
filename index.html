@@ -500,11 +500,13 @@ const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ri
 function saveGame(){
   const flags={};
   SAVE_FLAGS.forEach(k=>{if(localStorage.getItem(k)==="1")flags[k]=1;});
-  localStorage.setItem("ritoGameSave",JSON.stringify({version:2,builds,party,party2,flags,streak:Number(localStorage.getItem("ritoStreak")||0)}));
+  const encodeParty=list=>list.map(p=>({...p,sp:SPECIES[p.sp]?.id||p.sp}));
+  localStorage.setItem("ritoGameSave",JSON.stringify({version:3,builds,party:encodeParty(party),party2:encodeParty(party2),flags,streak:Number(localStorage.getItem("ritoStreak")||0)}));
 }
 function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")||"null");if(s){
   if(s.builds) ["p1","p2"].forEach(owner=>{if(s.builds[owner]) Object.assign(builds[owner],s.builds[owner]);});
-  if(Array.isArray(s.party))party=s.party;if(Array.isArray(s.party2))party2=s.party2;
+  const decodeParty=list=>Array.isArray(list)?list.map(p=>{const id=typeof p.sp==="number"?SPECIES[p.sp]?.id:p.sp;const sp=SPECIES.findIndex(x=>x.id===id);return sp>=0?{...p,sp}:null;}).filter(Boolean):[];
+  if(Array.isArray(s.party))party=decodeParty(s.party);if(Array.isArray(s.party2))party2=decodeParty(s.party2);
   if(s.flags&&typeof s.flags==="object") SAVE_FLAGS.forEach(k=>{if(s.flags[k]===1)localStorage.setItem(k,"1");});
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
@@ -600,6 +602,8 @@ function renderParty(){
   for(let i=0;i<6;i++){
     if(curParty[i]){
       const sp=SPECIES[curParty[i].sp];
+      const savedMoves=spMoves(sp,owner);
+      const movePool=[...new Set([...(sp.learnset||[]),...savedMoves])];
       // 持ち物一覧に登録されている全アイテムを選択可能にする。
       // メガストーン／ナイトもITEMSへ自動登録されているため、ここで一緒に表示する。
       const itemKeys=Object.keys(ITEMS).filter(k=>!ITEMS[k].mega||ITEMS[k].mega===curParty[i].sp);
@@ -609,6 +613,10 @@ function renderParty(){
         <select onchange="setItem(${i},this.value)" class="${ITEMS[curParty[i].item].mega?'stone':''}">
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
         </select>
+        <div class="mini" style="margin-top:5px">技</div>
+        ${[0,1,2,3].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
+          ${movePool.map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${MOVES[k]?.name||k}</option>`).join("")}
+        </select>`).join("")}
         <button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:4px" onclick="removeParty(${i})">はずす</button>
       </div>`;
     }else{
@@ -645,6 +653,13 @@ function toggleParty(i){
 }
 function removeParty(slot){ curParty.splice(slot,1); saveGame(); renderParty(); }
 function setItem(slot,val){ curParty[slot].item=val; saveGame(); renderParty(); }
+function setPartyMove(slot,moveSlot,val){
+  const sp=SPECIES[curParty[slot]?.sp];
+  if(!sp)return;
+  const moves=spMoves(sp,ownerForBuilder());
+  if(moveSlot<4)moves[moveSlot]=val;
+  saveGame(); renderParty();
+}
 
 // ===== 育成（技・特性）=====
 let trainSel=-1;
