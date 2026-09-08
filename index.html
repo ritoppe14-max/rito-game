@@ -563,7 +563,7 @@ function renderHome(){
   document.getElementById("goBattle").disabled = party.length!==6;
   document.getElementById("goBattle").textContent = party.length===6?"⚔ たたかう":`⚔ たたかう（あと${6-party.length}体）`;
   const hero=document.getElementById("homeHero");
-  hero.innerHTML = party.length? party.map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${ITEMS[p.item].name}</div></div>`).join("")
+  hero.innerHTML = party.length? party.filter(p=>SPECIES[p.sp]).map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${(ITEMS[p.item]||ITEMS.none).name}</div></div>`).join("")
     : `<div class="sub">まだパーティがありません。「パーティを編成する」から6体えらんでね。</div>`;
   document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`).join("");
 }
@@ -602,6 +602,10 @@ function renderParty(){
   for(let i=0;i<6;i++){
     if(curParty[i]){
       const sp=SPECIES[curParty[i].sp];
+      // 古い保存データに存在しないポケモンIDがあっても編成画面を止めない。
+      if(!sp){curParty.splice(i,1);i--;continue;}
+      const item=ITEMS[curParty[i].item]||ITEMS.none;
+      if(!ITEMS[curParty[i].item])curParty[i].item="none";
       const savedMoves=spMoves(sp,owner);
       const movePool=[...new Set([...(sp.learnset||[]),...savedMoves])];
       // 持ち物一覧に登録されている全アイテムを選択可能にする。
@@ -610,7 +614,7 @@ function renderParty(){
       slots.innerHTML+=`<div class="pslot">
         <img src="${IMG(sp.img)}"><div style="font-size:12px;font-weight:700">${sp.name}</div>
         <div class="mini">特性：${spAbil(sp,owner).name}</div>
-        <select onchange="setItem(${i},this.value)" class="${ITEMS[curParty[i].item].mega?'stone':''}">
+        <select onchange="setItem(${i},this.value)" class="${item.mega?'stone':''}">
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
         </select>
         <div class="mini" style="margin-top:5px">技</div>
