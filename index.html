@@ -1173,12 +1173,12 @@ function openSwitch(side){  // 通常の交代（行動として）
 }
 function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
 function startRayCharge(side,mv){
-  if(busy)return; busy=true; let power=0, finished=false;
+  if(busy)return; busy=true; let power=0, postMaxTaps=0, finished=false;
   const c=document.getElementById("cmd");
-  const finish=()=>{if(finished)return;finished=true;clearInterval(timer);window.removeEventListener("keydown",tap);busy=false;submitAction(side,{type:"move",move:Object.assign({},mv,{chargedPower:power})});};
-  const tap=e=>{if(e&&e.type==="keydown"){if(e.repeat||e.code!=="Space")return;e.preventDefault();}if(finished)return;power=Math.min(140,power+5);const b=document.getElementById("rayChargeBtn");if(b)b.textContent=`ガリョウテンセイ（威力${power}）`;};
-  const timer=setInterval(()=>{if(!finished&&Date.now()-started>=5000)finish();},50),started=Date.now();
-  c.innerHTML=`<div class="center sub">ガリョウテンセイの威力をためる（5秒）</div><button class="btn mega" id="rayChargeBtn" onclick="window.__rayChargeTap()">ガリョウテンセイ（威力0）</button>`;
+  const finish=()=>{if(finished)return;finished=true;clearInterval(timer);window.removeEventListener("keydown",tap);busy=false;const bonus=Math.floor(postMaxTaps/5)*.05;submitAction(side,{type:"move",move:Object.assign({},mv,{chargedPower:power,percentDamage:bonus,ignoreFixedReduction:bonus>0})});};
+  const tap=e=>{if(e&&e.type==="keydown"){if(e.repeat||e.code!=="Space")return;e.preventDefault();}if(finished)return;if(power<140)power=Math.min(140,power+5);else postMaxTaps++;const bonus=Math.floor(postMaxTaps/5)*5;const b=document.getElementById("rayChargeBtn");if(b)b.textContent=`ガリョウテンセイ（威力${power}）${bonus?`／割合+${bonus}%`:""}`;};
+  const timer=setInterval(()=>{if(!finished&&Date.now()-started>=8000)finish();},50),started=Date.now();
+  c.innerHTML=`<div class="center sub">ガリョウテンセイの威力をためる（8秒）<br>威力140後は5タップごとに割合ダメージ+5%</div><button class="btn mega" id="rayChargeBtn" onclick="window.__rayChargeTap()">ガリョウテンセイ（威力0）</button>`;
   window.__rayChargeTap=()=>tap({type:"click"}); window.addEventListener("keydown",tap);
 }
 function chooseSwitch(side,i){
@@ -1388,7 +1388,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(attacker.itemKey==="healcrown"&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.30));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);renderHp();pushLog(`  ★ かいふくかんむりで HP${h}回復！`,"#46d160");}
     applyMaxMoveEffect(attacker,defender,move);
     if(move.percentDamage&&defender.curHp>0){
-      const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*constantDamageFactor(defender)));
+      const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*(move.ignoreFixedReduction?1:constantDamageFactor(defender))));
       defender.curHp=Math.max(0,defender.curHp-extra); renderHp();
       pushLog(`  └ 割合ダメージ ${extra}！`);
     }
