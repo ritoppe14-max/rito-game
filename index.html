@@ -729,7 +729,9 @@ function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=
 // ===== 見せ合い → 3体選出 =====
 let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false;
 function enterPreview(){   // CPU戦
-  if(party.length!==6) return;
+  // ダイマックス解放戦は3体以上の手持ちがあれば挑戦できる。
+  // 通常のCPU戦・ルナティック戦は従来どおり6体編成を必要とする。
+  if(mode==='dynamaxUnlock' ? party.length<3 : party.length!==6) return;
   if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic5') buildLunaticParty5(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
   selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, label:"あなたのパーティ — 出す3体をえらぶ（選んだ順に先発）",
     cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
