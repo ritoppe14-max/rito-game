@@ -341,7 +341,7 @@ const M={
   tenmillion:{name:"10まんばりき",type:"ground",cat:"phys",power:90},
   buildup:{name:"ビルドアップ",type:"fighting",cat:"status",power:0,selfBoost:{atk:1,def:1}},
   leechseed:{name:"やどりぎのたね",type:"grass",cat:"status",power:0,accuracy:.9,leech:true},
-  doublepepper:{name:"ダブルハバネロ",type:"grass",cat:"phys",power:45,doubleType:"fire"},
+  doublepepper:{name:"ダブルハバネロ",type:"grass",cat:"phys",power:45,doubleType:"fire",doublePower:45},
   pepperextract:{name:"ハバネロエキス",type:"grass",cat:"spec",power:30,burnPower:4},
   gravevisit:{name:"おはかまいり",type:"ghost",cat:"phys",power:50,faintBonus:40,maxPower:120},
   shadowball:{name:"シャドーボール",type:"ghost",cat:"spec",power:80,targetDrop:{chance:.2,stats:{spd:-1}}},
@@ -1395,7 +1395,12 @@ function attack(attacker,defender,move,defImgId,cb){
       defender.curHp=Math.max(0,defender.curHp-second); renderHp();
       pushLog(`  └ おやこあいの 追加攻撃！ ${second} ダメージ`);
     }
-    if(move.doubleType&&defender.curHp>0){const second=calcDamage(attacker,defender,Object.assign({},move,{type:move.doubleType,doubleType:null}),false).dmg;defender.curHp=Math.max(0,defender.curHp-second);renderHp();pushLog(`  └ 2回目の攻撃！ ${second} ダメージ`);}
+    if(move.doubleType&&defender.curHp>0){
+      const secondMove=Object.assign({},move,{type:move.doubleType,power:move.doublePower||move.power,doubleType:null});
+      const second=calcDamage(attacker,defender,secondMove,false).dmg;
+      defender.curHp=Math.max(0,defender.curHp-second);renderHp();
+      pushLog(`  └ 2回目の攻撃！（${TYPE_JP[secondMove.type]}） ${second} ダメージ`);
+    }
     if(defender.abilEff==="pepperguard"&&attacker.curHp>0&&defender.curHp>0) applyStatus(attacker,"burn",defender);
     if(move.salt&&defender.curHp>0){defender.salted=true;pushLog(`  ・ ${defender.name} は しおづけになった！`,"#7ad1ff");}
     if(move.trapTurns&&defender.curHp>0){
