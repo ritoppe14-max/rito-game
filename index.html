@@ -1388,7 +1388,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(attacker.itemKey==="healcrown"&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.30));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);renderHp();pushLog(`  ★ かいふくかんむりで HP${h}回復！`,"#46d160");}
     applyMaxMoveEffect(attacker,defender,move);
     if(move.percentDamage&&defender.curHp>0){
-      const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*(defender.id==="eternatus"?.1:1)));
+      const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*constantDamageFactor(defender)));
       defender.curHp=Math.max(0,defender.curHp-extra); renderHp();
       pushLog(`  └ 割合ダメージ ${extra}！`);
     }
@@ -1686,6 +1686,11 @@ function cpuForcedSwitch(){
 }
 
 // ===== ターン終了処理 =====
+function constantDamageFactor(mon){
+  if(mon&&mon.isMega&&mon.id==="rayquaza")return .2;
+  if(mon&&mon.id==="eternatus")return .1;
+  return 1;
+}
 function applyResidual(mon,imgId,source){
   if(mon.fainted) return;
   let d=0, label="", color="#9fb3d6";
@@ -1710,8 +1715,8 @@ function applyResidual(mon,imgId,source){
     color="#ff7043";
   }
   if(mon.salted){d=Math.max(1,Math.floor(mon.maxHp/(mon.types.includes("steel")||mon.types.includes("water")?4:8)));label="しおづけ";color="#7ad1ff";}
-  if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8*(mon.id==="eternatus"?.1:1)));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
-  if(mon.id==="eternatus"&&d>0)d=Math.max(1,Math.floor(d*.1));
+  if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8*constantDamageFactor(mon)));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
+  if(d>0)d=Math.max(1,Math.floor(d*constantDamageFactor(mon)));
   if(!d) return;
   mon.curHp=Math.max(0,mon.curHp-d);
   if(mon.trapTurns>0) mon.trapTurns--;
@@ -1739,7 +1744,7 @@ function endTurn(){
     const source=target===me?foe:me;
     const sleepy=target&&(target.yawnTurns>0||target.status==="sleep"||target.status==="hypersleep");
     if(source&&!source.fainted&&source.abilEff==="nightmarez"&&sleepy&&target.curHp>0){
-      const d=Math.max(1,Math.floor(target.maxHp/4*(target.id==="eternatus"?.1:1)));
+      const d=Math.max(1,Math.floor(target.maxHp/4*constantDamageFactor(target)));
       target.curHp=Math.max(0,target.curHp-d); renderHp();
       pushLog(`  ★ ${source.name} の ナイトメアZ！ ${target.name} は ${d} ダメージ！`,"#b061ff");
       if(target.curHp<=0&&!target.fainted) faintMon(target,target===me?"myImg":"foeImg");
@@ -1770,7 +1775,7 @@ function endTurn(){
   if(psychicTurns>0)psychicTurns--;
   if(mistTurns>0)mistTurns--;
   if(weather==="hail"){
-    [me,foe].forEach(m=>{if(m&&!m.fainted&&!m.types.includes("ice")){const d=Math.max(1,Math.floor(m.maxHp/16*(m.id==="eternatus"?.1:1)));m.curHp=Math.max(0,m.curHp-d);pushLog(`  ・ ${m.name} は あられで ${d} ダメージ！`,"#a8d8e8");if(m.curHp<=0&&!m.fainted)faintMon(m,m===me?"myImg":"foeImg");}});
+    [me,foe].forEach(m=>{if(m&&!m.fainted&&!m.types.includes("ice")){const d=Math.max(1,Math.floor(m.maxHp/16*constantDamageFactor(m)));m.curHp=Math.max(0,m.curHp-d);pushLog(`  ・ ${m.name} は あられで ${d} ダメージ！`,"#a8d8e8");if(m.curHp<=0&&!m.fainted)faintMon(m,m===me?"myImg":"foeImg");}});
     renderHp();
   }
   // ひんしの入れ替え
