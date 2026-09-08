@@ -100,8 +100,6 @@
   <div id="home">
     <div class="grid" id="homeHero"></div>
     <div class="mode-menu">
-      <button class="btn mode-btn practice" onclick="show('train')">🎯 練習</button>
-      <button class="btn mode-btn battle" onclick="openPartyBuilder('cpu')">⚔ 対戦</button>
     </div>
     <div class="menu">
       <button class="btn blue" onclick="show('train')">🎓 ポケモンを育成する（技・特性）</button>
@@ -453,7 +451,7 @@ const ABILS={
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
   lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"],
 };
-SPECIES.forEach(sp=>{ sp.learnset=LEARN[sp.id]; if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]; });
+SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
 // 育成内容（セッション保持）：1Pとフレンドで技4つ・特性を別々に保存
 function createBuild(){
