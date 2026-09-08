@@ -316,7 +316,7 @@ const M={
   closecombat:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
   focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
   nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
-  shadowclaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:70,cut:true},
+  shadowclaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:70,cut:true,ignoreDefBoost:true},
   suckerpunch:{name:"ふいうち",type:"dark",cat:"phys",power:70,prio:6,requiresAttack:true},
   shadowsneak:{name:"かげうち",type:"ghost",cat:"phys",power:40,prio:1},
   playtogether:{name:"いっしょにあそぼ!",type:"fairy",cat:"phys",power:170,onceBattle:true,preTargetDrop:{def:-1}},
@@ -976,6 +976,8 @@ function calcDamage(attacker,defender,move,isCrit){
   if(!move.ignoreAbility&&((defender.abilEff==="flashfire"&&moveType==="fire")||(defender.abilEff==="magmaheat"&&moveType==="ground")||(defender.abilEff==="eartheater"&&moveType==="ground"))) return {dmg:0,eff:0,stab:false};
   let atkStage=(move.cat==="spec")?attacker.stages.spa:attacker.stages.atk;
   let defStage=(move.cat==="spec")?defender.stages.spd:defender.stages.def;
+  // シャドークローは相手の防御ランク上昇を無視する。
+  if(move.ignoreDefBoost&&defStage>0)defStage=0;
   if(!move.ignoreAbility&&defender.abilEff==="unaware") atkStage=0;
   if(!move.ignoreAbility&&attacker.abilEff==="unaware") defStage=0;
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
