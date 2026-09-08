@@ -511,7 +511,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ return buildOf(sp,owner).moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
@@ -606,7 +606,7 @@ function renderParty(){
       if(!sp){curParty.splice(i,1);i--;continue;}
       const item=ITEMS[curParty[i].item]||ITEMS.none;
       if(!ITEMS[curParty[i].item])curParty[i].item="none";
-      const savedMoves=spMoves(sp,owner);
+      const savedMoves=Array.isArray(spMoves(sp,owner))?spMoves(sp,owner):sp.moves.slice();
       const movePool=[...new Set([...(sp.learnset||[]),...savedMoves])];
       // 持ち物一覧に登録されている全アイテムを選択可能にする。
       // メガストーン／ナイトもITEMSへ自動登録されているため、ここで一緒に表示する。
