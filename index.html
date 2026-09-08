@@ -526,6 +526,8 @@ const ITEMS={
   toxicorb:{name:"どくどくだま",desc:"1ターン目終了時に自分がどくになる"},
   healcrown:{name:"かいふくかんむり",desc:"与えたダメージの30%回復。最大HPと攻撃ダメージが5%増加"},
   powerband:{name:"ちからのハチマキ",desc:"すべての攻撃のダメージ10%増加。攻撃性能5%増加"},
+  magmarockitem:{name:"マグマのがんせき",desc:"はがね・ほのお技1.2倍。受けるじめん技を25%軽減"},
+  skywyrm:{name:"てんくうのたつ",desc:"攻撃上昇後に防御・特防が下がると素早さ+1"},
   cheatdice:{name:"いかさまダイス",desc:"多段技が連続で命中したとき4～5回攻撃が確定"},
   firstbell:{name:"さきがけベル",desc:"相手を状態異常にすると最大HPの30%回復"},
   gritbelt:{name:"ふんばりベルト",desc:"状態異常になったとき最大HPの50%回復"},
@@ -1056,12 +1058,14 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.itemKey==="orb") dmg*=1.3;
   if(attacker.itemKey==="healcrown") dmg*=1.05;
   if(attacker.itemKey==="powerband") dmg*=1.10;
+  if(attacker.itemKey==="magmarockitem"&&(moveType==="steel"||moveType==="fire"))dmg*=1.2;
   if(attacker.itemKey==="band"&&move.cat==="phys") dmg*=1.3;
   if(attacker.itemKey==="specs"&&move.cat==="spec") dmg*=1.3;
   if(attacker.itemKey==="lightstone"){ atkStat*=1.1; dmg*=1.1; }
   if(!move.ignoreAbility&&defender.abilEff==="aurashield"&&move.cat==="phys") dmg*=0.5;
   if(!move.ignoreAbility&&defender.abilEff==="prankster") dmg*=0.9;
   if(!move.ignoreAbility&&defender.abilEff==="purifyingSalt"&&move.type==="ghost") dmg*=0.5;
+  if(defender.itemKey==="magmarockitem"&&moveType==="ground")dmg*=0.75;
   if(defender.status==="hypersleep") dmg*=1.25;
   if(grassTurns>0&&moveType==="grass") dmg*=1.3;
   if(electricTurns>0&&moveType==="electric") dmg*=1.33;
@@ -1561,7 +1565,7 @@ function hasPendingMove(mon){
   const side=mon===me?"me":"foe";
   return turnAct[side]&&turnAct[side].type==="move";
 }
-function applyDrop(mon,stats){for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}renderStages();}
+function applyDrop(mon,stats){let atkUp=false,defDown=false,spdDown=false;for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;if(k==="atk"&&d>0)atkUp=true;if(k==="def"&&d<0)defDown=true;if(k==="spd"&&d<0)spdDown=true;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}if(mon.itemKey==="skywyrm"&&!mon.skyWyrmBoosted&&(atkUp||mon.stages.atk>0)&&(defDown||mon.stages.def<0)&&(spdDown||mon.stages.spd<0)){mon.skyWyrmBoosted=true;mon.stages.spe=Math.min(6,mon.stages.spe+1);pushLog(`  ★ ${mon.name} の てんくうのたつ！ すばやさが上がった！`,"#ffcb05");}renderStages();}
 
 // ききかいひ：攻撃後にHPが半分以下になったら自動で交代する。
 // この関数を通らずに次の攻撃へ進むと、攻撃完了後に例外が発生して
