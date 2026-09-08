@@ -842,6 +842,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
     if(mode==="lunatic5"){
       mon.maxHp*=2; mon.curHp=mon.maxHp;
       mon.moves=mon.moves.map(m=>m.name==="ガリョウテンセイ"?Object.assign({},m,{chargedPower:140}):m);
+      mon.stoneMatches=true; mon.megaForm=SPECIES[SP_BY_ID.rayquaza].megas[0];
     }
     if(mon.id==="zacian") mon.itemKey="rustedsword";
     if(mode==="lunatic2"&&mon.id==="marilli"){mon.abilName=ABIL.hugepower.name;mon.abilEff=ABIL.hugepower.eff;}
