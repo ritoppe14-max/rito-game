@@ -431,7 +431,7 @@ const SPECIES=[
  S("garganacl","キョジオーン","image/image/キョジオーン.gif",["rock"],{hp:100,atk:100,def:130,spa:45,spd:90,spe:35},"purifyingSalt",["saltcure","stoneedge","earthquake","ironhead"],[]),
  S("scovillain","スコヴィラン","image/image/スコヴィラン.gif",["grass","fire"],{hp:65,atk:108,def:65,spa:108,spd:65,spe:75},"moody",["flamethrower","energyball","crunch","rockslide"],
    [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:130,def:93,spa:130,spd:93,spe:75},abil:"pepperguard"}]),
- S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"levitate",["latiospulse","dpulse","psychic","thunderbolt"],[]),
+ S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"speedboost",["latiospulse","dpulse","psychic","thunderbolt"],[]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -488,7 +488,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["levitate"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
