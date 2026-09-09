@@ -531,6 +531,7 @@ const ITEMS={
   powerband:{name:"ちからのハチマキ",desc:"すべての攻撃のダメージ10%増加。攻撃性能5%増加"},
   magmarockitem:{name:"マグマのがんせき",desc:"はがね・ほのお技1.2倍。受けるじめん技を25%軽減"},
   skywyrm:{name:"てんくうのたつ",desc:"攻撃上昇後に防御・特防が下がると素早さ+1"},
+  peacescroll:{name:"へいわせんこく",desc:"3ターン攻撃・変化技を封じ、防御・特防3倍。りゅうのはどうはチャージのみ可能"},
   cheatdice:{name:"いかさまダイス",desc:"多段技が連続で命中したとき4～5回攻撃が確定"},
   firstbell:{name:"さきがけベル",desc:"相手を状態異常にすると最大HPの30%回復"},
   gritbelt:{name:"ふんばりベルト",desc:"状態異常になったとき最大HPの50%回復"},
@@ -895,6 +896,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.isMega=false; p.isDynamax=false; p.isGigantamax=false; p.dynamaxTurns=0; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.toxicTurns=0; p.flinched=false; p.turnMoved=false; p.hitBeforeMove=false; p.usedDisguise=false; p.usedPlayTogether=false; p.usedFirstBell=false; p.usedGritBelt=false; p.quickDraw=false;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.infinitePower=0;
+  p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
@@ -1024,6 +1026,7 @@ function calcDamage(attacker,defender,move,isCrit){
   let atkStat=((move.cat==="spec")?attacker.base.spa:attacker.base.atk)*stageMult(atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(defender.itemKey==="eviolite"&&!defender.isMega)defStat*=1.5;
+  if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
   if(move.lowDef){
     const physDef=defender.base.def*stageMult(defender.stages.def);
     const specDef=defender.base.spd*stageMult(defender.stages.spd);
@@ -1070,6 +1073,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(!move.ignoreAbility&&defender.abilEff==="prankster") dmg*=0.9;
   if(!move.ignoreAbility&&defender.abilEff==="purifyingSalt"&&move.type==="ghost") dmg*=0.5;
   if(defender.itemKey==="magmarockitem"&&moveType==="ground")dmg*=0.75;
+  if(attacker.itemKey==="peacescroll"&&attacker.peaceTurns>0&&move.infiniteCharge)return {dmg:0,eff:1,stab:false};
   if(defender.status==="hypersleep") dmg*=1.25;
   if(grassTurns>0&&moveType==="grass") dmg*=1.3;
   if(electricTurns>0&&moveType==="electric") dmg*=1.33;
@@ -1220,7 +1224,7 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
+function chooseMove(side,i){ const mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.itemKey==="peacescroll"&&user.peaceTurns>0&& !mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
 function startLatiosCharge(side,mv){
   if(busy)return; busy=true; const mon=activeOf(side); let taps=0,finished=false;
   const c=document.getElementById("cmd");
@@ -1817,6 +1821,7 @@ function endTurn(){
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
+  [me,foe].forEach(m=>{if(m&&m.peaceTurns>0){m.peaceTurns--;if(m.peaceTurns===0)pushLog(`  ・ ${m.name} の へいわせんこくの効果が切れた！`,"#7ad1ff");}});
   renderStages();
   [me,foe].forEach(m=>{if(m&&m.protectCooldown>0)m.protectCooldown--;if(m&&m.abilEff==="moody"&&!m.fainted)applyMoody(m);});
   applyResidual(me,"myImg",foe);
