@@ -113,11 +113,11 @@
       <button class="btn mega" onclick="startLunaticStage4()"><img src="image/image/メガダークライ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ4</button>
       <button class="btn mega" onclick="startLunaticStage5()"><img src="image/image/メガレックウザ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ5</button>
       <button class="btn mega" onclick="startDynamaxUnlockStage()"><img src="image/image/ムゲンダイナ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ダイマックス解放</button>
-      <label class="sub">NPCレベル <select id="npcLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <label class="sub">NPCレベル <select id="npcLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
       <button class="btn ghost" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
       <button class="btn ghost" onclick="showItemDex()">🎒 持ち物一覧</button>
       <button class="btn ghost" onclick="showPokemonDex()">📖 ポケモン一覧</button>
-      <div class="sub" id="streakLabel">最大連勝記録：0勝</div>
+      <div class="sub" id="streakLabel">現在の連勝：0勝 ／ 最大連勝記録：0勝</div>
       <div class="sub" style="margin-top:14px">📖 ポケモン一覧</div>
       <div class="grid" id="homeDex"></div>
     </div>
@@ -178,7 +178,7 @@
     <div class="cmd" id="cmd"></div>
     <div class="center hidden" id="endArea">
       <div class="result" id="resultTxt"></div>
-      <button class="btn ghost" onclick="show('home')">メニューにもどる</button>
+      <button class="btn ghost" onclick="show('home')">メニューにもどる</button><button class="btn blue" onclick="startCpu()">🔁 連戦する</button>
     </div>
   </div>
 </div>
@@ -564,7 +564,7 @@ function sampleFour(arr){
 
 document.getElementById("homeHero").innerHTML="";
 function renderHome(){
-  document.getElementById("streakLabel").textContent=`最大連勝記録：${Number(localStorage.getItem("ritoMaxStreak")||0)}勝`;
+  document.getElementById("streakLabel").textContent=`現在の連勝：${Number(localStorage.getItem("ritoStreak")||0)}勝 ／ 最大連勝記録：${Number(localStorage.getItem("ritoMaxStreak")||0)}勝`;
   document.getElementById("goBattle").disabled = party.length!==6;
   document.getElementById("goBattle").textContent = party.length===6?"⚔ たたかう":`⚔ たたかう（あと${6-party.length}体）`;
   const hero=document.getElementById("homeHero");
@@ -1867,7 +1867,7 @@ function finish(meWon){
   if(mode==='dynamaxUnlock'&&meWon) localStorage.setItem("ritoDynamaxClear","1");
   // 解放状況も手持ち・育成内容と同じスナップショットへ保存する。
   if(meWon&&['lunatic','lunatic2','lunatic3','lunatic4','lunatic5','dynamaxUnlock'].includes(mode)) saveGame();
-  if(mode==='cpu'&&npcLevel===5){let n=Number(localStorage.getItem("ritoStreak")||0);n=meWon?n+1:0;const best=Math.max(Number(localStorage.getItem("ritoMaxStreak")||0),n);localStorage.setItem("ritoStreak",String(n));localStorage.setItem("ritoMaxStreak",String(best));saveGame();}
+  if(mode==='cpu'){let n=Number(localStorage.getItem("ritoStreak")||0);n=meWon?n+1:0;const best=Math.max(Number(localStorage.getItem("ritoMaxStreak")||0),n);localStorage.setItem("ritoStreak",String(n));localStorage.setItem("ritoMaxStreak",String(best));saveGame();}
   document.getElementById("endArea").classList.remove("hidden");
   const r=document.getElementById("resultTxt");
   if(mode==='friend') r.textContent = meWon?"🏆 プレイヤー1の勝ち！":"🏆 プレイヤー2の勝ち！";
