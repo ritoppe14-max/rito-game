@@ -1715,6 +1715,11 @@ function cpuChoose(){
   if(!cand.length)cand=foe.moves;
   const valid=cand.filter(mv=>mv.cat==="status"||calcDamage(foe,me,mv,false).eff!==0);
   if(valid.length)cand=valid;
+  if(npcLevel>=10){
+    const preferred=foe.base.spa>=foe.base.atk?"spec":"phys";
+    const typed=cand.filter(mv=>mv.cat==="status"||mv.cat===preferred);
+    if(typed.length)cand=typed;
+  }
   // 攻撃技がある場合、つるぎのまい等の自己強化だけを連続選択しない。
   const attackable=cand.filter(mv=>mv.cat!=="status"&&mv.power>0&&calcDamage(foe,me,mv,false).eff!==0);
   if(attackable.length)cand=cand.filter(mv=>mv.cat!=="status"||!mv.selfBoost);
