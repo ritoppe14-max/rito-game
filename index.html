@@ -638,9 +638,9 @@ function renderParty(){
       slots.innerHTML+=`<div class="pslot">
         <img src="${IMG(sp.img)}"><div style="font-size:12px;font-weight:700">${sp.name}</div>
         <div class="mini">特性：${spAbil(sp,owner).name}</div>
-        <select onchange="setItem(${i},this.value)" class="${item.mega?'stone':''}">
+        <div style="display:flex;gap:4px;align-items:center"><select onchange="setItem(${i},this.value)" class="${item.mega?'stone':''}">
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
-        </select>
+        </select><button class="btn ghost" style="font-size:11px;padding:4px 7px" onclick="searchItems(${i})">調べる</button></div>
         <div class="mini" style="margin-top:5px">技</div>
         ${[0,1,2,3].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
           ${movePool.map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
@@ -681,6 +681,15 @@ function toggleParty(i){
 }
 function removeParty(slot){ curParty.splice(slot,1); saveGame(); renderParty(); }
 function setItem(slot,val){ curParty[slot].item=val; saveGame(); renderParty(); }
+function searchItems(slot){
+  const q=prompt("持ち物の頭文字をアルファベットで入力（例：I）");
+  if(q===null)return;
+  const letter=q.trim().toUpperCase().charAt(0);
+  const groups={A:"あ",I:"い",U:"う",E:"え",O:"お",K:"か",G:"が",S:"さ",Z:"ざ",T:"た",D:"だ",N:"な",H:"は",B:"ば",P:"ぱ",M:"ま",Y:"や",R:"ら",W:"わ"};
+  const head=groups[letter];
+  const found=Object.keys(ITEMS).filter(k=>!ITEMS[k].mega&&head&&ITEMS[k].name.startsWith(head)||!ITEMS[k].mega&&letter&&k.charAt(0).toUpperCase()===letter);
+  alert(found.length?found.map(k=>`【${ITEMS[k].name}】${ITEMS[k].desc}`).join("\n"):"該当する持ち物がありません。");
+}
 function setPartyMove(slot,moveSlot,val){
   const sp=SPECIES[curParty[slot]?.sp];
   if(!sp)return;
