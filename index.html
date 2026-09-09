@@ -282,6 +282,7 @@ const M={
   hydreigonmeteor:{name:"りゅうせいぐん",type:"dragon",cat:"spec",power:120,hydreigonMeteor:true},
   dragonrage2:{name:"りゅうのいごり",type:"dragon",cat:"phys",power:120,selfDrop:{atk:-1}},
   dpulse:{name:"ドラゴンパルス",type:"dragon",cat:"spec",power:85},
+  latiospulse:{name:"りゅうのはどう",type:"dragon",cat:"spec",power:30,infiniteCharge:true},
   dragonclaw:{name:"ドラゴンクロー",type:"dragon",cat:"phys",power:80,cut:true},
   scaleshot:{name:"スケイルショット",type:"dragon",cat:"phys",power:25,accuracy:.90,multiHit:5,selfBoost:{chance:1,stats:{def:1}},selfDrop:{spe:-1}},
   doublewing:{name:"ダブルフィング",type:"flying",cat:"phys",power:45,multiHit:2},
@@ -430,7 +431,7 @@ const SPECIES=[
  S("garganacl","キョジオーン","image/image/キョジオーン.gif",["rock"],{hp:100,atk:100,def:130,spa:45,spd:90,spe:35},"purifyingSalt",["saltcure","stoneedge","earthquake","ironhead"],[]),
  S("scovillain","スコヴィラン","image/image/スコヴィラン.gif",["grass","fire"],{hp:65,atk:108,def:65,spa:108,spd:65,spe:75},"moody",["flamethrower","energyball","crunch","rockslide"],
    [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:130,def:93,spa:130,spd:93,spe:75},abil:"pepperguard"}]),
- S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"levitate",["dpulse","psychic","thunderbolt","icebeam"],[]),
+ S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"levitate",["latiospulse","dpulse","psychic","thunderbolt"],[]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -479,7 +480,7 @@ const LEARN={
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
   garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
-  latios:["dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
+  latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
 };
 const ABILS={
   centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], darkrai:["pressure"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
@@ -893,6 +894,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
   p.isMega=false; p.isDynamax=false; p.isGigantamax=false; p.dynamaxTurns=0; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.toxicTurns=0; p.flinched=false; p.turnMoved=false; p.hitBeforeMove=false; p.usedDisguise=false; p.usedPlayTogether=false; p.usedFirstBell=false; p.usedGritBelt=false; p.quickDraw=false;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+  p.infinitePower=0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
@@ -1218,7 +1220,16 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
+function chooseMove(side,i){ const mv=activeOf(side).moves[i]; if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
+function startLatiosCharge(side,mv){
+  if(busy)return; busy=true; const mon=activeOf(side); let taps=0,finished=false;
+  const c=document.getElementById("cmd");
+  const finish=()=>{if(finished)return;finished=true;clearInterval(timer);window.removeEventListener("keydown",tap);busy=false;mon.infinitePower=Math.min(999,mon.infinitePower+taps);const hits=Math.min(4,1+Math.floor(mon.infinitePower/30));const power=30+Math.max(0,mon.infinitePower-120);submitAction(side,{type:"move",move:Object.assign({},mv,{chargedPower:power,multiHit:hits})});};
+  const tap=e=>{if(e&&e.type==="keydown"){if(e.repeat||e.code!=="Space")return;e.preventDefault();}if(finished)return;taps++;const total=mon.infinitePower+taps;const b=document.getElementById("latiosChargeBtn");if(b)b.textContent=`りゅうのはどう（むげんのちから ${total}／攻撃${Math.min(4,1+Math.floor(total/30))}回 威力${30+Math.max(0,total-120)}）`;};
+  const timer=setInterval(()=>{if(!finished&&Date.now()-started>=5000)finish();},50),started=Date.now();
+  c.innerHTML=`<div class="center sub">りゅうのはどうのむげんのちからをためる（5秒）</div><button class="btn mega" id="latiosChargeBtn" onclick="window.__latiosChargeTap()">りゅうのはどう（むげんのちから ${mon.infinitePower}）</button>`;
+  window.__latiosChargeTap=()=>tap({type:"click"}); window.addEventListener("keydown",tap);
+}
 function startRayCharge(side,mv){
   if(busy)return; busy=true; let power=0, postMaxTaps=0, finished=false;
   const c=document.getElementById("cmd");
