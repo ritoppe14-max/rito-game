@@ -237,7 +237,7 @@ const ABIL={
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
   sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
   roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null}, clearbody:{name:"クリアボディ",eff:null}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"},
-  aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
+  aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
@@ -253,6 +253,8 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",clearbody:"相手の技で能力ランクを下げられない",poisonheal:"どく・もうどく状態のとき毎ターン最大HPの1/7回復",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
   poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
 
+ABIL.defiant={name:"まけんき",eff:"defiant"};
+ABDESC.defiant="能力が下がると攻撃が2段階上がる";
 // ===== わざ =====
 const M={
   powergem:{name:"パワージェム",type:"rock",cat:"spec",power:80},
@@ -356,6 +358,7 @@ const M={
   toxic:{name:"どくどく",type:"poison",cat:"status",power:0,accuracy:.9,toxic:true},
   substitute:{name:"みがわり",type:"normal",cat:"status",power:0,substitute:true},
   swordsdance:{name:"つるぎのまい",type:"normal",cat:"status",power:0,selfBoost:{atk:2}},
+  formation:{name:"はいすいのじん",type:"fighting",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1,def:1,spa:1,spd:1,spe:1}}},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -432,6 +435,8 @@ const SPECIES=[
  S("scovillain","スコヴィラン","image/image/スコヴィラン.gif",["grass","fire"],{hp:65,atk:108,def:65,spa:108,spd:65,spe:75},"moody",["flamethrower","energyball","crunch","rockslide"],
    [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:130,def:93,spa:130,spd:93,spe:75},abil:"pepperguard"}]),
  S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"speedboost",["latiospulse","dpulse","psychic","thunderbolt"],[]),
+ S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect"],
+   [{stone:"falinksstone",stoneName:"タイレーツナイト",name:"メガタイレーツ",img:"image/image/メガタイレーツ.gif",types:["fighting"],base:{hp:100,atk:145,def:125,spa:70,spd:90,spe:105},abil:"defiant"}]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -907,7 +912,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1091,13 +1096,22 @@ function calcDamage(attacker,defender,move,isCrit){
   if(mistTurns>0&&moveType==="dragon"&&eff>1) dmg*=((4/3)/eff);
   if(isCrit) dmg*=move.critMult||1.5;
   else{ if(defender.abilEff==="multiscale"&&defender.curHp===defender.maxHp) dmg*=0.5; }
+  const fp=falinksPartInfo(defender,move);
+  if(fp)dmg*=fp.mult;
+  if(defender.falinksLeftFootTurns>0)dmg*=1.2;
   return {dmg: eff===0?0:Math.max(1,Math.floor(dmg)), eff, stab:stab>1};
+}
+function falinksPartInfo(defender,move){
+  if(!defender||defender.id!=="falinks"||!defender.isMega)return null;
+  const p=move.targetPart||"waist";
+  return {mult:{head:1.1,rightarm:.9,leftarm:1.2,waist:1,rightfoot:1.1,leftfoot:1.1}[p]||1,accuracy:p==="rightarm"?.9:null,reflect:p==="head"?1/6:p==="leftarm"?1/3:0,rightFoot:p==="rightfoot",leftFoot:p==="leftfoot"};
 }
 function sheerForceBoosts(move){return !!(move.targetDrop||move.flinch||move.freeze||move.burn||move.poison||move.paralyze||(move.selfBoost&&move.selfBoost.chance));}
 function effSpeed(m){
   // 同じレベルで戦うため、種族値ではなく素早さ実数値を基準に比較する
   let s=Math.floor(m.base.spe*2*LEVEL/100+5)*stageMult(m.stages.spe||0);
   if(m.status==="paralyze")s*=0.5;
+  if(m.falinksRightFootTurns>0)s*=1.1;
   if(m.abilEff==="swiftswim"&&weather==="rain")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
   if(m.itemKey==="scarf")s*=1.5;
@@ -1211,8 +1225,12 @@ document.addEventListener("keydown",e=>{
   const isZ=me.itemKey.endsWith("z"), isCharizard=me.id==="lizardon";
   if((k===" "&&!isZ&&!isCharizard)||(k==="z"&&isZ)||(isCharizard&&(k==="x"||k==="y"))){e.preventDefault();megaArm.me=true;renderMenu("me");}
 });
+let selectedPart={me:"waist",foe:"waist"};
+function chooseFalinksPart(side,part){selectedPart[side]=part;openMoves(side);}
 function openMoves(side){
-  const m=activeOf(side), opp=activeOf(side==="me"?"foe":"me"), c=document.getElementById("cmd"); let h='<div class="moves">';
+  const m=activeOf(side), opp=activeOf(side==="me"?"foe":"me"), c=document.getElementById("cmd"); let h="";
+  if(opp.id==="falinks"&&opp.isMega){const parts={head:"頭",rightarm:"右腕",leftarm:"左腕",waist:"腰",rightfoot:"右足",leftfoot:"左足"};h+=`<div class="center sub">メガタイレーツの狙う部位：${parts[selectedPart[side]]}</div><div class="actrow">${Object.entries(parts).map(([k,v])=>`<button class="btn ghost" onclick="chooseFalinksPart('${side}','${k}')" ${selectedPart[side]===k?'disabled':''}>${v}</button>`).join("")}</div>`;}
+  h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
     h+=`<button class="move" title="${shown.name}｜${TYPE_JP[shown.type]}・${catLabel(shown)}／威力${shown.power}\n${shown.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(shown.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="chooseMove('${side}',${i})">
@@ -1233,7 +1251,7 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ const mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.itemKey==="peacescroll"&&user.peaceTurns>0&& !mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv}); }
+function chooseMove(side,i){ const mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.itemKey==="peacescroll"&&user.peaceTurns>0&& !mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv,part:selectedPart[side]||"waist"}); }
 function startLatiosCharge(side,mv){
   if(busy)return; busy=true; const mon=activeOf(side); let taps=0,finished=false;
   const c=document.getElementById("cmd");
@@ -1295,8 +1313,8 @@ function doResolve(){
   };
   const phaseAttack=(next)=>{
     const movers=[];
-    if(A.type==="move") movers.push({who:"me",move:A.move,mon:me});
-    if(B.type==="move") movers.push({who:"foe",move:B.move,mon:foe});
+    if(A.type==="move") movers.push({who:"me",move:A.move,part:A.part||"waist",mon:me});
+    if(B.type==="move") movers.push({who:"foe",move:B.move,part:B.part||"waist",mon:foe});
     movers.forEach(m=>{m.mon.quickDraw=false;if(m.mon.abilEff==="quickdraw"&&Math.random()<.2){m.mon.quickDraw=true;pushLog(`  ★ ${m.mon.name} の クイックドロウ！ 優先度が上がった！`,"#ffcb05");} });
     movers.sort((a,b)=>{
       const pa=movePriority(a.mon,a.move), pb=movePriority(b.mon,b.move);
@@ -1315,6 +1333,7 @@ function runAttacks(movers,i,done){
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
   if(def.fainted){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
+  m.move=Object.assign({},m.move,{targetPart:m.part||"waist"});
   if(atk===foe)atk.lastMoveWasStatus=m.move.cat==="status";
   if(atk.flinched&&atk.abilEff!=="focus"){ atk.flinched=false; atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は ひるんで 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450); return; }
   if(atk.status==="freeze"){
@@ -1385,7 +1404,8 @@ function attack(attacker,defender,move,defImgId,cb){
     return;
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
-  if(move.accuracy&&Math.random()>move.accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,"#ff7043");if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
+  const falinksPart=falinksPartInfo(defender,move), accuracy=falinksPart&&falinksPart.accuracy||move.accuracy;
+  if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -1458,6 +1478,12 @@ function attack(attacker,defender,move,defImgId,cb){
     defender.curHp=Math.max(0,defender.curHp-dmg); renderHp();
     if(actualDamage>0&&!defender.turnMoved)defender.hitBeforeMove=true;
     if(attacker.itemKey==="healcrown"&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.30));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);renderHp();pushLog(`  ★ かいふくかんむりで HP${h}回復！`,"#46d160");}
+    if(falinksPart&&actualDamage>0){
+      if(falinksPart.reflect){const r=Math.max(1,Math.floor(attacker.maxHp*falinksPart.reflect));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ メガタイレーツの反射攻撃！ ${r} ダメージ`,'#ff7043');}
+      if(falinksPart.rightFoot){defender.falinksRightFootTurns=2;pushLog('  └ メガタイレーツの右足で次のターン素早さUP！','#ffcb05');}
+      if(falinksPart.leftFoot){defender.falinksLeftFootTurns=2;pushLog('  └ メガタイレーツの左足で次のターン被ダメージUP・回復！','#ffcb05');}
+    }
+    if(defender.falinksLeftFootTurns>0&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.4));defender.curHp=Math.min(defender.maxHp,defender.curHp+h);renderHp();pushLog(`  └ メガタイレーツが ${h} 回復！`,'#46d160');}
     applyMaxMoveEffect(attacker,defender,move);
     if(move.percentDamage&&defender.curHp>0){
       const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*(move.ignoreFixedReduction?1:constantDamageFactor(defender))));
@@ -1592,7 +1618,7 @@ function hasPendingMove(mon){
   const side=mon===me?"me":"foe";
   return turnAct[side]&&turnAct[side].type==="move";
 }
-function applyDrop(mon,stats){let atkUp=false,defDown=false,spdDown=false;for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;if(k==="atk"&&d>0)atkUp=true;if(k==="def"&&d<0)defDown=true;if(k==="spd"&&d<0)spdDown=true;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}if(mon.itemKey==="skywyrm"&&!mon.skyWyrmBoosted&&(atkUp||mon.stages.atk>0)&&(defDown||mon.stages.def<0)&&(spdDown||mon.stages.spd<0)){mon.skyWyrmBoosted=true;mon.stages.spe=Math.min(6,mon.stages.spe+1);pushLog(`  ★ ${mon.name} の てんくうのたつ！ すばやさが上がった！`,"#ffcb05");}renderStages();}
+function applyDrop(mon,stats){let atkUp=false,defDown=false,spdDown=false,anyDown=false;for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;if(k==="atk"&&d>0)atkUp=true;if(k==="def"&&d<0)defDown=true;if(k==="spd"&&d<0)spdDown=true;if(d<0)anyDown=true;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}if(mon.abilEff==="defiant"&&anyDown){mon.stages.atk=Math.min(6,mon.stages.atk+2);pushLog(`  ★ ${mon.name} の まけんき！ こうげきが2段階上がった！`,"#ff7043");}if(mon.itemKey==="skywyrm"&&!mon.skyWyrmBoosted&&(atkUp||mon.stages.atk>0)&&(defDown||mon.stages.def<0)&&(spdDown||mon.stages.spd<0)){mon.skyWyrmBoosted=true;mon.stages.spe=Math.min(6,mon.stages.spe+1);pushLog(`  ★ ${mon.name} の てんくうのたつ！ すばやさが上がった！`,"#ffcb05");}renderStages();}
 
 // ききかいひ：攻撃後にHPが半分以下になったら自動で交代する。
 // この関数を通らずに次の攻撃へ進むと、攻撃完了後に例外が発生して
@@ -1815,6 +1841,8 @@ function cpuForceReplace(cb){
 function endTurn(){
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0)pushLog(`  ・ ${m.name} の げきりんが 終わった！`);}
+    if(m&&m.falinksRightFootTurns>0)m.falinksRightFootTurns--;
+    if(m&&m.falinksLeftFootTurns>0)m.falinksLeftFootTurns--;
     if(m&&m.roostedTypes){m.types=m.roostedTypes;m.roostedTypes=null;}
   });
   [me,foe].forEach(m=>{if(m&&m.yawnTurns>0){m.yawnTurns--;if(m.yawnTurns===0&&!m.status){m.status="sleep";m.sleepTurns=2+Math.floor(Math.random()*2);pushLog(`  ・ ${m.name} は ねむってしまった！`,"#9fb3d6");}}});
