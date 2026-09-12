@@ -4,10 +4,17 @@ const multiOriginal={renderHp,renderStages,renderHeis,renderActive,faintMon,enem
 const multiOther=s=>s==='me'?'foe':'me';
 const multiLiving=s=>multi.slots[s].filter(m=>m&&!m.fainted&&m.curHp>0);
 const multiBench=s=>multi.teams[s].filter(m=>!m.fainted&&m.curHp>0&&!multi.slots[s].includes(m));
+const multiVisible=s=>multiLiving(s).filter(m=>!m.behindOf||m.behindOf.fainted||!multiLiving(s).includes(m.behindOf));
+function multiClearBehind(mon){if(!multi)return;Object.values(multi.teams).flat().forEach(m=>{if(m===mon||m.behindOf===mon)m.behindOf=null;});}
+function multiSetBehind(mon,host){
+  const side=multi&&multi.slots.me.includes(mon)?'me':'foe';
+  if(!multi||!host||host===mon||!multiLiving(side).includes(host)){return;}
+  mon.behindOf=host;pushLog(`  ・ ${mon.name} は ${host.name} の後ろに回った！`,'#7ad1ff');renderMulti();
+}
 function multiImage(m){return 'multi-img-'+m.multiId;}
 function renderMulti(){
   if(!multi)return;
-  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${battleSize===2?'ダブル':'トリプル'}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center"><img id="${multiImage(m)}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
+  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${battleSize===2?'ダブル':'トリプル'}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center;opacity:${m.behindOf?.75:1};border-color:${m.behindOf?'#7ad1ff':'var(--line)'}"><img id="${multiImage(m)}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}${m.behindOf?` <span class="mini">（${m.behindOf.name}の後ろ）</span>`:''}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
 }
 function renderMultiActionPanels(){
   if(!multi)return;
@@ -19,8 +26,8 @@ renderHp=function(){if(multi)renderMulti();else multiOriginal.renderHp();};
 renderStages=function(){if(multi)renderMulti();else multiOriginal.renderStages();};
 renderHeis=function(){if(multi)renderMulti();else multiOriginal.renderHeis();};
 renderActive=function(){if(multi)renderMulti();else multiOriginal.renderActive();};
-faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){m.fainted=true;m.curHp=0;pushLog(`${m.name} は たおれた！`);}renderMulti();};
-enemyTargets=function(s){return multi?multiLiving(multiOther(s)):multiOriginal.enemyTargets(s);};
+faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){m.fainted=true;m.curHp=0;multiClearBehind(m);pushLog(`${m.name} は たおれた！`);}renderMulti();};
+enemyTargets=function(s){return multi?multiVisible(multiOther(s)):multiOriginal.enemyTargets(s);};
 show=function(id){if(id!=='battle'&&multi){multi=null;document.getElementById('multiField')?.remove();document.getElementById('multi-action-me')?.remove();document.getElementById('multi-action-foe')?.remove();document.querySelector('#battle .field').style.display='';}multiOriginal.show(id);};
 function startMultiFriend(size){battleSize=size;mode='friend';openPartyBuilder('p1');}
 const singleFriendSetup=startFriendSetup;
@@ -60,12 +67,12 @@ function multiNext(){
 }
 function multiChoose(s){
   busy=false;inputSide=s;renderMulti();
-  const enemies=multiLiving(multiOther(s)),bench=multiBench(s);
+  const enemies=multiVisible(multiOther(s)),bench=multiBench(s);
   const allies=multiLiving(s);
-  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">じこさいせい・デコレーションは「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${m.electroBeamReady&&!mv.chargeTurn?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
+  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${m.electroBeamReady&&!mv.chargeTurn?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
 }
 function multiConfirm(s){
-  const actions=multiLiving(s).map(mon=>{const v=document.getElementById('multi-action-'+mon.multiId).value,base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(v.slice(1))],ally=multi.teams[s].find(m=>m.multiId===Number(document.getElementById('multi-ally-'+mon.multiId).value));return {side:s,mon,type:v[0]==='s'?'switch':'move',replacement:multi.teams[s].find(m=>m.multiId===Number(v.slice(1))),move:base.decorateAlly?Object.assign({},base,{allyTarget:ally}):base,target:(base.allyHeal||base.allyBoost)?ally:multi.teams[multiOther(s)].find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value))};});
+  const actions=multiLiving(s).map(mon=>{const v=document.getElementById('multi-action-'+mon.multiId).value,base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(v.slice(1))],ally=multi.teams[s].find(m=>m.multiId===Number(document.getElementById('multi-ally-'+mon.multiId).value)),move=(base.decorateAlly||base.behindMove)?Object.assign({},base,base.decorateAlly?{allyTarget:ally}:{behindTarget:ally}):base;return {side:s,mon,type:v[0]==='s'?'switch':'move',replacement:multi.teams[s].find(m=>m.multiId===Number(v.slice(1))),move,target:(base.allyHeal||base.allyBoost)?ally:multiVisible(multiOther(s)).find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value))};});
   const switches=actions.filter(a=>a.type==='switch');
   if(new Set(switches.map(a=>a.replacement)).size!==switches.length){alert('同じ控えを複数の場所へ出すことはできません。');return;}
   if(switches.some(a=>a.mon.switchLock>0)){alert('交代不能のポケモンがいます。');return;}
@@ -83,7 +90,7 @@ function multiConfirm(s){
 function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
-  a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
+  multiClearBehind(a.mon);a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
   slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;
   me=a.side==='me'?a.replacement:multiLiving('me')[0]||myTeam[0];foe=a.side==='foe'?a.replacement:multiLiving('foe')[0]||foeTeam[0];
   renderMulti();applyHazards(a.side,()=>a.replacement.fainted?cb():multiEntry(a.side,a.replacement,cb));
@@ -94,7 +101,7 @@ function multiResolve(){
   series(actions.map(a=>cb=>{
     if(!multi.slots[a.side].includes(a.mon)||a.mon.fainted){cb();return;}
     if(a.type==='switch'){multiSwitch(a,cb);return;}
-    const enemies=multiLiving(multiOther(a.side)),targets=(a.move.allyHeal||a.move.allyBoost)?multiLiving(a.side):enemies;
+    const enemies=multiVisible(multiOther(a.side)),targets=(a.move.allyHeal||a.move.allyBoost)?multiLiving(a.side):enemies;
     const target=targets.includes(a.target)?a.target:targets[0];if(!target){cb();return;}
     const m=a.mon;
     if(m.holeCakeTurns>0){pushLog(`${m.name} は ホールケイプ中で 動けない！`);cb();return;}

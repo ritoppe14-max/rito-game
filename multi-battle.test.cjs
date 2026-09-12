@@ -16,6 +16,9 @@ vm.runInContext(`
     const old=multi.slots.me[0],next=multiBench('me')[0];
     multiSwitch({side:'me',mon:old,replacement:next},()=>{});
     check(multi.slots.me[0]===next&&!multiLiving('me').includes(old),'switch');
+    const cover=multiLiving('me')[0],hidden=multiLiving('me')[1];
+    multiSetBehind(hidden,cover);check(hidden.behindOf===cover&&!multiVisible('me').includes(hidden),'behind ally cannot be targeted');
+    multiClearBehind(cover);check(!hidden.behindOf,'behind state clears with ally');
     const order=[];const realAttack=attack;attack=(a,d,m,img,cb)=>{order.push(a);cb();};
     multi.actions=['me','foe'].flatMap(side=>multiLiving(side).map((mon,i)=>{mon.base.spe=20+i+(side==='me'?30:0);return {side,mon,type:'move',move:M.thunderbolt,target:multiLiving(multiOther(side))[0]};}));
     multiResolve();
@@ -38,6 +41,12 @@ vm.runInContext(`
   check(M.duraludonDisaster.type==='dragon','Duraludon Disaster is Dragon type');
   check(M.duraludonDisaster.onceBattle&&M.duraludonDisaster.onceFlag==='usedDuraludonDisaster','Duraludon Disaster is once per battle');
   check(SP_BY_ID.empoleon!==undefined&&M.hydrocannon.power===120&&M.hydrocannon.trapTurns===3&&M.hydrocannon.trapDenom===10,'Empoleon Hydro Cannon and residual effect');
+  battleSize=1;const intelSingle=makeMon(SP_BY_ID.inteleon,'none','p1');battleSize=2;const intelMulti=makeMon(SP_BY_ID.inteleon,'none','p1');
+  check(intelSingle.base.spa===140&&intelMulti.base.spa===125&&intelSingle.base.spe===150,'Inteleon single and multi stats');
+  intelSingle.isDynamax=true;intelSingle.isGigantamax=true;const gmaxSnipe=maxMoveFor(intelSingle,M.snipeshot);
+  check(gmaxSnipe.name==='キョダイソゲキ'&&gmaxSnipe.power===140&&gmaxSnipe.ignoreAbility&&gmaxSnipe.forceCrit,'Inteleon G-Max Snipe Shot');
+  const normalCrit=Object.assign({},intelSingle,{abilEff:null});
+  check(calcDamage(intelSingle,fire,M.snipeshot,true).dmg>calcDamage(normalCrit,fire,M.snipeshot,true).dmg,'Sniper raises critical damage');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
