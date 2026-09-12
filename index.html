@@ -925,6 +925,9 @@ function renderPreview(){
       <div class="mini">${ITEMS[p.item].mega?'★'+ITEMS[p.item].name:spAbil(sp,selCtx.owner).name}</div></div>`;
   });
   document.getElementById("startBtn").disabled = selCtx.sel.length!==(selCtx.count||3);
+  const start=document.getElementById("startBtn");
+  const count=selCtx.count||3;
+  start.textContent=`えらんだ${count}体で バトル！`;
 }
 function toggleSel(i){
   const k=selCtx.sel.indexOf(i);
@@ -953,7 +956,10 @@ function cpuSelect3(){
     cpuSel=arr.slice(0,count);
   }
 }
-document.getElementById("startBtn").onclick=()=>{ if(selCtx && selCtx.sel.length===3) selCtx.cb(); };
+document.getElementById("startBtn").onclick=()=>{
+  const count=selCtx?.count||3;
+  if(selCtx && selCtx.sel.length===count) selCtx.cb();
+};
 
 // ===== バトル =====
 let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0, rayMegaBlocked=false, rayMegaActive=false;
