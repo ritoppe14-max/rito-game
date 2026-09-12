@@ -61,6 +61,8 @@ vm.runInContext(`
   check(drednaw.types.includes('water')&&drednaw.types.includes('rock')&&drednaw.base.atk===115&&calcDamage(drednaw,fire,M.crunch,false).dmg>calcDamage(drednawPlain,fire,M.crunch,false).dmg,'Drednaw Strong Jaw');
   const hold=makeMon(SP_BY_ID.hold,'none','p1'),holdPlain=Object.assign({},makeMon(SP_BY_ID.hold,'none','p1'),{abilEff:null});
   check(hold.types.includes('normal')&&hold.types.includes('ground')&&calcDamage(hold,fire,M.earthquake,false).dmg>calcDamage(holdPlain,fire,M.earthquake,false).dmg,'Hold Huge Power');
+  const galvantula=SPECIES[SP_BY_ID.galvantula];
+  check(galvantula.types.includes('bug')&&galvantula.types.includes('electric')&&galvantula.base.spa===97&&galvantula.abil==='compoundeyes','Galvantula');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
