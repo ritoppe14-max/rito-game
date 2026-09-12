@@ -323,6 +323,8 @@ const M={
   xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
   beatup:{name:"ふくろだたき",type:"dark",cat:"phys",power:30,exclusive:"falinks",beatup:true},
+  ritualBlade:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,ritual:true},
+  ritualTick:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,ritualTick:true},
   smarthorn:{name:"スマートホーン",type:"steel",cat:"phys",power:70,accuracy:1},
   zenheadbutt:{name:"しねんのずつき",type:"psychic",cat:"phys",power:90,flinch:.25},
   throatchop:{name:"じごくづき",type:"dark",cat:"phys",power:80,soundBlock:3},
@@ -515,7 +517,7 @@ const LEARN={
   idaitou:["liquidation","shadowball","crunch","aquajet","gravevisit","hydropump","icebeam","darkpulse"],
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
   garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
-  falinks:["formation","beatup","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
+  falinks:["formation","beatup","ritualBlade","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
 };
@@ -690,7 +692,7 @@ function renderParty(){
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
         </select><button class="btn ghost" style="font-size:11px;padding:4px 7px" onclick="searchItems(${i})">調べる</button></div>
         <div class="mini" style="margin-top:5px">技</div>
-        ${[0,1,2,3].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
+        ${[0,1,2,3,...(sp.id==="falinks"?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
           ${movePool.map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
         </select>`).join("")}
         ${sp.id==="falinks"?`<button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:5px" onclick="toggleHeiEditor(${i})">ヘイ</button>${curParty[i].showHei?renderHeiEditor(i):''}`:''}
@@ -750,7 +752,7 @@ function setPartyMove(slot,moveSlot,val){
   const sp=SPECIES[curParty[slot]?.sp];
   if(!sp)return;
   const moves=spMoves(sp,ownerForBuilder());
-  if(moveSlot<4)moves[moveSlot]=val;
+  if(moveSlot<5)moves[moveSlot]=val;
   saveGame(); renderParty();
 }
 
@@ -963,7 +965,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1370,6 +1372,8 @@ function doResolve(){
     const movers=[];
     if(A.type==="move") movers.push({who:"me",move:A.move,part:A.part||"waist",mon:me});
     if(B.type==="move") movers.push({who:"foe",move:B.move,part:B.part||"waist",mon:foe});
+    if(me.ritualTurns>0&&!me.fainted)movers.push({who:"me",move:M.ritualTick,part:"waist",mon:me,ritualExtra:true});
+    if(foe.ritualTurns>0&&!foe.fainted)movers.push({who:"foe",move:M.ritualTick,part:"waist",mon:foe,ritualExtra:true});
     movers.forEach(m=>{m.mon.quickDraw=false;if(m.mon.abilEff==="quickdraw"&&Math.random()<.2){m.mon.quickDraw=true;pushLog(`  ★ ${m.mon.name} の クイックドロウ！ 優先度が上がった！`,"#ffcb05");} });
     movers.sort((a,b)=>{
       const pa=movePriority(a.mon,a.move), pb=movePriority(b.mon,b.move);
@@ -1431,6 +1435,7 @@ function applyMoveRecoil(attacker,move,actualDamage){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move=maxMoveFor(attacker,move);
+  if(move.ritual)attacker.ritualTurns=5;
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.onceFlag||"usedPlayTogether";
@@ -1931,6 +1936,7 @@ function endTurn(){
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
   [me,foe].forEach(m=>{if(m&&m.soundBlocked>0)m.soundBlocked--;});
   [me,foe].forEach(m=>{if(m&&m.coachTurns>0)m.coachTurns--;});
+  [me,foe].forEach(m=>{if(m&&m.ritualTurns>0)m.ritualTurns--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
   [me,foe].forEach(m=>{if(m&&m.peaceTurns>0){m.peaceTurns--;if(m.peaceTurns===0)pushLog(`  ・ ${m.name} の へいわせんこくの効果が切れた！`,"#7ad1ff");}});
