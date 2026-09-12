@@ -34,6 +34,8 @@ vm.runInContext(`
   check(single.eff===1,'Duraludon cannon ignores type effectiveness');
   battleSize=2;const multiDmg=calcDamage(dura,fire,M.duraludonCannon,false).dmg;
   check(multiDmg>=Math.floor(single.dmg*1.49),'Duraludon cannon multi boost');
+  const fairy=makeMon(SP_BY_ID.marilli,'none','cpu');
+  check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   hazards=emptyHazards();setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);
   check(hazards.foe.rocks===3,'Stealth Rock three layers');
   dura.duraludonShieldTurns=3;const shielded=calcDamage(fire,dura,M.fireblast,false).dmg;dura.duraludonShieldTurns=0;const plain=calcDamage(fire,dura,M.fireblast,false).dmg;
