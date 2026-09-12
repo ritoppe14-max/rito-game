@@ -57,6 +57,8 @@ vm.runInContext(`
   check(thievul.types[0]==='dark'&&thievul.base.spa===87&&thievul.base.spe===90&&thievul.abil==='unburden','Thievul');
   const obstagoon=SPECIES[SP_BY_ID.obstagoon];
   check(obstagoon.types.includes('dark')&&obstagoon.types.includes('normal')&&obstagoon.base.def===101&&obstagoon.abil==='defiant','Obstagoon');
+  const drednaw=makeMon(SP_BY_ID.drednaw,'none','p1'),drednawPlain=Object.assign({},makeMon(SP_BY_ID.drednaw,'none','p1'),{abilEff:null});
+  check(drednaw.types.includes('water')&&drednaw.types.includes('rock')&&drednaw.base.atk===115&&calcDamage(drednaw,fire,M.crunch,false).dmg>calcDamage(drednawPlain,fire,M.crunch,false).dmg,'Drednaw Strong Jaw');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');

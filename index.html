@@ -320,9 +320,9 @@ const M={
   aquajet:{name:"アクアジェット",type:"water",cat:"phys",power:40,prio:1,percentDamage:.10},
   extremespeed:{name:"しんそく",type:"normal",cat:"phys",power:80,prio:2},
   icebeam:{name:"れいとうビーム",type:"ice",cat:"spec",power:90,freeze:.1},
-  icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2},
+  icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2,bite:true},
   icepunch:{name:"れいとうパンチ",type:"ice",cat:"phys",power:75},
-  crunch:{name:"かみくだく",type:"dark",cat:"phys",power:80,targetDrop:{chance:.2,stats:{def:-1}}},
+  crunch:{name:"かみくだく",type:"dark",cat:"phys",power:80,targetDrop:{chance:.2,stats:{def:-1}},bite:true},
   hydreigoncrunch:{name:"かみくだく",type:"dark",cat:"phys",power:85,targetDrop:{chance:.3,stats:{def:-1}}},
   hydreigonironhead:{name:"アイアンヘッド",type:"steel",cat:"phys",power:90,targetDrop:{chance:.3,stats:{def:-1}}},
   darkpulse:{name:"あくのはどう",type:"dark",cat:"spec",power:80},
@@ -497,6 +497,7 @@ const SPECIES=[
  S("corviknight","アーマーガア","image/image/アーマーガア.gif",["flying","steel"],{hp:98,atk:87,def:105,spa:53,spd:85,spe:67},"mirrorarmor",["ironhead","bodypress","roost","irondefense"],[]),
  S("thievul","フォクスライ","image/image/フォクスライ.gif",["dark"],{hp:70,atk:58,def:58,spa:87,spd:92,spe:90},"unburden",["darkpulse","suckerpunch","nastyPlot","psychic"],[]),
  S("obstagoon","タチフサグマ","image/image/タチフサグマ.gif",["dark","normal"],{hp:93,atk:90,def:101,spa:60,spd:81,spe:95},"defiant",["throatchop","suckerpunch","closecombat","protect"],[]),
+ S("drednaw","カジリガメ","image/image/カジリガメ.gif",["water","rock"],{hp:90,atk:115,def:90,spa:48,spd:68,spe:74},"strongjaw",["liquidation","crunch","stoneedge","icefang"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
@@ -569,6 +570,7 @@ const LEARN={
   corviknight:["ironhead","bodypress","roost","irondefense","uturn","steelbeam","protect"],
   thievul:["darkpulse","suckerpunch","nastyPlot","psychic","shadowball","protect","toxic"],
   obstagoon:["throatchop","suckerpunch","closecombat","protect","takedown","bodypress","ironhead","icepunch","earthquake","toxic"],
+  drednaw:["liquidation","crunch","stoneedge","icefang","waterfall","earthquake","rockslide","bodypress","protect"],
   alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
@@ -579,7 +581,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
@@ -1218,6 +1220,7 @@ function calcDamage(attacker,defender,move,isCrit){
   // メガボーマンダ／メガオーダイルのすてみタックルは専用強化
   if((move===M.takedown||move._baseMove===M.takedown)&&attacker.isMega&&(attacker.id==="salamence"||attacker.id==="ohdairu")) dmg*=1.2;
   if(attacker.abilEff==="sandforce") dmg*=1.2;
+  if(attacker.abilEff==="strongjaw"&&move.bite) dmg*=1.5;
   if(move.multiBattleBoost&&battleSize>1) dmg*=1.5;
   if(move.weakBoost&&eff>1)dmg*=move.weakBoost;
   if(move.megaBonus&&defender.isMega) dmg*=2;
