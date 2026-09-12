@@ -258,9 +258,11 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
 ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
+ABIL.schooling={name:"ぎょぐん",eff:"schooling"};
 ABDESC.defiant="能力が下がると攻撃が2段階上がる";
 ABDESC.unburden="持ち物を持っていないと素早さ実数値が2倍";
 ABDESC.rage="HPが減ると攻撃が上がる";
+ABDESC.schooling="HPが1/4を超えるとむれたすがた。自分の反動ダメージを半減";
 // ===== わざ =====
 const M={
   powergem:{name:"パワージェム",type:"rock",cat:"spec",power:80},
@@ -508,6 +510,7 @@ const SPECIES=[
  S("glalie","オニゴーリ","image/image/オニゴーリ.gif",["ice"],{hp:80,atk:80,def:80,spa:80,spd:80,spe:80},"moody",["icebeam","icefang","shadowball","protect"],[]),
  S("kingler","キングラー","image/image/キングラー.gif",["water"],{hp:55,atk:150,def:115,spa:50,spd:50,spe:50},"shellarmor",["crabhammer","liquidation","xscissor","rockslide"],[]),
  S("cloyster","パルシェン","image/image/パルシェン.gif",["water","ice"],{hp:50,atk:85,def:180,spa:85,spd:45,spe:70},"shellarmor",["iciclecrash","surf","icebeam","spikes"],[]),
+ S("wishiwashi","ヨワシ","image/image/ヨワシ.gif",["water"],{hp:90,atk:140,def:120,spa:140,spd:120,spe:30},"schooling",["surf","hydropump","icebeam","aquajet"],[]),
  S("crustle","イワパレス","image/image/イワパレス.gif",["bug","rock"],{hp:70,atk:105,def:125,spa:65,spd:75,spe:45},"shellarmor",["crustlerockTomb","xscissor","earthquake","stoneedge"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
@@ -589,6 +592,7 @@ const LEARN={
   glalie:["icebeam","icefang","shadowball","protect","iciclecrash","crunch","earthquake","ironhead","toxic"],
   kingler:["crabhammer","liquidation","xscissor","rockslide","icebeam","bodypress","protect","toxic"],
   cloyster:["iciclecrash","surf","icebeam","spikes","hydropump","rockslide","protect","toxic"],
+  wishiwashi:["surf","hydropump","icebeam","aquajet","liquidation","protect","toxic"],
   crustle:["crustlerockTomb","xscissor","earthquake","stoneedge","rockslide","ironhead","protect","toxic"],
   alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
@@ -600,7 +604,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], wishiwashi:["schooling"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
@@ -1042,6 +1046,11 @@ let hazards=emptyHazards();
 function makeMon(sp_i, itemKey, owner="p1"){
   const sp=SPECIES[sp_i];
   const p={ id:sp.id, name:sp.name, img:sp.img, types:sp.types.slice(), base:Object.assign({},sp.base) };
+  if(sp.id==="wishiwashi"){
+    p.wishiwashiSchoolBase=Object.assign({},sp.base);
+    p.wishiwashiSoloBase={hp:45,atk:20,def:20,spa:25,spd:25,spe:40};
+    p.schoolForm=true;
+  }
   if(sp.id==="inteleon"&&battleSize>1)p.base.spa=125;
   if(owner==="cpu"&&npcLevel>=5) for(const k of Object.keys(p.base)) p.base[k]*=1.1;
   const savedBuild=buildOf(sp,owner);
@@ -1118,7 +1127,18 @@ function renderActive(){
 function setAbLine(){const it=(m,side)=>(side==='foe'&&(mode==='cpu'||mode==='friend'))?"":(m.itemKey!=="none"?" ／ "+ITEMS[m.itemKey].name:"");
   document.getElementById("myAb").textContent="特性："+me.abilName+it(me,"me");
   document.getElementById("foeAb").textContent="特性："+foe.abilName+it(foe,"foe");}
-function renderHp(){for(const[m,f,n]of[[me,"myHp","myHpNum"],[foe,"foeHp","foeHpNum"]]){const el=document.getElementById(f),pc=Math.max(0,m.curHp/m.maxHp*100);el.style.width=pc+"%";el.style.background=pc>50?"var(--hp-green)":pc>20?"var(--hp-yellow)":"var(--hp-red)";document.getElementById(n).textContent=`${Math.max(0,m.curHp)} / ${m.maxHp}`;}}
+function updateWishiwashiForm(mon,imgId){
+  if(!mon||mon.id!=="wishiwashi"||mon.fainted)return;
+  const school=mon.curHp>mon.maxHp/4;
+  if(mon.schoolForm===school)return;
+  mon.schoolForm=school;
+  mon.base=Object.assign({},school?mon.wishiwashiSchoolBase:mon.wishiwashiSoloBase);
+  mon.img=school?"image/image/ヨワシ.gif":"image/image/ヨワシ(単独).gif";
+  const img=document.getElementById(imgId);
+  if(img)img.src=IMG(mon.img);
+  pushLog(`  ★ ${mon.name} は ${school?"むれたすがた":"たんどくのすがた"}に なった！`,school?"#7ad1ff":"#9fb3d6");
+}
+function renderHp(){for(const[m,f,n,imgId]of[[me,"myHp","myHpNum","myImg"],[foe,"foeHp","foeHpNum","foeImg"]]){updateWishiwashiForm(m,imgId);const el=document.getElementById(f),pc=Math.max(0,m.curHp/m.maxHp*100);el.style.width=pc+"%";el.style.background=pc>50?"var(--hp-green)":pc>20?"var(--hp-yellow)":"var(--hp-red)";document.getElementById(n).textContent=`${Math.max(0,m.curHp)} / ${m.maxHp}`;}}
 function stgText(m){const p=[];for(const k of["atk","spa","def","spd","spe"]){const s=m.stages[k];if(s)p.push(`${STAT_JP[k]}${s>0?"+":""}${s}`);}const a=[];if(p.length)a.push("能力 "+p.join(" "));if(m.status)a.push("状態 "+statusName(m.status));return a.join(" / ");}
 function statusName(s){return s==="freeze"?"こおり":s==="burn"?"やけど":s==="poison"?"どく":s==="toxic"?"もうどく":s==="sleep"?"ねむり":s==="hypersleep"?"超眠気":s==="paralyze"?"まひ":"";}
 function renderStages(){document.getElementById("myStg").textContent=stgText(me);document.getElementById("foeStg").textContent=stgText(foe);}
@@ -1597,7 +1617,7 @@ function runAttacks(movers,i,done){
 }
 function applyMoveRecoil(attacker,move,actualDamage){
   if(!move.recoilDamage||actualDamage<=0||attacker.abilEff==="damp"||attacker.curHp<=0) return;
-  const recoil=Math.max(1,Math.floor(actualDamage*.33));
+  const recoil=Math.max(1,Math.floor(actualDamage*move.recoilDamage*(attacker.abilEff==="schooling"?.5:1)));
   attacker.curHp=Math.max(0,attacker.curHp-recoil);
   renderHp();
   pushLog(`  └ ${attacker.name} は反動で ${recoil} ダメージ！`,"#ff7043");

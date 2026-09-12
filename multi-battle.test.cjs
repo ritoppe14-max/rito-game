@@ -75,6 +75,10 @@ vm.runInContext(`
   check(kingler.types[0]==='water'&&kingler.base.atk===150&&kingler.base.spe===50&&kingler.moves.includes('crabhammer'),'Kingler custom stats');
   const cloyster=SPECIES[SP_BY_ID.cloyster];
   check(cloyster.types.includes('water')&&cloyster.types.includes('ice')&&cloyster.base.atk===85&&cloyster.base.def===180,'Cloyster custom attack');
+  const wishiwashi=makeMon(SP_BY_ID.wishiwashi,'none','p1');
+  check(wishiwashi.base.hp===90&&wishiwashi.base.def===120&&wishiwashi.base.spd===120,'Wishiwashi school form stats');
+  wishiwashi.curHp=Math.floor(wishiwashi.maxHp/4); updateWishiwashiForm(wishiwashi,'myImg');
+  check(!wishiwashi.schoolForm&&wishiwashi.base.def===20&&wishiwashi.base.spd===25,'Wishiwashi solo form at quarter HP');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
