@@ -107,6 +107,8 @@
       <button class="btn blue" onclick="show('train')">🎓 ポケモンを育成する（技・特性）</button>
       <button class="btn blue" onclick="openPartyBuilder('cpu')">🛠 パーティを編成する（6体）</button>
       <button class="btn" id="goBattle" onclick="startCpu()" disabled>⚔ CPUとたたかう（要：6体）</button>
+      <button class="btn blue" onclick="startGroupBattle(2)">⚔ ダブルバトル（2体 vs 2体）</button>
+      <button class="btn blue" onclick="startGroupBattle(3)">⚔ トリプルバトル（3体 vs 3体）</button>
       <button class="btn mega" onclick="startLunaticStage()"><img src="image/image/ザシアン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ</button>
       <button class="btn mega" onclick="startLunaticStage2()"><img src="image/image/メガボーマンダ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ2</button>
       <button class="btn mega" onclick="startLunaticStage3()"><img src="image/image/メガヒードラン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ3</button>
@@ -655,7 +657,7 @@ renderHome();
 
 // ===== パーティ編成 =====
 function openPartyBuilder(m){ builderMode=m; curParty=(m==='p2')?party2:party; show('party'); }
-function startCpu(){ mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
+function startCpu(){ battleSize=1;mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
 function startLunaticStage(){ mode='lunatic'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage2(){ mode='lunatic2'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage3(){ mode='lunatic3'; lunaticStage=true; npcLevel=10; enterPreview(); }
@@ -820,16 +822,18 @@ function setTrainAbil(k){ buildOf(SPECIES[trainSel],trainOwner).ability=k; saveG
 function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=sp.moves.slice(); buildOf(sp,trainOwner).ability=sp.abil; saveGame(); renderTrain(); }
 
 // ===== 見せ合い → 3体選出 =====
-let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false;
+let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1;
+function startGroupBattle(size){mode="cpu";lunaticStage=false;battleSize=size;npcLevel=Number(document.getElementById("npcLevel").value)||1;enterPreview();}
 function enterPreview(){   // CPU戦
-  const required=(lunaticStage||mode==='dynamaxUnlock')?3:6;
+  const required=battleSize>1?battleSize*2:(lunaticStage||mode==='dynamaxUnlock')?3:6;
   if(party.length<required){
     alert(`挑戦するにはパーティに${required}体以上必要です（現在${party.length}体）。パーティを編成してください。`);
     openPartyBuilder('cpu');
     return;
   }
   if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic5') buildLunaticParty5(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
-  selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, label:"あなたのパーティ — 出す3体をえらぶ（選んだ順に先発）",
+  const count=battleSize>1?battleSize*2:3;
+  selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, count, label:`あなたのパーティ — 出す${count}体をえらぶ`,
     cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
   show("preview"); renderPreview();
 }
@@ -914,15 +918,16 @@ function renderPreview(){
       <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div>
       <div class="mini">${ITEMS[p.item].mega?'★'+ITEMS[p.item].name:spAbil(sp,selCtx.owner).name}</div></div>`;
   });
-  document.getElementById("startBtn").disabled = selCtx.sel.length!==3;
+  document.getElementById("startBtn").disabled = selCtx.sel.length!==(selCtx.count||3);
 }
 function toggleSel(i){
   const k=selCtx.sel.indexOf(i);
   if(k>=0) selCtx.sel.splice(k,1);
-  else if(selCtx.sel.length<3) selCtx.sel.push(i);
+  else if(selCtx.sel.length<(selCtx.count||3)) selCtx.sel.push(i);
   renderPreview();
 }
 function cpuSelect3(){
+  const count=battleSize>1?battleSize*2:3;
   if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'){
     if(mode==='lunatic3'||mode==='lunatic4'){ cpuSel=[0,1,2]; return; }
     if(mode==='lunatic5'){ cpuSel=[0]; return; }
@@ -935,11 +940,11 @@ function cpuSelect3(){
     const others=cpuParty.map((_,i)=>i).filter(i=>i!==ragI&&i!==pelI);
     const third=others[Math.floor(Math.random()*others.length)];
     // ペリッパー先発→雨を降らせてからラグラージへ交代
-    cpuSel = [pelI,ragI,third];
+    cpuSel = [pelI,ragI,third].slice(0,count);
   }else{
     const arr=cpuParty.map((_,i)=>i);
     for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
-    cpuSel=arr.slice(0,3);
+    cpuSel=arr.slice(0,count);
   }
 }
 document.getElementById("startBtn").onclick=()=>{ if(selCtx && selCtx.sel.length===3) selCtx.cb(); };
@@ -996,6 +1001,10 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
     }
   });
   myA=0; foeA=0; me=myTeam[0]; foe=foeTeam[0];
+  if(battleSize>1){
+    me.heis=myTeam.slice(1,battleSize);foe.heis=foeTeam.slice(1,battleSize);
+    me.heis.forEach(h=>{h.isHei=true;h.host=me;});foe.heis.forEach(h=>{h.isHei=true;h.host=foe;});
+  }
   busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; maxUsed={me:false,foe:false}; rayMegaBlocked=false; rayMegaActive=false; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
   show("battle");
   document.getElementById("endArea").classList.add("hidden");
@@ -1715,7 +1724,7 @@ function chooseHeiMoves(){
   const names=[...(mon.heis||[]).filter(h=>!h.fainted).map(h=>h.name),...(action.move.beatup?heiInput.picks:[])];
   if(!names.length){action.heiReady=true;submitAction(side,action);return;}
   document.getElementById("cmd").innerHTML='<div>ヘイの技を選択（行動順は優先度・素早さで決定）</div>'+names.map((name,i)=>{
-    const h=FALINKS_HEI.find(h=>h.name===name);
+    const h=(mon.heis||[]).find(h=>h.name===name)||FALINKS_HEI.find(h=>h.name===name);
     return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select><select id="heiTarget${i}">${enemyTargets(side).map((t,j)=>`<option value="${j}">${t.name}</option>`).join("")}</select></div>`;
   }).join("")+`<button class="btn" onclick="confirmHeiMoves()">決定</button>`;
   heiInput.names=names;
