@@ -616,6 +616,17 @@ function showDexInfo(i){
   const statText=b=>`HP${b.hp} 攻${b.atk} 防${b.def} 特攻${b.spa} 特防${b.spd} 素早${b.spe}`;
   lines.push(`種族値：${statText(sp.base)}`);
   if(sp.megas.length) sp.megas.forEach(m=>lines.push(`${m.name}：${TYPE_JP[m.types[0]]}${m.types[1]?"・"+TYPE_JP[m.types[1]]:""}／種族値 ${statText(m.base)}／特性：${ABIL[m.abil]?.name||m.abil}`));
+  if(sp.id==="falinks"){
+    lines.push("メガタイレーツの部位攻撃：");
+    lines.push("頭：与ダメージ1.1倍／攻撃者に最大HPの1/6反射");
+    lines.push("右腕：与ダメージ0.9倍／命中90%／反射なし");
+    lines.push("左腕：与ダメージ1.2倍／攻撃者に最大HPの1/3反射");
+    lines.push("腰：与ダメージ1.0倍");
+    lines.push("右足：与ダメージ1.1倍／次ターンの素早さ1.1倍");
+    lines.push("左足：与ダメージ1.1倍／次ターン被ダメージ1.2倍・受けたダメージの40%回復");
+    lines.push("ヘイ5種の性能：");
+    FALINKS_HEI.forEach(h=>lines.push(`${h.name}：${statText(h.base)}／特性 ${ABIL[h.abil]?.name||h.abil}／持ち物設定可`));
+  }
   alert(lines.join("\n"));
 }
 function showPokemonDex(){ document.getElementById("homeDex").scrollIntoView({behavior:"smooth"}); }
