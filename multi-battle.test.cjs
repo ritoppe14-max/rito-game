@@ -69,6 +69,8 @@ vm.runInContext(`
   check(mamoswine.base.hp===110&&mamoswine.base.atk===130&&calcDamage(fire,mamoswine,M.fireblast,false).dmg<calcDamage(fire,mamoswinePlain,M.fireblast,false).dmg,'Mamoswine Thick Fat');
   const glalie=SPECIES[SP_BY_ID.glalie];
   check(glalie.types[0]==='ice'&&Object.values(glalie.base).every(v=>v===80)&&glalie.abil==='moody','Glalie');
+  const crustle=SPECIES[SP_BY_ID.crustle];
+  check(crustle.types.includes('bug')&&crustle.types.includes('rock')&&M.crustlerockTomb.power===80&&M.crustlerockTomb.switchLock===2&&M.crustlerockTomb.targetDrop.stats.spe===-1,'Crustle Rock Tomb');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
