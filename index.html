@@ -239,7 +239,7 @@ const ABIL={
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
   sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
-  roughskin:{name:"さめはだ",eff:"roughskin"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
+  roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
@@ -454,6 +454,7 @@ const SPECIES=[
  S("centiskorch","マルヤクデ","image/image/マルヤクデ.gif",["fire","bug"],{hp:100,atk:115,def:65,spa:90,spd:90,spe:65},"flashfire",["firewhip","fireblast","bugbite","crunch"]),
  S("sableye","ヤミラミ","image/image/ヤミラミ.gif",["dark","ghost"],{hp:50,atk:75,def:75,spa:65,spd:65,spe:50},"prankster",["protect","substitute","toxic","suckerpunch"]),
  S("orthworm","ミミズズ","image/image/ミミズズ.gif",["steel"],{hp:70,atk:85,def:145,spa:60,spd:55,spe:65},"eartheater",["ironhead","earthquake","stealthrock","spikes"]),
+ S("ferrothorn","ナットレイ","image/image/ナットレイ.gif",["grass","steel"],{hp:74,atk:94,def:131,spa:54,spd:116,spe:20},"ironbarbs",["powerwhip","ironhead","leechseed","spikes"],[]),
  S("mimikyu","ミミッキュ","image/image/ミミッキュ.gif",["ghost","fairy"],{hp:55,atk:90,def:80,spa:50,spd:105,spe:96},"disguise",["playrough","swordsdance","shadowsneak","shadowclaw","playtogether"]),
  S("chansey","ラッキー","image/image/ラッキー.gif",["normal"],{hp:250,atk:5,def:5,spa:35,spd:105,spe:50},"pressure",["softboiled","toxic","thunderwave","protect"]),
  S("porygon2","ポリゴン2","image/image/ポリゴン2.gif",["normal"],{hp:85,atk:80,def:90,spa:105,spd:95,spe:60},"pressure",["recover","thunderbolt","icebeam","protect"]),
@@ -564,6 +565,7 @@ const LEARN={
   centiskorch:["firewhip","fireblast","flamethrower","bugbite","crunch","protect","toxic","earthquake"],
   sableye:["protect","substitute","toxic","suckerpunch","crunch","fakeout","quickattack","shadowball","reflect","calmMind","willowisp"],
   orthworm:["ironhead","earthquake","stealthrock","spikes","rockslide","protect","toxic","stoneedge"],
+  ferrothorn:["powerwhip","ironhead","leechseed","spikes","stealthrock","bodypress","protect","toxic"],
   darkrai:["darkpulse","shadowball","focusblast","darkhole","sludgebomb","calmMind","nastyPlot","psychic","icebeam","thunderbolt"],
   gengar:["shadowball","sludgebomb","focusblast","darkpulse","sludgewave","psychic","thunderbolt","icebeam","nastyPlot","willowisp","protect"],
   chansey:["softboiled","toxic","protect","icebeam","thunderbolt"],
@@ -657,7 +659,7 @@ Object.entries(EXTERNAL_MOVE_COMPAT).forEach(([id,moves])=>{if(!LEARN[id])return
 const EXTERNAL_MOVE_COMPAT_2={salamence:["bravebird","dualwingbeat","firefang"],rayquaza:["bravebird","dualwingbeat","flareblitz"],corviknight:["bravebird","dualwingbeat","bodypress2"],pelipper:["scald","muddywater","icywind"],ohdairu:["flipturn","wavecrash","lowkick"],empoleon:["scald","icywind","flashcannon2"],inteleon:["flipturn","icywind","aircutter"],marilli:["wavecrash","chillingwater"],toxapex:["scald","haze"],yadoran:["scald","futuresight"],wishiwashi:["scald","muddywater","blizzard"],gabarias:["earthquake2","smackdown"],hippowdon:["earthquake2","rocktomb2"],gliscor:["earthquake2","poisonfang"],gengar:["disable","imprison","sludgewave2"],mimikyu:["phantomforce","shadowpunch"],latios:["storedpower","futuresight","safeguard"],lucario:["meteorMash","heavySlam"],duraludon:["flashcannon2","heavySlam"],orthworm:["heavySlam","smartstrike"],pendor:["crosspoison","poisonTail"],scovillain:["synthesis","stunspore","sleeppowder"],gorillander:["synthesis","woodhammer"],galvantula:["stunspore","electrowebHit"],joltik:["stunspore","electrowebHit"],alcremie:["safeguard","batonpass"]};
 Object.entries(EXTERNAL_MOVE_COMPAT_2).forEach(([id,moves])=>{if(!LEARN[id])return;moves.filter(k=>M[k]&&!LEARN[id].includes(k)).forEach(k=>LEARN[id].push(k));});
 const ABILS={
-  centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
+  centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], ferrothorn:["ironbarbs"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
   gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], excadrill:["sandrush","sandforce"], gigalith:["sandstream","sandforce"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
@@ -1940,11 +1942,11 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.cat==="phys"&&defender.abilEff==="toxicdebris"&&defender.curHp>0){
       setHazard(attacker===me?"me":"foe","toxicspikes",defender);
     }
-    if(move.cat==="phys"&&defender.abilEff==="roughskin"&&attacker.curHp>0){
+    if(move.cat==="phys"&&["roughskin","ironbarbs"].includes(defender.abilEff)&&attacker.curHp>0){
       const rh=Math.max(1,Math.floor(attacker.maxHp/8));
       attacker.curHp=Math.max(0,attacker.curHp-rh);
       renderHp();
-      pushLog(`  ★ ${defender.name} の さめはだ！ ${attacker.name} に ${rh} ダメージ！`,"#ff7043");
+      pushLog(`  ★ ${defender.name} の ${defender.abilName}！ ${attacker.name} に ${rh} ダメージ！`,"#ff7043");
       if(attacker.curHp<=0) faintMon(attacker,attacker===me?"myImg":"foeImg");
     }
     cb();
