@@ -365,6 +365,7 @@ const M={
   sludgeattack:{name:"ヘドロこうげき",type:"poison",cat:"spec",power:95,poison:.1},
   scalesound:{name:"スケイルノイズ",type:"dragon",cat:"spec",power:110,sound:true,ignoreSubstitute:true,selfDrop:{def:-1}},
   closecombat:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
+  starassault:{name:"スターアサルト",type:"fighting",cat:"phys",power:200,recoilDamage:.2,recharge:true},
   closecombatHei:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
   focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
   nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
@@ -547,6 +548,7 @@ const SPECIES=[
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
  S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect","ritualBlade"],
    [{stone:"falinksstone",stoneName:"タイレーツナイト",name:"メガタイレーツ",img:"image/image/メガタイレーツ.gif",types:["fighting"],base:{hp:100,atk:145,def:125,spa:70,spd:90,spe:105},abil:"defiant"}]),
+ S("sirfetchd","ネギガナイト","image/image/ネギガナイト.gif",["fighting"],{hp:62,atk:135,def:95,spa:68,spd:82,spe:65},"focus",["starassault","closecombat","leafblade","bravebird"],[]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -606,6 +608,7 @@ const LEARN={
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
   garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
   falinks:["formation","beatup","ritualBlade","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
+  sirfetchd:["starassault","closecombat","leafblade","bravebird","nightslash","poisonjab","knockoff","protect"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
@@ -1696,6 +1699,7 @@ function applyMoveRecoil(attacker,move,actualDamage){
   if(attacker.curHp<=0&&!attacker.fainted) faintMon(attacker,attacker===me?"myImg":"foeImg");
 }
 function attack(attacker,defender,move,defImgId,cb){
+  if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
   if(move.chargeTurn&&attacker.electroBeamReady){
@@ -1936,6 +1940,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status") applyDrop(attacker,{spa:1});
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
+    if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
     if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
