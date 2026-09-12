@@ -67,6 +67,8 @@ vm.runInContext(`
   check(joltik.base.hp===75&&joltik.base.def===75&&joltik.base.spd===75&&calcDamage(fire,joltik,M.fireblast,false).dmg<calcDamage(fire,joltikPlain,M.fireblast,false).dmg,'Boosted Joltik receives Eviolite bulk');
   const mamoswine=makeMon(SP_BY_ID.mamoswine,'none','p1'),mamoswinePlain=Object.assign({},makeMon(SP_BY_ID.mamoswine,'none','p1'),{abilEff:null});
   check(mamoswine.base.hp===110&&mamoswine.base.atk===130&&calcDamage(fire,mamoswine,M.fireblast,false).dmg<calcDamage(fire,mamoswinePlain,M.fireblast,false).dmg,'Mamoswine Thick Fat');
+  const glalie=SPECIES[SP_BY_ID.glalie];
+  check(glalie.types[0]==='ice'&&Object.values(glalie.base).every(v=>v===80)&&glalie.abil==='moody','Glalie');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
