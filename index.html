@@ -1408,6 +1408,12 @@ function chooseSwitch(side,i){
   submitAction(side,{type:"switch",idx:i});
 }
 function submitAction(side,action){
+  // 味方対象技は、シングルでも本体・ヘイを含めて対象を明示的に選択する。
+  if(action.type==="move"&&isAllyTargetMove(action.move)&&!action.allyTargetReady){
+    pendingAllyTarget={side,action};
+    document.getElementById("cmd").innerHTML='<div>味方の対象を選択</div>'+friendlyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAllyTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('')+'<div class="center"><button class="btn ghost" onclick="openMoves(\''+side+'\')">← もどる</button></div>';
+    return;
+  }
   if(action.type==="move"&&!action.targetReady&&enemyTargets(side).length>1){
     pendingTarget={side,action};
     document.getElementById("cmd").innerHTML='<div>攻撃対象を選択</div>'+enemyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('');return;
@@ -1421,6 +1427,17 @@ function submitAction(side,action){
   }else doResolve();
 }
 let pendingTarget=null;
+let pendingAllyTarget=null;
+function isAllyTargetMove(move){return !!(move&&(move.allyHeal||move.allyBoost||move.decorateAlly));}
+function friendlyTargets(side){const host=activeOf(side);return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
+function confirmAllyTarget(index){
+  const p=pendingAllyTarget;if(!p)return;
+  const target=friendlyTargets(p.side)[index];if(!target)return;
+  pendingAllyTarget=null;
+  p.action.allyTargetReady=true;
+  p.action.move=Object.assign({},p.action.move,{allyTarget:target});
+  submitAction(p.side,p.action);
+}
 function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
 function resolveAttackTarget(side,target){const list=enemyTargets(side);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
 function confirmAttackTarget(i){const {side,action}=pendingTarget;action.target=enemyTargets(side)[i];action.targetReady=true;submitAction(side,action);}
