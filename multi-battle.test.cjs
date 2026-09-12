@@ -55,6 +55,8 @@ vm.runInContext(`
   check(corviknight.types.includes('flying')&&corviknight.types.includes('steel')&&corviknight.base.def===105&&corviknight.abil==='mirrorarmor','Corviknight');
   const thievul=SPECIES[SP_BY_ID.thievul];
   check(thievul.types[0]==='dark'&&thievul.base.spa===87&&thievul.base.spe===90&&thievul.abil==='unburden','Thievul');
+  const obstagoon=SPECIES[SP_BY_ID.obstagoon];
+  check(obstagoon.types.includes('dark')&&obstagoon.types.includes('normal')&&obstagoon.base.def===101&&obstagoon.abil==='defiant','Obstagoon');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
