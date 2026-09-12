@@ -37,6 +37,7 @@ vm.runInContext(`
   const fairy=makeMon(SP_BY_ID.marilli,'none','cpu');
   check(M.duraludonDisaster.type==='dragon','Duraludon Disaster is Dragon type');
   check(M.duraludonDisaster.onceBattle&&M.duraludonDisaster.onceFlag==='usedDuraludonDisaster','Duraludon Disaster is once per battle');
+  check(SP_BY_ID.empoleon!==undefined&&M.hydrocannon.power===120&&M.hydrocannon.trapTurns===3&&M.hydrocannon.trapDenom===10,'Empoleon Hydro Cannon and residual effect');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');

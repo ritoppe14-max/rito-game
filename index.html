@@ -311,6 +311,7 @@ const M={
   softboiled:{name:"タマゴうみ",type:"normal",cat:"status",power:0,recover:.50},
   surf:{name:"なみのり",type:"water",cat:"spec",power:90},
   hydropump:{name:"ハイドロポンプ",type:"water",cat:"spec",power:110},
+  hydrocannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:120,trapTurns:3,trapDenom:10,trapLabel:"ハイドロカノンの激流",trapColor:"#4fc3f7"},
   liquidation:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}},
   waterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,flinch:.2},
   aquajet:{name:"アクアジェット",type:"water",cat:"phys",power:40,prio:1,percentDamage:.10},
@@ -485,6 +486,7 @@ const SPECIES=[
  S("dragapult","ドラパルト","image/image/ドラパルト.gif",["dragon","ghost"],{hp:88,atk:120,def:75,spa:100,spd:75,spe:142},"clearbody",["dragonclaw","shadowball","flamethrower","protect"],[]),
  S("duraludon","ジュラルドン","image/image/ジュラルドン.gif",["steel","dragon"],{hp:70,atk:60,def:105,spa:135,spd:105,spe:85},"heavymetal",["duraludonCannon","dragontail","duraludonPulse","stealthrock","duraludonDisaster"],[]),
  S("archaludon","ブリジュラス","image/image/ブリジュラス.gif",["steel","dragon"],{hp:80,atk:60,def:110,spa:110,spd:110,spe:70},"clearbody",["electrobeam","steelbeam","dragonclaw","protect"],[]),
+ S("empoleon","エンペルト","image/image/エンペルト.gif",["water","steel"],{hp:84,atk:86,def:88,spa:111,spd:101,spe:60},"torrent",["hydrocannon","surf","icebeam","flashcannon"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
@@ -550,6 +552,7 @@ const LEARN={
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
   duraludon:["duraludonCannon","dragontail","duraludonPulse","stealthrock","steelbeam","dragonclaw","thunderbolt","protect","meteor","darkpulse"],
   archaludon:["electrobeam","steelbeam","dragonclaw","protect","flashcannon","thunderbolt","meteor","darkpulse"],
+  empoleon:["hydrocannon","surf","hydropump","icebeam","flashcannon","steelbeam","earthpower","protect"],
   alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
@@ -560,7 +563,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
@@ -1017,7 +1020,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
+  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1746,7 +1749,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(defender.abilEff==="pepperguard"&&attacker.curHp>0&&defender.curHp>0) applyStatus(attacker,"burn",defender);
     if(move.salt&&defender.curHp>0){defender.salted=true;pushLog(`  ・ ${defender.name} は しおづけになった！`,"#7ad1ff");}
     if(move.trapTurns&&defender.curHp>0){
-      defender.trapTurns=move.trapTurns; defender.trapDenom=move.trapDenom;
+      defender.trapTurns=move.trapTurns; defender.trapDenom=move.trapDenom; defender.trapLabel=move.trapLabel||"マグマストームの熱"; defender.trapColor=move.trapColor||"#ff7043";
       defender.switchLock=move.switchLock||0;
       pushLog(`  ・ ${defender.name} は ${move.name} の熱に包まれた！`,"#ff7043");
     }
@@ -2153,8 +2156,8 @@ function applyResidual(mon,imgId,source){
   }
   if(mon.trapTurns>0){
     d=Math.max(d,Math.max(1,Math.floor(mon.maxHp/mon.trapDenom)));
-    label="マグマストームの熱";
-    color="#ff7043";
+    label=mon.trapLabel||"マグマストームの熱";
+    color=mon.trapColor||"#ff7043";
   }
   if(mon.salted){d=Math.max(1,Math.floor(mon.maxHp/(mon.types.includes("steel")||mon.types.includes("water")?4:8)));label="しおづけ";color="#7ad1ff";}
   if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8*constantDamageFactor(mon)));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
