@@ -273,6 +273,8 @@ const M={
   earthquake:{name:"じしん",type:"ground",cat:"phys",power:100},
   rocktomb:{name:"がんせきふうじ",type:"rock",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}},
   flashcannon:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,selfBoost:{chance:.2,stats:{spd:1}}},
+  ironrod:{name:"アイアンロッド",type:"steel",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}},
+  electrobeam:{name:"エレクトロビーム",type:"electric",cat:"spec",power:120,chargeTurn:true},
   ironhead:{name:"アイアンヘッド",type:"steel",cat:"phys",power:80},
   behemothblade:{name:"きょじゅうざん",type:"steel",cat:"phys",power:100,megaBonus:true},
   fireblast:{name:"だいもんじ",type:"fire",cat:"spec",power:110,burn:.3},
@@ -440,7 +442,7 @@ const SPECIES=[
    [{stone:"kangaskhanite",stoneName:"ガルーラナイト",name:"メガガルーラ",img:"image/image/メガルーラ.gif",types:["normal"],base:{hp:105,atk:125,def:100,spa:60,spd:100,spe:100},abil:"parentalbond"}]),
  S("salamence","ボーマンダ","image/image/ボーマンダ.gif",["dragon","flying"],{hp:95,atk:135,def:80,spa:110,spd:80,spe:100},"intimidate",["dragonclaw","scaleshot","dragondance","takedown"],
    [{stone:"salamencite",stoneName:"ボーマンダナイト",name:"メガボーマンダ",img:"image/image/メガボーマンダ.gif",types:["dragon","flying"],base:{hp:95,atk:155,def:110,spa:90,spd:110,spe:140},abil:"aerilate"}]),
- S("heatran","ヒードラン","image/image/ヒードラン.gif",["fire","steel"],{hp:91,atk:90,def:106,spa:130,spd:106,spe:77},"flashfire",["fireblast","magmastorm","earthpower","flashcannon"],
+ S("heatran","ヒードラン","image/image/ヒードラン.gif",["fire","steel"],{hp:91,atk:90,def:106,spa:130,spd:106,spe:77},"flashfire",["fireblast","magmastorm","earthpower","stealthrock"],
    [{stone:"heatranite",stoneName:"ヒードランナイト",name:"メガヒードラン",img:"image/image/メガヒードラン.gif",types:["fire","steel"],base:{hp:91,atk:120,def:106,spa:175,spd:141,spe:67},abil:"magmaheat"}]),
  S("pelipper","ペリッパー","image/image/ペリッパー.gif",["water","flying"],{hp:60,atk:50,def:100,spa:95,spd:70,spe:65},"drizzle",["surf","hurricane","icebeam","airslash"],[]),
  S("pendor","ペンドラー","image/image/ペンドラー.gif",["bug","poison"],{hp:60,atk:100,def:89,spa:55,spd:69,spe:112},"speedboost",["megahorn","poisonjab","earthquake","rockslide"],
@@ -456,7 +458,7 @@ const SPECIES=[
  S("cinderace","エースバーン","image/image/エースバーン.gif",["fire"],{hp:80,atk:116,def:75,spa:65,spd:75,spe:119},"blaze",["pyroball","highjumpkick","crunch","flamethrower"],[]),
  S("absol","アブソル","image/image/アブソル.gif",["dark"],{hp:65,atk:130,def:60,spa:75,spd:60,spe:75},"pressure",["crunch","megahorn","icefang","quickattack"],
    [{stone:"absolzite",stoneName:"アブソルZナイト",name:"メガアブソルZ",img:"image/image/メガアブソルZ.gif",types:["dark"],base:{hp:65,atk:164,def:60,spa:115,spd:60,spe:151},abil:"sharpness"}]),
- S("lucario","ルカリオ","image/image/ルカリオ.gif",["fighting","steel"],{hp:70,atk:110,def:70,spa:115,spd:70,spe:90},"focus",["closecombat","flashcannon","psychic","quickattack"],
+ S("lucario","ルカリオ","image/image/ルカリオ.gif",["fighting","steel"],{hp:70,atk:110,def:70,spa:115,spd:70,spe:90},"focus",["closecombat","ironrod","psychic","quickattack"],
    [{stone:"lucarionite",stoneName:"ルカリオナイト",name:"メガルカリオ",img:"image/image/メガルカリオ.gif",types:["fighting","steel"],base:{hp:70,atk:145,def:88,spa:140,spd:70,spe:112},abil:"adaptability"},
     {stone:"lucarioniteZ",stoneName:"ルカリオZナイト",name:"メガルカリオZ",img:"image/image/メガルカリオZ.gif",types:["fighting","steel"],base:{hp:70,atk:100,def:100,spa:164,spd:151,spe:151},abil:"aurashield"}]),
  S("zacian","ザシアン","image/image/ザシアン.gif",["fairy"],{hp:92,atk:130,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"],
@@ -468,6 +470,8 @@ const SPECIES=[
    [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:130,def:93,spa:130,spd:93,spe:75},abil:"pepperguard"}]),
  S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"speedboost",["latiospulse","dpulse","psychic","thunderbolt"],[]),
  S("dragapult","ドラパルト","image/image/ドラパルト.gif",["dragon","ghost"],{hp:88,atk:120,def:75,spa:100,spd:75,spe:142},"clearbody",["dragonclaw","shadowball","flamethrower","protect"],[]),
+ S("duraludon","ジュラルドン","image/image/ジュラルドン.gif",["steel","dragon"],{hp:70,atk:60,def:105,spa:135,spd:105,spe:85},"clearbody",["steelbeam","dragonclaw","thunderbolt","protect"],[]),
+ S("archaludon","ブリジュラス","image/image/ブリジュラス.gif",["steel","dragon"],{hp:80,atk:60,def:110,spa:110,spd:110,spe:70},"clearbody",["electrobeam","steelbeam","dragonclaw","protect"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
  S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect","ritualBlade"],
@@ -511,7 +515,7 @@ const LEARN={
   gliscor:["earthquake","stoneedge","xscissor","stealthrock","spikes","substitute","protect"],
   kangaskhan:["earthquake","crunch","closecombat","rockslide","takedown","suckerpunch","fakeout","icepunch","protect"],
   salamence:["dragonclaw","scaleshot","doublewing","dragondance","takedown","outrage","ironhead","roost","earthquake","airslash","stoneedge","fireblast","protect"],
-  heatran:["fireblast","flamethrower","magmastorm","earthpower","flashcannon","stealthrock","stoneedge","darkpulse","protect"],
+  heatran:["fireblast","flamethrower","magmastorm","earthpower","stealthrock","stoneedge","darkpulse","protect"],
   pelipper:["surf","hurricane","icebeam","airslash","hydropump","thunderbolt","energyball","flamethrower"],
   pendor:["megahorn","poisonjab","earthquake","rockslide","xscissor","sludgebomb","aquajet","icefang"],
   marilli:["playrough","liquidation","aquajet","crunch","waterfall","icefang","poisonjab","xscissor"],
@@ -521,7 +525,7 @@ const LEARN={
   gorillander:["drumattack","grassslide","crunch","earthquake","rockslide","leafblade","energyball"],
   cinderace:["pyroball","highjumpkick","crunch","flamethrower","fireblast","quickattack"],
   absol:["crunch","megahorn","icefang","quickattack","stoneedge","poisonjab","darkpulse","xscissor","nightslash","shadowclaw","suckerpunch"],
-  lucario:["closecombat","flashcannon","psychic","quickattack","earthquake","stoneedge","darkpulse","focusblast","steelbeam","aurablast"],
+  lucario:["closecombat","ironrod","psychic","quickattack","earthquake","stoneedge","darkpulse","focusblast","steelbeam","aurablast"],
   zacian:["closecombat","crunch","stoneedge","quickattack","ironhead","playrough"],
   idaitou:["liquidation","shadowball","crunch","aquajet","gravevisit","hydropump","icebeam","darkpulse"],
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
@@ -530,6 +534,8 @@ const LEARN={
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
+  duraludon:["steelbeam","dragonclaw","thunderbolt","protect","flashcannon","meteor","darkpulse"],
+  archaludon:["electrobeam","steelbeam","dragonclaw","protect","flashcannon","thunderbolt","meteor","darkpulse"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
@@ -1447,6 +1453,8 @@ function runAttacks(movers,i,done){
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
   if(def.fainted&&!isFriendlyMove(m.move)){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
+  // エレクトロビームをためた次のターンは、別の技を選んでも発射する。
+  if(atk.electroBeamReady) m.move=M.electrobeam;
   m.move=Object.assign({},m.move,{targetPart:m.part||"waist"});
   if(atk===foe)atk.lastMoveWasStatus=m.move.cat==="status";
   if(atk.flinched&&atk.abilEff!=="focus"){ atk.flinched=false; atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は ひるんで 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450); return; }
@@ -1500,6 +1508,17 @@ function applyMoveRecoil(attacker,move,actualDamage){
 function attack(attacker,defender,move,defImgId,cb){
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
+  if(move.chargeTurn&&attacker.electroBeamReady){
+    attacker.electroBeamReady=false;
+  }else if(move.chargeTurn&&weather!=="rain"){
+    attacker.electroBeamReady=true;
+    attacker.acted=(attacker.acted||0)+1;
+    attacker.firstTurnReady=false;
+    applyDrop(attacker,{spa:1});
+    pushLog(`${attacker.name} は エレクトロビームの 電気をためた！ とくこうが上がった！`,"#f8d030");
+    setTimeout(cb,450);
+    return;
+  }
   if(move.ritual&&attacker.usedRitual){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.ritual){attacker.usedRitual=true;attacker.ritualTurns=5;}
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
@@ -1936,14 +1955,14 @@ function doMega(mon,imgId,cb){
 function doSwitch(side,idx,cb){
   megaArm[side]=false;
   if(side==="me"){
-    const out=me; out.subHp=0; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    const out=me; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false;
     pushLog(`${out.name} を ひっこめて ${me.name}！`);
     renderActive();
     applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
   }else{
-    const out=foe; out.subHp=0; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    const out=foe; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false;
     pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
