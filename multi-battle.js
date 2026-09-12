@@ -96,7 +96,11 @@ function multiResolve(){
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
     m.turnMoved=true;
-    attack(m,target,a.move,multiImage(target),()=>{renderMulti();cb();});
+    attack(m,target,a.move,multiImage(target),()=>{
+      renderMulti();
+      if(a.move.switchAfter&&multiBench(a.side).length)multiSwitch({side:a.side,mon:m,replacement:multiBench(a.side)[0]},cb);
+      else cb();
+    });
   }),multiEnd);
 }
 function multiEnd(){
@@ -104,6 +108,7 @@ function multiEnd(){
     const target=multiLiving(multiOther(s))[0]||multi.teams[multiOther(s)][0];
     me=s==='me'?m:target;foe=s==='foe'?m:target;
     applyResidual(m,multiImage(m),target);
+    applyStealthRockResidual(s,m,multiImage(m));
     if(m.curHp<=0){faintMon(m,multiImage(m));return;}
     if(m.itemKey==='toxicorb'&&!m.status)applyStatus(m,'poison',m);
     if(m.abilEff==='poisonheal'&&(m.status==='poison'||m.status==='toxic'))m.curHp=Math.min(m.maxHp,m.curHp+Math.max(1,Math.floor(m.maxHp/7)));
@@ -111,6 +116,7 @@ function multiEnd(){
     if(m.abilEff==='speedboost')applyDrop(m,{spe:1});
     if(m.yawnTurns>0&&--m.yawnTurns===0&&!m.status){m.status='sleep';m.sleepTurns=2+Math.floor(Math.random()*2);}
     if(m.switchLock>0)m.switchLock--;
+    if(m.duraludonShieldTurns>0)m.duraludonShieldTurns--;
   }));
   if(weatherTurns>0&&--weatherTurns===0)weather=null;
   if(electricTurns>0)electricTurns--;if(grassTurns>0)grassTurns--;if(psychicTurns>0)psychicTurns--;if(mistTurns>0)mistTurns--;

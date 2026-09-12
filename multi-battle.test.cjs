@@ -28,5 +28,15 @@ vm.runInContext(`
     check(d.curHp<hp,'real damage');
     show('home');check(!multi,'leave battle');
   }
+  const dura=makeMon(SP_BY_ID.duraludon,'none','p1'), fire=makeMon(SP_BY_ID.centiskorch,'none','cpu');
+  me=dura;foe=fire;battleSize=1;
+  const single=calcDamage(dura,fire,M.duraludonCannon,false);
+  check(single.eff===1,'Duraludon cannon ignores type effectiveness');
+  battleSize=2;const multiDmg=calcDamage(dura,fire,M.duraludonCannon,false).dmg;
+  check(multiDmg>=Math.floor(single.dmg*1.49),'Duraludon cannon multi boost');
+  hazards=emptyHazards();setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);
+  check(hazards.foe.rocks===3,'Stealth Rock three layers');
+  dura.duraludonShieldTurns=3;const shielded=calcDamage(fire,dura,M.fireblast,false).dmg;dura.duraludonShieldTurns=0;const plain=calcDamage(fire,dura,M.fireblast,false).dmg;
+  check(shielded<=Math.ceil(plain*2/3),'Duraludon disaster shield');
 `,c);
-console.log('Double/triple: selection, slots, switching, all actions, speed order, damage and exit OK');
+console.log('Double/triple and Duraludon features: slots, switching, speed order, damage, cannon, rocks and shield OK');
