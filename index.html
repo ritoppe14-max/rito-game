@@ -382,6 +382,7 @@ const M={
   substitute:{name:"みがわり",type:"normal",cat:"status",power:0,substitute:true},
   swordsdance:{name:"つるぎのまい",type:"normal",cat:"status",power:0,selfBoost:{atk:2}},
   formation:{name:"はいすいのじん",type:"fighting",cat:"status",power:0,onceBattle:true,onceFlag:"usedFormation",selfBoost:{chance:1,stats:{atk:1,def:1,spa:1,spd:1,spe:1}}},
+  heicoaching:{name:"ヘイのコーチング",type:"normal",cat:"status",power:0,heiCoaching:true},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -466,11 +467,11 @@ SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai"]);
 const FALINKS_HEI=[
-  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster",moves:["buildup","charm","throatchop","ironhead"]},
-  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate",moves:["bodypress","jetpunch","irondefense","thunderpunch"]},
-  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary",moves:["closecombat","tripleaxel","drainpunch","firstimpression"]},
-  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",moves:["closecombat","megahorn","iceSpinner","machpunchZ"]},
-  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",moves:["sacredwave","darkpulse2","sludgeattack","scalesound"]}
+  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster",item:"none",moves:["buildup","charm","throatchop","ironhead"]},
+  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate",item:"none",moves:["bodypress","jetpunch","irondefense","thunderpunch"]},
+  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary",item:"none",moves:["closecombat","tripleaxel","drainpunch","firstimpression"]},
+  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",item:"none",moves:["closecombat","megahorn","iceSpinner","machpunchZ"]},
+  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",item:"none",moves:["sacredwave","darkpulse2","sludgeattack","scalesound"]}
 ];
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
@@ -943,7 +944,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1071,6 +1072,7 @@ function calcDamage(attacker,defender,move,isCrit){
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(defender.itemKey==="eviolite"&&!defender.isMega)defStat*=1.5;
+  if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
   if(move.lowDef){
     const physDef=defender.base.def*stageMult(defender.stages.def);
@@ -1265,6 +1267,7 @@ function openMoves(side){
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
+    if(m.id==="falinks"&&i===0&&m.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
     h+=`<button class="move" title="${shown.name}｜${TYPE_JP[shown.type]}・${catLabel(shown)}／威力${shown.power}\n${shown.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(shown.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="chooseMove('${side}',${i})">
       <div class="mn">${shown.name}${shown.prio?` <span style="color:#7ad1ff;font-size:11px">⏫+${shown.prio}</span>`:''}</div>
@@ -1284,7 +1287,7 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ const mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.itemKey==="peacescroll"&&user.peaceTurns>0&& !mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv,part:selectedPart[side]||"waist"}); }
+function chooseMove(side,i){ let mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.id==="falinks"&&i===0&&user.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching; if(user.itemKey==="peacescroll"&&user.peaceTurns>0&&!mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv,part:selectedPart[side]||"waist"}); }
 function startLatiosCharge(side,mv){
   if(busy)return; busy=true; const mon=activeOf(side); let taps=0,finished=false;
   const c=document.getElementById("cmd");
@@ -1441,6 +1444,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
   const falinksPart=falinksPartInfo(defender,move), accuracy=falinksPart&&falinksPart.accuracy||move.accuracy;
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
+  if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -1907,6 +1911,7 @@ function endTurn(){
   [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="toxicorb"&&m.acted>=1&&!m.status){applyStatus(m,"poison",m);}});
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
   [me,foe].forEach(m=>{if(m&&m.soundBlocked>0)m.soundBlocked--;});
+  [me,foe].forEach(m=>{if(m&&m.coachTurns>0)m.coachTurns--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
   [me,foe].forEach(m=>{if(m&&m.peaceTurns>0){m.peaceTurns--;if(m.peaceTurns===0)pushLog(`  ・ ${m.name} の へいわせんこくの効果が切れた！`,"#7ad1ff");}});
