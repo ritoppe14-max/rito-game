@@ -1315,6 +1315,7 @@ function runAttacks(movers,i,done){
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
   if(def.fainted){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
+  if(atk===foe)atk.lastMoveWasStatus=m.move.cat==="status";
   if(atk.flinched&&atk.abilEff!=="focus"){ atk.flinched=false; atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は ひるんで 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450); return; }
   if(atk.status==="freeze"){
     if(Math.random()<0.25){ atk.status=null; renderStages(); pushLog(`  └ ${atk.name} の こおりが とけた！`,"#7ad1ff"); }
@@ -1735,6 +1736,7 @@ function cpuChoose(){
   }
   // 攻撃技がある場合、つるぎのまい等の自己強化だけを連続選択しない。
   const attackable=cand.filter(mv=>mv.cat!=="status"&&mv.power>0&&calcDamage(foe,me,mv,false).eff!==0);
+  if(foe.lastMoveWasStatus&&attackable.length)cand=attackable;
   if(attackable.length)cand=cand.filter(mv=>mv.cat!=="status"||!mv.selfBoost);
   const weak=cand.filter(mv=>calcDamage(foe,me,mv,false).eff>1);
   if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){
