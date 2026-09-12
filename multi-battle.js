@@ -72,7 +72,7 @@ function multiConfirm(s){
   multi.actions.push(...actions);
   if(s==='me'&&mode==='friend'){document.getElementById('cmd').innerHTML='<div class="sub">プレイヤー2に交代してください</div><button class="btn" onclick="multiChoose(\'foe\')">プレイヤー2の入力へ</button>';return;}
   if(s==='me')multiLiving('foe').forEach(mon=>{
-    const options=mon.moves.flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
+    const options=mon.moves.filter(move=>!(move.onceBattle&&mon[move.onceFlag||'usedPlayTogether'])).flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
     const valid=options.filter(a=>a.move.cat==='status'||calcDamage(mon,a.target,a.move,false).eff>0);
     const pool=valid.length?valid:options;
     pool.sort((a,b)=>calcDamage(mon,b.target,b.move,false).dmg-calcDamage(mon,a.target,a.move,false).dmg);
