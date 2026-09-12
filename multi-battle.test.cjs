@@ -73,6 +73,8 @@ vm.runInContext(`
   check(crustle.types.includes('bug')&&crustle.types.includes('rock')&&M.crustlerockTomb.power===80&&M.crustlerockTomb.switchLock===2&&M.crustlerockTomb.targetDrop.stats.spe===-1,'Crustle Rock Tomb');
   const kingler=SPECIES[SP_BY_ID.kingler];
   check(kingler.types[0]==='water'&&kingler.base.atk===150&&kingler.base.spe===50&&kingler.moves.includes('crabhammer'),'Kingler custom stats');
+  const cloyster=SPECIES[SP_BY_ID.cloyster];
+  check(cloyster.types.includes('water')&&cloyster.types.includes('ice')&&cloyster.base.atk===85&&cloyster.base.def===180,'Cloyster custom attack');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
