@@ -401,6 +401,7 @@ const M={
   stealthrock:{name:"ステルスロック",type:"rock",cat:"status",power:65,hazard:"rocks"},
   stealthrockTick:{name:"ステルスロック",type:"rock",cat:"phys",power:65},
   spikes:{name:"まきびし",type:"ground",cat:"status",power:0,hazard:"spikes"},
+  stickyweb:{name:"ねばねばネット",type:"bug",cat:"status",power:0,hazard:"stickyweb"},
   toxicspikes:{name:"どくびし",type:"poison",cat:"status",power:0,hazard:"toxicspikes"},
   toxic:{name:"どくどく",type:"poison",cat:"status",power:0,accuracy:.9,toxic:true},
   substitute:{name:"みがわり",type:"normal",cat:"status",power:0,substitute:true},
@@ -421,7 +422,7 @@ const M={
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
 function statEffectChance(e){return e&&e.chance!==undefined?e.chance:1;}
-function moveEffText(mv){const t=[];if(mv.hpPower)t.push("残りHPで威力変化（最大150・最低10）");if(mv.accuracy)t.push(`命中${Math.round(mv.accuracy*100)}%`);if(mv.prio)t.push(`優先度+${mv.prio}`);if(mv.cut)t.push("切る技");if(mv.firstTurnOnly)t.push("出てすぐのターンのみ");if(mv.highCrit)t.push(`急所率${Math.round((mv.critRate||.125)*1000)/10}%`);if(mv.critMult)t.push(`急所ダメージ${mv.critMult}倍`);if(mv.flinch)t.push(`${Math.round(mv.flinch*100)}%で相手を行動不能`);if(mv.freeze)t.push(`${Math.round(mv.freeze*100)}%でこおり`);if(mv.burn)t.push(`${Math.round(mv.burn*100)}%でやけど`);if(mv.poison)t.push(`${Math.round(mv.poison*100)}%でどく`);if(mv.paralyze)t.push(`${Math.round(mv.paralyze*100)}%でまひ`);if(mv.spread)t.push("相手全体を攻撃（範囲ダメージ減衰なし）");if(mv.healDamage)t.push(`与えたダメージの${Math.round(mv.healDamage*100)}%回復`);if(mv.hypersleep)t.push("100%で超眠気（25%で行動不能・被ダメージ1.25倍）");if(mv.hazard==="rocks")t.push("交代で出た相手に最大HP1/10ダメージ");if(mv.hazard==="toxicspikes")t.push("交代してきた相手を毒にする。2回で猛毒");if(mv.hazard==="electroweb")t.push("交代してきた相手をまひ・でんき相性に応じた最大HPダメージ");if(mv.selfBoost){const st=statEffectStats(mv.selfBoost),ch=statEffectChance(mv.selfBoost);t.push(`${ch<1?Math.round(ch*100)+"%で":""}自分の`+Object.keys(st).map(k=>STAT_JP[k]).join("・")+"↑");}if(mv.selfDrop)t.push("使用後 自分の"+Object.keys(mv.selfDrop).map(k=>STAT_JP[k]).join("・")+"↓");if(mv.targetDrop)t.push(`${Math.round(mv.targetDrop.chance*100)}%で相手の`+Object.keys(mv.targetDrop.stats).map(k=>STAT_JP[k]).join("・")+"↓");return t.join(" / ");}
+function moveEffText(mv){const t=[];if(mv.hpPower)t.push("残りHPで威力変化（最大150・最低10）");if(mv.accuracy)t.push(`命中${Math.round(mv.accuracy*100)}%`);if(mv.prio)t.push(`優先度+${mv.prio}`);if(mv.cut)t.push("切る技");if(mv.firstTurnOnly)t.push("出てすぐのターンのみ");if(mv.highCrit)t.push(`急所率${Math.round((mv.critRate||.125)*1000)/10}%`);if(mv.critMult)t.push(`急所ダメージ${mv.critMult}倍`);if(mv.flinch)t.push(`${Math.round(mv.flinch*100)}%で相手を行動不能`);if(mv.freeze)t.push(`${Math.round(mv.freeze*100)}%でこおり`);if(mv.burn)t.push(`${Math.round(mv.burn*100)}%でやけど`);if(mv.poison)t.push(`${Math.round(mv.poison*100)}%でどく`);if(mv.paralyze)t.push(`${Math.round(mv.paralyze*100)}%でまひ`);if(mv.spread)t.push("相手全体を攻撃（範囲ダメージ減衰なし）");if(mv.healDamage)t.push(`与えたダメージの${Math.round(mv.healDamage*100)}%回復`);if(mv.hypersleep)t.push("100%で超眠気（25%で行動不能・被ダメージ1.25倍）");if(mv.hazard==="rocks")t.push("交代で出た相手に最大HP1/10ダメージ");if(mv.hazard==="toxicspikes")t.push("交代してきた相手を毒にする。2回で猛毒");if(mv.hazard==="electroweb")t.push("交代してきた相手をまひ・でんき相性に応じた最大HPダメージ");if(mv.hazard==="stickyweb")t.push("交代して出た相手のすばやさを下げる");if(mv.selfBoost){const st=statEffectStats(mv.selfBoost),ch=statEffectChance(mv.selfBoost);t.push(`${ch<1?Math.round(ch*100)+"%で":""}自分の`+Object.keys(st).map(k=>STAT_JP[k]).join("・")+"↑");}if(mv.selfDrop)t.push("使用後 自分の"+Object.keys(mv.selfDrop).map(k=>STAT_JP[k]).join("・")+"↓");if(mv.targetDrop)t.push(`${Math.round(mv.targetDrop.chance*100)}%で相手の`+Object.keys(mv.targetDrop.stats).map(k=>STAT_JP[k]).join("・")+"↓");return t.join(" / ");}
 
 // ===== ポケモン（通常の本来特性・メガ形態）=====
 // メガストーン名：末尾の「ー」を取り「ナイト」＋メガ名の接尾文字
@@ -507,7 +508,7 @@ const SPECIES=[
  S("drednaw","カジリガメ","image/image/カジリガメ.gif",["water","rock"],{hp:90,atk:115,def:90,spa:48,spd:68,spe:74},"strongjaw",["liquidation","crunch","stoneedge","icefang"],[]),
  S("hold","ホールド","image/image/ホールド.gif",["normal","ground"],{hp:85,atk:56,def:77,spa:50,spd:77,spe:78},"hugepower",["earthquake","bodypress","quickattack","stoneedge"],[]),
  S("galvantula","デンチュラ","image/image/デンチュラ.gif",["bug","electric"],{hp:70,atk:77,def:60,spa:97,spd:60,spe:108},"compoundeyes",["thunder","bugbite","electroweb","energyball"],[]),
- S("joltik","バチュル","image/image/バチュル.gif",["bug","electric"],{hp:75,atk:47,def:75,spa:57,spd:75,spe:65},"compoundeyes",["thunderbolt","bugbite","electroweb","suckerpunch"],[]),
+ S("joltik","バチュル","image/image/バチュル.gif",["bug","electric"],{hp:75,atk:47,def:75,spa:57,spd:75,spe:65},"compoundeyes",["thunderbolt","bugbite","electroweb","stickyweb"],[]),
  S("mamoswine","マンムー","image/image/マンムー.gif",["ice","ground"],{hp:110,atk:130,def:80,spa:70,spd:60,spe:80},"thickfat",["earthquake","icefang","stoneedge","iciclecrash"],[]),
  S("glalie","オニゴーリ","image/image/オニゴーリ.gif",["ice"],{hp:80,atk:80,def:80,spa:80,spd:80,spe:80},"moody",["icebeam","icefang","shadowball","protect"],[]),
  S("kingler","キングラー","image/image/キングラー.gif",["water"],{hp:55,atk:150,def:115,spa:50,spd:50,spe:50},"shellarmor",["crabhammer","liquidation","xscissor","rockslide"],[]),
@@ -590,7 +591,7 @@ const LEARN={
   drednaw:["liquidation","crunch","stoneedge","icefang","waterfall","earthquake","rockslide","bodypress","protect"],
   hold:["earthquake","bodypress","quickattack","stoneedge","takedown","icepunch","thunderpunch","ironhead","protect","toxic"],
   galvantula:["thunder","thunderbolt","electroweb","bugbite","energyball","suckerpunch","shadowball","protect","toxic"],
-  joltik:["thunderbolt","thunder","electroweb","bugbite","suckerpunch","energyball","protect","toxic"],
+  joltik:["thunderbolt","thunder","electroweb","stickyweb","bugbite","suckerpunch","energyball","protect","toxic"],
   mamoswine:["earthquake","icefang","stoneedge","icebeam","iciclecrash","rockslide","takedown","protect"],
   glalie:["icebeam","icefang","shadowball","protect","iciclecrash","crunch","earthquake","ironhead","toxic"],
   kingler:["crabhammer","liquidation","xscissor","rockslide","icebeam","bodypress","protect","toxic"],
@@ -1045,7 +1046,7 @@ document.getElementById("startBtn").onclick=()=>{
 // ===== バトル =====
 let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0, rayMegaBlocked=false, rayMegaActive=false;
 let mode='cpu', megaArm={me:false,foe:false}, maxArm={me:false,foe:false}, maxUsed={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
-function emptyHazards(){return {me:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,disaster:null},foe:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,disaster:null}};}
+function emptyHazards(){return {me:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null},foe:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null}};}
 let hazards=emptyHazards();
 function makeMon(sp_i, itemKey, owner="p1"){
   const sp=SPECIES[sp_i];
@@ -1995,6 +1996,11 @@ function setHazard(side,type,setter){
     else{ h.electroweb=true; h.electrowebSetter=setter||null; pushLog(`  └ ${sideLabel(side)} の場に エレキネットが しかけられた！`,"#f8d030"); }
     return;
   }
+  if(type==="stickyweb"){
+    if(h.stickyweb) pushLog("  └ すでに ねばねばネットが しかけられている！","#9fb3d6");
+    else{ h.stickyweb=true; pushLog(`  └ ${sideLabel(side)} の場に ねばねばネットが しかけられた！`,"#9bc53d"); }
+    return;
+  }
   if(type==="rocks"){
     if(h.rocks>=3) pushLog("  └ すでに ステルスロックは 3回まかれている！","#9fb3d6");
     else{ h.rocks++; h.rocksSetter=setter||h.rocksSetter; pushLog(`  └ ${sideLabel(side)} の場に ステルスロックが まかれた！（${h.rocks}/3回）`,"#b6a136"); }
@@ -2160,6 +2166,13 @@ function applyHazards(side,cb){
     if(mon.curHp<=0) faintMon(mon,imgOf(side));
     next();
   },350));
+  if(h.stickyweb) tasks.push(next=>setTimeout(()=>{
+    if(!mon.fainted){
+      applyDrop(mon,{spe:-1});
+      pushLog(`  🕸 ${mon.name} は ねばねばネットで すばやさが 下がった！`,"#9bc53d");
+    }
+    next();
+  },300));
   if(!tasks.length) cb(); else series(tasks,cb);
 }
 

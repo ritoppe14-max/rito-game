@@ -81,6 +81,7 @@ vm.runInContext(`
   check(!wishiwashi.schoolForm&&wishiwashi.base.def===20&&wishiwashi.base.spd===25,'Wishiwashi solo form at quarter HP');
   const pyukumuku=SPECIES[SP_BY_ID.pyukumuku];
   check(pyukumuku.base.hp===150&&pyukumuku.base.def===70&&pyukumuku.base.spd===70&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
+  check(SPECIES[SP_BY_ID.joltik].learnset.includes('stickyweb')&&M.stickyweb.hazard==='stickyweb','Joltik Sticky Web');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
