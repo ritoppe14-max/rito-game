@@ -961,7 +961,7 @@ function cpuSelect3(){
     const others=cpuParty.map((_,i)=>i).filter(i=>i!==ragI&&i!==pelI);
     const third=others[Math.floor(Math.random()*others.length)];
     // ペリッパー先発→雨を降らせてからラグラージへ交代
-    cpuSel = [pelI,ragI,third].slice(0,count);
+    cpuSel = [pelI,ragI,third,...others.filter(i=>i!==third)].slice(0,count);
   }else{
     const arr=cpuParty.map((_,i)=>i);
     for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
@@ -1001,6 +1001,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   return p;
 }
 function startBattleWith(p1party,p1sel,p2party,p2sel){
+  if(battleSize>1&&(mode==='cpu'||mode==='friend'))return startMultiBattle(p1party,p1sel,p2party,p2sel);
   const foeOwner=mode==="friend" ? "p2" : "cpu";
   myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
   foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
@@ -2214,3 +2215,4 @@ function finish(meWon){
   r.style.color=meWon?"var(--accent)":"var(--hp-red)";
 }
 </script>
+<script src="multi-battle.js"></script>
