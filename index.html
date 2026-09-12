@@ -323,7 +323,8 @@ const M={
   xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
   beatup:{name:"ふくろだたき",type:"dark",cat:"phys",power:30,exclusive:"falinks",beatup:true},
-  ritualBlade:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,multiHit:5},
+  ritualBlade:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,multiHit:5,ritual:true},
+  ritualTick:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,multiHit:5,ritualTick:true},
   smarthorn:{name:"スマートホーン",type:"steel",cat:"phys",power:70,accuracy:1},
   zenheadbutt:{name:"しねんのずつき",type:"psychic",cat:"phys",power:90,flinch:.25},
   throatchop:{name:"じごくづき",type:"dark",cat:"phys",power:80,soundBlock:3},
@@ -1376,6 +1377,8 @@ function doResolve(){
     const movers=[];
     if(A.type==="move") movers.push({who:"me",move:A.move,part:A.part||"waist",mon:me});
     if(B.type==="move") movers.push({who:"foe",move:B.move,part:B.part||"waist",mon:foe});
+    if(me.ritualTurns>0&&!me.fainted)movers.push({who:"me",move:M.ritualTick,part:"waist",mon:me,ritualExtra:true});
+    if(foe.ritualTurns>0&&!foe.fainted)movers.push({who:"foe",move:M.ritualTick,part:"waist",mon:foe,ritualExtra:true});
     const addHeiMovers=(side,action,host)=>{
       if(!action||action.type!=="move"||!host.heis)return;
       host.heis.filter(h=>!h.fainted).forEach(h=>{
@@ -1446,6 +1449,7 @@ function applyMoveRecoil(attacker,move,actualDamage){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move=maxMoveFor(attacker,move);
+  if(move.ritual)attacker.ritualTurns=5;
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.onceFlag||"usedPlayTogether";
@@ -2016,6 +2020,7 @@ function endTurn(){
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
   [me,foe].forEach(m=>{if(m&&m.soundBlocked>0)m.soundBlocked--;});
   [me,foe].forEach(m=>{if(m&&m.coachTurns>0)m.coachTurns--;});
+  [me,foe].forEach(m=>{if(m&&m.ritualTurns>0)m.ritualTurns--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
   [me,foe].forEach(m=>{if(m&&m.peaceTurns>0){m.peaceTurns--;if(m.peaceTurns===0)pushLog(`  ・ ${m.name} の へいわせんこくの効果が切れた！`,"#7ad1ff");}});
