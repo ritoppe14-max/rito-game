@@ -100,6 +100,7 @@
 
   <div id="home">
     <div class="center" style="margin:12px 0"><button id="codeButton" class="btn blue" onclick="openDevCode()">🔐 コードを入力</button></div>
+    <div class="center" id="partyProfileButtons" style="margin:8px 0"></div>
     <div class="grid" id="homeHero"></div>
     <div class="mode-menu">
     </div>
@@ -671,12 +672,14 @@ function saveGame(){
   const flags={};
   SAVE_FLAGS.forEach(k=>{if(localStorage.getItem(k)==="1")flags[k]=1;});
   const encodeParty=list=>list.map(p=>({...p,sp:SPECIES[p.sp]?.id||p.sp}));
-  localStorage.setItem("ritoGameSave",JSON.stringify({version:3,builds,party:encodeParty(party),party2:encodeParty(party2),flags,streak:Number(localStorage.getItem("ritoStreak")||0)}));
+  const profiles=(partyProfiles||[party,[],[]]).map(encodeParty);
+  localStorage.setItem("ritoGameSave",JSON.stringify({version:4,builds,party:encodeParty(party),party2:encodeParty(party2),partyProfiles:profiles,activePartyProfile,flags,streak:Number(localStorage.getItem("ritoStreak")||0)}));
 }
 function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")||"null");if(s){
   if(s.builds) ["p1","p2"].forEach(owner=>{if(s.builds[owner]) Object.assign(builds[owner],s.builds[owner]);});
   const decodeParty=list=>Array.isArray(list)?list.map(p=>{const id=typeof p.sp==="number"?SPECIES[p.sp]?.id:p.sp;const sp=SPECIES.findIndex(x=>x.id===id);return sp>=0?{...p,sp}:null;}).filter(Boolean):[];
   if(Array.isArray(s.party))party=decodeParty(s.party);if(Array.isArray(s.party2))party2=decodeParty(s.party2);
+  if(Array.isArray(s.partyProfiles)){partyProfiles=s.partyProfiles.slice(0,3).map(decodeParty);while(partyProfiles.length<3)partyProfiles.push([]);activePartyProfile=Math.max(0,Math.min(2,Number(s.activePartyProfile)||0));party=partyProfiles[activePartyProfile];}
   if(s.flags&&typeof s.flags==="object") SAVE_FLAGS.forEach(k=>{if(s.flags[k]===1)localStorage.setItem(k,"1");});
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
@@ -721,7 +724,7 @@ const ITEMS={
 SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.stoneName,desc:`${sp.name}専用。${mg.name}にメガシンカ`,mega:si,form:fi}; }));
 
 // ===== 編成データ（保持）=====
-let party=[], party2=[], curParty=null, builderMode='cpu'; // P1=party / P2=party2
+let party=[], party2=[], partyProfiles=[party,[],[]], activePartyProfile=0, curParty=null, builderMode='cpu'; // P1=party / P2=party2
 loadGame();
 
 function show(id){["home","party","train","preview","battle"].forEach(s=>document.getElementById(s).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="party")renderParty();if(id==="home")renderHome();if(id==="train")renderTrain();}
@@ -735,6 +738,8 @@ function sampleFour(arr){
 
 document.getElementById("homeHero").innerHTML="";
 function renderHome(){
+  partyProfiles[activePartyProfile]=party;
+  document.getElementById("partyProfileButtons").innerHTML=[0,1,2].map(i=>`<button class="btn ${i===activePartyProfile?'blue':'ghost'}" style="font-size:12px;padding:6px 10px;margin:0 2px" onclick="selectPartyProfile(${i})">パーティ${i+1}（${partyProfiles[i].length}/6）</button>`).join("");
   document.getElementById("streakLabel").textContent=`現在の連勝：${Number(localStorage.getItem("ritoStreak")||0)}勝 ／ 最大連勝記録：${Number(localStorage.getItem("ritoMaxStreak")||0)}勝`;
   document.getElementById("goBattle").disabled = party.length!==6;
   document.getElementById("goBattle").textContent = party.length===6?"⚔ たたかう":`⚔ たたかう（あと${6-party.length}体）`;
@@ -742,6 +747,11 @@ function renderHome(){
   hero.innerHTML = party.length? party.filter(p=>SPECIES[p.sp]).map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${(ITEMS[p.item]||ITEMS.none).name}</div></div>`).join("")
     : `<div class="sub">まだパーティがありません。「パーティを編成する」から6体えらんでね。</div>`;
   document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`).join("");
+}
+function selectPartyProfile(i){
+  partyProfiles[activePartyProfile]=party;
+  activePartyProfile=i; party=partyProfiles[i]||[]; partyProfiles[i]=party; curParty=null;
+  saveGame(); renderHome();
 }
 function showDexInfo(i){
   const sp=SPECIES[i], lines=[`【${sp.name}】`,`特性：${ABIL[sp.abil]?.name||sp.abil}`,`説明：${ABDESC[sp.abil]||""}`];
