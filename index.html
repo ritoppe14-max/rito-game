@@ -1015,6 +1015,7 @@ function renderActive(){
   document.getElementById("myName").textContent=me.name;
   document.getElementById("foeName").textContent=foe.name;
   setAbLine(); renderHp(); renderStages(); renderDots();
+  renderHeis();
 }
 function setAbLine(){const it=(m,side)=>(side==='foe'&&(mode==='cpu'||mode==='friend'))?"":(m.itemKey!=="none"?" ／ "+ITEMS[m.itemKey].name:"");
   document.getElementById("myAb").textContent="特性："+me.abilName+it(me,"me");
@@ -1333,6 +1334,7 @@ function chooseSwitch(side,i){
   submitAction(side,{type:"switch",idx:i});
 }
 function submitAction(side,action){
+  if(action.type==="move"&&!action.heiReady){openHeiActions(side,action);return;}
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
   turnAct[side]=action&&action.type==="move"?Object.assign({},action,{move:Object.assign({},action.move)}):action; clearCmd();
   if(side==="me"){
@@ -1381,7 +1383,7 @@ function doResolve(){
       // 優先度が同じなら、実数値の高い方を必ず先に行動させる
       return effSpeed(b.mon)-effSpeed(a.mon);
     });
-    runAttacks(movers,0,next);
+    runAttacks(movers,0,()=>runHeiActions(next));
   };
   phaseSwitch(()=>phaseMax(()=>phaseMega(()=>phaseAttack(()=>endTurn()))));
 }
@@ -1630,11 +1632,78 @@ function summonFalinksHeis(mon){
   if(!mon||mon.id!=="falinks"||mon.isMega)return false;
   if(mon.beatupUses>=3){pushLog(`  └ ${mon.name} の ふくろだたきは もう使えない！`,"#9fb3d6");return false;}
   const pool=FALINKS_HEI.filter(h=>!(mon.beatupSummoned||[]).includes(h.name));
-  const count=mon.beatupUses<2?2:1, picked=pool.slice(0,count);
+  const count=mon.beatupUses<2?2:1, picked=(mon.pendingHeis||pool.map(h=>h.name)).map(name=>pool.find(h=>h.name===name)).filter(Boolean).slice(0,count);
+  mon.pendingHeis=null;
+  mon.heis=mon.heis||[];
+  picked.forEach(h=>{
+    const hei=makeMon(SP_BY_ID.falinks,"none","cpu");
+    Object.assign(hei,{id:"hei",name:h.name,img:"image/image/タイレーツのヘイ.gif",base:{...h.base},abilEff:h.abil,abilName:ABIL[h.abil].name,moves:h.moves.map(k=>M[k]),isHei:true});
+    hei.maxHp=Math.floor((h.base.hp*2*LEVEL/100+LEVEL+10)*1.5);hei.curHp=hei.maxHp;
+    const entry=(mon===me?party:party2).find(p=>p.sp===SP_BY_ID.falinks);
+    hei.itemKey=entry?.heiItems?.[h.name]||"none";
+    mon.heis.push(hei);
+    if(h.abil==="intimidate")applyDrop(mon===me?foe:me,{atk:-1});
+  });
   mon.beatupSummoned=(mon.beatupSummoned||[]).concat(picked.map(h=>h.name)); mon.beatupUses++;
   const place=mon.beatupUses===1?"右":mon.beatupUses===2?"左":"上";
   pushLog(`  ★ ふくろだたき！ ${place}に ${picked.map(h=>h.name).join("・")} が登場！（${picked.map(h=>h.base.hp+"HP").join("／")}）`,"#ffcb05");
+  renderHeis();
   return true;
+}
+let heiInput=null;
+function renderHeis(){
+  ["me","foe"].forEach(side=>{
+    let box=document.getElementById(side+"Heis");
+    if(!box){box=document.createElement("div");box.id=side+"Heis";document.getElementById(imgOf(side)).parentElement.appendChild(box);}
+    box.style.cssText="display:flex;flex-wrap:wrap;gap:6px;max-width:260px";
+    box.innerHTML=(activeOf(side)?.heis||[]).map(h=>`<div style="text-align:center"><img src="${IMG(h.img)}" style="width:60px;height:60px;object-fit:contain"><div>${h.name}</div><small>HP ${h.curHp}/${h.maxHp}</small></div>`).join("");
+  });
+}
+function openHeiActions(side,action){
+  const mon=activeOf(side);
+  if(action.move.beatup&&(mon.isMega||mon.beatupUses>=3)){pushLog("  └ ふくろだたきは使用できない！");renderMenu(side);return;}
+  heiInput={side,action,picks:[]};
+  if(action.move.beatup){
+    const available=FALINKS_HEI.filter(h=>!(mon.beatupSummoned||[]).includes(h.name));
+    document.getElementById("cmd").innerHTML=`<div>呼び出すヘイを${Math.min(2,available.length)}体選択</div>`+available.map(h=>`<button class="btn ghost" onclick="pickHei('${h.name}',this)">${h.name}</button>`).join("");
+  }else chooseHeiMoves();
+}
+function pickHei(name,button){
+  if(heiInput.picks.includes(name))return;
+  heiInput.picks.push(name);button.disabled=true;
+  const mon=activeOf(heiInput.side);
+  if(heiInput.picks.length>=Math.min(2,5-(mon.beatupSummoned||[]).length)){mon.pendingHeis=heiInput.picks.slice();chooseHeiMoves();}
+}
+function chooseHeiMoves(){
+  const {side,action}=heiInput,mon=activeOf(side);
+  const names=[...(mon.heis||[]).filter(h=>!h.fainted).map(h=>h.name),...(action.move.beatup?heiInput.picks:[])];
+  if(!names.length){action.heiReady=true;submitAction(side,action);return;}
+  document.getElementById("cmd").innerHTML='<div>タイレーツの技の後に使うヘイの技</div>'+names.map((name,i)=>{
+    const h=FALINKS_HEI.find(h=>h.name===name);
+    return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select></div>`;
+  }).join("")+`<button class="btn" onclick="confirmHeiMoves()">決定</button>`;
+  heiInput.names=names;
+}
+function confirmHeiMoves(){
+  const {side,action,names}=heiInput;
+  action.heiMoves=names.map((name,i)=>({name,key:document.getElementById("heiMove"+i).value}));action.heiReady=true;
+  submitAction(side,action);
+}
+function runHeiActions(done){
+  const tasks=[];
+  ["me","foe"].forEach(side=>{
+    const mon=activeOf(side),target=activeOf(side==="me"?"foe":"me");
+    if(mon.fainted||mon.isMega)return;
+    (mon.heis||[]).forEach(h=>{
+      const choice=turnAct[side]?.heiMoves?.find(x=>x.name===h.name);
+      const move=choice?M[choice.key]:h.moves[0];
+      tasks.push(cb=>{
+        if(h.fainted||target.fainted){cb();return;}
+        attack(h,target,move,imgOf(side==="me"?"foe":"me"),()=>{renderHeis();cb();});
+      });
+    });
+  });
+  series(tasks,done);
 }
 function canStatus(mon,status,source){
   if(mon.abilEff==="purifyingSalt") return false;
@@ -1684,6 +1753,7 @@ function setHazard(side,type,setter){
   }
 }
 function faintMon(mon,imgId){
+  if(mon.isHei){mon.fainted=true;mon.curHp=0;pushLog(`  └ ${mon.name} は倒れた！`);renderHeis();return;}
   if(mon.fainted) return;
   mon.fainted=true;
   pushLog(`💥 ${mon.name} は たおれた！`);
