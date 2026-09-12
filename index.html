@@ -1712,7 +1712,7 @@ function chooseHeiMoves(){
   const {side,action}=heiInput,mon=activeOf(side);
   const names=[...(mon.heis||[]).filter(h=>!h.fainted).map(h=>h.name),...(action.move.beatup?heiInput.picks:[])];
   if(!names.length){action.heiReady=true;submitAction(side,action);return;}
-  document.getElementById("cmd").innerHTML='<div>タイレーツの技の後に使うヘイの技</div>'+names.map((name,i)=>{
+  document.getElementById("cmd").innerHTML='<div>ヘイの技を選択（行動順は優先度・素早さで決定）</div>'+names.map((name,i)=>{
     const h=FALINKS_HEI.find(h=>h.name===name);
     return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select><select id="heiTarget${i}">${enemyTargets(side).map((t,j)=>`<option value="${j}">${t.name}</option>`).join("")}</select></div>`;
   }).join("")+`<button class="btn" onclick="confirmHeiMoves()">決定</button>`;
