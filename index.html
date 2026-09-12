@@ -254,7 +254,11 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
 
 ABIL.defiant={name:"まけんき",eff:"defiant"};
+ABIL.unburden={name:"かるわざ",eff:"unburden"};
+ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABDESC.defiant="能力が下がると攻撃が2段階上がる";
+ABDESC.unburden="持ち物を持っていないと素早さ実数値が2倍";
+ABDESC.rage="HPが減ると攻撃が上がる";
 // ===== わざ =====
 const M={
   powergem:{name:"パワージェム",type:"rock",cat:"spec",power:80},
@@ -318,6 +322,7 @@ const M={
   fakeout:{name:"ねこだまし",type:"normal",cat:"phys",power:40,prio:3,firstTurnOnly:true,flinch:1},
   xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
+  beatup:{name:"ふくろだたき",type:"dark",cat:"phys",power:30,exclusive:"falinks",beatup:true},
   smarthorn:{name:"スマートホーン",type:"steel",cat:"phys",power:70,accuracy:1},
   zenheadbutt:{name:"しねんのずつき",type:"psychic",cat:"phys",power:90,flinch:.25},
   throatchop:{name:"じごくづき",type:"dark",cat:"phys",power:80,soundBlock:3},
@@ -446,6 +451,13 @@ const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai"]);
+const FALINKS_HEI=[
+  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster"},
+  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate"},
+  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary"},
+  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden"},
+  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage"}
+];
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
@@ -917,7 +929,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1118,6 +1130,7 @@ function effSpeed(m){
   if(m.status==="paralyze")s*=0.5;
   if(m.falinksRightFootTurns>0)s*=1.1;
   if(m.abilEff==="swiftswim"&&weather==="rain")s*=2;
+  if(m.abilEff==="unburden"&&!m.itemKey||m.abilEff==="unburden"&&m.itemKey==="none")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
   if(m.itemKey==="scarf")s*=1.5;
   return s;
@@ -1237,6 +1250,7 @@ function openMoves(side){
   if(opp.id==="falinks"&&opp.isMega){const parts={head:"頭",rightarm:"右腕",leftarm:"左腕",waist:"腰",rightfoot:"右足",leftfoot:"左足"};h+=`<div class="center sub">メガタイレーツの狙う部位：${parts[selectedPart[side]]}</div><div class="actrow">${Object.entries(parts).map(([k,v])=>`<button class="btn ghost" onclick="chooseFalinksPart('${side}','${k}')" ${selectedPart[side]===k?'disabled':''}>${v}</button>`).join("")}</div>`;}
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
+    if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
     h+=`<button class="move" title="${shown.name}｜${TYPE_JP[shown.type]}・${catLabel(shown)}／威力${shown.power}\n${shown.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(shown.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="chooseMove('${side}',${i})">
       <div class="mn">${shown.name}${shown.prio?` <span style="color:#7ad1ff;font-size:11px">⏫+${shown.prio}</span>`:''}</div>
@@ -1520,6 +1534,7 @@ function attack(attacker,defender,move,defImgId,cb){
       pushLog(`  ・ ${defender.name} は ${move.name} の熱に包まれた！`,"#ff7043");
     }
     if(move.soundBlock&&defender.curHp>0){defender.soundBlocked=move.soundBlock;pushLog(`  ・ ${defender.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
+    if(move.beatup&&actualDamage>0)summonFalinksHeis(attacker);
     applyMoveRecoil(attacker,move,actualDamage);
     if(res.stab) pushLog("  └ タイプ一致！");
     if(res.eff>1) pushLog(`  └ こうかは ばつぐんだ！（×${res.eff}）`,"#ff7043");
@@ -1566,6 +1581,16 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     cb();
   },480);
+}
+function summonFalinksHeis(mon){
+  if(!mon||mon.id!=="falinks"||mon.isMega)return false;
+  if(mon.beatupUses>=3){pushLog(`  └ ${mon.name} の ふくろだたきは もう使えない！`,"#9fb3d6");return false;}
+  const pool=FALINKS_HEI.filter(h=>!(mon.beatupSummoned||[]).includes(h.name));
+  const count=mon.beatupUses<2?2:1, picked=pool.slice(0,count);
+  mon.beatupSummoned=(mon.beatupSummoned||[]).concat(picked.map(h=>h.name)); mon.beatupUses++;
+  const place=mon.beatupUses===1?"右":mon.beatupUses===2?"左":"上";
+  pushLog(`  ★ ふくろだたき！ ${place}に ${picked.map(h=>h.name).join("・")} が登場！（${picked.map(h=>h.base.hp+"HP").join("／")}）`,"#ffcb05");
+  return true;
 }
 function canStatus(mon,status,source){
   if(mon.abilEff==="purifyingSalt") return false;
