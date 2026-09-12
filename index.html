@@ -515,7 +515,7 @@ const LEARN={
   idaitou:["liquidation","shadowball","crunch","aquajet","gravevisit","hydropump","icebeam","darkpulse"],
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
   garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
-  falinks:["formation","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
+  falinks:["formation","beatup","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
 };
@@ -693,6 +693,7 @@ function renderParty(){
         ${[0,1,2,3].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
           ${movePool.map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
         </select>`).join("")}
+        ${sp.id==="falinks"?`<button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:5px" onclick="toggleHeiEditor(${i})">ヘイ</button>${curParty[i].showHei?renderHeiEditor(i):''}`:''}
         <button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:4px" onclick="removeParty(${i})">はずす</button>
       </div>`;
     }else{
@@ -716,6 +717,13 @@ function renderParty(){
   else if(builderMode==='p2') nav.innerHTML=`<button class="btn" ${party2.length===6?'':'disabled'} onclick="friendP2Done()">見せ合いへ → (${party2.length}/6)</button> <button class="btn ghost" onclick="openPartyBuilder('p1')">← P1へ</button> <button class="btn ghost" onclick="show('home')">やめる</button>`;
   else nav.innerHTML=`<button class="btn ghost" onclick="show('home')">← もどる（保存）</button>`;
 }
+function renderHeiEditor(slot){
+  const p=curParty[slot]; p.heiItems=p.heiItems||{};
+  const keys=Object.keys(ITEMS).filter(k=>!ITEMS[k].mega);
+  return `<div style="margin-top:6px;border-top:1px solid var(--line);padding-top:5px"><div class="mini">ヘイの持ち物</div>${FALINKS_HEI.map(h=>`<div style="display:flex;align-items:center;gap:3px;margin-top:3px"><span style="font-size:10px;width:38px">${h.name}</span><select style="font-size:10px;min-width:80px" onchange="setHeiItem(${slot},'${h.name}',this.value)">${keys.map(k=>`<option value="${k}" ${(p.heiItems[h.name]||'none')===k?'selected':''}>${ITEMS[k].name}</option>`).join('')}</select></div>`).join('')}</div>`;
+}
+function toggleHeiEditor(slot){curParty[slot].showHei=!curParty[slot].showHei;renderParty();}
+function setHeiItem(slot,name,val){curParty[slot].heiItems=curParty[slot].heiItems||{};curParty[slot].heiItems[name]=val;saveGame();renderParty();}
 function toggleParty(i){
   if(SPECIES[i].id==="zacian"&&localStorage.getItem("ritoLunaticClear")!=="1"){ alert("ルナティックステージをクリアするまでザシアンは使用できません。"); return; }
   if(SPECIES[i].id==="salamence"&&localStorage.getItem("ritoLunatic2Clear")!=="1"){ alert("ルナティックステージ2をクリアするまでボーマンダは使用できません。"); return; }
