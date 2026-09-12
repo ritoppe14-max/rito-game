@@ -342,7 +342,7 @@ const M={
   nastyPlot:{name:"わるだくみ",type:"dark",cat:"status",power:0,selfBoost:{chance:1,stats:{spa:2}}},
   firstimpression:{name:"であいがしら",type:"bug",cat:"phys",power:90,prio:5,firstTurnOnly:true},
   fakeout:{name:"ねこだまし",type:"normal",cat:"phys",power:40,prio:3,firstTurnOnly:true,flinch:1},
-  xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
+  xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80,cut:true},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
   beatup:{name:"ふくろだたき",type:"dark",cat:"phys",power:30,exclusive:"falinks",beatup:true},
   ritualBlade:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,multiHit:5,ritual:true},
@@ -1320,6 +1320,7 @@ function calcDamage(attacker,defender,move,isCrit){
   // メガボーマンダ／メガオーダイルのすてみタックルは専用強化
   if((move===M.takedown||move._baseMove===M.takedown)&&attacker.isMega&&(attacker.id==="salamence"||attacker.id==="ohdairu")) dmg*=1.2;
   if(attacker.abilEff==="sandforce") dmg*=1.2;
+  if(attacker.abilEff==="sharpness"&&move.cut) dmg*=1.5;
   if(attacker.abilEff==="strongjaw"&&move.bite) dmg*=1.5;
   if(move.multiBattleBoost&&battleSize>1) dmg*=1.5;
   if(move.weakBoost&&eff>1)dmg*=move.weakBoost;
