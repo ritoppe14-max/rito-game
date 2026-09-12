@@ -242,7 +242,7 @@ const ABIL={
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
-  regenerator:{name:"さいせいりょく",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
+  regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null},
 };
 const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
@@ -253,7 +253,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
   sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",clearbody:"相手の技で能力ランクを下げられない",heavymetal:"ほえる・ふきとばしなど、自分以外の技による強制交代を受けない",poisonheal:"どく・もうどく状態のとき毎ターン最大HPの1/7回復",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
-  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",chargeboost:"でんき技を使うと とくこうが1段階上がる",electricmaker:"登場時にエレキフィールドを5ターン展開",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
+  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",aromaveil:"味方をメンタル攻撃から守る",moldbreaker:"(フレーバー)",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",chargeboost:"でんき技を使うと とくこうが1段階上がる",electricmaker:"登場時にエレキフィールドを5ターン展開",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
 
 ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
@@ -398,6 +398,14 @@ const M={
   heicoaching:{name:"ヘイのコーチング",type:"normal",cat:"status",power:0,heiCoaching:true},
   heicare:{name:"かいご",type:"normal",cat:"status",power:0,heiCare:true},
   duraludonDisaster:{name:"超合金硬竜砲撃・ジュラルディザスター",type:"steel",cat:"spec",power:130,exclusive:"duraludon",duraludonDisaster:true},
+  alcremieRecover:{name:"じこさいせい",type:"normal",cat:"status",power:0,allyHeal:.30},
+  decoration:{name:"デコレーション",type:"fairy",cat:"status",power:0,allyBoost:{atk:1,spa:1}},
+  magicalshine:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true,decorateAlly:true},
+  sweetscent:{name:"あまいかおり",type:"fairy",cat:"status",power:0,sweetAroma:3},
+  holecake:{name:"ホールケイプ・マルホイップ",type:"fairy",cat:"status",power:0,exclusive:"alcremie",onceBattle:true,onceFlag:"usedHoleCake",holeCake:true},
+  drainingkiss:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75},
+  mysticalfire:{name:"マジカルフレイム",type:"fire",cat:"spec",power:75,targetDrop:{chance:1,stats:{spa:-1}}},
+  acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -477,6 +485,7 @@ const SPECIES=[
  S("dragapult","ドラパルト","image/image/ドラパルト.gif",["dragon","ghost"],{hp:88,atk:120,def:75,spa:100,spd:75,spe:142},"clearbody",["dragonclaw","shadowball","flamethrower","protect"],[]),
  S("duraludon","ジュラルドン","image/image/ジュラルドン.gif",["steel","dragon"],{hp:70,atk:60,def:105,spa:135,spd:105,spe:85},"heavymetal",["duraludonCannon","dragontail","duraludonPulse","stealthrock","duraludonDisaster"],[]),
  S("archaludon","ブリジュラス","image/image/ブリジュラス.gif",["steel","dragon"],{hp:80,atk:60,def:110,spa:110,spd:110,spe:70},"clearbody",["electrobeam","steelbeam","dragonclaw","protect"],[]),
+ S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
  S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect","ritualBlade"],
@@ -541,6 +550,7 @@ const LEARN={
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
   duraludon:["duraludonCannon","dragontail","duraludonPulse","stealthrock","steelbeam","dragonclaw","thunderbolt","protect","meteor","darkpulse"],
   archaludon:["electrobeam","steelbeam","dragonclaw","protect","flashcannon","thunderbolt","meteor","darkpulse"],
+  alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
@@ -550,7 +560,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
@@ -577,7 +587,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; if(sp.id==="duraludon"&&b[sp.id].ability==="clearbody")b[sp.id].ability="heavymetal"; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="lucario"||sp.id==="heatran")b.moves=b.moves.map(k=>k==="flashcannon"?"ironrod":k); const fifth={falinks:"ritualBlade",duraludon:"duraludonDisaster"}[sp.id]; if(fifth){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]=fifth;} return b.moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="lucario"||sp.id==="heatran")b.moves=b.moves.map(k=>k==="flashcannon"?"ironrod":k); const fifth={falinks:"ritualBlade",duraludon:"duraludonDisaster",alcremie:"holecake"}[sp.id]; if(fifth){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]=fifth;} return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
@@ -683,7 +693,8 @@ function openPartyBuilder(m){ builderMode=m; curParty=(m==='p2')?party2:party; s
 function partyMoveChoices(sp,pool,slot){
   if(slot===4&&sp.id==="falinks")return ["ritualBlade"];
   if(slot===4&&sp.id==="duraludon")return ["duraludonDisaster"];
-  return pool.filter(k=>!(["ritualBlade","duraludonDisaster"].includes(k)));
+  if(slot===4&&sp.id==="alcremie")return ["holecake"];
+  return pool.filter(k=>!(["ritualBlade","duraludonDisaster","holecake"].includes(k)));
 }
 function startCpu(){ battleSize=1;mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
 function startLunaticStage(){ mode='lunatic'; lunaticStage=true; npcLevel=10; enterPreview(); }
@@ -723,7 +734,7 @@ function renderParty(){
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
         </select><button class="btn ghost" style="font-size:11px;padding:4px 7px" onclick="searchItems(${i})">調べる</button></div>
         <div class="mini" style="margin-top:5px">技</div>
-        ${[0,1,2,3,...(["falinks","duraludon"].includes(sp.id)?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
+        ${[0,1,2,3,...(["falinks","duraludon","alcremie"].includes(sp.id)?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
           ${partyMoveChoices(sp,movePool,mi).map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
         </select>`).join("")}
         ${sp.id==="falinks"?`<button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:5px" onclick="toggleHeiEditor(${i})">ヘイ</button>${curParty[i].showHei?renderHeiEditor(i):''}`:''}
@@ -831,7 +842,7 @@ function renderTrainEdit(){
       <img src="${IMG(sp.img)}" style="width:60px;height:60px;image-rendering:pixelated">
       <div><div style="font-weight:700;font-size:15px">${trainOwner==="p1"?"1P":"フレンド"}：${sp.name}</div><div class="types">${typeTags(sp.types)}</div></div></div>
     <div class="mini" style="margin-bottom:8px">種族値 HP${sp.base.hp} こう${sp.base.atk} ぼう${sp.base.def} 特こう${sp.base.spa} 特ぼう${sp.base.spd} 素${sp.base.spe}</div>
-    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}${sp.id==="falinks"?'<div class="mini">5枠目（専用）：祭神旋風刃</div>':sp.id==="duraludon"?'<div class="mini">5枠目（専用）：超合金硬竜砲撃・ジュラルディザスター</div>':''}
+    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}${sp.id==="falinks"?'<div class="mini">5枠目（専用）：祭神旋風刃</div>':sp.id==="duraludon"?'<div class="mini">5枠目（専用）：超合金硬竜砲撃・ジュラルディザスター</div>':sp.id==="alcremie"?'<div class="mini">5枠目（専用・1回）：ホールケイプ・マルホイップ</div>':''}
     <div style="font-weight:700;font-size:13px;margin:10px 0 6px">特性</div>${abilOpts}
     <div class="center"><button class="btn ghost" style="font-size:12px;padding:4px 14px" onclick="resetTrain()">初期設定にもどす</button>${partySlot>=0?` <button class="btn ghost" style="font-size:12px;padding:4px 14px;color:#ff8a8a" onclick="removeTrainedPokemon()">パーティから外す</button>`:""}</div>
   </div>`;
@@ -1006,7 +1017,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1411,7 +1422,7 @@ let pendingTarget=null;
 function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
 function resolveAttackTarget(side,target){const list=enemyTargets(side);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
 function confirmAttackTarget(i){const {side,action}=pendingTarget;action.target=enemyTargets(side)[i];action.targetReady=true;submitAction(side,action);}
-function isFriendlyMove(move){return !!(move.heiCare||move.heiCoaching||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
+function isFriendlyMove(move){return !!(move.heiCare||move.heiCoaching||move.allyHeal||move.allyBoost||move.holeCake||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
 function handoff(side){
   const c=document.getElementById("cmd");
   c.innerHTML=`<div class="center" style="margin:10px 0">
@@ -1473,6 +1484,7 @@ function runAttacks(movers,i,done){
   if(!m.hei&&atk!==m.mon){ runAttacks(movers,i+1,done); return; }
   if(m.hei&&activeOf(m.who)!==m.host){ runAttacks(movers,i+1,done); return; }
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
+  if(atk.holeCakeTurns>0){setTimeout(()=>{pushLog(`  └ ${atk.name} は ホールケイプ中で 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},250);return;}
   if(def.fainted&&!isFriendlyMove(m.move)){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
   // エレクトロビームをためた次のターンは、別の技を選んでも発射する。
@@ -1566,6 +1578,11 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{pushLog(`  └ ${attacker.name} は身を守った！`,"#7ad1ff");cb();},350); return;
   }
   if(move.leech){setTimeout(()=>{defender.leechSource=attacker;pushLog(`  └ ${defender.name} に ヤドリギが ついた！`,"#7ad1ff");cb();},450);return;}
+  const allyTarget=move.allyTarget||((battleSize>1)?defender:attacker);
+  if(move.allyHeal){setTimeout(()=>{const h=Math.max(1,Math.floor(allyTarget.maxHp*move.allyHeal));allyTarget.curHp=Math.min(allyTarget.maxHp,allyTarget.curHp+h);renderHp();pushLog(`  └ ${allyTarget.name} は HP${h}回復！`,"#46d160");cb();},450);return;}
+  if(move.allyBoost){setTimeout(()=>{applyDrop(allyTarget,move.allyBoost);pushLog(`  └ ${allyTarget.name} は デコレーションで こうげき・とくこうUP！`,"#ffcb05");cb();},450);return;}
+  if(move.holeCake){setTimeout(()=>{attacker.holeCakeTurns=3;pushLog(`  ★ ${attacker.name} は ホールケイプ・マルホイップを展開した！ 3ターン行動できない！`,"#ffcb05");cb();},450);return;}
+  if(move.decorateAlly&&allyTarget&&!allyTarget.fainted){applyDrop(allyTarget,{atk:1,spa:1});pushLog(`  └ ${allyTarget.name} は デコレーションで こうげき・とくこうUP！`,"#ffcb05");}
   if(defender.protectActive&&!isFriendlyMove(move)&&!move.onceBattle&&!move.ignoreProtect){
     if(move.maxMove&&move.cat!=="status"&&move.power>0){
       setTimeout(()=>{const d=Math.max(1,Math.floor(defender.maxHp*.25));defender.curHp=Math.max(0,defender.curHp-d);renderHp();pushLog(`  └ ダイマックス技が まもるを 貫通し ${d} ダメージ！`,"#e84b4b");if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);cb();},350);
@@ -1617,6 +1634,10 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{if(defender.curHp>0){if(electricTurns>0)pushLog(`  └ エレキフィールドで ${defender.name} は ねむくならない！`,"#f8d030");else{defender.yawnTurns=2;pushLog(`  └ ${defender.name} は ねむけを さそわれた！`,"#9fb3d6");}}cb();},450);
     return;
   }
+  if(move.sweetAroma){
+    setTimeout(()=>{defender.sweetAromaTurns=move.sweetAroma;pushLog(`  └ ${defender.name} は あまいかおりに 包まれた！`,"#ffcb05");cb();},450);
+    return;
+  }
   const critRate=attacker.id==="raichuA"&&attacker.itemKey==="pancake"?.5:(move.critRate||(move.highCrit?0.125:0.066));
   const isCrit=!defender.careCritGuard&&Math.random()<critRate;
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
@@ -1631,6 +1652,10 @@ function attack(attacker,defender,move,defImgId,cb){
   if(res.eff===0&&move.outrage) attacker.outrageTurns=0;
   if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
   let dmg=res.dmg, lifeTrigger=false;
+  if(defender.alcremieShieldHp>0){
+    setTimeout(()=>{const blocked=Math.min(defender.alcremieShieldHp,dmg);defender.alcremieShieldHp=Math.max(0,defender.alcremieShieldHp-dmg);pushLog(`  └ ${defender.name} の マルホイップシールドが ${blocked} ダメージを 防いだ！`,"#ffcb05");if(defender.alcremieShieldHp<=0)pushLog(`  └ ${defender.name} の マルホイップシールドが 消えた！`,"#ffcb05");renderHp();cb();},450);
+    return;
+  }
   if(defender.subHp>0&&!move.onceBattle&&!move.ignoreSubstitute){
     setTimeout(()=>{
       const actualDamage=Math.min(defender.subHp,dmg);
@@ -2115,12 +2140,32 @@ function applyResidual(mon,imgId,source){
   if(mon.salted){d=Math.max(1,Math.floor(mon.maxHp/(mon.types.includes("steel")||mon.types.includes("water")?4:8)));label="しおづけ";color="#7ad1ff";}
   if(mon.leechSource&&!mon.fainted){const h=Math.max(1,Math.floor(mon.maxHp/8*constantDamageFactor(mon)));mon.curHp=Math.max(0,mon.curHp-h);if(mon.leechSource&&!mon.leechSource.fainted)mon.leechSource.curHp=Math.min(mon.leechSource.maxHp,mon.leechSource.curHp+h);renderHp();pushLog(`  ・ ${mon.name} はヤドリギで ${h} ダメージ！`,"#7ad1ff");}
   if(d>0)d=Math.max(1,Math.floor(d*constantDamageFactor(mon)));
-  if(!d) return;
-  mon.curHp=Math.max(0,mon.curHp-d);
-  if(mon.trapTurns>0) mon.trapTurns--;
-  renderHp();
-  pushLog(`  ・ ${mon.name} は ${label}で ${d} ダメージ！`,color);
-  if(mon.curHp<=0) faintMon(mon,imgId);
+  if(d){
+    mon.curHp=Math.max(0,mon.curHp-d);
+    if(mon.trapTurns>0) mon.trapTurns--;
+    renderHp();
+    pushLog(`  ・ ${mon.name} は ${label}で ${d} ダメージ！`,color);
+    if(mon.curHp<=0) faintMon(mon,imgId);
+  }
+  if(mon.sweetAromaTurns>0&&!mon.fainted){
+    const sweet=Math.max(1,Math.floor(mon.maxHp*.10));
+    mon.curHp=Math.max(0,mon.curHp-sweet);mon.sweetAromaTurns--;renderHp();
+    pushLog(`  ・ ${mon.name} は あまいかおりで ${sweet} ダメージ！`,"#ffcb05");
+    if(mon.curHp<=0)faintMon(mon,imgId);
+  }
+}
+function applyHoleCake(allies){
+  const caster=allies.find(m=>m&&!m.fainted&&m.holeCakeTurns>0);
+  if(!caster)return;
+  allies.filter(m=>m&&!m.fainted).forEach(m=>{
+    const h=Math.max(1,Math.floor(m.maxHp*.50));
+    m.curHp=Math.min(m.maxHp,m.curHp+h);
+    m.alcremieShieldHp=Math.max(1,Math.floor(m.maxHp*.25));
+    pushLog(`  🍰 ${m.name} は マルホイップで HP${h}回復・最大HP1/4のシールド！`,"#ffcb05");
+  });
+  caster.holeCakeTurns--;
+  if(caster.holeCakeTurns===0)pushLog(`  ・ ${caster.name} の ホールケイプが 終わった！`,"#ffcb05");
+  renderHp();renderStages();
 }
 function applyStealthRockResidual(side,mon,imgId){
   const h=hazards[side];
@@ -2185,6 +2230,8 @@ function endTurn(){
     }
   });
   [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="leftovers"){const h=Math.max(1,Math.floor(m.maxHp/16));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ・ ${m.name} は たべのこしで ${h} 回復！`,"#46d160");}});
+  applyHoleCake([me]);
+  applyHoleCake([foe]);
   [me,foe].forEach(m=>{if(m&&!m.fainted&&(m.itemKey==="orb"||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
   if(grassTurns>0){
     [me,foe].forEach(m=>{if(m&&!m.fainted){const h=Math.max(1,Math.floor(m.maxHp/8));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ☘ ${m.name} はグラスフィールドで ${h} 回復！`,"#7ac74c");}});

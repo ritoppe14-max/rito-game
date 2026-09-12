@@ -38,5 +38,13 @@ vm.runInContext(`
   check(hazards.foe.rocks===3,'Stealth Rock three layers');
   dura.duraludonShieldTurns=3;const shielded=calcDamage(fire,dura,M.fireblast,false).dmg;dura.duraludonShieldTurns=0;const plain=calcDamage(fire,dura,M.fireblast,false).dmg;
   check(shielded<=Math.ceil(plain*2/3),'Duraludon disaster shield');
+  const cream=makeMon(SP_BY_ID.alcremie,'none','p1'),ally=makeMon(SP_BY_ID.duraludon,'none','p1'),enemy=makeMon(SP_BY_ID.centiskorch,'none','cpu');
+  battleSize=2;me=cream;foe=enemy;ally.curHp=Math.floor(ally.maxHp*.4);
+  attack(cream,ally,M.alcremieRecover,'myImg',()=>{});
+  check(ally.curHp>Math.floor(ally.maxHp*.4),'Alcremie ally recovery');
+  attack(cream,enemy,Object.assign({},M.magicalshine,{allyTarget:ally}),'foeImg',()=>{});
+  check(ally.stages.atk===1&&ally.stages.spa===1,'Magical Shine decoration');
+  cream.holeCakeTurns=3;ally.curHp=1;applyHoleCake([cream,ally]);
+  check(ally.alcremieShieldHp===Math.floor(ally.maxHp*.25)&&ally.curHp>1,'Hole Cake ally shield and recovery');
 `,c);
-console.log('Double/triple and Duraludon features: slots, switching, speed order, damage, cannon, rocks and shield OK');
+console.log('Double/triple, Duraludon and Alcremie features: battle actions, support, shields and hazards OK');

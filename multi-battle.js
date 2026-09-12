@@ -55,17 +55,18 @@ function multiNext(){
 function multiChoose(s){
   busy=false;inputSide=s;renderMulti();
   const enemies=multiLiving(multiOther(s)),bench=multiBench(s);
-  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）</div>`+multiLiving(s).map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${m.electroBeamReady&&!mv.chargeTurn?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
+  const allies=multiLiving(s);
+  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）</div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${m.electroBeamReady&&!mv.chargeTurn?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>敵：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label>味方：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
 }
 function multiConfirm(s){
-  const actions=multiLiving(s).map(mon=>{const v=document.getElementById('multi-action-'+mon.multiId).value;return {side:s,mon,type:v[0]==='s'?'switch':'move',replacement:multi.teams[s].find(m=>m.multiId===Number(v.slice(1))),move:mon.electroBeamReady?M.electrobeam:mon.moves[Number(v.slice(1))],target:multi.teams[multiOther(s)].find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value))};});
+  const actions=multiLiving(s).map(mon=>{const v=document.getElementById('multi-action-'+mon.multiId).value,base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(v.slice(1))],ally=multi.teams[s].find(m=>m.multiId===Number(document.getElementById('multi-ally-'+mon.multiId).value));return {side:s,mon,type:v[0]==='s'?'switch':'move',replacement:multi.teams[s].find(m=>m.multiId===Number(v.slice(1))),move:base.decorateAlly?Object.assign({},base,{allyTarget:ally}):base,target:(base.allyHeal||base.allyBoost)?ally:multi.teams[multiOther(s)].find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value))};});
   const switches=actions.filter(a=>a.type==='switch');
   if(new Set(switches.map(a=>a.replacement)).size!==switches.length){alert('同じ控えを複数の場所へ出すことはできません。');return;}
   if(switches.some(a=>a.mon.switchLock>0)){alert('交代不能のポケモンがいます。');return;}
   multi.actions.push(...actions);
   if(s==='me'&&mode==='friend'){document.getElementById('cmd').innerHTML='<div class="sub">プレイヤー2に交代してください</div><button class="btn" onclick="multiChoose(\'foe\')">プレイヤー2の入力へ</button>';return;}
   if(s==='me')multiLiving('foe').forEach(mon=>{
-    const options=mon.moves.flatMap(move=>multiLiving('me').map(target=>({side:'foe',mon,type:'move',move:mon.electroBeamReady?M.electrobeam:move,target})));
+    const options=mon.moves.flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
     const valid=options.filter(a=>a.move.cat==='status'||calcDamage(mon,a.target,a.move,false).eff>0);
     const pool=valid.length?valid:options;
     pool.sort((a,b)=>calcDamage(mon,b.target,b.move,false).dmg-calcDamage(mon,a.target,a.move,false).dmg);
@@ -87,9 +88,10 @@ function multiResolve(){
   series(actions.map(a=>cb=>{
     if(!multi.slots[a.side].includes(a.mon)||a.mon.fainted){cb();return;}
     if(a.type==='switch'){multiSwitch(a,cb);return;}
-    const enemies=multiLiving(multiOther(a.side));
-    const target=enemies.includes(a.target)?a.target:enemies[0];if(!target){cb();return;}
+    const enemies=multiLiving(multiOther(a.side)),targets=(a.move.allyHeal||a.move.allyBoost)?multiLiving(a.side):enemies;
+    const target=targets.includes(a.target)?a.target:targets[0];if(!target){cb();return;}
     const m=a.mon;
+    if(m.holeCakeTurns>0){pushLog(`${m.name} は ホールケイプ中で 動けない！`);cb();return;}
     if(m.flinched||m.status==='paralyze'&&Math.random()<.2||m.status==='hypersleep'&&Math.random()<.25){pushLog(`${m.name} は動けない！`);cb();return;}
     if(m.status==='sleep'&&--m.sleepTurns>0){pushLog(`${m.name} は眠っている！`);cb();return;}if(m.status==='sleep')m.status=null;
     if(m.status==='freeze'){if(Math.random()>=.25){cb();return;}m.status=null;}
@@ -118,6 +120,7 @@ function multiEnd(){
     if(m.switchLock>0)m.switchLock--;
     if(m.duraludonShieldTurns>0)m.duraludonShieldTurns--;
   }));
+  applyHoleCake(multiLiving('me'));applyHoleCake(multiLiving('foe'));
   if(weatherTurns>0&&--weatherTurns===0)weather=null;
   if(electricTurns>0)electricTurns--;if(grassTurns>0)grassTurns--;if(psychicTurns>0)psychicTurns--;if(mistTurns>0)mistTurns--;
   renderMulti();multiReplace();
