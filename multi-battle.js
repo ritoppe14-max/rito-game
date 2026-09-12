@@ -9,13 +9,19 @@ function renderMulti(){
   if(!multi)return;
   document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${battleSize===2?'ダブル':'トリプル'}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center"><img id="${multiImage(m)}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
 }
+function renderMultiActionPanels(){
+  if(!multi)return;
+  const panel=(side,title,align,color)=>`<div id="multi-action-${side}" style="position:fixed;top:12px;${align}:12px;z-index:20;min-width:160px;max-width:260px;background:rgba(12,19,34,.94);border:1px solid ${color};border-radius:10px;padding:8px;pointer-events:none"><div style="font-size:12px;font-weight:700;color:${color}">${title}</div><div style="font-size:11px;line-height:1.6">${(multi.actionLog?.[side]||[]).map(t=>`<div>${t}</div>`).join('')||'<span style="color:#9fb3d6">まだ行動していません</span>'}</div></div>`;
+  document.getElementById('multi-action-me')?.remove();document.getElementById('multi-action-foe')?.remove();
+  document.getElementById('battle').insertAdjacentHTML('beforeend',panel('foe','相手の行動','left','#ff8a8a')+panel('me','味方の行動','right','#7ad1ff'));
+}
 renderHp=function(){if(multi)renderMulti();else multiOriginal.renderHp();};
 renderStages=function(){if(multi)renderMulti();else multiOriginal.renderStages();};
 renderHeis=function(){if(multi)renderMulti();else multiOriginal.renderHeis();};
 renderActive=function(){if(multi)renderMulti();else multiOriginal.renderActive();};
 faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){m.fainted=true;m.curHp=0;pushLog(`${m.name} は たおれた！`);}renderMulti();};
 enemyTargets=function(s){return multi?multiLiving(multiOther(s)):multiOriginal.enemyTargets(s);};
-show=function(id){if(id!=='battle'&&multi){multi=null;document.getElementById('multiField')?.remove();document.querySelector('#battle .field').style.display='';}multiOriginal.show(id);};
+show=function(id){if(id!=='battle'&&multi){multi=null;document.getElementById('multiField')?.remove();document.getElementById('multi-action-me')?.remove();document.getElementById('multi-action-foe')?.remove();document.querySelector('#battle .field').style.display='';}multiOriginal.show(id);};
 function startMultiFriend(size){battleSize=size;mode='friend';openPartyBuilder('p1');}
 const singleFriendSetup=startFriendSetup;
 startFriendSetup=function(){battleSize=1;singleFriendSetup();};
@@ -31,14 +37,14 @@ function startMultiBattle(p1,sel1,p2,sel2){
   multiOriginal.show('battle');
   myTeam=sel1.map(i=>makeMon(p1[i].sp,p1[i].item,'p1'));
   foeTeam=sel2.map(i=>makeMon(p2[i].sp,p2[i].item,mode==='friend'?'p2':'cpu'));
-  multi={teams:{me:myTeam,foe:foeTeam},slots:{me:myTeam.slice(0,battleSize),foe:foeTeam.slice(0,battleSize)},actions:[],round:0};
+  multi={teams:{me:myTeam,foe:foeTeam},slots:{me:myTeam.slice(0,battleSize),foe:foeTeam.slice(0,battleSize)},actions:[],actionLog:{me:[],foe:[]},round:0};
   [...myTeam,...foeTeam].forEach((m,i)=>{m.multiId=i;m.isHei=false;});
   me=myTeam[0];foe=foeTeam[0];weather=null;weatherTurns=grassTurns=electricTurns=psychicTurns=mistTurns=0;hazards=emptyHazards();
   document.querySelector('#battle .field').style.display='none';
   document.getElementById('multiField')?.remove();
   document.getElementById('battle').insertAdjacentHTML('afterbegin','<div id="multiField"></div>');
   document.getElementById('log').innerHTML='';document.getElementById('endArea').classList.add('hidden');
-  renderMulti();
+  renderMulti();renderMultiActionPanels();
   series(['me','foe'].flatMap(s=>multi.slots[s].map(m=>cb=>multiEntry(s,m,cb))),multiNext);
 }
 function multiEntry(s,m,cb){
@@ -48,7 +54,7 @@ function multiEntry(s,m,cb){
   applyEntry(m,multiImage(m),cb);
 }
 function multiNext(){
-  if(!multi)return;multi.round++;multi.actions=[];
+  if(!multi)return;multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
   [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;});
   multiChoose('me');
 }
@@ -95,6 +101,7 @@ function multiResolve(){
     if(m.flinched||m.status==='paralyze'&&Math.random()<.2||m.status==='hypersleep'&&Math.random()<.25){pushLog(`${m.name} は動けない！`);cb();return;}
     if(m.status==='sleep'&&--m.sleepTurns>0){pushLog(`${m.name} は眠っている！`);cb();return;}if(m.status==='sleep')m.status=null;
     if(m.status==='freeze'){if(Math.random()>=.25){cb();return;}m.status=null;}
+    multi.actionLog[a.side].push(`${m.name} の ${a.move.name}`);renderMultiActionPanels();
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
     m.turnMoved=true;
