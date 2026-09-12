@@ -442,7 +442,7 @@ const SPECIES=[
    [{stone:"kangaskhanite",stoneName:"ガルーラナイト",name:"メガガルーラ",img:"image/image/メガルーラ.gif",types:["normal"],base:{hp:105,atk:125,def:100,spa:60,spd:100,spe:100},abil:"parentalbond"}]),
  S("salamence","ボーマンダ","image/image/ボーマンダ.gif",["dragon","flying"],{hp:95,atk:135,def:80,spa:110,spd:80,spe:100},"intimidate",["dragonclaw","scaleshot","dragondance","takedown"],
    [{stone:"salamencite",stoneName:"ボーマンダナイト",name:"メガボーマンダ",img:"image/image/メガボーマンダ.gif",types:["dragon","flying"],base:{hp:95,atk:155,def:110,spa:90,spd:110,spe:140},abil:"aerilate"}]),
- S("heatran","ヒードラン","image/image/ヒードラン.gif",["fire","steel"],{hp:91,atk:90,def:106,spa:130,spd:106,spe:77},"flashfire",["fireblast","magmastorm","earthpower","stealthrock"],
+ S("heatran","ヒードラン","image/image/ヒードラン.gif",["fire","steel"],{hp:91,atk:90,def:106,spa:130,spd:106,spe:77},"flashfire",["fireblast","magmastorm","earthpower","ironrod"],
    [{stone:"heatranite",stoneName:"ヒードランナイト",name:"メガヒードラン",img:"image/image/メガヒードラン.gif",types:["fire","steel"],base:{hp:91,atk:120,def:106,spa:175,spd:141,spe:67},abil:"magmaheat"}]),
  S("pelipper","ペリッパー","image/image/ペリッパー.gif",["water","flying"],{hp:60,atk:50,def:100,spa:95,spd:70,spe:65},"drizzle",["surf","hurricane","icebeam","airslash"],[]),
  S("pendor","ペンドラー","image/image/ペンドラー.gif",["bug","poison"],{hp:60,atk:100,def:89,spa:55,spd:69,spe:112},"speedboost",["megahorn","poisonjab","earthquake","rockslide"],
@@ -515,7 +515,7 @@ const LEARN={
   gliscor:["earthquake","stoneedge","xscissor","stealthrock","spikes","substitute","protect"],
   kangaskhan:["earthquake","crunch","closecombat","rockslide","takedown","suckerpunch","fakeout","icepunch","protect"],
   salamence:["dragonclaw","scaleshot","doublewing","dragondance","takedown","outrage","ironhead","roost","earthquake","airslash","stoneedge","fireblast","protect"],
-  heatran:["fireblast","flamethrower","magmastorm","earthpower","stealthrock","stoneedge","darkpulse","protect"],
+  heatran:["fireblast","flamethrower","magmastorm","earthpower","ironrod","stealthrock","stoneedge","darkpulse","protect"],
   pelipper:["surf","hurricane","icebeam","airslash","hydropump","thunderbolt","energyball","flamethrower"],
   pendor:["megahorn","poisonjab","earthquake","rockslide","xscissor","sludgebomb","aquajet","icefang"],
   marilli:["playrough","liquidation","aquajet","crunch","waterfall","icefang","poisonjab","xscissor"],
@@ -572,7 +572,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="falinks"){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]="ritualBlade";} return b.moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="lucario"||sp.id==="heatran")b.moves=b.moves.map(k=>k==="flashcannon"?"ironrod":k); if(sp.id==="falinks"){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]="ritualBlade";} return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
