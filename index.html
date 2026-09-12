@@ -1159,7 +1159,9 @@ function calcDamage(attacker,defender,move,isCrit){
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
-  if(defender.itemKey==="eviolite"&&!defender.isMega)defStat*=1.5;
+  // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon"]);
+  if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
   if(move.lowDef){
