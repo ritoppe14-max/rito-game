@@ -1222,6 +1222,8 @@ function applyMaxMoveEffect(attacker,defender,move){
 function runMultiHit(attacker,defender,move,defImgId,cb){
   const count=attacker.itemKey==="steadydice"?3:move.multiHit;
   const hitMove=Object.assign({},move,{multiHit:null,accuracy:attacker.itemKey==="steadydice"?1:move.accuracy,selfBoost:null,selfDrop:null});
+  // 祭神旋風刃は発動時だけ使用済みにし、5回の個別ヒットでは再判定しない。
+  delete hitMove.ritual;
   let i=0;
   const next=()=>{
     if(i>=count||defender.fainted||attacker.fainted){
