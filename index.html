@@ -606,6 +606,16 @@ const LEARN={
 };
 // ポケモン徹底攻略のSV→剣盾→サンムーンの順で確認した、専用技以外の対戦用55技。
 const COMPETITIVE_MOVE_55=["earthquake","rockslide","stoneedge","ironhead","poisonjab","crunch","suckerpunch","shadowclaw","shadowball","darkpulse","icebeam","icefang","icepunch","flamethrower","fireblast","firepunch","thunderbolt","thunder","thunderwave","energyball","focusblast","psychic","surf","hydropump","waterfall","aquajet","liquidation","crabhammer","bugbite","xscissor","megahorn","dragonclaw","meteor","dpulse","dragontail","hurricane","airslash","playrough","closecombat","bodypress","fakeout","uturn","protect","substitute","toxic","stealthrock","spikes","stickyweb","swordsdance","calmMind","nastyPlot","dragondance","irondefense","buildup","reflect"];
+// 実際の育成画面へ追加する習得可能な対戦技（SV→剣盾→サンムーン基準）。
+const COMPETITIVE_COMPAT={
+  sableye:["reflect","calmMind","willowisp"], chansey:["reflect","substitute"], porygon2:["reflect","calmMind","shadowball"], yadoran:["reflect","calmMind","nastyPlot"], latios:["reflect","nastyPlot"],
+  darkrai:["substitute","protect"], gengar:["substitute","thunderwave"], hydreigon:["nastyPlot","substitute"], rayquaza:["meteor","dragondance"], gabarias:["swordsdance","substitute"], salamence:["swordsdance","meteor"], dragapult:["suckerpunch","dragonrage2"],
+  ohdairu:["swordsdance","substitute"], samehada:["swordsdance","substitute"], marilli:["buildup","substitute"], ragulaaji:["protect","toxic"], pelipper:["protect","toxic"], empoleon:["stealthrock","toxic"], inteleon:["suckerpunch","icebeam"], kingler:["swordsdance","agility"], cloyster:["swordsdance","substitute"], wishiwashi:["protect","toxic"], pyukumuku:["toxic","protect"],
+  bangiras:["swordsdance","substitute"], regirock:["bodypress","irondefense"], hippowdon:["toxic","whirlwind"], gliscor:["swordsdance","toxic"], heatran:["substitute","toxic"], corviknight:["bodypress","uturn"], dubwool:["buildup","substitute"],
+  gorillander:["swordsdance","uturn"], cinderace:["uturn","suckerpunch"], lucario:["swordsdance","nastyPlot"], zacian:["swordsdance","playrough"], mimikyu:["substitute","shadowclaw"], falinks:["swordsdance","buildup"],
+  galvantula:["stickyweb","thunderwave"], joltik:["stickyweb","thunderwave"], pincurchin:["spikes","thunderwave"], crustle:["swordsdance","stealthrock"], orthworm:["bodypress","irondefense"], toxapex:["toxicspikes","banefulbunker"]
+};
+Object.entries(COMPETITIVE_COMPAT).forEach(([id,moves])=>{if(!LEARN[id])return;moves.filter(k=>M[k]&&!LEARN[id].includes(k)).forEach(k=>LEARN[id].push(k));});
 const ABILS={
   centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
   gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
