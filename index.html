@@ -967,7 +967,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1449,7 +1449,8 @@ function applyMoveRecoil(attacker,move,actualDamage){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move=maxMoveFor(attacker,move);
-  if(move.ritual)attacker.ritualTurns=5;
+  if(move.ritual&&attacker.usedRitual){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
+  if(move.ritual){attacker.usedRitual=true;attacker.ritualTurns=5;}
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.onceFlag||"usedPlayTogether";
@@ -1912,7 +1913,7 @@ function cpuChoose(){
     const ri=foeTeam.findIndex(m=>m.id==="ragulaaji"&&!m.fainted);
     if(ri>=0&&ri!==foeA) return {type:"switch",idx:ri};
   }
-  let cand=foe.moves.filter(mv=>!(mv.firstTurnOnly&&(foe.acted||0)>0)&&!(psychicTurns>0&&mv.prio>0)&&!(mv.onceBattle&&foe.usedPlayTogether));
+  let cand=foe.moves.filter(mv=>!(mv.firstTurnOnly&&(foe.acted||0)>0)&&!(psychicTurns>0&&mv.prio>0)&&!(mv.onceBattle&&foe.usedPlayTogether)&&!(mv.ritual&&foe.usedRitual));
   if(!cand.length)cand=foe.moves;
   const valid=cand.filter(mv=>mv.cat==="status"||calcDamage(foe,me,mv,false).eff!==0);
   if(valid.length)cand=valid;
