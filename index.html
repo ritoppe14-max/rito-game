@@ -576,6 +576,9 @@ const ITEMS={
   weakness:{name:"じゃくてんほけん",desc:"弱点技を受けると こうげき・とくこう+2(×2)"},
   life:{name:"せいめいほけん",desc:"はじめて弱点技を受けるとき ダメージ3/4軽減・HP29%回復・ぼうぎょ・とくぼう+1"},
   sitrus:{name:"おぼんのみ",desc:"HPが50%以下になると 一度だけ最大HPの1/4回復"},
+  akkiberry:{name:"アッキのみ",desc:"物理技を受けると 一度だけぼうぎょ+1"},
+  leftovers:{name:"たべのこし",desc:"毎ターン終了時に最大HPの1/16回復"},
+  pancake:{name:"パンケーキ",desc:"アローラライチュウが持つと急所率50%"},
   orb:{name:"いのちのたま",desc:"技の威力1.3倍。毎ターンHP1/10減少"},
   toxicorb:{name:"どくどくだま",desc:"1ターン目終了時に自分がどくになる"},
   healcrown:{name:"かいふくかんむり",desc:"与えたダメージの30%回復。最大HPと攻撃ダメージが5%増加"},
@@ -986,7 +989,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
-  p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
+  p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
@@ -1573,7 +1576,8 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{if(defender.curHp>0){if(electricTurns>0)pushLog(`  └ エレキフィールドで ${defender.name} は ねむくならない！`,"#f8d030");else{defender.yawnTurns=2;pushLog(`  └ ${defender.name} は ねむけを さそわれた！`,"#9fb3d6");}}cb();},450);
     return;
   }
-  const isCrit=!defender.careCritGuard&&Math.random()<(move.critRate||(move.highCrit?0.125:0.066));
+  const critRate=attacker.id==="raichuA"&&attacker.itemKey==="pancake"?.5:(move.critRate||(move.highCrit?0.125:0.066));
+  const isCrit=!defender.careCritGuard&&Math.random()<critRate;
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
   if(res.disguise){defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
@@ -1604,6 +1608,11 @@ function attack(attacker,defender,move,defImgId,cb){
     const actualDamage=Math.min(defender.curHp,dmg);
     defender.curHp=Math.max(0,defender.curHp-dmg); renderHp();
     if(actualDamage>0&&!defender.turnMoved)defender.hitBeforeMove=true;
+    if(actualDamage>0&&move.cat==="phys"&&defender.itemKey==="akkiberry"&&!defender.usedAkki){
+      defender.usedAkki=true;
+      applyDrop(defender,{def:1});
+      pushLog(`  ★ ${defender.name} の アッキのみ！ ぼうぎょが上がった！`,"#ffcb05");
+    }
     if(attacker.itemKey==="healcrown"&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.30));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);renderHp();pushLog(`  ★ かいふくかんむりで HP${h}回復！`,"#46d160");}
     if(falinksPart&&actualDamage>0){
       if(falinksPart.reflect){const r=Math.max(1,Math.floor(attacker.maxHp*falinksPart.reflect));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ メガタイレーツの反射攻撃！ ${r} ダメージ`,'#ff7043');}
@@ -2122,6 +2131,7 @@ function endTurn(){
       pushLog(`  ・ ${m.name} は ポイズンヒールで ${h} 回復！`,"#46d160");
     }
   });
+  [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="leftovers"){const h=Math.max(1,Math.floor(m.maxHp/16));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ・ ${m.name} は たべのこしで ${h} 回復！`,"#46d160");}});
   [me,foe].forEach(m=>{if(m&&!m.fainted&&(m.itemKey==="orb"||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
   if(grassTurns>0){
     [me,foe].forEach(m=>{if(m&&!m.fainted){const h=Math.max(1,Math.floor(m.maxHp/8));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ☘ ${m.name} はグラスフィールドで ${h} 回復！`,"#7ac74c");}});
