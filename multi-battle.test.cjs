@@ -83,6 +83,8 @@ vm.runInContext(`
   check(pyukumuku.base.hp===150&&pyukumuku.base.def===70&&pyukumuku.base.spd===70&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
   check(SPECIES[SP_BY_ID.joltik].learnset.includes('stickyweb')&&M.stickyweb.hazard==='stickyweb','Joltik Sticky Web');
   check(COMPETITIVE_MOVE_55.length===55&&SPECIES[SP_BY_ID.sableye].learnset.includes('reflect')&&M.reflect.reflect,'Competitive 55 and Sableye Reflect');
+  const excadrill=SPECIES[SP_BY_ID.excadrill],gigalith=SPECIES[SP_BY_ID.gigalith];
+  check(excadrill.types.includes('ground')&&excadrill.types.includes('steel')&&excadrill.base.atk===135&&excadrill.abil==='sandrush'&&gigalith.base.def===130&&gigalith.abil==='sandstream','Excadrill and Gigalith');
   const absolMega=makeMon(SP_BY_ID.absol,'absolzite','p1'); absolMega.base={hp:65,atk:164,def:60,spa:115,spd:60,spe:151}; absolMega.abilEff='sharpness'; absolMega.isMega=true;
   const absolPlain=Object.assign({},absolMega,{abilEff:null});
   check(calcDamage(absolMega,fire,M.nightslash,false).dmg>calcDamage(absolPlain,fire,M.nightslash,false).dmg&&calcDamage(absolMega,fire,M.psychocut,false).dmg>calcDamage(absolPlain,fire,M.psychocut,false).dmg&&M.xscissor.cut,'Sharpness boosts cutting moves');
