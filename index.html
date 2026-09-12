@@ -387,6 +387,7 @@ const M={
   flaresong:{name:"フレアソング",type:"fire",cat:"spec",power:50,sound:true,selfBoost:{chance:1,stats:{spa:1}}},
   saltcure:{name:"しおづけ",type:"rock",cat:"phys",power:40,salt:true},
   protect:{name:"まもる",type:"normal",cat:"status",power:0,prio:6,protect:true},
+  reflect:{name:"リフレクター",type:"psychic",cat:"status",power:0,reflect:true},
   grassslide:{name:"グラススライダー",type:"grass",cat:"phys",power:70,grassPriority:true},
   tenmillion:{name:"10まんばりき",type:"ground",cat:"phys",power:90},
   buildup:{name:"ビルドアップ",type:"fighting",cat:"status",power:0,selfBoost:{atk:1,def:1}},
@@ -537,7 +538,7 @@ const FALINKS_HEI=[
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
   centiskorch:["firewhip","fireblast","flamethrower","bugbite","crunch","protect","toxic","earthquake"],
-  sableye:["protect","substitute","toxic","suckerpunch","crunch","fakeout","quickattack","shadowball"],
+  sableye:["protect","substitute","toxic","suckerpunch","crunch","fakeout","quickattack","shadowball","reflect","calmMind","willowisp"],
   orthworm:["ironhead","earthquake","stealthrock","spikes","rockslide","protect","toxic","stoneedge"],
   darkrai:["darkpulse","shadowball","focusblast","darkhole","sludgebomb","calmMind","nastyPlot","psychic","icebeam","thunderbolt"],
   gengar:["shadowball","sludgebomb","focusblast","darkpulse","sludgewave","psychic","thunderbolt","icebeam","nastyPlot","willowisp","protect"],
@@ -603,6 +604,8 @@ const LEARN={
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
+// ポケモン徹底攻略のSV→剣盾→サンムーンの順で確認した、専用技以外の対戦用55技。
+const COMPETITIVE_MOVE_55=["earthquake","rockslide","stoneedge","ironhead","poisonjab","crunch","suckerpunch","shadowclaw","shadowball","darkpulse","icebeam","icefang","icepunch","flamethrower","fireblast","firepunch","thunderbolt","thunder","thunderwave","energyball","focusblast","psychic","surf","hydropump","waterfall","aquajet","liquidation","crabhammer","bugbite","xscissor","megahorn","dragonclaw","meteor","dpulse","dragontail","hurricane","airslash","playrough","closecombat","bodypress","fakeout","uturn","protect","substitute","toxic","stealthrock","spikes","stickyweb","swordsdance","calmMind","nastyPlot","dragondance","irondefense","buildup","reflect"];
 const ABILS={
   centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
   gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
@@ -1072,7 +1075,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
+  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1225,6 +1228,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
+  if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
   const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
@@ -1683,6 +1687,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);host.careCritGuardPending=true;renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！ 次のターンは急所に当たらない！`,'#46d160');cb();},450); return; }
+  if(move.cat==="status"&&move.reflect){ setTimeout(()=>{attacker.reflectTurns=5;pushLog(`  └ ${attacker.name} は リフレクターを 張った！`,"#7ad1ff");cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -2307,6 +2312,7 @@ function endTurn(){
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0)pushLog(`  ・ ${m.name} の げきりんが 終わった！`);}
+    if(m&&m.reflectTurns>0)m.reflectTurns--;
     if(m&&m.falinksRightFootTurns>0)m.falinksRightFootTurns--;
     if(m&&m.falinksLeftFootTurns>0)m.falinksLeftFootTurns--;
     if(m&&m.duraludonShieldTurns>0)m.duraludonShieldTurns--;

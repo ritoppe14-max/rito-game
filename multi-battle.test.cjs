@@ -82,6 +82,7 @@ vm.runInContext(`
   const pyukumuku=SPECIES[SP_BY_ID.pyukumuku];
   check(pyukumuku.base.hp===150&&pyukumuku.base.def===70&&pyukumuku.base.spd===70&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
   check(SPECIES[SP_BY_ID.joltik].learnset.includes('stickyweb')&&M.stickyweb.hazard==='stickyweb','Joltik Sticky Web');
+  check(COMPETITIVE_MOVE_55.length===55&&SPECIES[SP_BY_ID.sableye].learnset.includes('reflect')&&M.reflect.reflect,'Competitive 55 and Sableye Reflect');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
