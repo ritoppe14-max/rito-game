@@ -47,6 +47,8 @@ vm.runInContext(`
   check(gmaxSnipe.name==='キョダイソゲキ'&&gmaxSnipe.power===140&&gmaxSnipe.ignoreAbility&&gmaxSnipe.forceCrit,'Inteleon G-Max Snipe Shot');
   const normalCrit=Object.assign({},intelSingle,{abilEff:null});
   check(calcDamage(intelSingle,fire,M.snipeshot,true).dmg>calcDamage(normalCrit,fire,M.snipeshot,true).dmg,'Sniper raises critical damage');
+  const wool=makeMon(SP_BY_ID.dubwool,'none','p1'),woolPlain=Object.assign({},wool,{abilEff:null});
+  check(wool.base.hp===100&&wool.base.def===100&&calcDamage(fire,wool,M.crunch,false).dmg<calcDamage(fire,woolPlain,M.crunch,false).dmg,'Dubwool Fluffy halves physical damage');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
