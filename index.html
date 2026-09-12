@@ -1699,7 +1699,9 @@ function chooseHeiMoves(){
 }
 function confirmHeiMoves(){
   const {side,action,names}=heiInput;
-  action.heiMoves=names.map((name,i)=>({name,key:document.getElementById("heiMove"+i).value}));action.heiReady=true;
+  const moves=names.map((name,i)=>({name,key:document.getElementById("heiMove"+i).value}));
+  if(moves.filter(m=>m.key==="heicare").length>2){alert("かいごは同じターンに2回までです。");return;}
+  action.heiMoves=moves;action.heiReady=true;
   submitAction(side,action);
 }
 function runHeiActions(done){
