@@ -498,6 +498,7 @@ const SPECIES=[
  S("thievul","フォクスライ","image/image/フォクスライ.gif",["dark"],{hp:70,atk:58,def:58,spa:87,spd:92,spe:90},"unburden",["darkpulse","suckerpunch","nastyPlot","psychic"],[]),
  S("obstagoon","タチフサグマ","image/image/タチフサグマ.gif",["dark","normal"],{hp:93,atk:90,def:101,spa:60,spd:81,spe:95},"defiant",["throatchop","suckerpunch","closecombat","protect"],[]),
  S("drednaw","カジリガメ","image/image/カジリガメ.gif",["water","rock"],{hp:90,atk:115,def:90,spa:48,spd:68,spe:74},"strongjaw",["liquidation","crunch","stoneedge","icefang"],[]),
+ S("hold","ホールド","image/image/ホールド.gif",["normal","ground"],{hp:85,atk:56,def:77,spa:50,spd:77,spe:78},"hugepower",["earthquake","bodypress","quickattack","stoneedge"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
@@ -571,6 +572,7 @@ const LEARN={
   thievul:["darkpulse","suckerpunch","nastyPlot","psychic","shadowball","protect","toxic"],
   obstagoon:["throatchop","suckerpunch","closecombat","protect","takedown","bodypress","ironhead","icepunch","earthquake","toxic"],
   drednaw:["liquidation","crunch","stoneedge","icefang","waterfall","earthquake","rockslide","bodypress","protect"],
+  hold:["earthquake","bodypress","quickattack","stoneedge","takedown","icepunch","thunderpunch","ironhead","protect","toxic"],
   alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
@@ -581,7 +583,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
