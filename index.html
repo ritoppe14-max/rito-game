@@ -842,7 +842,7 @@ function renderTrainEdit(){
       <img src="${IMG(sp.img)}" style="width:60px;height:60px;image-rendering:pixelated">
       <div><div style="font-weight:700;font-size:15px">${trainOwner==="p1"?"1P":"フレンド"}：${sp.name}</div><div class="types">${typeTags(sp.types)}</div></div></div>
     <div class="mini" style="margin-bottom:8px">種族値 HP${sp.base.hp} こう${sp.base.atk} ぼう${sp.base.def} 特こう${sp.base.spa} 特ぼう${sp.base.spd} 素${sp.base.spe}</div>
-    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}${sp.id==="falinks"?'<div class="mini">5枠目（専用）：祭神旋風刃</div>':sp.id==="duraludon"?'<div class="mini">5枠目（専用）：超合金硬竜砲撃・ジュラルディザスター</div>':sp.id==="alcremie"?'<div class="mini">5枠目（専用・1回）：ホールケイプ・マルホイップ</div>':''}
+    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}${sp.id==="falinks"?'<div class="mini">5枠目（専用）：祭神旋風刃</div>':sp.id==="duraludon"?'<div class="mini">5枠目（専用）：超合金硬竜砲撃・ジュラルディザスター（ドラゴン・特殊・威力130）</div>':sp.id==="alcremie"?'<div class="mini">5枠目（専用・1回）：ホールケイプ・マルホイップ</div>':''}
     <div style="font-weight:700;font-size:13px;margin:10px 0 6px">特性</div>${abilOpts}
     <div class="center"><button class="btn ghost" style="font-size:12px;padding:4px 14px" onclick="resetTrain()">初期設定にもどす</button>${partySlot>=0?` <button class="btn ghost" style="font-size:12px;padding:4px 14px;color:#ff8a8a" onclick="removeTrainedPokemon()">パーティから外す</button>`:""}</div>
   </div>`;

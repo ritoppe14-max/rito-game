@@ -35,6 +35,7 @@ vm.runInContext(`
   battleSize=2;const multiDmg=calcDamage(dura,fire,M.duraludonCannon,false).dmg;
   check(multiDmg>=Math.floor(single.dmg*1.49),'Duraludon cannon multi boost');
   const fairy=makeMon(SP_BY_ID.marilli,'none','cpu');
+  check(M.duraludonDisaster.type==='dragon','Duraludon Disaster is Dragon type');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
