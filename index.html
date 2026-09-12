@@ -1336,6 +1336,10 @@ function chooseSwitch(side,i){
   submitAction(side,{type:"switch",idx:i});
 }
 function submitAction(side,action){
+  if(action.type==="move"&&!action.targetReady&&enemyTargets(side).length>1){
+    pendingTarget={side,action};
+    document.getElementById("cmd").innerHTML='<div>攻撃対象を選択</div>'+enemyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('');return;
+  }
   if(action.type==="move"&&!action.heiReady){openHeiActions(side,action);return;}
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
   turnAct[side]=action&&action.type==="move"?Object.assign({},action,{move:Object.assign({},action.move)}):action; clearCmd();
@@ -1344,6 +1348,11 @@ function submitAction(side,action){
     else handoff("foe");
   }else doResolve();
 }
+let pendingTarget=null;
+function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
+function resolveAttackTarget(side,target){const list=enemyTargets(side);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
+function confirmAttackTarget(i){const {side,action}=pendingTarget;action.target=enemyTargets(side)[i];action.targetReady=true;submitAction(side,action);}
+function isFriendlyMove(move){return !!(move.heiCare||move.heiCoaching||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
 function handoff(side){
   const c=document.getElementById("cmd");
   c.innerHTML=`<div class="center" style="margin:10px 0">
@@ -1375,15 +1384,16 @@ function doResolve(){
   };
   const phaseAttack=(next)=>{
     const movers=[];
-    if(A.type==="move") movers.push({who:"me",move:A.move,part:A.part||"waist",mon:me});
-    if(B.type==="move") movers.push({who:"foe",move:B.move,part:B.part||"waist",mon:foe});
+    if(A.type==="move") movers.push({who:"me",move:A.move,target:A.target,part:A.part||"waist",mon:me});
+    if(B.type==="move") movers.push({who:"foe",move:B.move,target:B.target,part:B.part||"waist",mon:foe});
     if(me.ritualTurns>0&&!me.fainted)movers.push({who:"me",move:M.ritualTick,part:"waist",mon:me,ritualExtra:true});
     if(foe.ritualTurns>0&&!foe.fainted)movers.push({who:"foe",move:M.ritualTick,part:"waist",mon:foe,ritualExtra:true});
     const addHeiMovers=(side,action,host)=>{
       if(!action||action.type!=="move"||!host.heis)return;
       host.heis.filter(h=>!h.fainted).forEach(h=>{
         const selected=action.heiMoves?.find(x=>x.name===h.name);
-        movers.push({who:side,move:selected?M[selected.key]:h.moves[0],part:"waist",mon:h,host,hei:true});
+        h.turnMoved=false;h.flinched=false;h.protectActive=false;
+        movers.push({who:side,move:selected?M[selected.key]:h.moves[0],target:selected?.target,part:"waist",mon:h,host,hei:true});
       });
     };
     addHeiMovers("me",A,me); addHeiMovers("foe",B,foe);
@@ -1400,11 +1410,11 @@ function doResolve(){
 }
 function runAttacks(movers,i,done){
   if(i>=movers.length){done();return;}
-  const m=movers[i], atk=m.hei?m.mon:activeOf(m.who), def=activeOf(m.who==="me"?"foe":"me"), defImg=m.who==="me"?"foeImg":"myImg";
+  const m=movers[i], atk=m.hei?m.mon:activeOf(m.who), def=resolveAttackTarget(m.who,m.target), defImg=m.who==="me"?"foeImg":"myImg";
   if(!m.hei&&atk!==m.mon){ runAttacks(movers,i+1,done); return; }
   if(m.hei&&activeOf(m.who)!==m.host){ runAttacks(movers,i+1,done); return; }
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
-  if(def.fainted){ runAttacks(movers,i+1,done); return; }
+  if(def.fainted&&!isFriendlyMove(m.move)){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
   m.move=Object.assign({},m.move,{targetPart:m.part||"waist"});
   if(atk===foe)atk.lastMoveWasStatus=m.move.cat==="status";
@@ -1433,6 +1443,15 @@ function runAttacks(movers,i,done){
     runAttacks(movers,i+1,done); return;
   }
   attack(atk,def,m.move,defImg,()=>{
+    renderHeis();
+    const added=[];
+    ["me","foe"].forEach(side=>(activeOf(side).heis||[]).forEach(h=>{
+      if(h.fainted||movers.some(x=>x.mon===h))return;
+      const choice=turnAct[side]?.heiMoves?.find(x=>x.name===h.name);
+      added.push({who:side,mon:h,host:activeOf(side),hei:true,move:choice?M[choice.key]:h.moves[0],target:choice?.target});
+    }));
+    const remaining=movers.slice(i+1).concat(added).sort((a,b)=>movePriority(b.mon,b.move)-movePriority(a.mon,a.move)||effSpeed(b.mon)-effSpeed(a.mon));
+    movers.splice(i+1,movers.length, ...remaining);
     tryEmergencyExit(defSide,def,()=>{
       if(m.move.switchAfter&&!atk.fainted&&teamOf(m.who).some((p,j)=>j!==activeIdxOf(m.who)&&!p.fainted)) requestForcedSwitch(m.who,()=>runAttacks(movers,i+1,done));
       else runAttacks(movers,i+1,done);
@@ -1448,6 +1467,7 @@ function applyMoveRecoil(attacker,move,actualDamage){
   if(attacker.curHp<=0&&!attacker.fainted) faintMon(attacker,attacker===me?"myImg":"foeImg");
 }
 function attack(attacker,defender,move,defImgId,cb){
+  if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
   if(move.ritual&&attacker.usedRitual){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.ritual){attacker.usedRitual=true;attacker.ritualTurns=5;}
@@ -1474,7 +1494,7 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{pushLog(`  └ ${attacker.name} は身を守った！`,"#7ad1ff");cb();},350); return;
   }
   if(move.leech){setTimeout(()=>{defender.leechSource=attacker;pushLog(`  └ ${defender.name} に ヤドリギが ついた！`,"#7ad1ff");cb();},450);return;}
-  if(defender.protectActive&&!move.onceBattle&&!move.ignoreProtect){
+  if(defender.protectActive&&!isFriendlyMove(move)&&!move.onceBattle&&!move.ignoreProtect){
     if(move.maxMove&&move.cat!=="status"&&move.power>0){
       setTimeout(()=>{const d=Math.max(1,Math.floor(defender.maxHp*.25));defender.curHp=Math.max(0,defender.curHp-d);renderHp();pushLog(`  └ ダイマックス技が まもるを 貫通し ${d} ダメージ！`,"#e84b4b");if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);cb();},350);
     }else setTimeout(()=>{pushLog(`  └ ${defender.name} は攻撃から身を守った！`,"#7ad1ff");cb();},350);
@@ -1670,7 +1690,7 @@ function renderHeis(){
     let box=document.getElementById(side+"Heis");
     if(!box){box=document.createElement("div");box.id=side+"Heis";document.getElementById(imgOf(side)).parentElement.appendChild(box);}
     box.style.cssText="display:flex;flex-wrap:wrap;gap:6px;max-width:260px";
-    box.innerHTML=(activeOf(side)?.heis||[]).map(h=>`<div style="text-align:center"><img src="${IMG(h.img)}" style="width:60px;height:60px;object-fit:contain"><div>${h.name}</div><small>HP ${h.curHp}/${h.maxHp}</small><div style="font-size:10px;color:#ffcb05;max-width:100px">${stgText(h)||"能力変化なし"}</div></div>`).join("");
+    box.innerHTML=(activeOf(side)?.heis||[]).map(h=>`<div style="text-align:center"><img id="hei-${side}-${h.name}" src="${IMG(h.img)}" style="width:60px;height:60px;object-fit:contain;opacity:${h.fainted?.4:1}"><div>${h.name}</div><small>HP ${h.curHp}/${h.maxHp}</small><div style="font-size:10px;color:#ffcb05;max-width:100px">${stgText(h)||"能力変化なし"}</div></div>`).join("");
   });
 }
 function openHeiActions(side,action){
@@ -1694,13 +1714,13 @@ function chooseHeiMoves(){
   if(!names.length){action.heiReady=true;submitAction(side,action);return;}
   document.getElementById("cmd").innerHTML='<div>タイレーツの技の後に使うヘイの技</div>'+names.map((name,i)=>{
     const h=FALINKS_HEI.find(h=>h.name===name);
-    return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select></div>`;
+    return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select><select id="heiTarget${i}">${enemyTargets(side).map((t,j)=>`<option value="${j}">${t.name}</option>`).join("")}</select></div>`;
   }).join("")+`<button class="btn" onclick="confirmHeiMoves()">決定</button>`;
   heiInput.names=names;
 }
 function confirmHeiMoves(){
   const {side,action,names}=heiInput;
-  const moves=names.map((name,i)=>({name,key:document.getElementById("heiMove"+i).value}));
+  const moves=names.map((name,i)=>({name,key:document.getElementById("heiMove"+i).value,target:enemyTargets(side)[Number(document.getElementById("heiTarget"+i).value)]}));
   if(moves.filter(m=>m.key==="heicare").length>2){alert("かいごは同じターンに2回までです。");return;}
   action.heiMoves=moves;action.heiReady=true;
   submitAction(side,action);
