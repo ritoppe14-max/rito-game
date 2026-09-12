@@ -385,6 +385,7 @@ const M={
   swordsdance:{name:"つるぎのまい",type:"normal",cat:"status",power:0,selfBoost:{atk:2}},
   formation:{name:"はいすいのじん",type:"fighting",cat:"status",power:0,onceBattle:true,onceFlag:"usedFormation",selfBoost:{chance:1,stats:{atk:1,def:1,spa:1,spd:1,spe:1}}},
   heicoaching:{name:"ヘイのコーチング",type:"normal",cat:"status",power:0,heiCoaching:true},
+  heicare:{name:"かいご",type:"normal",cat:"status",power:0,heiCare:true},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -461,7 +462,7 @@ const SPECIES=[
  S("scovillain","スコヴィラン","image/image/スコヴィラン.gif",["grass","fire"],{hp:65,atk:108,def:65,spa:108,spd:65,spe:75},"moody",["flamethrower","energyball","crunch","rockslide"],
    [{stone:"scovillainite",stoneName:"スコヴィランナイト",name:"メガスコヴィラン",img:"image/image/メガスコヴィラン.gif",types:["grass","fire"],base:{hp:65,atk:130,def:93,spa:130,spd:93,spe:75},abil:"pepperguard"}]),
  S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"speedboost",["latiospulse","dpulse","psychic","thunderbolt"],[]),
- S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect"],
+ S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect","ritualBlade"],
    [{stone:"falinksstone",stoneName:"タイレーツナイト",name:"メガタイレーツ",img:"image/image/メガタイレーツ.gif",types:["fighting"],base:{hp:100,atk:145,def:125,spa:70,spd:90,spe:105},abil:"defiant"}]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
@@ -469,11 +470,11 @@ SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai"]);
 const FALINKS_HEI=[
-  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster",item:"none",moves:["buildup","charm","throatchop","ironhead"]},
-  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate",item:"none",moves:["bodypress","jetpunch","irondefense","thunderpunch"]},
-  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary",item:"none",moves:["closecombat","tripleaxel","drainpunch","firstimpression"]},
-  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",item:"none",moves:["closecombat","megahorn","iceSpinner","machpunchZ"]},
-  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",item:"none",moves:["sacredwave","darkpulse2","sludgeattack","scalesound"]}
+  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster",item:"none",moves:["buildup","charm","throatchop","ironhead","heicare"]},
+  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate",item:"none",moves:["bodypress","jetpunch","irondefense","thunderpunch","heicare"]},
+  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary",item:"none",moves:["closecombat","tripleaxel","drainpunch","firstimpression","heicare"]},
+  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",item:"none",moves:["closecombat","megahorn","iceSpinner","machpunchZ","heicare"]},
+  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",item:"none",moves:["sacredwave","darkpulse2","sludgeattack","scalesound","heicare"]}
 ];
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
@@ -554,7 +555,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); return b.moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="falinks"&&b.moves.length<5)b.moves.push("ritualBlade"); return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
@@ -953,7 +954,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   if(owner==="cpu"&&npcLevel>=5) for(const k of Object.keys(p.base)) p.base[k]*=1.1;
   const savedBuild=buildOf(sp,owner);
   const abilityKey=owner==="cpu" ? pickOne(sp.abils||[sp.abil]) : (savedBuild.ability||sp.abil);
-  const moveKeys=owner==="cpu" ? sampleFour(sp.learnset) : (Array.isArray(savedBuild.moves)&&savedBuild.moves.length?savedBuild.moves:sp.moves);
+  const moveKeys=owner==="cpu" ? sampleFour(sp.learnset) : spMoves(sp,owner);
   const ab=ABIL[abilityKey]||ABIL[sp.abil]; p.abilName=ab.name; p.abilEff=ab.eff;
   p.moves=moveKeys.map(k=>M[k]);
   p.itemKey=itemKey||"none";
@@ -1471,6 +1472,7 @@ function attack(attacker,defender,move,defImgId,cb){
   const falinksPart=falinksPartInfo(defender,move), accuracy=falinksPart&&falinksPart.accuracy||move.accuracy;
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
+  if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -1637,7 +1639,7 @@ function summonFalinksHeis(mon){
   mon.heis=mon.heis||[];
   picked.forEach(h=>{
     const hei=makeMon(SP_BY_ID.falinks,"none","cpu");
-    Object.assign(hei,{id:"hei",name:h.name,img:"image/image/タイレーツのヘイ.gif",base:{...h.base},abilEff:h.abil,abilName:ABIL[h.abil].name,moves:h.moves.map(k=>M[k]),isHei:true});
+    Object.assign(hei,{id:"hei",name:h.name,img:"image/image/タイレーツのヘイ.gif",base:{...h.base},abilEff:h.abil,abilName:ABIL[h.abil].name,moves:h.moves.map(k=>M[k]),isHei:true,host:mon});
     hei.maxHp=Math.floor((h.base.hp*2*LEVEL/100+LEVEL+10)*1.5);hei.curHp=hei.maxHp;
     const entry=(mon===me?party:party2).find(p=>p.sp===SP_BY_ID.falinks);
     hei.itemKey=entry?.heiItems?.[h.name]||"none";
