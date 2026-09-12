@@ -500,6 +500,7 @@ const SPECIES=[
  S("drednaw","カジリガメ","image/image/カジリガメ.gif",["water","rock"],{hp:90,atk:115,def:90,spa:48,spd:68,spe:74},"strongjaw",["liquidation","crunch","stoneedge","icefang"],[]),
  S("hold","ホールド","image/image/ホールド.gif",["normal","ground"],{hp:85,atk:56,def:77,spa:50,spd:77,spe:78},"hugepower",["earthquake","bodypress","quickattack","stoneedge"],[]),
  S("galvantula","デンチュラ","image/image/デンチュラ.gif",["bug","electric"],{hp:70,atk:77,def:60,spa:97,spd:60,spe:108},"compoundeyes",["thunder","bugbite","electroweb","energyball"],[]),
+ S("joltik","バチュル","image/image/バチュル.gif",["bug","electric"],{hp:75,atk:47,def:75,spa:57,spd:75,spe:65},"compoundeyes",["thunderbolt","bugbite","electroweb","suckerpunch"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
  S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
@@ -575,6 +576,7 @@ const LEARN={
   drednaw:["liquidation","crunch","stoneedge","icefang","waterfall","earthquake","rockslide","bodypress","protect"],
   hold:["earthquake","bodypress","quickattack","stoneedge","takedown","icepunch","thunderpunch","ironhead","protect","toxic"],
   galvantula:["thunder","thunderbolt","electroweb","bugbite","energyball","suckerpunch","shadowball","protect","toxic"],
+  joltik:["thunderbolt","thunder","electroweb","bugbite","suckerpunch","energyball","protect","toxic"],
   alcremie:["alcremieRecover","decoration","magicalshine","sweetscent","drainingkiss","mysticalfire","acidarmor","calmMind","energyball","shadowball","psychic","protect"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
@@ -585,7 +587,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
@@ -1186,7 +1188,7 @@ function calcDamage(attacker,defender,move,isCrit){
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
-  const evioliteEligible=new Set(["chansey","porygon2","duraludon"]);
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
