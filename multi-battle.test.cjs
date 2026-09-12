@@ -85,7 +85,7 @@ vm.runInContext(`
   check(COMPETITIVE_MOVE_55.length===55&&SPECIES[SP_BY_ID.sableye].learnset.includes('reflect')&&M.reflect.reflect,'Competitive 55 and Sableye Reflect');
   const absolMega=makeMon(SP_BY_ID.absol,'absolzite','p1'); absolMega.base={hp:65,atk:164,def:60,spa:115,spd:60,spe:151}; absolMega.abilEff='sharpness'; absolMega.isMega=true;
   const absolPlain=Object.assign({},absolMega,{abilEff:null});
-  check(calcDamage(absolMega,fire,M.nightslash,false).dmg>calcDamage(absolPlain,fire,M.nightslash,false).dmg,'Sharpness boosts cutting moves');
+  check(calcDamage(absolMega,fire,M.nightslash,false).dmg>calcDamage(absolPlain,fire,M.nightslash,false).dmg&&calcDamage(absolMega,fire,M.psychocut,false).dmg>calcDamage(absolPlain,fire,M.psychocut,false).dmg&&M.xscissor.cut,'Sharpness boosts cutting moves');
   check(calcDamage(dura,fairy,M.duraludonDisaster,false).eff===2,'Duraludon Disaster pierces Fairy immunity for 2x damage');
   const duraEviolite=makeMon(SP_BY_ID.duraludon,'eviolite','p1'),duraPlain=makeMon(SP_BY_ID.duraludon,'none','p1');
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
