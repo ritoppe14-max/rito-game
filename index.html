@@ -1177,7 +1177,7 @@ function effSpeed(m){
 }
 function movePriority(mon,move){
   return (move.prio||0)
-    +(mon.abilEff==="prankster"&&move.cat==="status"?2:0)
+    +(mon.abilEff==="prankster"&&move.cat==="status"?1:0)
     +(move.grassPriority&&grassTurns>0?4:0)
     +(mon.quickDraw?2:0);
 }
@@ -1377,6 +1377,14 @@ function doResolve(){
     const movers=[];
     if(A.type==="move") movers.push({who:"me",move:A.move,part:A.part||"waist",mon:me});
     if(B.type==="move") movers.push({who:"foe",move:B.move,part:B.part||"waist",mon:foe});
+    const addHeiMovers=(side,action,host)=>{
+      if(!action||action.type!=="move"||!host.heis)return;
+      host.heis.filter(h=>!h.fainted).forEach(h=>{
+        const selected=action.heiMoves?.find(x=>x.name===h.name);
+        movers.push({who:side,move:selected?M[selected.key]:h.moves[0],part:"waist",mon:h,host,hei:true});
+      });
+    };
+    addHeiMovers("me",A,me); addHeiMovers("foe",B,foe);
     if(me.ritualTurns>0&&!me.fainted)movers.push({who:"me",move:M.ritualTick,part:"waist",mon:me,ritualExtra:true});
     if(foe.ritualTurns>0&&!foe.fainted)movers.push({who:"foe",move:M.ritualTick,part:"waist",mon:foe,ritualExtra:true});
     movers.forEach(m=>{m.mon.quickDraw=false;if(m.mon.abilEff==="quickdraw"&&Math.random()<.2){m.mon.quickDraw=true;pushLog(`  ★ ${m.mon.name} の クイックドロウ！ 優先度が上がった！`,"#ffcb05");} });
@@ -1386,14 +1394,15 @@ function doResolve(){
       // 優先度が同じなら、実数値の高い方を必ず先に行動させる
       return effSpeed(b.mon)-effSpeed(a.mon);
     });
-    runAttacks(movers,0,()=>runHeiActions(next));
+    runAttacks(movers,0,next);
   };
   phaseSwitch(()=>phaseMax(()=>phaseMega(()=>phaseAttack(()=>endTurn()))));
 }
 function runAttacks(movers,i,done){
   if(i>=movers.length){done();return;}
-  const m=movers[i], atk=activeOf(m.who), def=activeOf(m.who==="me"?"foe":"me"), defImg=m.who==="me"?"foeImg":"myImg";
-  if(atk!==m.mon){ runAttacks(movers,i+1,done); return; }
+  const m=movers[i], atk=m.hei?m.mon:activeOf(m.who), def=activeOf(m.who==="me"?"foe":"me"), defImg=m.who==="me"?"foeImg":"myImg";
+  if(!m.hei&&atk!==m.mon){ runAttacks(movers,i+1,done); return; }
+  if(m.hei&&activeOf(m.who)!==m.host){ runAttacks(movers,i+1,done); return; }
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
   if(def.fainted){ runAttacks(movers,i+1,done); return; }
   if(atk.outrageTurns>0) m.move=M.outrage;
