@@ -1354,6 +1354,7 @@ function handoff(side){
 // ===== ターン解決 =====
 function series(tasks,done){let i=0;const nx=()=>{ if(i>=tasks.length){done();return;} tasks[i++](nx); };nx();}
 function doResolve(){
+  [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=!!mon.careCritGuardPending;mon.careCritGuardPending=false;});
   busy=true; clearCmd();
   me.protectActive=false; foe.protectActive=false;
   me.turnMoved=false; foe.turnMoved=false; me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
@@ -1473,7 +1474,7 @@ function attack(attacker,defender,move,defImgId,cb){
   const falinksPart=falinksPartInfo(defender,move), accuracy=falinksPart&&falinksPart.accuracy||move.accuracy;
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
-  if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！`,'#46d160');cb();},450); return; }
+  if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);host.careCritGuardPending=true;renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！ 次のターンは急所に当たらない！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -1514,7 +1515,7 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{if(defender.curHp>0){if(electricTurns>0)pushLog(`  └ エレキフィールドで ${defender.name} は ねむくならない！`,"#f8d030");else{defender.yawnTurns=2;pushLog(`  └ ${defender.name} は ねむけを さそわれた！`,"#9fb3d6");}}cb();},450);
     return;
   }
-  const isCrit=Math.random()<(move.critRate||(move.highCrit?0.125:0.066));
+  const isCrit=!defender.careCritGuard&&Math.random()<(move.critRate||(move.highCrit?0.125:0.066));
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
   if(res.disguise){defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
@@ -1988,6 +1989,7 @@ function cpuForceReplace(cb){
   });
 }
 function endTurn(){
+  [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0)pushLog(`  ・ ${m.name} の げきりんが 終わった！`);}
     if(m&&m.falinksRightFootTurns>0)m.falinksRightFootTurns--;
