@@ -265,6 +265,7 @@ const M={
   poisonjab:{name:"どくづき",type:"poison",cat:"phys",power:80,poison:.5},
   earthpower:{name:"だいちのちから",type:"ground",cat:"spec",power:90,targetDrop:{chance:.2,stats:{spd:-1}}},
   earthquake:{name:"じしん",type:"ground",cat:"phys",power:100},
+  rocktomb:{name:"がんせきふうじ",type:"rock",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}},
   flashcannon:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,selfBoost:{chance:.2,stats:{spd:1}}},
   ironhead:{name:"アイアンヘッド",type:"steel",cat:"phys",power:80},
   behemothblade:{name:"きょじゅうざん",type:"steel",cat:"phys",power:100,megaBonus:true},
@@ -317,6 +318,9 @@ const M={
   fakeout:{name:"ねこだまし",type:"normal",cat:"phys",power:40,prio:3,firstTurnOnly:true,flinch:1},
   xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
+  smarthorn:{name:"スマートホーン",type:"steel",cat:"phys",power:70,accuracy:1},
+  zenheadbutt:{name:"しねんのずつき",type:"psychic",cat:"phys",power:90,flinch:.25},
+  throatchop:{name:"じごくづき",type:"dark",cat:"phys",power:80,soundBlock:3},
   closecombat:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
   focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
   nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
@@ -338,7 +342,7 @@ const M={
   psychic_hisui:{name:"サイコキネシス",type:"psychic",cat:"spec",power:90,targetDrop:{chance:.2,stats:{spd:-1}}},
   shellarms:{name:"シェルアームズ",type:"poison",cat:"spec",power:90,lowDef:true},
   hyakki:{name:"ひゃっきやこう",type:"ghost",cat:"spec",power:70,statusPower:2,burn:.5},
-  flaresong:{name:"フレアソング",type:"fire",cat:"spec",power:50,selfBoost:{chance:1,stats:{spa:1}}},
+  flaresong:{name:"フレアソング",type:"fire",cat:"spec",power:50,sound:true,selfBoost:{chance:1,stats:{spa:1}}},
   saltcure:{name:"しおづけ",type:"rock",cat:"phys",power:40,salt:true},
   protect:{name:"まもる",type:"normal",cat:"status",power:0,prio:6,protect:true},
   grassslide:{name:"グラススライダー",type:"grass",cat:"phys",power:70,grassPriority:true},
@@ -484,6 +488,7 @@ const LEARN={
   idaitou:["liquidation","shadowball","crunch","aquajet","gravevisit","hydropump","icebeam","darkpulse"],
   loudbone:["flaresong","shadowball","flamethrower","focusblast","fireblast","dpulse","psychic"],
   garganacl:["saltcure","stoneedge","earthquake","ironhead","rockslide","closecombat"],
+  falinks:["formation","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
 };
@@ -912,7 +917,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0;
+  p.trapTurns=0; p.trapDenom=0; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.subHp=0; p.outrageTurns=0; p.roostedTypes=null; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   return p;
 }
@@ -1376,6 +1381,7 @@ function applyMoveRecoil(attacker,move,actualDamage){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move=maxMoveFor(attacker,move);
+  if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   if(move.onceBattle&&attacker.usedPlayTogether){setTimeout(()=>{pushLog(`  └ ${attacker.name} は いっしょにあそぼ!を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.onceBattle)attacker.usedPlayTogether=true;
@@ -1513,6 +1519,7 @@ function attack(attacker,defender,move,defImgId,cb){
       defender.switchLock=move.switchLock||0;
       pushLog(`  ・ ${defender.name} は ${move.name} の熱に包まれた！`,"#ff7043");
     }
+    if(move.soundBlock&&defender.curHp>0){defender.soundBlocked=move.soundBlock;pushLog(`  ・ ${defender.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
     applyMoveRecoil(attacker,move,actualDamage);
     if(res.stab) pushLog("  └ タイプ一致！");
     if(res.eff>1) pushLog(`  └ こうかは ばつぐんだ！（×${res.eff}）`,"#ff7043");
@@ -1858,6 +1865,7 @@ function endTurn(){
   });
   [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="toxicorb"&&m.acted>=1&&!m.status){applyStatus(m,"poison",m);}});
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
+  [me,foe].forEach(m=>{if(m&&m.soundBlocked>0)m.soundBlocked--;});
   // かそく：すばやさ+1
   [["me",me],["foe",foe]].forEach(([s,m])=>{ if(!m.fainted&&m.abilEff==="speedboost"){ m.stages.spe=Math.min(6,m.stages.spe+1); pushLog(`  ・ ${m.name} の すばやさが 上がった（かそく）`,"#ff7043"); }});
   [me,foe].forEach(m=>{if(m&&m.peaceTurns>0){m.peaceTurns--;if(m.peaceTurns===0)pushLog(`  ・ ${m.name} の へいわせんこくの効果が切れた！`,"#7ad1ff");}});
