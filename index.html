@@ -555,7 +555,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="falinks"&&b.moves.length<5)b.moves.push("ritualBlade"); return b.moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="falinks"){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]="ritualBlade";} return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
@@ -694,7 +694,7 @@ function renderParty(){
         </select><button class="btn ghost" style="font-size:11px;padding:4px 7px" onclick="searchItems(${i})">調べる</button></div>
         <div class="mini" style="margin-top:5px">技</div>
         ${[0,1,2,3,...(sp.id==="falinks"?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
-          ${movePool.map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
+          ${(sp.id==="falinks"&&mi===4?["ritualBlade"]:movePool.filter(k=>sp.id!=="falinks"||k!=="ritualBlade")).map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
         </select>`).join("")}
         ${sp.id==="falinks"?`<button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:5px" onclick="toggleHeiEditor(${i})">ヘイ</button>${curParty[i].showHei?renderHeiEditor(i):''}`:''}
         <button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:4px" onclick="removeParty(${i})">はずす</button>
@@ -782,11 +782,12 @@ function renderTrainEdit(){
   if(trainSel<0){ box.classList.add("hidden"); box.innerHTML=""; return; }
   box.classList.remove("hidden");
   const sp=SPECIES[trainSel], b=buildOf(sp,trainOwner);
+  spMoves(sp,trainOwner);
   const targetParty=trainOwner==="p2"?party2:party;
   const partySlot=targetParty.findIndex(p=>p&&p.sp===trainSel);
   let slots="";
   for(let s=0;s<4;s++){
-    const opts=sp.learnset.map(k=>{
+    const opts=sp.learnset.filter(k=>sp.id!=="falinks"||k!=="ritualBlade").map(k=>{
       const used=b.moves.includes(k)&&b.moves[s]!==k;
       return `<option value="${k}" ${b.moves[s]===k?'selected':''} ${used?'disabled':''}>${M[k].name}（${TYPE_JP[M[k].type]}/${catLabel(M[k])} 威${M[k].power}）</option>`;
     }).join("");
@@ -800,7 +801,7 @@ function renderTrainEdit(){
       <img src="${IMG(sp.img)}" style="width:60px;height:60px;image-rendering:pixelated">
       <div><div style="font-weight:700;font-size:15px">${trainOwner==="p1"?"1P":"フレンド"}：${sp.name}</div><div class="types">${typeTags(sp.types)}</div></div></div>
     <div class="mini" style="margin-bottom:8px">種族値 HP${sp.base.hp} こう${sp.base.atk} ぼう${sp.base.def} 特こう${sp.base.spa} 特ぼう${sp.base.spd} 素${sp.base.spe}</div>
-    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}
+    <div style="font-weight:700;font-size:13px;margin-bottom:6px">わざ（入れ替え可）</div>${slots}${sp.id==="falinks"?'<div class="mini">5枠目（専用）：祭神旋風刃</div>':''}
     <div style="font-weight:700;font-size:13px;margin:10px 0 6px">特性</div>${abilOpts}
     <div class="center"><button class="btn ghost" style="font-size:12px;padding:4px 14px" onclick="resetTrain()">初期設定にもどす</button>${partySlot>=0?` <button class="btn ghost" style="font-size:12px;padding:4px 14px;color:#ff8a8a" onclick="removeTrainedPokemon()">パーティから外す</button>`:""}</div>
   </div>`;
