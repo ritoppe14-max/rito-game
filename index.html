@@ -326,7 +326,21 @@ const M={
   smarthorn:{name:"スマートホーン",type:"steel",cat:"phys",power:70,accuracy:1},
   zenheadbutt:{name:"しねんのずつき",type:"psychic",cat:"phys",power:90,flinch:.25},
   throatchop:{name:"じごくづき",type:"dark",cat:"phys",power:80,soundBlock:3},
+  charm:{name:"つぶらなひとみ",type:"fairy",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}},
+  drainpunch:{name:"ドレインパンチ",type:"fighting",cat:"phys",power:80,healDamage:.5},
+  tripleaxel:{name:"トリプルアクセル",type:"ice",cat:"phys",power:30,accuracy:.9,multiPowers:[30,60,90],selfDropOnMiss:{spe:-1}},
+  jetpunch:{name:"ジェットパンチ",type:"water",cat:"phys",power:50,prio:1},
+  bodypress:{name:"ボディプレス",type:"fighting",cat:"phys",power:80,useDef:true},
+  irondefense:{name:"てっぺき",type:"steel",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
+  thunderpunch:{name:"かみなりパンチ",type:"electric",cat:"phys",power:75,paralyze:.5},
+  iceSpinner:{name:"アイススピナー",type:"ice",cat:"phys",power:85,clearField:true},
+  machpunchZ:{name:"マッハパンチZ",type:"fighting",cat:"phys",power:80,prio:3,ignoreProtect:true,selfDrop:{spe:-1}},
+  sacredwave:{name:"せいなるハドウ",type:"fighting",cat:"spec",power:95,allExceptAllies:true},
+  darkpulse2:{name:"あくのはどう",type:"dark",cat:"spec",power:80},
+  sludgeattack:{name:"ヘドロこうげき",type:"poison",cat:"spec",power:95,poison:.1},
+  scalesound:{name:"スケイルノイズ",type:"dragon",cat:"spec",power:110,sound:true,ignoreSubstitute:true,selfDrop:{def:-1}},
   closecombat:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
+  closecombatHei:{name:"インファイト",type:"fighting",cat:"phys",power:120,selfDrop:{def:-1,spd:-1}},
   focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
   nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
   shadowclaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:70,cut:true,ignoreDefBoost:true},
@@ -452,11 +466,11 @@ SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai"]);
 const FALINKS_HEI=[
-  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster"},
-  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate"},
-  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary"},
-  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden"},
-  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage"}
+  {name:"末っ子",base:{hp:70,atk:75,def:65,spa:40,spd:55,spe:95},abil:"prankster",moves:["buildup","charm","throatchop","ironhead"]},
+  {name:"甥っ子",base:{hp:70,atk:85,def:105,spa:35,spd:55,spe:70},abil:"intimidate",moves:["bodypress","jetpunch","irondefense","thunderpunch"]},
+  {name:"次男",base:{hp:90,atk:80,def:50,spa:50,spd:50,spe:60},abil:"contrary",moves:["closecombat","tripleaxel","drainpunch","firstimpression"]},
+  {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",moves:["closecombat","megahorn","iceSpinner","machpunchZ"]},
+  {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",moves:["sacredwave","darkpulse2","sludgeattack","scalesound"]}
 ];
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
@@ -1054,7 +1068,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(!move.ignoreAbility&&defender.abilEff==="unaware") atkStage=0;
   if(!move.ignoreAbility&&attacker.abilEff==="unaware") defStage=0;
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
-  let atkStat=((move.cat==="spec")?attacker.base.spa:attacker.base.atk)*stageMult(atkStage);
+  let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(defender.itemKey==="eviolite"&&!defender.isMega)defStat*=1.5;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
@@ -1189,7 +1203,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
       if(move.selfDrop)applyDrop(attacker,move.selfDrop);
       cb();return;
     }
-    i++; attack(attacker,defender,hitMove,defImgId,next);
+    i++; const currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove; attack(attacker,defender,currentMove,defImgId,next);
   };
   next();
 }
@@ -1418,7 +1432,7 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{pushLog(`  └ ${attacker.name} は身を守った！`,"#7ad1ff");cb();},350); return;
   }
   if(move.leech){setTimeout(()=>{defender.leechSource=attacker;pushLog(`  └ ${defender.name} に ヤドリギが ついた！`,"#7ad1ff");cb();},450);return;}
-  if(defender.protectActive&&!move.onceBattle){
+  if(defender.protectActive&&!move.onceBattle&&!move.ignoreProtect){
     if(move.maxMove&&move.cat!=="status"&&move.power>0){
       setTimeout(()=>{const d=Math.max(1,Math.floor(defender.maxHp*.25));defender.curHp=Math.max(0,defender.curHp-d);renderHp();pushLog(`  └ ダイマックス技が まもるを 貫通し ${d} ダメージ！`,"#e84b4b");if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);cb();},350);
     }else setTimeout(()=>{pushLog(`  └ ${defender.name} は攻撃から身を守った！`,"#7ad1ff");cb();},350);
@@ -1426,7 +1440,7 @@ function attack(attacker,defender,move,defImgId,cb){
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
   const falinksPart=falinksPartInfo(defender,move), accuracy=falinksPart&&falinksPart.accuracy||move.accuracy;
-  if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
+  if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=defender===me?"me":"foe";
@@ -1480,7 +1494,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(res.eff===0&&move.outrage) attacker.outrageTurns=0;
   if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
   let dmg=res.dmg, lifeTrigger=false;
-  if(defender.subHp>0&&!move.onceBattle){
+  if(defender.subHp>0&&!move.onceBattle&&!move.ignoreSubstitute){
     setTimeout(()=>{
       const actualDamage=Math.min(defender.subHp,dmg);
       defender.subHp=Math.max(0,defender.subHp-dmg); renderHp();
@@ -1506,6 +1520,7 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     if(defender.falinksLeftFootTurns>0&&actualDamage>0){const h=Math.max(1,Math.floor(actualDamage*.4));defender.curHp=Math.min(defender.maxHp,defender.curHp+h);renderHp();pushLog(`  └ メガタイレーツが ${h} 回復！`,'#46d160');}
     applyMaxMoveEffect(attacker,defender,move);
+    if(move.clearField){grassTurns=0;electricTurns=0;psychicTurns=0;mistTurns=0;pushLog('  └ フィールドが破壊された！','#7ad1ff');}
     if(move.percentDamage&&defender.curHp>0){
       const extra=Math.max(1,Math.floor(defender.maxHp*move.percentDamage*(move.ignoreFixedReduction?1:constantDamageFactor(defender))));
       defender.curHp=Math.max(0,defender.curHp-extra); renderHp();
