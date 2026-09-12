@@ -26,7 +26,7 @@ startFriendSelect=function(){
   const select=(owner,src,reveal,cb)=>{selCtx={owner,src,reveal,sel:[],count,label:`${owner==='p1'?'プレイヤー1':'プレイヤー2'}：${count}体選択（最初の${battleSize}体が先発）`,cb};show('preview');renderPreview();};
   select('p1',party,party2,()=>{const p1=selCtx.sel.slice();select('p2',party2,party,()=>startBattleWith(party,p1,party2,selCtx.sel.slice()));});
 };
-document.querySelector('#home .menu').insertAdjacentHTML('beforeend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button>');
+document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button>');
 function startMultiBattle(p1,sel1,p2,sel2){
   multiOriginal.show('battle');
   myTeam=sel1.map(i=>makeMon(p1[i].sp,p1[i].item,'p1'));

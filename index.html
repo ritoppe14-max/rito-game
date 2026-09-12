@@ -107,8 +107,6 @@
       <button class="btn blue" onclick="show('train')">🎓 ポケモンを育成する（技・特性）</button>
       <button class="btn blue" onclick="openPartyBuilder('cpu')">🛠 パーティを編成する（6体）</button>
       <button class="btn" id="goBattle" onclick="startCpu()" disabled>⚔ CPUとたたかう（要：6体）</button>
-      <button class="btn blue" onclick="startGroupBattle(2)">⚔ ダブルバトル（2体 vs 2体）</button>
-      <button class="btn blue" onclick="startGroupBattle(3)">⚔ トリプルバトル（3体 vs 3体）</button>
       <button class="btn mega" onclick="startLunaticStage()"><img src="image/image/ザシアン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ</button>
       <button class="btn mega" onclick="startLunaticStage2()"><img src="image/image/メガボーマンダ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ2</button>
       <button class="btn mega" onclick="startLunaticStage3()"><img src="image/image/メガヒードラン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ3</button>
@@ -116,7 +114,9 @@
       <button class="btn mega" onclick="startLunaticStage5()"><img src="image/image/メガレックウザ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ5</button>
       <button class="btn mega" onclick="startDynamaxUnlockStage()"><img src="image/image/ムゲンダイナ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ダイマックス解放</button>
       <label class="sub">NPCレベル <select id="npcLevel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
-      <button class="btn ghost" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
+      <button class="btn ghost" id="friendBattleButton" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
+      <button class="btn blue" onclick="startGroupBattle(2)">⚔ ダブルバトル（2体 vs 2体）</button>
+      <button class="btn blue" onclick="startGroupBattle(3)">⚔ トリプルバトル（3体 vs 3体）</button>
       <button class="btn ghost" onclick="showItemDex()">🎒 持ち物一覧</button>
       <button class="btn ghost" onclick="showPokemonDex()">📖 ポケモン一覧</button>
       <div class="sub" id="streakLabel">現在の連勝：0勝 ／ 最大連勝記録：0勝</div>
