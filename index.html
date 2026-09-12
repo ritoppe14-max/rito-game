@@ -283,6 +283,7 @@ const M={
   steelfever:{name:"鋼の暴熱",type:"fire",cat:"spec",power:130,accuracy:.8,trapTurns:6,trapDenom:4,switchLock:6},
   eruption:{name:"ふんか",type:"fire",cat:"spec",power:150,hpPower:true},
   thunderbolt:{name:"10まんボルト",type:"electric",cat:"spec",power:90,paralyze:.1},
+  risingvolt:{name:"ライジングボルト",type:"electric",cat:"spec",power:70,electricFieldDouble:true},
   risingpancake:{name:"ライジングパンケーキ",type:"electric",cat:"spec",power:85,paralyze:.5,spread:true},
   electroweb:{name:"エレキネット",type:"electric",cat:"status",power:0,hazard:"electroweb"},
   thunderwave:{name:"でんじは",type:"electric",cat:"status",power:0,paralyze:1},
@@ -468,7 +469,7 @@ const SPECIES=[
  S("latios","ラティオス","image/image/ラティオス.gif",["dragon","psychic"],{hp:80,atk:90,def:80,spa:130,spd:110,spe:110},"speedboost",["latiospulse","dpulse","psychic","thunderbolt"],[]),
  S("dragapult","ドラパルト","image/image/ドラパルト.gif",["dragon","ghost"],{hp:88,atk:120,def:75,spa:100,spd:75,spe:142},"clearbody",["dragonclaw","shadowball","flamethrower","protect"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
- S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","thunderbolt","suckerpunch","protect"],[]),
+ S("pincurchin","バチンウニ","image/image/バチンウニ.gif",["electric"],{hp:48,atk:101,def:95,spa:91,spd:85,spe:15},"electricmaker",["electroweb","risingvolt","thunderbolt","suckerpunch"],[]),
  S("falinks","タイレーツ","image/image/タイレーツ.gif",["fighting"],{hp:100,atk:120,def:100,spa:60,spd:70,spe:85},"defiant",["formation","closecombat","ironhead","protect","ritualBlade"],
    [{stone:"falinksstone",stoneName:"タイレーツナイト",name:"メガタイレーツ",img:"image/image/メガタイレーツ.gif",types:["fighting"],base:{hp:100,atk:145,def:125,spa:70,spd:90,spe:105},abil:"defiant"}]),
 ];
@@ -530,7 +531,7 @@ const LEARN={
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
-  pincurchin:["electroweb","thunderbolt","suckerpunch","protect","spikes","toxic"],
+  pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
 const ABILS={
   centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], darkrai:["pressure"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
@@ -1137,6 +1138,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
+  if(move.electricFieldDouble&&electricTurns>0) movePower*=2;
   if(move.statusPower&&defender.status) movePower*=move.statusPower;
   if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
