@@ -243,7 +243,7 @@ const ABIL={
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
-  regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
+  regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
 const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
@@ -555,6 +555,8 @@ const SPECIES=[
  S("mandibuzz","バルジーナ","image/image/バルジーナ.gif",["dark","flying"],{hp:110,atk:65,def:105,spa:55,spd:95,spe:80},"roughskin",["foulplay","airslash","roost","toxic"],[]),
  S("cramorant","ウッウ","image/image/ウッウ.gif",["flying","water"],{hp:70,atk:85,def:55,spa:85,spd:95,spe:85},"damp",["surf","hurricane","icebeam","roost"],[]),
  S("durant","アリアント","image/image/アリアント.gif",["bug","steel"],{hp:58,atk:109,def:112,spa:48,spd:48,spe:109},"sandforce",["ironhead","xscissor","stoneedge","crunch"],[]),
+ S("haxorus","オノノクス","image/image/オノノクス.gif",["dragon"],{hp:76,atk:147,def:90,spa:60,spd:70,spe:97},"moldbreaker",["dragonclaw","outrage","earthquake","swordsdance"],[]),
+ S("runerigus","デスバーン","image/image/デスバーン.gif",["ground","ghost"],{hp:58,atk:95,def:145,spa:50,spd:105,spe:30},"wandering",["shadowball","earthquake","willowisp","stealthrock"],[]),
 ];
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -616,6 +618,7 @@ const LEARN={
   falinks:["formation","beatup","ritualBlade","closecombat","ironhead","earthquake","megahorn","rocktomb","smarthorn","zenheadbutt","throatchop","protect"],
   sirfetchd:["starassault","closecombat","leafblade","bravebird","nightslash","poisonjab","knockoff","protect"],
   escavalier:["megahorn","ironhead","closecombat","xscissor","protect"], accelgor:["bugbuzz","energyball","focusblast","spikes","toxic","protect"], braviary:["bravebird","doubleedge","closecombat","uturn","rockslide","protect"], mandibuzz:["foulplay","airslash","roost","toxic","knockoff","protect"], cramorant:["surf","hurricane","icebeam","roost","airslash","protect"], durant:["ironhead","xscissor","stoneedge","crunch","rockslide","swordsdance","protect"],
+  haxorus:["dragonclaw","outrage","earthquake","swordsdance","poisonjab","ironhead","rockslide","dragonrage2","protect"], runerigus:["shadowball","earthquake","willowisp","stealthrock","bodypress","irondefense","toxic","protect"],
   scovillain:["flamethrower","energyball","crunch","rockslide","fireblast","sludgebomb","leechseed","doublepepper","pepperextract"],
   latios:["latiospulse","dpulse","psychic","thunderbolt","icebeam","dragonclaw","calmMind","surf","shadowball","protect"],
   dragapult:["dragonclaw","shadowball","flamethrower","protect","crunch","thunderbolt","icebeam","uturn","dragonrage2"],
@@ -674,7 +677,7 @@ const ABILS={
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], excadrill:["sandrush","sandforce"], gigalith:["sandstream","sandforce"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
   marilli:["hugepower","torrent"], yadoran:["quickdraw"], ragulaaji:["damp"], darkrai:["pressure"],
-  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], noivern:["aerilate","dragonskin"], escavalier:["shellarmor"], accelgor:["speedboost"], braviary:["defiant"], mandibuzz:["roughskin"], cramorant:["damp"], durant:["sandforce"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], wishiwashi:["schooling"], pyukumuku:["innardsout"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
+  lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], noivern:["aerilate","dragonskin"], escavalier:["shellarmor"], accelgor:["speedboost"], braviary:["defiant"], mandibuzz:["roughskin"], cramorant:["damp"], durant:["sandforce"], haxorus:["moldbreaker"], runerigus:["wandering"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], wishiwashi:["schooling"], pyukumuku:["innardsout"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
 
