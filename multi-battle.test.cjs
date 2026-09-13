@@ -105,3 +105,30 @@ vm.runInContext(`
   check(ally.alcremieShieldHp===Math.floor(ally.maxHp*.25)&&ally.curHp>1,'Hole Cake ally shield and recovery');
 `,c);
 console.log('Double/triple, Duraludon and Alcremie features: battle actions, support, shields and hazards OK');
+vm.runInContext(`
+  multi=null;battleSize=1;mode='cpu';
+  for(const [id,old] of Object.entries({escavalier:'shellarmor',mandibuzz:'roughskin',cramorant:'damp',durant:'sandforce'})){
+    builds.p1[id].ability=old;
+    check(makeMon(SP_BY_ID[id],'none','p1').abilEff===SPECIES[SP_BY_ID[id]].abil,'saved ability migration '+id);
+    check(makeMon(SP_BY_ID[id],'none','cpu').abilEff===SPECIES[SP_BY_ID[id]].abil,'NPC ability '+id);
+  }
+  renderHome();renderTrain();openPartyBuilder('cpu');
+  for(const id of ['clobbopus','grapploct','dracovish','arctovish','arctozolt','dracozolt','zamazenta']){
+    const name=SPECIES[SP_BY_ID[id]].name;
+    for(const grid of ['homeDex','trainGrid','dexGrid'])check(document.getElementById(grid).innerHTML.includes(name),grid+' shows '+name);
+    check(makeMon(SP_BY_ID[id],'none').moves.every(Boolean),'valid moves '+id);
+  }
+  me=makeMon(SP_BY_ID.zamazenta,'rustedshield');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  applyEntry(me,'myImg',()=>{});check(me.name==='ザマゼンタ(王)'&&me.types.includes('steel')&&me.stages.def===1,'shield form and defense');
+  me=makeMon(SP_BY_ID.mandibuzz,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');me.curHp=10;foe.curHp=1;
+  attack(me,foe,M.airslash,'foeImg',()=>{});check(me.curHp===me.maxHp,'KO full recovery');
+  for(const fraction of [.9,.3]){
+    me=makeMon(SP_BY_ID.cramorant,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');
+    me.curHp=Math.floor(me.maxHp*fraction);me.gulpReady=true;
+    const hp=foe.curHp;
+    attack(foe,me,{name:'test',type:'normal',cat:'phys',power:1},'myImg',()=>{});
+    check(!me.gulpReady&&foe.curHp===hp-Math.floor(foe.maxHp/(fraction>.5?8:4)),'missile damage');
+    check(fraction>.5?foe.stages.def===-1:foe.status==='paralyze','missile effect');
+  }
+`,c);
+console.log('Saved abilities, all new Pokemon in three screens, shield form and custom effects OK');
