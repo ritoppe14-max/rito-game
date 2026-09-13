@@ -180,3 +180,55 @@ vm.runInContext(`
   check(M.gilgamesh.type==='ghost'&&M.gilgamesh.power===170&&M.gilgamesh.ignoreDefBoost&&M.gilgamesh.koBoost.atk===1,'Gilgamesh is the requested Ghost fifth move');
 `,c);
 console.log('Aegislash: forms, shields, and Ghost fifth move OK');
+vm.runInContext(`{
+  const oldRandom=Math.random;Math.random=()=>.6;
+  try {
+    multi=null;battleSize=1;weather=null;
+    renderHome();renderTrain();curParty=[];renderParty();
+    for(const id of ['articuno','zapdos','moltres']){
+      const sp=SPECIES[SP_BY_ID[id]];
+      for(const screen of ['homeDex','trainGrid','dexGrid'])check(document.getElementById(screen).innerHTML.includes(sp.name),'bird visible in '+screen);
+      check(spMoves(sp)[4]===BIRD_FIFTH[id]&&sp.learnset.every(k=>M[k]),'valid bird moves');
+      check(makeMon(SP_BY_ID[id],'none','cpu').moves[4]===M[BIRD_FIFTH[id]],'CPU fifth slot');
+    }
+    const reset=(id='articuno')=>{me=makeMon(SP_BY_ID[id],'none');foe=makeMon(SP_BY_ID.clobbopus,'none');foe.maxHp=foe.curHp=100000;myTeam=[me];foeTeam=[foe];};
+    reset();
+    const normal=calcDamage(foe,me,M.icepunch,false).dmg;
+    me.birdHail=true;check(calcDamage(foe,me,M.icepunch,false).dmg<normal,'snow cloak defense');
+    attack(me,foe,M.iceAvalanche,'foeImg',()=>{});
+    const hp=me.curHp;
+    attack(foe,me,{type:'fire',cat:'spec',name:'shield test',power:100000},'myImg',()=>{});
+    check(me.curHp===hp&&me.iceShieldHp===0,'huge hit breaks shield without overflow');
+    attack(me,foe,M.iceAvalanche,'foeImg',()=>{});check(me.iceShieldHp===0,'shield once per battle');
+    reset();attack(me,foe,M.birdBlizzard,'foeImg',()=>{});
+    check(me.birdHail&&foe.birdBlizzardDot.turns===5,'blizzard hail and duration');
+    const beforeDot=foe.curHp;for(let i=0;i<5;i++)birdEndTurn(foe,'foeImg');
+    check(!foe.birdBlizzardDot&&foe.curHp<beforeDot,'five turns residual expire');
+    const afterDot=foe.curHp;birdEndTurn(foe,'foeImg');check(foe.curHp===afterDot,'no sixth residual');
+    reset('zapdos');let before=foe.curHp;
+    attack(me,foe,M.birdZapCannon,'foeImg',()=>{});check(foe.curHp===before,'zap cannon misses at 60 percent roll');
+    me.birdNextSure=true;attack(me,foe,M.birdZapCannon,'foeImg',()=>{});
+    check(foe.curHp<before&&foe.status==='paralyze'&&!me.birdNextSure,'next move guaranteed hit and paralysis');
+    Math.random=()=>.1;birdContact(foe,me,M.icebeam,10);check(me.birdNextSure,'static activates');Math.random=()=>.6;
+    reset('moltres');for(let i=0;i<30;i++)birdContact(me,foe,M.birdSkyAttack,1);
+    check(me.birdFlameMult===2,'flame body capped at twice attack');
+    attack(me,foe,M.volcanoReign,'foeImg',()=>{});check(me.volcanoTurns===6,'volcano buff set');
+    const boosted=calcDamage(me,foe,M.flamethrower,false).dmg;me.volcanoTurns=0;
+    check(boosted>calcDamage(me,foe,M.flamethrower,false).dmg,'volcano damage boost');
+    reset('zapdos');const other=makeMon(SP_BY_ID.clobbopus,'none');other.curHp=other.maxHp=100000;
+    multi={teams:{me:[me],foe:[foe,other]},slots:{me:[me],foe:[foe,other]}};
+    [me,foe,other].forEach((m,i)=>m.multiId=i);
+    const damage=calcDamage(me,foe,M.thunderRoar,false).dmg;
+    attack(me,foe,M.thunderRoar,'foeImg',()=>{});
+    check(foe.curHp===100000-3*damage&&other.curHp===100000-3*damage,'three hits on both enemies');
+    check(foe.birdSpdMult===.9&&other.birdSpdMult===.9&&me.birdSureTurns===3,'spread defense drop and two future turns sure hit');
+    multi=null;reset('moltres');me.birdEntryTurn=true;
+    const heat=calcDamage(me,foe,M.birdHeatWave,false).dmg;
+    attack(me,foe,M.birdHeatWave,'foeImg',()=>{});check(foe.curHp===100000-2*heat,'entry heat wave double hit');
+    reset();const ally=makeMon(SP_BY_ID.zapdos,'none');
+    multi={teams:{me:[me,ally],foe:[foe]},slots:{me:[me,ally],foe:[foe]}};
+    attack(me,foe,M.iceAvalanche,'foeImg',()=>{});
+    check(ally.iceShieldHp===Math.floor(me.maxHp*1.5),'ally shield based on Articuno HP');
+  }finally{Math.random=oldRandom;multi=null;}
+}`,c);
+console.log('Legendary birds: visibility, shields, residuals, abilities, spread multi-hits and entry Heat Wave OK');
