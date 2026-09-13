@@ -164,3 +164,19 @@ vm.runInContext(`
   }
 `,c);
 console.log('Escavalier moves: item removal, attack drop, priority and Steel Knight OK');
+vm.runInContext(`
+  const aegIndex=SP_BY_ID.aegislash, aeg=SPECIES[aegIndex];
+  check(aegIndex!==undefined&&aeg.name==='ギルガルド','Aegislash is registered');
+  check(spMoves(aeg).length===5&&spMoves(aeg)[4]==='gilgamesh','Aegislash has its fixed fifth move');
+  me=makeMon(aegIndex,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  check(me.aegislashForm==='shield'&&me.base.def===150&&me.base.atk===50,'Aegislash starts in shield form');
+  attack(me,foe,M.aegislashShadowClaw,'foeImg',()=>{});
+  check(me.aegislashForm==='blade'&&me.base.atk===150&&me.base.def===50,'attacking changes Aegislash to blade form');
+  attack(me,foe,M.kingsshield,'foeImg',()=>{});
+  check(me.aegislashForm==='shield'&&me.protectActive&&me.kingShieldActive,'King Shield changes to shield form and protects');
+  const physical={name:'test',type:'normal',cat:'phys',power:1};
+  attack(foe,me,physical,'myImg',()=>{});
+  check(foe.stages.atk===-1,'King Shield lowers a physical attacker attack');
+  check(M.gilgamesh.type==='ghost'&&M.gilgamesh.power===170&&M.gilgamesh.ignoreDefBoost&&M.gilgamesh.koBoost.atk===1,'Gilgamesh is the requested Ghost fifth move');
+`,c);
+console.log('Aegislash: forms, shields, and Ghost fifth move OK');

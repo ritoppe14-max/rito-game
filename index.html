@@ -260,6 +260,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
 ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
+ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.steelknight={name:"はがねのきし",eff:"steelknight"};
 ABIL.rottenfeast={name:"ふはいたべ",eff:"rottenfeast"};
 ABIL.gulpMissile={name:"うのミサイル",eff:"gulpMissile"};
@@ -275,6 +276,7 @@ ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
 ABDESC.hustle="ダメージ1.5倍・命中率0.8倍";
 ABDESC.schooling="HPが1/4を超えるとむれたすがた。自分の反動ダメージを半減";
 ABDESC.innardsout="倒されたとき、倒される直前のHPと同じダメージを相手に与える";
+ABDESC.stancechange="攻撃技でブレードフォルム、防御技でシールドフォルムに変化";
 // ===== わざ =====
 const M={
   powergem:{name:"パワージェム",type:"rock",cat:"spec",power:80},
@@ -383,6 +385,11 @@ const M={
   focusblast:{name:"きあいだま",type:"fighting",cat:"spec",power:120,accuracy:.8},
   nightslash:{name:"つじぎり",type:"dark",cat:"phys",power:70,cut:true},
   shadowclaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:70,cut:true,ignoreDefBoost:true},
+  aegislashShadowClaw:{name:"シャドークロー",type:"ghost",cat:"phys",power:80,cut:true,ignoreDefBoost:true,critRate:.5,bladeForm:true},
+  aegislashSacredSword:{name:"せいなるつるぎ",type:"fighting",cat:"phys",power:95,ignoreDefBoost:true,bladeForm:true},
+  kingsshield:{name:"キングシールド",type:"steel",cat:"status",power:0,prio:6,shieldForm:true,kingsShield:true},
+  wideguard:{name:"ワイドガード",type:"rock",cat:"status",power:0,prio:3,shieldForm:true,wideGuard:true},
+  gilgamesh:{name:"妖刀・ギルガメッシュ",type:"ghost",cat:"phys",power:170,ignoreDefBoost:true,bladeForm:true,onceBattle:true,onceFlag:"usedGilgamesh",koBoost:{atk:1}},
   suckerpunch:{name:"ふいうち",type:"dark",cat:"phys",power:70,prio:6,requiresAttack:true},
   shadowsneak:{name:"かげうち",type:"ghost",cat:"phys",power:40,prio:1},
   playtogether:{name:"いっしょにあそぼ!",type:"fairy",cat:"phys",power:170,onceBattle:true,preTargetDrop:{def:-1}},
@@ -469,6 +476,7 @@ const SPECIES=[
  S("sableye","ヤミラミ","image/image/ヤミラミ.gif",["dark","ghost"],{hp:50,atk:75,def:75,spa:65,spd:65,spe:50},"prankster",["protect","substitute","toxic","suckerpunch"]),
  S("orthworm","ミミズズ","image/image/ミミズズ.gif",["steel"],{hp:70,atk:85,def:145,spa:60,spd:55,spe:65},"eartheater",["ironhead","earthquake","stealthrock","spikes"]),
  S("ferrothorn","ナットレイ","image/image/ナットレイ.gif",["grass","steel"],{hp:74,atk:94,def:131,spa:54,spd:116,spe:20},"ironbarbs",["powerwhip","ironhead","leechseed","spikes"],[]),
+ S("aegislash","ギルガルド","image/image/ギルガルド(シールド).gif",["steel","ghost"],{hp:60,atk:50,def:150,spa:50,spd:150,spe:60},"stancechange",["kingsshield","aegislashShadowClaw","aegislashSacredSword","wideguard","gilgamesh"],[]),
  S("mimikyu","ミミッキュ","image/image/ミミッキュ.gif",["ghost","fairy"],{hp:55,atk:90,def:80,spa:50,spd:105,spe:96},"disguise",["playrough","swordsdance","shadowsneak","shadowclaw","playtogether"]),
  S("chansey","ラッキー","image/image/ラッキー.gif",["normal"],{hp:250,atk:5,def:5,spa:35,spd:105,spe:50},"pressure",["softboiled","toxic","thunderwave","protect"]),
  S("porygon2","ポリゴン2","image/image/ポリゴン2.gif",["normal"],{hp:85,atk:80,def:90,spa:105,spd:95,spe:60},"pressure",["recover","thunderbolt","icebeam","protect"]),
@@ -596,6 +604,7 @@ const LEARN={
   sableye:["protect","substitute","toxic","suckerpunch","crunch","fakeout","quickattack","shadowball","reflect","calmMind","willowisp"],
   orthworm:["ironhead","earthquake","stealthrock","spikes","rockslide","protect","toxic","stoneedge"],
   ferrothorn:["powerwhip","ironhead","leechseed","spikes","stealthrock","bodypress","protect","toxic"],
+  aegislash:["kingsshield","aegislashShadowClaw","aegislashSacredSword","wideguard","gilgamesh","shadowball","ironhead","protect"],
   darkrai:["darkpulse","shadowball","focusblast","darkhole","sludgebomb","calmMind","nastyPlot","psychic","icebeam","thunderbolt"],
   gengar:["shadowball","sludgebomb","focusblast","darkpulse","sludgewave","psychic","thunderbolt","icebeam","nastyPlot","willowisp","protect"],
   chansey:["softboiled","toxic","protect","icebeam","thunderbolt"],
@@ -692,7 +701,7 @@ Object.entries(EXTERNAL_MOVE_COMPAT).forEach(([id,moves])=>{if(!LEARN[id])return
 const EXTERNAL_MOVE_COMPAT_2={salamence:["bravebird","dualwingbeat","firefang"],rayquaza:["bravebird","dualwingbeat","flareblitz"],corviknight:["bravebird","dualwingbeat","bodypress2"],pelipper:["scald","muddywater","icywind"],ohdairu:["flipturn","wavecrash","lowkick"],empoleon:["scald","icywind","flashcannon2"],inteleon:["flipturn","icywind","aircutter"],marilli:["wavecrash","chillingwater"],toxapex:["scald","haze"],yadoran:["scald","futuresight"],wishiwashi:["scald","muddywater","blizzard"],gabarias:["earthquake2","smackdown"],hippowdon:["earthquake2","rocktomb2"],gliscor:["earthquake2","poisonfang"],gengar:["disable","imprison","sludgewave2"],mimikyu:["phantomforce","shadowpunch"],latios:["storedpower","futuresight","safeguard"],lucario:["meteorMash","heavySlam"],duraludon:["flashcannon2","heavySlam"],orthworm:["heavySlam","smartstrike"],pendor:["crosspoison","poisonTail"],scovillain:["synthesis","stunspore","sleeppowder"],gorillander:["synthesis","woodhammer"],galvantula:["stunspore","electrowebHit"],joltik:["stunspore","electrowebHit"],alcremie:["safeguard","batonpass"]};
 Object.entries(EXTERNAL_MOVE_COMPAT_2).forEach(([id,moves])=>{if(!LEARN[id])return;moves.filter(k=>M[k]&&!LEARN[id].includes(k)).forEach(k=>LEARN[id].push(k));});
 const ABILS={
-  centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], ferrothorn:["ironbarbs"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
+  centiskorch:["flashfire"], sableye:["prankster"], orthworm:["eartheater","sandveil"], ferrothorn:["ironbarbs"], aegislash:["stancechange"], darkrai:["pressure"], gengar:["cursedbody"], ohdairu:["torrent","sheerforce"], gabarias:["sandveil","roughskin"], kirafurol:["toxicdebris","corrosion"],
   gusoku:["emergencyexit"], samehada:["speedboost","roughskin"], dorapion:["sniper","sandveil"],
   doramidoro:["poisonpoint","adaptability"], bakuphoon:["blaze","sandforce"], bakuphoonH:["frisk"],
   bangiras:["sandstream","sandforce"], regirock:["clearbody"], excadrill:["sandrush","sandforce"], gigalith:["sandstream","sandforce"], hippowdon:["sandstream","sandforce"], gliscor:["poisonheal"], kangaskhan:["intimidate"], salamence:["intimidate"], heatran:["flashfire"], pelipper:["drizzle","swiftswim"], pendor:["speedboost","sandforce"],
@@ -732,7 +741,7 @@ function loadGame(){try{const s=JSON.parse(localStorage.getItem("ritoGameSave")|
 }}catch(e){}}
 function ownerBuild(owner){ return builds[owner]||builds.p1; }
 function buildOf(sp,owner="p1"){ const b=ownerBuild(owner); if(!b[sp.id]) b[sp.id]={moves:sp.moves.slice(),ability:sp.abil}; if(!sp.abils.includes(b[sp.id].ability))b[sp.id].ability=sp.abil; return b[sp.id]; }
-function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="lucario"||sp.id==="heatran")b.moves=b.moves.map(k=>k==="flashcannon"?"ironrod":k); const fifth={falinks:"ritualBlade",duraludon:"duraludonDisaster",alcremie:"holecake"}[sp.id]; if(fifth){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]=fifth;} return b.moves; }
+function spMoves(sp,owner="p1"){ const b=buildOf(sp,owner); if(!Array.isArray(b.moves)||!b.moves.length)b.moves=sp.moves.slice(); if(sp.id==="lucario"||sp.id==="heatran")b.moves=b.moves.map(k=>k==="flashcannon"?"ironrod":k); const fifth={falinks:"ritualBlade",duraludon:"duraludonDisaster",alcremie:"holecake",aegislash:"gilgamesh"}[sp.id]; if(fifth){b.moves=b.moves.slice(0,4);while(b.moves.length<4)b.moves.push(sp.moves[b.moves.length]);b.moves[4]=fifth;} return b.moves; }
 function spAbil(sp,owner="p1"){ return ABIL[buildOf(sp,owner).ability]||ABIL[sp.abil]; }
 function ownerForBuilder(){ return builderMode==="p2" ? "p2" : "p1"; }
 
@@ -846,6 +855,7 @@ function partyMoveChoices(sp,pool,slot){
   if(slot===4&&sp.id==="falinks")return ["ritualBlade"];
   if(slot===4&&sp.id==="duraludon")return ["duraludonDisaster"];
   if(slot===4&&sp.id==="alcremie")return ["holecake"];
+  if(slot===4&&sp.id==="aegislash")return ["gilgamesh"];
   return pool.filter(k=>!(["ritualBlade","duraludonDisaster","holecake"].includes(k)));
 }
 function startCpu(){ battleSize=1;mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
@@ -886,7 +896,7 @@ function renderParty(){
           ${itemKeys.map(k=>`<option value="${k}" ${curParty[i].item===k?'selected':''}>${ITEMS[k].name}</option>`).join("")}
         </select><button class="btn ghost" style="font-size:11px;padding:4px 7px" onclick="searchItems(${i})">調べる</button></div>
         <div class="mini" style="margin-top:5px">技</div>
-        ${[0,1,2,3,...(["falinks","duraludon","alcremie"].includes(sp.id)?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
+        ${[0,1,2,3,...(["falinks","duraludon","alcremie","aegislash"].includes(sp.id)?[4]:[])].map(mi=>`<select onchange="setPartyMove(${i},${mi},this.value)" style="font-size:11px;margin-top:2px">
           ${partyMoveChoices(sp,movePool,mi).map(k=>`<option value="${k}" ${savedMoves[mi]===k?'selected':''}>${M[k]?.name||k}</option>`).join("")}
         </select>`).join("")}
         ${sp.id==="falinks"?`<button class="btn ghost" style="font-size:11px;padding:3px 10px;margin-top:5px" onclick="toggleHeiEditor(${i})">ヘイ</button>${curParty[i].showHei?renderHeiEditor(i):''}`:''}
@@ -1154,6 +1164,7 @@ let hazards=emptyHazards();
 function makeMon(sp_i, itemKey, owner="p1"){
   const sp=SPECIES[sp_i];
   const p={ id:sp.id, name:sp.name, img:sp.img, types:sp.types.slice(), base:Object.assign({},sp.base) };
+  if(sp.id==="aegislash")p.aegislashForm="shield";
   if(sp.id==="wishiwashi"){
     p.wishiwashiSchoolBase=Object.assign({},sp.base);
     p.wishiwashiSoloBase={hp:45,atk:20,def:20,spa:25,spd:25,spe:40};
@@ -1170,7 +1181,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
   p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
-  p.isMega=false; p.isDynamax=false; p.isGigantamax=false; p.dynamaxTurns=0; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.flinched=false; p.turnMoved=false; p.hitBeforeMove=false; p.usedDisguise=false; p.usedPlayTogether=false; p.usedDuraludonDisaster=false; p.usedFirstBell=false; p.usedGritBelt=false; p.quickDraw=false;
+  p.isMega=false; p.isDynamax=false; p.isGigantamax=false; p.dynamaxTurns=0; p.acted=0; p.firstTurnReady=true; p.fainted=false; p.status=null; p.salted=false; p.leechSource=null; p.protectActive=false; p.protectCooldown=0; p.kingShieldActive=false; p.wideGuardActive=false; p.wideGuardCooldown=false; p.flinched=false; p.turnMoved=false; p.hitBeforeMove=false; p.usedDisguise=false; p.usedPlayTogether=false; p.usedDuraludonDisaster=false; p.usedGilgamesh=false; p.usedFirstBell=false; p.usedGritBelt=false; p.quickDraw=false;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
@@ -1638,7 +1649,7 @@ function series(tasks,done){let i=0;const nx=()=>{ if(i>=tasks.length){done();re
 function doResolve(){
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=!!mon.careCritGuardPending;mon.careCritGuardPending=false;});
   busy=true; clearCmd();
-  me.protectActive=false; foe.protectActive=false;
+  [...myTeam,...foeTeam].forEach(m=>{m.protectActive=false;m.kingShieldActive=false;m.wideGuardActive=false;});
   me.turnMoved=false; foe.turnMoved=false; me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
   const A=turnAct.me, B=turnAct.foe;
   const phaseSwitch=(next)=>{const t=[];
@@ -1742,10 +1753,22 @@ function applyMoveRecoil(attacker,move,actualDamage){
   pushLog(`  └ ${attacker.name} は反動で ${recoil} ダメージ！`,"#ff7043");
   if(attacker.curHp<=0&&!attacker.fainted) faintMon(attacker,attacker===me?"myImg":"foeImg");
 }
+function setAegislashForm(mon,form){
+  if(!mon||mon.id!=="aegislash"||mon.aegislashForm===form)return;
+  mon.aegislashForm=form;
+  mon.base=form==="blade"?{hp:60,atk:150,def:50,spa:150,spd:50,spe:60}:{hp:60,atk:50,def:150,spa:50,spd:150,spe:60};
+  mon.img=form==="blade"?"image/image/ギルガルド(ブレード).gif":"image/image/ギルガルド(シールド).gif";
+  if(mon===me||mon===foe)renderActive();
+  pushLog(`  ★ ${mon.name} は ${form==="blade"?"ブレード":"シールド"}フォルムに 変化した！`,form==="blade"?"#ff7043":"#7ad1ff");
+}
 function attack(attacker,defender,move,defImgId,cb){
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
+  if(attacker.id==="aegislash"){
+    if(move.shieldForm)setAegislashForm(attacker,"shield");
+    else if(move.bladeForm||(move.cat!=="status"&&move.power>0))setAegislashForm(attacker,"blade");
+  }
   if(move.chargeTurn&&attacker.electroBeamReady){
     attacker.electroBeamReady=false;
   }else if(move.chargeTurn&&weather!=="rain"){
@@ -1784,6 +1807,15 @@ function attack(attacker,defender,move,defImgId,cb){
     attacker.protectActive=true; attacker.protectCooldown=2;
     setTimeout(()=>{pushLog(`  └ ${attacker.name} は身を守った！`,"#7ad1ff");cb();},350); return;
   }
+  if(move.kingsShield){
+    attacker.protectActive=true;attacker.kingShieldActive=true;
+    setTimeout(()=>{pushLog(`  └ ${attacker.name} は キングシールドで 身を守った！`,"#7ad1ff");cb();},350);return;
+  }
+  if(move.wideGuard){
+    if(attacker.wideGuardCooldown){attacker.wideGuardCooldown=false;setTimeout(()=>{pushLog("  └ ワイドガードは連続で使えない！","#9fb3d6");cb();},350);return;}
+    attacker.wideGuardActive=true;attacker.wideGuardCooldown=true;
+    setTimeout(()=>{pushLog(`  └ ${attacker.name} は ワイドガードで 味方を守った！`,"#7ad1ff");cb();},350);return;
+  }
   if(move.leech){setTimeout(()=>{defender.leechSource=attacker;pushLog(`  └ ${defender.name} に ヤドリギが ついた！`,"#7ad1ff");cb();},450);return;}
   const allyTarget=move.allyTarget||((battleSize>1)?defender:attacker);
   if(move.allyHeal){setTimeout(()=>{const h=Math.max(1,Math.floor(allyTarget.maxHp*move.allyHeal));allyTarget.curHp=Math.min(allyTarget.maxHp,allyTarget.curHp+h);renderHp();pushLog(`  └ ${allyTarget.name} は HP${h}回復！`,"#46d160");cb();},450);return;}
@@ -1791,10 +1823,14 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.holeCake){setTimeout(()=>{attacker.holeCakeTurns=3;pushLog(`  ★ ${attacker.name} は ホールケイプ・マルホイップを展開した！ 3ターン行動できない！`,"#ffcb05");cb();},450);return;}
   if(move.decorateAlly&&allyTarget&&!allyTarget.fainted){applyDrop(allyTarget,{atk:1,spa:1});pushLog(`  └ ${allyTarget.name} は デコレーションで こうげき・とくこうUP！`,"#ffcb05");}
   if(defender.protectActive&&!isFriendlyMove(move)&&!move.onceBattle&&!move.ignoreProtect){
+    if(defender.kingShieldActive&&move.cat==="phys")applyDrop(attacker,{atk:-1});
     if(move.maxMove&&move.cat!=="status"&&move.power>0){
       setTimeout(()=>{const d=Math.max(1,Math.floor(defender.maxHp*.25));defender.curHp=Math.max(0,defender.curHp-d);renderHp();pushLog(`  └ ダイマックス技が まもるを 貫通し ${d} ダメージ！`,"#e84b4b");if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);cb();},350);
     }else setTimeout(()=>{pushLog(`  └ ${defender.name} は攻撃から身を守った！`,"#7ad1ff");cb();},350);
     return;
+  }
+  if(move.spread&&defender.wideGuardActive&&!isFriendlyMove(move)){
+    setTimeout(()=>{pushLog(`  └ ${defender.name} の ワイドガードで 攻撃を防いだ！`,"#7ad1ff");cb();},350);return;
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
   const falinksPart=falinksPartInfo(defender,move), accuracy=Math.min(1,(falinksPart&&falinksPart.accuracy||move.accuracy||1)*(attacker.abilEff==="compoundeyes"?1.3:1)*(attacker.abilEff==="hustle"?.8:1));
