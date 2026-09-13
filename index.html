@@ -261,6 +261,10 @@ ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
+ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
+ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
+ABDESC.grimneigh="自分の技で相手を倒すと特攻が1段階上がる";
+ABDESC.chillingneigh="自分の技で相手を倒すと攻撃が1段階上がる";
 ABIL.birdSnow={name:"ゆきがくれ",eff:"birdSnow"};
 ABIL.birdStatic={name:"せいでんき",eff:"birdStatic"};
 ABIL.birdFlame={name:"ほのおのからだ",eff:"birdFlame"};
@@ -606,6 +610,10 @@ SPECIES.push(
  S("moltres","ファイヤー","image/image/ファイヤー.gif",["fire","flying"],{hp:100,atk:110,def:100,spa:135,spd:95,spe:100},"birdFlame",["birdSkyAttack","birdHeatWave","flamethrower","roost","volcanoReign"])
 );
 const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign"};
+SPECIES.push(
+ S("spectrier","レイスポス","image/image/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
+ S("glastrier","ブリザポス","image/image/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
+);
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -620,6 +628,8 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  spectrier:["shadowball","hex","nastyPlot","willowisp","drainingkiss","darkpulse","protect","substitute"],
+  glastrier:["iciclecrash","closecombat","heavySlam","swordsdance","crunch","bodypress","icebeam","protect","substitute"],
   articuno:["birdBlizzard","icebeam","hurricane","roost","airslash","icywind","reflect","protect","substitute"],
   zapdos:["birdZapCannon","birdThunderbolt","hurricane","roost","thunder","voltswitch","thunderwave","protect","substitute"],
   moltres:["birdSkyAttack","birdHeatWave","flamethrower","roost","fireblast","airslash","hurricane","willowisp","uturn","protect","substitute"],
@@ -1874,6 +1884,11 @@ function birdEndTurn(mon,imgId){
     renderHp();if(mon.curHp<=0)faintMon(mon,imgId);
   }
 }
+function applyNeigh(attacker,defender){
+  if(attacker.curHp<=0||attacker.fainted||defender.curHp>0||defender.fainted)return;
+  const stat=attacker.abilEff==="grimneigh"?"spa":attacker.abilEff==="chillingneigh"?"atk":null;
+  if(stat){applyDrop(attacker,{[stat]:1});pushLog(`  ★ ${attacker.name} の ${attacker.abilName}！`,"#ffcb05");}
+}
 function setAegislashForm(mon,form){
   if(!mon||mon.id!=="aegislash"||mon.aegislashForm===form)return;
   mon.aegislashForm=form;
@@ -2112,7 +2127,7 @@ function attack(attacker,defender,move,defImgId,cb){
         if(spreadDamage>0)birdContact(attacker,other,move,spreadDamage);
         pushLog(`  └ ${other.name} にも ${spreadDamage} ダメージ！`);
         if(!sheer&&move.paralyze&&other.curHp>0&&Math.random()<move.paralyze) applyStatus(other,"paralyze",attacker);
-        if(other.curHp<=0&&!other.fainted) faintMon(other,other.isHei?`hei-${other.host===me?"me":"foe"}-${other.name}`:imgOf(attackerSide==="me"?"foe":"me"));
+        if(other.curHp<=0&&!other.fainted){applyNeigh(attacker,other);faintMon(other,other.isHei?`hei-${other.host===me?"me":"foe"}-${other.name}`:imgOf(attackerSide==="me"?"foe":"me"));}
       });
       renderHp(); renderHeis();
     }
@@ -2174,6 +2189,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status") applyDrop(attacker,{spa:1});
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
+    applyNeigh(attacker,defender);
     if(defender.curHp<=0&&!defender.fainted&&attacker.curHp>0&&attacker.abilEff==="rottenfeast"){
       attacker.curHp=attacker.maxHp;renderHp();pushLog(`  ★ ${attacker.name} の ふはいたべ！ HPが全回復した！`,"#46d160");
     }

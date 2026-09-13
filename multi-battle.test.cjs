@@ -279,3 +279,18 @@ vm.runInContext(`{
   }
 }`,c);
 console.log('Double/triple command switches and cover remain actionable');
+vm.runInContext(`{
+  multi=null;battleSize=1;weather=null;
+  renderHome();renderTrain();curParty=[];renderParty();
+  for(const [id,stat] of [['spectrier','spa'],['glastrier','atk']]){
+    const sp=SPECIES[SP_BY_ID[id]];
+    for(const screen of ['homeDex','trainGrid','dexGrid'])check(document.getElementById(screen).innerHTML.includes(sp.name),id+' visible in '+screen);
+    check(sp.learnset.every(k=>M[k]),id+' valid learnset');
+    me=makeMon(SP_BY_ID[id],'none');foe=makeMon(SP_BY_ID.clobbopus,'none');myTeam=[me];foeTeam=[foe];
+    foe.curHp=1;
+    attack(me,foe,{name:'KO test',cat:'spec',type:'ghost',power:100,accuracy:1},'foeImg',()=>{});
+    check(foe.fainted&&me.stages[stat]===1,id+' KO ability activates once');
+    applyNeigh(me,foe);check(me.stages[stat]===1,id+' no double activation');
+  }
+}`,c);
+console.log('Spectrier and Glastrier: visible, valid moves, KO abilities OK');
