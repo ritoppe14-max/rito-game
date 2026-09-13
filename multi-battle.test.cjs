@@ -132,3 +132,17 @@ vm.runInContext(`
   }
 `,c);
 console.log('Saved abilities, all new Pokemon in three screens, shield form and custom effects OK');
+vm.runInContext(`
+  me=makeMon(SP_BY_ID.falinks,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  for(const names of [['末っ子','甥っ子'],['次男','三男'],['四男']]){
+    openHeiActions('me',{type:'move',move:M.beatup});
+    for(const name of names)pickHei(name,{disabled:false});
+    const menu=document.getElementById('cmd').innerHTML;
+    check(menu.includes('決定')&&!menu.includes('[object Object]'),'repeat summon move menu');
+    check(menu.includes('value="heicare"'),'existing and new helpers have valid move keys');
+    check(summonFalinksHeis(me),'summon succeeds');
+  }
+  check(me.heis.length===5&&new Set(me.heis.map(h=>h.name)).size===5,'2+2+1 distinct helpers');
+  check(!summonFalinksHeis(me),'fourth summon rejected');
+`,c);
+console.log('Falinks repeat summon: selection and 2+2+1 helpers OK');

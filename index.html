@@ -2066,7 +2066,8 @@ function chooseHeiMoves(){
   if(!names.length){action.heiReady=true;submitAction(side,action);return;}
   document.getElementById("cmd").innerHTML='<div>ヘイの技を選択（行動順は優先度・素早さで決定）</div>'+names.map((name,i)=>{
     const h=(mon.heis||[]).find(h=>h.name===name)||FALINKS_HEI.find(h=>h.name===name);
-    return `<div>${name}<select id="heiMove${i}">${h.moves.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select><select id="heiTarget${i}">${enemyTargets(side).map((t,j)=>`<option value="${j}">${t.name}</option>`).join("")}</select></div>`;
+    const moveKeys=h.moves.map(move=>typeof move==="string"?move:Object.keys(M).find(k=>M[k]===move)).filter(k=>M[k]);
+    return `<div>${name}<select id="heiMove${i}">${moveKeys.map(k=>`<option value="${k}">${M[k].name}</option>`).join("")}</select><select id="heiTarget${i}">${enemyTargets(side).map((t,j)=>`<option value="${j}">${t.name}</option>`).join("")}</select></div>`;
   }).join("")+`<button class="btn" onclick="confirmHeiMoves()">決定</button>`;
   heiInput.names=names;
 }
