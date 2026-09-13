@@ -352,6 +352,9 @@ const M={
   firstimpression:{name:"であいがしら",type:"bug",cat:"phys",power:90,prio:5,firstTurnOnly:true},
   fakeout:{name:"ねこだまし",type:"normal",cat:"phys",power:40,prio:3,firstTurnOnly:true,flinch:1},
   xscissor:{name:"シザークロス",type:"bug",cat:"phys",power:80,cut:true},
+  escavalierKnockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:60,removeItem:true},
+  escavalierLunge:{name:"とびかかる",type:"bug",cat:"phys",power:60,targetDrop:{chance:1,stats:{atk:-1}}},
+  escavalierBulletPunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:60,prio:1},
   megahorn:{name:"メガホーン",type:"bug",cat:"phys",power:120,accuracy:.8},
   beatup:{name:"ふくろだたき",type:"dark",cat:"phys",power:30,exclusive:"falinks",beatup:true},
   ritualBlade:{name:"祭神旋風刃",type:"fighting",cat:"phys",power:30,multiHit:5,ritual:true},
@@ -697,6 +700,7 @@ const ABILS={
   lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], noivern:["aerilate","dragonskin"], escavalier:["shellarmor"], accelgor:["speedboost"], braviary:["defiant"], mandibuzz:["roughskin"], cramorant:["damp"], durant:["sandforce"], haxorus:["moldbreaker"], runerigus:["wandering"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], wishiwashi:["schooling"], pyukumuku:["innardsout"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
+LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 ABDESC.dauntlessshield="場に出たとき防御が1段階上がる";
@@ -1351,6 +1355,7 @@ function calcDamage(attacker,defender,move,isCrit){
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
   if(attacker.abilEff==="steelknight"&&movePower<=65) movePower*=1.5;
+  if(move.removeItem&&defender.itemKey&&defender.itemKey!=="none")movePower*=1.5;
   if(attacker.abilEff==="hustle") movePower*=1.5;
   if(move.electricFieldDouble&&electricTurns>0) movePower*=2;
   if(move.statusPower&&defender.status) movePower*=move.statusPower;
@@ -1961,6 +1966,12 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     if(move.soundBlock&&defender.curHp>0){defender.soundBlocked=move.soundBlock;pushLog(`  ・ ${defender.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
     if(move.beatup&&actualDamage>0)summonFalinksHeis(attacker);
+    if(move.removeItem&&actualDamage>0&&defender.itemKey&&defender.itemKey!=="none"){
+      const removed=ITEMS[defender.itemKey]?.name||defender.itemKey;
+      defender.itemKey="none";defender.stoneMatches=false;
+      pushLog(`  └ ${defender.name} の ${removed} を はたきおとした！`,"#ffcb05");
+      setAbLine();
+    }
     applyMoveRecoil(attacker,move,actualDamage);
     if(res.stab) pushLog("  └ タイプ一致！");
     if(res.eff>1) pushLog(`  └ こうかは ばつぐんだ！（×${res.eff}）`,"#ff7043");

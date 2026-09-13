@@ -146,3 +146,21 @@ vm.runInContext(`
   check(!summonFalinksHeis(me),'fourth summon rejected');
 `,c);
 console.log('Falinks repeat summon: selection and 2+2+1 helpers OK');
+vm.runInContext(`
+  me=makeMon(SP_BY_ID.escavalier,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  const noItemDamage=calcDamage(me,foe,M.escavalierKnockoff,false).dmg;
+  foe.itemKey='rustedshield';foe.stoneMatches=true;
+  check(calcDamage(me,foe,M.escavalierKnockoff,false).dmg===Math.floor(noItemDamage*1.5)||calcDamage(me,foe,M.escavalierKnockoff,false).dmg===Math.floor(noItemDamage*1.5)+1,'held item boosts Knock Off');
+  attack(me,foe,M.escavalierKnockoff,'foeImg',()=>{});
+  check(foe.itemKey==='none'&&!foe.stoneMatches,'Knock Off removes held item and transformation access');
+  foe=makeMon(SP_BY_ID.clobbopus,'none');
+  attack(me,foe,M.escavalierLunge,'foeImg',()=>{});
+  check(foe.stages.atk===-1,'Lunge lowers attack');
+  check(movePriority(me,M.escavalierBulletPunch)===1,'Bullet Punch priority');
+  for(const move of [M.escavalierKnockoff,M.escavalierLunge,M.escavalierBulletPunch]){
+    const boosted=calcDamage(me,foe,move,false).dmg;
+    const plain=calcDamage({...me,abilEff:null},foe,move,false).dmg;
+    check(boosted>plain,'Steel Knight boosts each new move');
+  }
+`,c);
+console.log('Escavalier moves: item removal, attack drop, priority and Steel Knight OK');
