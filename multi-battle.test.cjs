@@ -232,3 +232,41 @@ vm.runInContext(`{
   }finally{Math.random=oldRandom;multi=null;}
 }`,c);
 console.log('Legendary birds: visibility, shields, residuals, abilities, spread multi-hits and entry Heat Wave OK');
+vm.runInContext(`{
+  for(const size of [2,3]){
+    battleSize=size;mode='friend';
+    const team=Array.from({length:size*2},()=>({sp:SP_BY_ID.clobbopus,item:'none'}));
+    startBattleWith(team,team.map((_,i)=>i),team,team.map((_,i)=>i));
+    const actor=multiLiving('foe')[0],replacement=multiBench('foe').at(-1);
+    [...multi.teams.me,...multi.teams.foe].forEach(m=>{m.maxHp=m.curHp=100000;m.moves=[M.icepunch];});
+    for(const mon of multiLiving('foe')){
+      document.getElementById('multi-action-'+mon.multiId).value=mon===actor?'s'+replacement.multiId:'m0';
+      document.getElementById('multi-target-'+mon.multiId).value=String(multiLiving('me')[0].multiId);
+      document.getElementById('multi-ally-'+mon.multiId).value=String(mon.multiId);
+    }
+    const before=multi.round;
+    multiConfirm('foe');
+    check(multi.slots.foe.includes(replacement),'switch from actual command input');
+    check(multi.round===before+1&&!busy,'turn resumes after command switch');
+    const [a,b]=multiLiving('me');multiSetBehind(a,b);multiSetBehind(b,a);
+    check(multiVisible('me').length>0,'cover cannot hide every target');
+    mode='cpu';
+    multiLiving('foe').forEach(m=>{m.moves=[M.gilgamesh];m.usedGilgamesh=true;});
+    multiLiving('me').forEach(m=>{
+      document.getElementById('multi-action-'+m.multiId).value='m0';
+      document.getElementById('multi-target-'+m.multiId).value=String(multiLiving('foe')[0].multiId);
+      document.getElementById('multi-ally-'+m.multiId).value=String(m.multiId);
+    });
+    const nextRound=multi.round;multiConfirm('me');
+    check(multi.round===nextRound+1&&!busy,'CPU without usable moves does not halt turn');
+    const dead=multiLiving('me')[0],reserve=multiBench('me')[0];
+    faintMon(dead,multiImage(dead));multiReplace();
+    check(document.getElementById('cmd').innerHTML.includes('代わりを選択'),'replacement prompt shown');
+    multiPickReplacement('me',dead.multiId,reserve.multiId);
+    check(multiLiving('me').includes(reserve)&&!busy,'replacement resumes input');
+    multi.teams.foe.forEach(m=>{m.curHp=0;m.fainted=true;});multiReplace();
+    check(document.getElementById('resultTxt').textContent.includes('勝ち'),'battle reaches result');
+    show('home');
+  }
+}`,c);
+console.log('Double/triple command switches and cover remain actionable');
