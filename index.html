@@ -289,7 +289,7 @@ const M={
   birdZapCannon:{name:"でんじほう",type:"electric",cat:"spec",power:170,accuracy:.3,paralyze:1,birdMove:true},
   birdThunderbolt:{name:"10まんボルト",type:"electric",cat:"spec",power:90,spread:true,birdMove:true},
   birdSkyAttack:{name:"ゴットバード",type:"flying",cat:"phys",power:85,switchAfter:true,birdMove:true},
-  birdHeatWave:{name:"ねっぷう",type:"fire",cat:"spec",power:80,spread:true,birdMove:true,entryDouble:true},
+  birdHeatWave:{name:"ねっぷう",type:"fire",cat:"spec",power:80,spread:true,birdMove:true,entryDouble:true,desc:"場に出て最初の攻撃なら2回攻撃。変化技・行動不能では権利を消費しない"},
   iceAvalanche:{name:"氷塊山雪雪崩",type:"ice",cat:"status",power:0,birdMove:true,birdShield:true,onceBattle:true,onceFlag:"usedIceAvalanche",desc:"自分と場の味方にフリーザーの最大HP150%のシールド。破壊時の超過ダメージなし"},
   thunderRoar:{name:"雷鳴轟残",type:"electric",cat:"spec",power:60,multiHit:3,spread:true,birdMove:true,birdSpdDrop:true,onceBattle:true,onceFlag:"usedThunderRoar",desc:"威力60×3・範囲攻撃。相手の特防×0.9。2ターン必中"},
   volcanoReign:{name:"火山現栄残",type:"fire",cat:"spec",power:100,birdMove:true,volcano:true,onceBattle:true,onceFlag:"usedVolcanoReign",desc:"5ターン与ダメージ1.2倍・被ダメージ0.8倍"},
@@ -1319,7 +1319,7 @@ function applyMoody(m){
   renderStages();
 }
 function applyEntry(m,imgId,cb){
-  m.birdEntryTurn=true;
+  m.birdFirstAttackReady=true;
   if(m.id==="zamazenta"&&m.stoneMatches&&!m.isMega){
     const form=m.megaForm;m.name=form.name;m.img=form.img;m.types=form.types.slice();m.base={...form.base};m.isMega=true;
     renderActive();pushLog("⚔ ザマゼンタは たてのおうに変身した！","#ffcb05");
@@ -1838,7 +1838,8 @@ function birdAttack(attacker,defender,move,defImgId,cb){
     pushLog(`${attacker.name} の ${move.name}！ 自分と味方に耐久${shield}の氷塊シールド！`,"#7ad1ff");renderHp();cb();return;
   }
   const actual=maxMoveFor(attacker,move);
-  const entryDouble=move.entryDouble&&attacker.birdEntryTurn;
+  const entryDouble=move.entryDouble&&attacker.birdFirstAttackReady;
+  if(actual.cat!=="status")attacker.birdFirstAttackReady=false;
   const targets=actual.spread?enemyTargets(birdSide(attacker)).slice():[defender];
   series(targets.map(target=>done=>{
     if(attacker.fainted||target.fainted){done();return;}
@@ -1861,7 +1862,6 @@ function birdAttack(attacker,defender,move,defImgId,cb){
 function birdEndTurn(mon,imgId){
   if(mon.birdSureTurns>0)mon.birdSureTurns--;
   if(mon.volcanoTurns>0)mon.volcanoTurns--;
-  mon.birdEntryTurn=false;
   const dot=mon.birdBlizzardDot;
   if(dot&&dot.turns>0){
     for(let i=0;i<2&&mon.curHp>0;i++){
@@ -1887,6 +1887,7 @@ function attack(attacker,defender,move,defImgId,cb){
     birdAttack(attacker,defender,move,defImgId,cb);return;
   }
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
+  if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
   if(attacker.id==="aegislash"){
