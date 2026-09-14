@@ -356,6 +356,9 @@ const M={
   aquajet:{name:"アクアジェット",type:"water",cat:"phys",power:40,prio:1,percentDamage:.10},
   extremespeed:{name:"しんそく",type:"normal",cat:"phys",power:80,prio:2},
   icebeam:{name:"れいとうビーム",type:"ice",cat:"spec",power:90,freeze:.1},
+  freezedry:{name:"フリーズドライ",type:"ice",cat:"spec",power:65,waterSuper:true},
+  fishiousrend:{name:"えらがみ",type:"water",cat:"phys",power:80,firstStrike:true},
+  boltbeak:{name:"でんげきくちばし",type:"electric",cat:"phys",power:80,firstStrike:true},
   iciclecrash:{name:"つららおとし",type:"ice",cat:"phys",power:85,accuracy:.9,flinch:.3},
   icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2,bite:true},
   icepunch:{name:"れいとうパンチ",type:"ice",cat:"phys",power:75},
@@ -447,6 +450,7 @@ const M={
   toxicspikes:{name:"どくびし",type:"poison",cat:"status",power:0,hazard:"toxicspikes"},
   toxic:{name:"どくどく",type:"poison",cat:"status",power:0,accuracy:.9,toxic:true},
   substitute:{name:"みがわり",type:"normal",cat:"status",power:0,substitute:true},
+  banetteShadow:{name:"かげぶんしん",type:"ghost",cat:"status",power:0,exclusive:"banette",banetteShadow:true},
   swordsdance:{name:"つるぎのまい",type:"normal",cat:"status",power:0,selfBoost:{atk:2}},
   formation:{name:"はいすいのじん",type:"fighting",cat:"status",power:0,onceBattle:true,onceFlag:"usedFormation",selfBoost:{chance:1,stats:{atk:1,def:1,spa:1,spd:1,spe:1}}},
   heicoaching:{name:"ヘイのコーチング",type:"normal",cat:"status",power:0,heiCoaching:true},
@@ -580,7 +584,7 @@ const SPECIES=[
  S("kingler","キングラー","image/image/キングラー.gif",["water"],{hp:55,atk:150,def:115,spa:50,spd:50,spe:50},"shellarmor",["crabhammer","liquidation","xscissor","rockslide"],[]),
  S("cloyster","パルシェン","image/image/パルシェン.gif",["water","ice"],{hp:50,atk:85,def:180,spa:85,spd:45,spe:70},"shellarmor",["iciclecrash","surf","icebeam","spikes"],[]),
  S("wishiwashi","ヨワシ","image/image/ヨワシ.gif",["water"],{hp:90,atk:140,def:120,spa:140,spd:120,spe:30},"schooling",["surf","hydropump","icebeam","aquajet"],[]),
- S("pyukumuku","ナマコブシ","image/image/ナマコブシ.gif",["water"],{hp:150,atk:60,def:70,spa:30,spd:70,spe:5},"innardsout",["recover","toxic","spikes","protect"],[]),
+ S("pyukumuku","ナマコブシ","image/image/ナマコブシ.gif",["water"],{hp:150,atk:60,def:50,spa:30,spd:50,spe:5},"innardsout",["recover","toxic","spikes","protect"],[]),
  S("crustle","イワパレス","image/image/イワパレス.gif",["bug","rock"],{hp:70,atk:105,def:125,spa:65,spd:75,spe:45},"shellarmor",["crustlerockTomb","xscissor","earthquake","stoneedge"],[]),
  S("alcremie","マホイップ","image/image/マホイップ.gif",["fairy"],{hp:65,atk:60,def:75,spa:110,spd:121,spe:64},"aromaveil",["alcremieRecover","decoration","magicalshine","sweetscent","holecake"],[]),
  S("raichuA","アローラライチュウ","image/image/アローラライチュウ.gif",["electric","psychic"],{hp:65,atk:74,def:65,spa:120,spd:80,spe:135},"chargeboost",["risingpancake","thunderbolt","psychic","protect"],[]),
@@ -598,10 +602,10 @@ const SPECIES=[
  S("runerigus","デスバーン","image/image/デスバーン.gif",["ground","ghost"],{hp:58,atk:95,def:145,spa:50,spd:105,spe:30},"wandering",["shadowball","earthquake","willowisp","stealthrock"],[]),
  S("clobbopus","タタッコ","image/image/タタッコ.gif",["fighting"],{hp:90,atk:68,def:65,spa:50,spd:105,spe:40},"hugepower",["octolock","drainpunch","icepunch","protect"],[]),
  S("grapploct","オトスパス","image/image/オトスパス.gif",["fighting"],{hp:105,atk:84,def:115,spa:90,spd:75,spe:90},"thickfat",["octolock","closecombat","drainpunch","icepunch"],[]),
- S("dracovish","ウヲノラゴン","image/image/ウヲノラゴン.gif",["water","dragon"],{hp:90,atk:90,def:100,spa:70,spd:80,spe:75},"strongjaw",["crunch","waterfall","dragonclaw","icefang"],[]),
- S("arctovish","ウヲチルフォン","image/image/ウヲチルフォン.gif",["water","ice"],{hp:90,atk:90,def:100,spa:90,spd:90,spe:55},"thickfat",["waterfall","icefang","crunch","icebeam"],[]),
- S("arctozolt","パッチルドン","image/image/パッチルドン.gif",["electric","ice"],{hp:90,atk:100,def:90,spa:90,spd:80,spe:55},"thickfat",["thunderbolt","icebeam","thunder","icefang"],[]),
- S("dracozolt","パッチラゴン","image/image/パッチラゴン.gif",["electric","dragon"],{hp:90,atk:100,def:90,spa:90,spd:70,spe:75},"hustle",["thunderbolt","dragonclaw","crunch","thunder"],[]),
+ S("dracovish","ウヲノラゴン","image/image/ウヲノラゴン.gif",["water","dragon"],{hp:90,atk:105,def:100,spa:85,spd:80,spe:85},"strongjaw",["crunch","fishiousrend","dragonclaw","icefang"],[]),
+ S("arctovish","ウヲチルフォン","image/image/ウヲチルフォン.gif",["water","ice"],{hp:90,atk:105,def:100,spa:105,spd:90,spe:65},"thickfat",["waterfall","icefang","fishiousrend","freezedry"],[]),
+ S("arctozolt","パッチルドン","image/image/パッチルドン.gif",["electric","ice"],{hp:90,atk:115,def:90,spa:105,spd:80,spe:65},"thickfat",["boltbeak","icebeam","dragondance","dragonclaw"],[]),
+ S("dracozolt","パッチラゴン","image/image/パッチラゴン.gif",["electric","dragon"],{hp:90,atk:115,def:90,spa:105,spd:70,spe:85},"hustle",["boltbeak","dragonclaw","crunch","freezedry"],[]),
  S("zamazenta","ザマゼンタ","image/image/ザマゼンタ.gif",["fighting"],{hp:92,atk:120,def:115,spa:80,spd:115,spe:138},"dauntlessshield",["closecombat","ironhead","crunch","playrough"],[{stone:"rustedshield",stoneName:"くちたたて",name:"ザマゼンタ(王)",img:"image/image/ザマゼンタ(王).gif",types:["fighting","steel"],base:{hp:92,atk:120,def:140,spa:80,spd:140,spe:128},abil:"dauntlessshield"}]),
 ];
 SPECIES.push(
@@ -615,7 +619,7 @@ SPECIES.push(
  S("glastrier","ブリザポス","image/image/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
 );
 SPECIES.push(S("banette","ジュペッタ","image/image/ジュペッタ.gif",["ghost"],{hp:64,atk:115,def:65,spa:83,spd:63,spe:65},"frisk",["shadowclaw","shadowsneak","willowisp","shadowball"],[
-  {stone:"banettite",stoneName:"ジュペッタナイト",name:"メガジュペッタ",img:"image/image/メガジュペッタ.gif",types:["ghost"],base:{hp:64,atk:135,def:75,spa:93,spd:83,spe:75},abil:"prankster"}
+  {stone:"banettite",stoneName:"ジュペッタナイト",name:"メガジュペッタ",img:"image/image/メガジュペッタ.gif",types:["ghost"],base:{hp:64,atk:165,def:75,spa:93,spd:83,spe:75},abil:"prankster"}
 ]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
@@ -631,7 +635,11 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
-  banette:["shadowclaw","shadowsneak","willowisp","shadowball","hex","phantomforce","knockoff","suckerpunch","thunderbolt","psychic","protect","substitute"],
+  dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend"],
+  arctovish:["waterfall","icefang","crunch","icebeam","fishiousrend","freezedry"],
+  arctozolt:["thunderbolt","icebeam","thunder","icefang","boltbeak","dragondance","dragonclaw"],
+  dracozolt:["thunderbolt","dragonclaw","crunch","thunder","boltbeak","freezedry"],
+  banette:["shadowclaw","shadowsneak","willowisp","shadowball","hex","phantomforce","knockoff","suckerpunch","thunderbolt","psychic","protect","substitute","banetteShadow"],
   spectrier:["shadowball","hex","nastyPlot","willowisp","drainingkiss","darkpulse","protect","substitute"],
   glastrier:["iciclecrash","closecombat","heavySlam","swordsdance","crunch","bodypress","icebeam","protect","substitute"],
   articuno:["birdBlizzard","icebeam","hurricane","roost","airslash","icywind","reflect","protect","substitute"],
@@ -1419,9 +1427,10 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.electricFieldDouble&&electricTurns>0) movePower*=2;
   if(move.statusPower&&defender.status) movePower*=move.statusPower;
   if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
+  if(move.firstStrike&&!defender.turnMoved)movePower*=2;
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
   let dmg=(attack/defense)*42;
-  const rawEff=effMultiplier(moveType,defender.types);
+  const rawEff=move.waterSuper&&defender.types.includes("water")?2:effMultiplier(moveType,defender.types);
   const eff=move.fairyBypass&&defender.types.includes("fairy")?2:(move.ignoreType?1:rawEff); dmg*=eff;
   // ルナティックステージ2のメガボーマンダは弱点ダメージを4/3倍に抑える
   if((defender.lunatic2Boss||defender.lunatic3Boss)&&eff>1) dmg*=((4/3)/eff);
@@ -1683,7 +1692,7 @@ function confirmAllyTarget(index){
   p.action.move=Object.assign({},p.action.move,{allyTarget:target});
   submitAction(p.side,p.action);
 }
-function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
+function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");if(host.shadowTargets&&host.shadowTargets.some(m=>!m.fainted&&m.curHp>0))return host.shadowTargets.filter(m=>!m.fainted&&m.curHp>0);return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
 function resolveAttackTarget(side,target){const list=enemyTargets(side);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
 function confirmAttackTarget(i){const {side,action}=pendingTarget;action.target=enemyTargets(side)[i];action.targetReady=true;submitAction(side,action);}
 function isFriendlyMove(move){return !!(move.birdShield||move.heiCare||move.heiCoaching||move.allyHeal||move.allyBoost||move.holeCake||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
@@ -1902,6 +1911,7 @@ function setAegislashForm(mon,form){
   pushLog(`  ★ ${mon.name} は ${form==="blade"?"ブレード":"シールド"}フォルムに 変化した！`,form==="blade"?"#ff7043":"#7ad1ff");
 }
 function attack(attacker,defender,move,defImgId,cb){
+  if(defender&&defender.isBanetteShadow){defender.fainted=true;defender.curHp=0;const host=defender.shadowHost;if(host&&host.shadowTargets&&host.shadowTargets.filter(m=>m!==host&&!m.fainted).length===0)host.shadowTargets=null;pushLog(`  └ ${defender.name} は かげぶんしんだった！ 分身が消えた！`,"#b061ff");renderHp();cb();return;}
   if(!move.birdResolved&&(move.birdMove||attacker.birdNextSure||attacker.birdSureTurns>0)){
     birdAttack(attacker,defender,move,defImgId,cb);return;
   }
@@ -2017,6 +2027,11 @@ function attack(attacker,defender,move,defImgId,cb){
       pushLog(`  └ ${attacker.name} は HP${cost}を 使って みがわりを 出した！`); cb();
     },450);
     return;
+  }
+  if(move.banetteShadow){
+    if(attacker.shadowTargets&&attacker.shadowTargets.some(m=>m!==attacker&&!m.fainted)){pushLog(`  └ ${attacker.name} は まだ分身が残っている！`,"#9fb3d6");cb();return;}
+    const copies=[attacker], shadowHp=Math.max(1,Math.floor(attacker.maxHp/3));for(let i=0;i<2;i++)copies.push({name:`${attacker.name}${i+1}`,curHp:shadowHp,maxHp:shadowHp,fainted:false,isBanetteShadow:true,shadowHost:attacker});
+    for(let i=copies.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copies[i],copies[j]]=[copies[j],copies[i]];}attacker.shadowTargets=copies;attacker.firstTurnReady=false;pushLog(`  └ ${attacker.name} は かげぶんしんで 3体に分かれた！`,"#b061ff");renderHp();cb();return;
   }
   if(move.yawn){
     setTimeout(()=>{if(defender.curHp>0){if(electricTurns>0)pushLog(`  └ エレキフィールドで ${defender.name} は ねむくならない！`,"#f8d030");else{defender.yawnTurns=2;pushLog(`  └ ${defender.name} は ねむけを さそわれた！`,"#9fb3d6");}}cb();},450);
@@ -2432,6 +2447,7 @@ function doMega(mon,imgId,cb){
     mon.img=mg.img;                       // メガ後の見た目を保持（再描画でも解除されない）
     if(mon.id==="heatran") mon.moves=mon.moves.map(m=>m.name==="マグマストーム"?M.steelfever:m);
     if(mon.id==="zacian") mon.moves=mon.moves.map(m=>m.name==="アイアンヘッド"?M.behemothblade:m);
+    if(mon.id==="banette"&&!mon.moves.some(m=>m===M.banetteShadow))mon.moves.push(M.banetteShadow);
     mon.acted=0; mon.firstTurnReady=true;  // メガ進化後はであいがしらを再度使える
     img.src=IMG(mg.img);
     document.getElementById(imgId==="myImg"?"myName":"foeName").textContent=mon.name;

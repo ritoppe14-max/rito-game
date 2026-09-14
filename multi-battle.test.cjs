@@ -80,7 +80,7 @@ vm.runInContext(`
   wishiwashi.curHp=Math.floor(wishiwashi.maxHp/4); updateWishiwashiForm(wishiwashi,'myImg');
   check(!wishiwashi.schoolForm&&wishiwashi.base.def===20&&wishiwashi.base.spd===25,'Wishiwashi solo form at quarter HP');
   const pyukumuku=SPECIES[SP_BY_ID.pyukumuku];
-  check(pyukumuku.base.hp===150&&pyukumuku.base.def===70&&pyukumuku.base.spd===70&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
+  check(pyukumuku.base.hp===150&&pyukumuku.base.def===50&&pyukumuku.base.spd===50&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
   check(SPECIES[SP_BY_ID.joltik].learnset.includes('stickyweb')&&M.stickyweb.hazard==='stickyweb','Joltik Sticky Web');
   check(COMPETITIVE_MOVE_55.length===55&&SPECIES[SP_BY_ID.sableye].learnset.includes('reflect')&&M.reflect.reflect,'Competitive 55 and Sableye Reflect');
   const excadrill=SPECIES[SP_BY_ID.excadrill],gigalith=SPECIES[SP_BY_ID.gigalith];
@@ -302,6 +302,6 @@ vm.runInContext(`{
   me=makeMon(SP_BY_ID.banette,'banettite');foe=makeMon(SP_BY_ID.clobbopus,'none');
   check(me.stoneMatches&&me.base.atk===115,'Banettite enables mega');
   doMega(me,'myImg',()=>{});
-  check(me.isMega&&me.name==='メガジュペッタ'&&me.base.atk===135&&me.abilEff==='prankster','Mega Banette uses requested Attack 135');
+  check(me.isMega&&me.name==='メガジュペッタ'&&me.base.atk===165&&me.abilEff==='prankster','Mega Banette uses Attack 165');
 }`,c);
-console.log('Banette: visible, Banettite and Mega Attack 135 OK');
+console.log('Banette: visible, Banettite and Mega Attack 165 OK');
