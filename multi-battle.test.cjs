@@ -294,3 +294,14 @@ vm.runInContext(`{
   }
 }`,c);
 console.log('Spectrier and Glastrier: visible, valid moves, KO abilities OK');
+vm.runInContext(`{
+  multi=null;battleSize=1;
+  renderHome();renderTrain();curParty=[];renderParty();
+  for(const screen of ['homeDex','trainGrid','dexGrid'])check(document.getElementById(screen).innerHTML.includes('ジュペッタ'),'Banette visible');
+  const sp=SPECIES[SP_BY_ID.banette];check(sp.learnset.every(k=>M[k]),'Banette moves valid');
+  me=makeMon(SP_BY_ID.banette,'banettite');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  check(me.stoneMatches&&me.base.atk===115,'Banettite enables mega');
+  doMega(me,'myImg',()=>{});
+  check(me.isMega&&me.name==='メガジュペッタ'&&me.base.atk===135&&me.abilEff==='prankster','Mega Banette uses requested Attack 135');
+}`,c);
+console.log('Banette: visible, Banettite and Mega Attack 135 OK');

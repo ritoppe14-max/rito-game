@@ -614,6 +614,9 @@ SPECIES.push(
  S("spectrier","レイスポス","image/image/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
  S("glastrier","ブリザポス","image/image/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
 );
+SPECIES.push(S("banette","ジュペッタ","image/image/ジュペッタ.gif",["ghost"],{hp:64,atk:115,def:65,spa:83,spd:63,spe:65},"frisk",["shadowclaw","shadowsneak","willowisp","shadowball"],[
+  {stone:"banettite",stoneName:"ジュペッタナイト",name:"メガジュペッタ",img:"image/image/メガジュペッタ.gif",types:["ghost"],base:{hp:64,atk:135,def:75,spa:93,spd:83,spe:75},abil:"prankster"}
+]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -628,6 +631,7 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  banette:["shadowclaw","shadowsneak","willowisp","shadowball","hex","phantomforce","knockoff","suckerpunch","thunderbolt","psychic","protect","substitute"],
   spectrier:["shadowball","hex","nastyPlot","willowisp","drainingkiss","darkpulse","protect","substitute"],
   glastrier:["iciclecrash","closecombat","heavySlam","swordsdance","crunch","bodypress","icebeam","protect","substitute"],
   articuno:["birdBlizzard","icebeam","hurricane","roost","airslash","icywind","reflect","protect","substitute"],
