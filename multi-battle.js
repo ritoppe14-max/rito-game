@@ -71,7 +71,7 @@ function multiChoose(s){
   busy=false;inputSide=s;renderMulti();
   const enemies=multiVisible(multiOther(s)),bench=multiBench(s);
   const allies=multiLiving(s);
-  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${m.electroBeamReady&&!mv.chargeTurn?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
+  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${(m.electroBeamReady&&!mv.chargeTurn)||(m.itemKey==='mougekiScarf'&&m.mougekiLock&&mv.name!==m.mougekiLock)?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
 }
 function multiConfirm(s){
   if(busy||!multi)return;
@@ -92,7 +92,7 @@ function multiConfirm(s){
   multi.actions.push(...actions);
   if(s==='me'&&mode==='friend'){document.getElementById('cmd').innerHTML='<div class="sub">プレイヤー2に交代してください</div><button class="btn" onclick="multiChoose(\'foe\')">プレイヤー2の入力へ</button>';return;}
   if(s==='me')multiLiving('foe').forEach(mon=>{
-    const options=mon.moves.filter(move=>!(move.onceBattle&&mon[move.onceFlag||'usedPlayTogether'])).flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
+    const options=mon.moves.filter(move=>(mon.itemKey!=='mougekiScarf'||!mon.mougekiLock||move.name===mon.mougekiLock)&&!(move.onceBattle&&mon[move.onceFlag||'usedPlayTogether'])).flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
     const valid=options.filter(a=>a.move.cat==='status'||calcDamage(mon,a.target,a.move,false).eff>0);
     const pool=valid.length?valid:options;
     pool.sort((a,b)=>calcDamage(mon,b.target,b.move,false).dmg-calcDamage(mon,a.target,a.move,false).dmg);
@@ -103,6 +103,7 @@ function multiConfirm(s){
 function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
+  a.mon.mougekiLock=null;
   multiClearBehind(a.mon);a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
   slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;
   me=a.side==='me'?a.replacement:multiLiving('me')[0]||myTeam[0];foe=a.side==='foe'?a.replacement:multiLiving('foe')[0]||foeTeam[0];

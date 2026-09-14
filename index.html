@@ -826,6 +826,7 @@ const ITEMS={
   elemental:{name:"エレメンタルロック",desc:"天候の継続ターンを3ターン延長"},
   lightstone:{name:"かるいし",desc:"攻撃・素早さ1.1倍"},
   scarf:{name:"こだわりスカーフ",desc:"素早さ実数値1.5倍。毎ターンHP1/10減少"},
+  mougekiScarf:{name:"もうげきスカーフ",desc:"素早さ実数値1.5倍。使った技は交代まで固定。タイプ・特性・まもるによる無効を貫通"},
 };
 SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.stoneName,desc:`${sp.name}専用。${mg.name}にメガシンカ`,mega:si,form:fi}; }));
 
@@ -1387,8 +1388,9 @@ function applyEntry(m,imgId,cb){
 
 // ===== ダメージ計算 =====
 function calcDamage(attacker,defender,move,isCrit){
+  if(attacker.itemKey==="mougekiScarf")move={...move,ignoreAbility:true};
   if(move.cat==="status"||((move.chargedPower!==undefined?move.chargedPower:move.power)<=0)) return {dmg:0,eff:1,stab:false};
-  if(defender.abilEff==="disguise"&&!defender.usedDisguise)return {dmg:0,eff:0,stab:false,disguise:true};
+  if(attacker.itemKey!=="mougekiScarf"&&defender.abilEff==="disguise"&&!defender.usedDisguise)return {dmg:0,eff:0,stab:false,disguise:true};
   const skinType=attacker.abilEff==="aerilate"?"flying":attacker.abilEff==="dragonskin"?"dragon":null;
   const moveType=skinType&&move.type==="normal"?skinType:move.type;
   if(!move.ignoreAbility&&((defender.abilEff==="flashfire"&&moveType==="fire")||(defender.abilEff==="magmaheat"&&moveType==="ground")||(defender.abilEff==="eartheater"&&moveType==="ground"))) return {dmg:0,eff:0,stab:false};
@@ -1434,7 +1436,8 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.firstStrike&&!defender.turnMoved)movePower*=2;
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
   let dmg=(attack/defense)*42;
-  const rawEff=move.waterSuper&&defender.types.includes("water")?2:effMultiplier(moveType,defender.types);
+  const typeEff=effMultiplier(moveType,defender.types);
+  const rawEff=move.waterSuper&&defender.types.includes("water")?2:(attacker.itemKey==="mougekiScarf"&&typeEff===0?1:typeEff);
   const eff=move.fairyBypass&&defender.types.includes("fairy")?2:(move.ignoreType?1:rawEff); dmg*=eff;
   // ルナティックステージ2のメガボーマンダは弱点ダメージを4/3倍に抑える
   if((defender.lunatic2Boss||defender.lunatic3Boss)&&eff>1) dmg*=((4/3)/eff);
@@ -1499,7 +1502,7 @@ function effSpeed(m){
   if(m.abilEff==="sandrush"&&weather==="sand")s*=2;
   if(m.abilEff==="unburden"&&!m.itemKey||m.abilEff==="unburden"&&m.itemKey==="none")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
-  if(m.itemKey==="scarf")s*=1.5;
+  if(m.itemKey==="scarf"||m.itemKey==="mougekiScarf")s*=1.5;
   return s;
 }
 function movePriority(mon,move){
@@ -1620,6 +1623,7 @@ function openMoves(side){
   if(opp.id==="falinks"&&opp.isMega){const parts={head:"頭",rightarm:"右腕",leftarm:"左腕",waist:"腰",rightfoot:"右足",leftfoot:"左足"};h+=`<div class="center sub">メガタイレーツの狙う部位：${parts[selectedPart[side]]}</div><div class="actrow">${Object.entries(parts).map(([k,v])=>`<button class="btn ghost" onclick="chooseFalinksPart('${side}','${k}')" ${selectedPart[side]===k?'disabled':''}>${v}</button>`).join("")}</div>`;}
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
+    if(m.itemKey==="mougekiScarf"&&m.mougekiLock&&mv.name!==m.mougekiLock)return;
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
     if(m.id==="falinks"&&i===0&&m.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
@@ -1915,6 +1919,11 @@ function setAegislashForm(mon,form){
   pushLog(`  ★ ${mon.name} は ${form==="blade"?"ブレード":"シールド"}フォルムに 変化した！`,form==="blade"?"#ff7043":"#7ad1ff");
 }
 function attack(attacker,defender,move,defImgId,cb){
+  if(attacker.itemKey==="mougekiScarf"){
+    if(attacker.mougekiLock&&attacker.mougekiLock!==move.name){pushLog("  └ もうげきスカーフで技が固定されている！");cb();return;}
+    attacker.mougekiLock=move.name;
+    move={...move,ignoreAbility:true,ignoreProtect:true};
+  }
   if(defender&&defender.isBanetteShadow){defender.fainted=true;defender.curHp=0;const host=defender.shadowHost;if(host&&host.shadowTargets&&host.shadowTargets.filter(m=>m!==host&&!m.fainted).length===0)host.shadowTargets=null;pushLog(`  └ ${defender.name} は かげぶんしんだった！ 分身が消えた！`,"#b061ff");renderHp();cb();return;}
   if(!move.birdResolved&&(move.birdMove||attacker.birdNextSure||attacker.birdSureTurns>0)){
     birdAttack(attacker,defender,move,defImgId,cb);return;
@@ -1987,7 +1996,7 @@ function attack(attacker,defender,move,defImgId,cb){
     }else setTimeout(()=>{pushLog(`  └ ${defender.name} は攻撃から身を守った！`,"#7ad1ff");cb();},350);
     return;
   }
-  if(move.spread&&defender.wideGuardActive&&!isFriendlyMove(move)){
+  if(move.spread&&defender.wideGuardActive&&!isFriendlyMove(move)&&!move.ignoreProtect){
     setTimeout(()=>{pushLog(`  └ ${defender.name} の ワイドガードで 攻撃を防いだ！`,"#7ad1ff");cb();},350);return;
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
@@ -2464,6 +2473,7 @@ function doMega(mon,imgId,cb){
 
 // ===== 交代 =====
 function doSwitch(side,idx,cb){
+  activeOf(side).mougekiLock=null;
   megaArm[side]=false;
   if(side==="me"){
     const out=me; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
@@ -2528,6 +2538,7 @@ function applyHazards(side,cb){
 
 // ===== CPU思考 =====
 function cpuChoose(){
+  if(foe.itemKey==="mougekiScarf"&&foe.mougekiLock){const move=foe.moves.find(m=>m.name===foe.mougekiLock);if(move)return {type:"move",move};}
   if(mode==='lunatic'&&foe.id==='hippowdon'&&foe.acted===0&&Math.random()<.70) return {type:"move",move:M.stealthrock};
   if(mode==='lunatic'&&foe.id==='cinderace'&&foe.curHp<=foe.maxHp*.2&&Math.random()<.85) return {type:"move",move:M.suckerpunch};
   // ペリッパー先発→雨が降ったらラグラージに交代

@@ -327,3 +327,20 @@ vm.runInContext(`{
   check(inputSide==='me'&&document.getElementById('cmd').innerHTML.includes('プレイヤー1'),'Player 1 retains picker');
 }`,c);
 console.log('Forced switching: NPC automatic, friend ownership and no-bench continuation OK');
+vm.runInContext(`{
+  battleSize=1;multi=null;mode='cpu';weather=null;
+  me=makeMon(SP_BY_ID.dracovish,'mougekiScarf');foe=makeMon(SP_BY_ID.gengar,'none');
+  myTeam=[me,makeMon(SP_BY_ID.arctovish,'none')];myA=0;foeTeam=[foe];foeA=0;hazards=emptyHazards();
+  const plain={...me,itemKey:'none'};
+  check(Math.abs(effSpeed(me)/effSpeed(plain)-1.5)<.02,'Mougeki speed boost');
+  check(calcDamage(plain,foe,M.quickattack,false).eff===0&&calcDamage(me,foe,M.quickattack,false).eff===1,'Type immunity bypass');
+  foe.types=['normal'];foe.abilEff='flashfire';
+  check(calcDamage(me,foe,M.flamethrower,false).dmg>0,'Ability immunity bypass');
+  foe.protectActive=true;foe.maxHp=foe.curHp=100000;
+  let calls=0;attack(me,foe,{...M.flamethrower,forceHit:true},'foeImg',()=>calls++);
+  check(foe.curHp<100000&&calls===1&&me.mougekiLock===M.flamethrower.name,'Protect bypass and move lock');
+  const hp=foe.curHp;attack(me,foe,M.waterfall,'foeImg',()=>calls++);
+  check(foe.curHp===hp&&calls===2,'Different move blocked');
+  const out=me;doSwitch('me',1,()=>{});check(!out.mougekiLock,'Switch clears move lock');
+}`,c);
+console.log('Mougeki scarf: speed, immunity/protect bypass and move lock OK');
