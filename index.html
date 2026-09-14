@@ -2728,6 +2728,11 @@ function endTurn(){
 }
 // 強制交代：そのsideの生きているポケモンを選ぶ（このターンは攻撃なし）
 function requestForcedSwitch(side,cb){
+  // NPCの交代先はCPUが決める。交代技から呼ばれた場合も手動選択を表示しない。
+  if(side==="foe"&&mode!=="friend"){
+    if(!foe.fainted&&cpuForcedSwitch()<0){cb();return;}
+    cpuForceReplace(cb);return;
+  }
   busy=true; inputSide=side; forcedCb=cb;
   const team=teamOf(side), ai=activeIdxOf(side), c=document.getElementById("cmd");
   let h=`<div class="center sub">${sideLabel(side)}：つぎの ポケモンを えらんでください</div><div class="switchrow">`;

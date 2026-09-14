@@ -305,3 +305,25 @@ vm.runInContext(`{
   check(me.isMega&&me.name==='メガジュペッタ'&&me.base.atk===165&&me.abilEff==='prankster','Mega Banette uses Attack 165');
 }`,c);
 console.log('Banette: visible, Banettite and Mega Attack 165 OK');
+vm.runInContext(`{
+  battleSize=1;multi=null;
+  for(const npcMode of ['cpu','lunatic','lunatic2','lunatic3','lunatic4','lunatic5','dynamaxUnlock']){
+    mode=npcMode;
+    myTeam=[makeMon(SP_BY_ID.dracovish,'none')];myA=0;me=myTeam[0];
+    foeTeam=[makeMon(SP_BY_ID.dracozolt,'none'),makeMon(SP_BY_ID.arctovish,'none')];foeA=0;foe=foeTeam[0];
+    hazards=emptyHazards();clearCmd();let resumed=0;
+    requestForcedSwitch('foe',()=>resumed++);
+    check(foeA===1&&resumed===1,'NPC switch resumes automatically: '+npcMode);
+    check(!document.getElementById('cmd').innerHTML.includes('pickForced'),'No NPC picker: '+npcMode);
+    foeTeam[0].fainted=true;resumed=0;
+    requestForcedSwitch('foe',()=>resumed++);
+    check(foeA===1&&resumed===1,'No bench safely resumes');
+  }
+  mode='friend';foeTeam[0].fainted=false;let resumed=0;
+  requestForcedSwitch('foe',()=>resumed++);
+  check(inputSide==='foe'&&document.getElementById('cmd').innerHTML.includes('プレイヤー2'),'Friend selects own replacement');
+  pickForced('foe',0);check(foeA===0&&resumed===1,'Friend choice resumes');
+  requestForcedSwitch('me',()=>{});
+  check(inputSide==='me'&&document.getElementById('cmd').innerHTML.includes('プレイヤー1'),'Player 1 retains picker');
+}`,c);
+console.log('Forced switching: NPC automatic, friend ownership and no-bench continuation OK');
