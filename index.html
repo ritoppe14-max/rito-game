@@ -1713,7 +1713,7 @@ function submitAction(side,action){
   }
   if(action.type==="move"&&!action.targetReady&&enemyTargets(side).length>1){
     pendingTarget={side,action};
-    document.getElementById("cmd").innerHTML='<div>攻撃対象を選択</div>'+enemyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('');return;
+    document.getElementById("cmd").innerHTML='<div>攻撃対象を選択</div>'+enemyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
   }
   if(action.type==="move"&&!action.heiReady){openHeiActions(side,action);return;}
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
