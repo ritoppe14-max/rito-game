@@ -292,7 +292,10 @@ ABIL.moldbreaker.eff="moldbreaker";
 ABDESC.moldbreaker="相手の特性を無視して攻撃する";
 Object.assign(ABIL,{waterabsorb:{name:"ちょすい",eff:"waterabsorb"},voltabsorb:{name:"ちくでん",eff:"voltabsorb"},chlorophyll:{name:"ようりょくそ",eff:"chlorophyll"},synchronize:{name:"シンクロ",eff:"synchronize"},snowcloak:{name:"ゆきがくれ",eff:"snowcloak"}});
 Object.assign(ABDESC,{waterabsorb:"水技を無効化し最大HPの1/4回復",voltabsorb:"電気技を無効化し最大HPの1/4回復",chlorophyll:"晴れのとき素早さ2倍",synchronize:"毒・猛毒・やけど・まひを与えた相手も同じ状態にする",snowcloak:"雪・あられのとき相手の技の命中率0.8倍"});
+ABIL.technician={name:"テクニシャン",eff:"technician"};
+ABDESC.technician="威力60以下の攻撃技の威力を1.5倍にする";
 const M={
+  scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
   bulletpunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:40,prio:1},
   hydroVortex:{name:"水流ハイドロ渦潮",type:"water",cat:"spec",power:100,eeveeMove:true,desc:"3ターン、対象に20ダメージ。自分と場の味方を毎ターン20回復"},
   divineThunder:{name:"神速雷鳴",type:"electric",cat:"spec",power:130,eeveeMove:true,desc:"3ターン、ターン終了時に自分の素早さ+1段階"},
@@ -642,6 +645,10 @@ SPECIES.push(
  S("glaceon","グレイシア","image/image/グレイシア.gif",["ice"],{hp:65,atk:60,def:110,spa:130,spd:95,spe:65},"snowcloak",["icebeam","freezedry","shadowball","protect","glacialAurora"])
 );
 Object.assign(BIRD_FIFTH,{vaporeon:"hydroVortex",jolteon:"divineThunder",flareon:"infernoFlame",leafeon:"grassCrusher",espeon:"psychicEndless",glaceon:"glacialAurora"});
+SPECIES.push(
+ S("scyther","ストライク","image/image/ストライク.gif",["bug","flying"],{hp:70,atk:110,def:80,spa:55,spd:80,spe:125},"technician",["scytherDoubleWing","xscissor","uturn","swordsdance"]),
+ S("scizor","ハッサム","image/image/ハッサム.gif",["bug","steel"],{hp:70,atk:130,def:100,spa:55,spd:80,spe:65},"technician",["bulletpunch","xscissor","uturn","swordsdance"])
+);
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -656,6 +663,8 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
+  scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
   arctovish:["waterfall","icefang","crunch","icebeam","fishiousrend","dragondance","dragonclaw"],
   arctozolt:["thunderbolt","icebeam","thunder","icefang","boltbeak","dragondance","dragonclaw"],
@@ -1430,7 +1439,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
   if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
-  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik"]);
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
@@ -1449,6 +1458,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
+  if(attacker.abilEff==="technician"&&movePower>0&&movePower<=60)movePower*=1.5;
   if(attacker.abilEff==="steelknight"&&movePower<=65) movePower*=1.5;
   if(move.removeItem&&defender.itemKey&&defender.itemKey!=="none")movePower*=1.5;
   if(attacker.abilEff==="hustle") movePower*=1.5;

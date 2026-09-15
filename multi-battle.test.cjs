@@ -405,3 +405,23 @@ vm.runInContext(`{
   multi=null;
 }`,c);
 console.log('Metagross and six Eevee evolutions: fifth slots, mega, Mold Breaker, durations, safe burn and multi forced switches OK');
+for(const name of ['ストライク','ハッサム'])assert.ok(fs.existsSync('image/image/'+name+'.gif'));
+vm.runInContext(`{
+  multi=null;battleSize=1;mode='cpu';weather='hail';hazards=emptyHazards();
+  const scyther=SPECIES[SP_BY_ID.scyther],scizor=SPECIES[SP_BY_ID.scizor];
+  check(scyther.base.spe===125&&scizor.base.spe===65,'Scyther +20 speed, Scizor standard speed');
+  for(const sp of [scyther,scizor])check(sp.moves.every(k=>M[k])&&sp.learnset.every(k=>M[k]),sp.name+' valid move pool');
+  me=makeMon(SP_BY_ID.scyther,'none');foe=makeMon(SP_BY_ID.glaceon,'none');
+  myTeam=[me];foeTeam=[foe];myA=foeA=0;foe.maxHp=foe.curHp=100000;
+  const move=M.scytherDoubleWing,random=Math.random;let hits=0,calls=0;
+  try{
+    Math.random=()=>.99;
+    const damage=calcDamage(me,foe,move,false).dmg;
+    attack(me,foe,{...move,birdOnHit:()=>hits++},'foeImg',()=>calls++);
+    check(hits===2&&calls===1&&foe.curHp===100000-2*damage,'Both 40-power hits land through Snow Cloak');
+    check(calcDamage(me,foe,move,false).dmg>calcDamage({...me,abilEff:null},foe,move,false).dmg,'Technician boosts low-power hits');
+    foe.protectActive=true;const hp=foe.curHp;
+    attack(me,foe,move,'foeImg',()=>{});check(foe.curHp===hp,'Sure hit does not bypass Protect');
+  }finally{Math.random=random;weather=null;}
+}`,c);
+console.log('Scyther and Scizor: move pools, speed, Technician and sure-hit double wing OK');
