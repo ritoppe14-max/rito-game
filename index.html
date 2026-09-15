@@ -649,6 +649,7 @@ SPECIES.push(
  S("scyther","ストライク","image/image/ストライク.gif",["bug","flying"],{hp:70,atk:110,def:80,spa:55,spd:80,spe:125},"technician",["scytherDoubleWing","xscissor","uturn","swordsdance"]),
  S("scizor","ハッサム","image/image/ハッサム.gif",["bug","steel"],{hp:70,atk:130,def:100,spa:55,spd:80,spe:65},"technician",["bulletpunch","xscissor","uturn","swordsdance"])
 );
+SPECIES.push(S("gyarados","ギャラドス","image/image/ギャラドス.gif",["water","flying"],{hp:95,atk:125,def:79,spa:60,spd:100,spe:81},"intimidate",["waterfall","icefang","earthquake","dragondance"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -663,6 +664,7 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
