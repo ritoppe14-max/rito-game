@@ -344,3 +344,64 @@ vm.runInContext(`{
   const out=me;doSwitch('me',1,()=>{});check(!out.mougekiLock,'Switch clears move lock');
 }`,c);
 console.log('Mougeki scarf: speed, immunity/protect bypass and move lock OK');
+for(const name of ['メタグロス','メガメタグロス','シャワーズ','サンダース','ブースター','リーフィア','エーフィ','グレイシア'])assert.ok(fs.existsSync('image/image/'+name+'.gif'),'Existing image: '+name);
+vm.runInContext(`{
+  const ids=['metagross','vaporeon','jolteon','flareon','leafeon','espeon','glaceon'];
+  for(const id of ids){
+    const sp=SPECIES[SP_BY_ID[id]];check(sp&&sp.moves.every(k=>M[k])&&sp.learnset.every(k=>M[k]),id+' data and moves');
+    if(id!=='metagross')for(const owner of ['p1','p2','cpu']){
+      const mon=makeMon(SP_BY_ID[id],'none',owner);
+      check(mon.moves.length===5&&mon.moves[4]===M[BIRD_FIFTH[id]],id+' fixed fifth for '+owner);
+    }
+  }
+  const reset=(id)=>{
+    multi=null;battleSize=1;mode='cpu';weather=null;grassTurns=electricTurns=psychicTurns=mistTurns=0;hazards=emptyHazards();
+    me=makeMon(SP_BY_ID[id],id==='metagross'?'metagronite':'none');
+    foe=makeMon(SP_BY_ID.clobbopus,'none');foe.abilEff=null;foe.maxHp=foe.curHp=100000;
+    myTeam=[me,makeMon(SP_BY_ID.vaporeon,'none')];foeTeam=[foe,makeMon(SP_BY_ID.glaceon,'none')];myA=foeA=0;
+    return me;
+  };
+  const hit=(move)=>{let calls=0;attack(me,foe,{...move,forceHit:true},'foeImg',()=>calls++);check(calls===1,'callback '+move.name);};
+  reset('metagross');check(me.stoneMatches,'Metagronite match');doMega(me,'myImg',()=>{});
+  check(me.isMega&&me.name==='メガメタグロス'&&me.base.atk===145&&me.base.spe===110&&me.abilEff==='moldbreaker','Mega stats and Mold Breaker');
+  foe.types=['normal'];
+  for(const ability of ['flashfire','levitate','disguise','thickfat','multiscale','prankster','aurashield']){
+    foe.abilEff=ability;
+    const move=ability==='levitate'?M.earthquake:M.flamethrower;
+    check(calcDamage(me,foe,move,false).dmg===calcDamage(me,{...foe,abilEff:null},move,false).dmg,'Mold Breaker '+ability);
+  }
+  foe.abilEff='roughskin';const hp=me.curHp;hit(M.meteorMash);check(me.curHp===hp,'Mold Breaker prevents contact ability');
+  reset('vaporeon');const ally=myTeam[1];me.heis=[ally];me.curHp=me.maxHp-80;ally.curHp=ally.maxHp-80;hit(M.hydroVortex);
+  const startHp=me.curHp,startAlly=ally.curHp,startFoe=foe.curHp;
+  for(let i=0;i<4;i++){eeveeEndTurn(me,'myImg');eeveeEndTurn(foe,'foeImg');}
+  check(me.curHp===startHp+60&&ally.curHp===startAlly+60&&foe.curHp===startFoe-60,'Hydro exactly three ticks and ally healing');
+  reset('jolteon');hit(M.divineThunder);for(let i=0;i<4;i++)eeveeEndTurn(me,'myImg');check(me.stages.spe===3,'Thunder exactly three boosts');
+  reset('glaceon');hit(M.glacialAurora);for(let i=0;i<6;i++)eeveeEndTurn(foe,'foeImg');check(foe.stages.spd===-5,'Aurora exactly five drops');
+  reset('glaceon');foe.protectActive=true;hit(M.glacialAurora);check(!foe.auroraTurns,'Protected target gets no aurora');
+  reset('vaporeon');hit(M.hydroVortex);const oldMe=me,oldFoe=foe;doSwitch('me',1,()=>{});doSwitch('foe',1,()=>{});check(!oldMe.hydroTurns&&!oldFoe.hydroDot,'Switch clears ongoing effects');
+  reset('flareon');hit(M.infernoFlame);const fireHp=me.curHp;
+  check(me.status==='burn'&&me.safeBurn,'Flareon self burn');
+  check(calcDamage(me,foe,M.quickattack,false).dmg===calcDamage({...me,status:null},foe,M.quickattack,false).dmg,'No self-burn attack penalty');
+  applyResidual(me,'myImg',foe);check(me.curHp===fireHp,'No self-burn residual');
+  reset('espeon');const original=foe;hit(M.psychicEndless);check(foe!==original&&foeA===1,'Single forced switch');
+  foeTeam=[foe];foeA=0;hit(M.psychicEndless);check(foeTeam[0]===foe,'No bench completes');
+  for(const size of [2,3]){
+    battleSize=size;mode='friend';
+    const a=Array.from({length:size*2},()=>({sp:SP_BY_ID.leafeon,item:'none'}));
+    const b=Array.from({length:size*2},()=>({sp:SP_BY_ID.clobbopus,item:'none'}));
+    startBattleWith(a,a.map((_,i)=>i),b,b.map((_,i)=>i));
+    const attacker=multiLiving('me')[0],targets=multiLiving('foe').slice();
+    targets.forEach(t=>{t.maxHp=t.curHp=100000;t.abilEff=null;});
+    multiSetBehind(targets[1],targets[0]);
+    let done=0;attack(attacker,targets[0],{...M.grassCrusher,forceHit:true},multiImage(targets[0]),()=>done++);
+    check(done===1&&targets.every(t=>t.curHp<100000),'Leaf hits all '+size);
+    const guarded=targets[1],guardHp=guarded.curHp;guarded.wideGuardActive=true;
+    attack(attacker,targets[0],{...M.grassCrusher,forceHit:true},multiImage(targets[0]),()=>{});
+    check(guarded.curHp===guardHp,'Wide guard still blocks spread');
+    const before=multiLiving('foe').slice(),incoming=multiBench('foe').slice();
+    psychicForceSwitch(attacker,M.psychicEndless,()=>done++);
+    check(done===2&&multiLiving('foe').every(t=>incoming.includes(t))&&before.every(t=>!multiLiving('foe').includes(t)),'Unique multi replacements '+size);
+  }
+  multi=null;
+}`,c);
+console.log('Metagross and six Eevee evolutions: fifth slots, mega, Mold Breaker, durations, safe burn and multi forced switches OK');

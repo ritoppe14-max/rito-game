@@ -60,6 +60,7 @@ function multiEntry(s,m,cb){
   me=s==='me'?m:multiLiving('me')[0]||myTeam[0];foe=s==='foe'?m:multiLiving('foe')[0]||foeTeam[0];
   pushLog(`${sideLabel(s)} は ${m.name} を くりだした！`);
   if(m.id==='zacian'&&m.stoneMatches&&!m.isMega){transformZacian(m,multiImage(m),cb);return;}
+  if(m.id==='metagross'&&m.stoneMatches&&!m.isMega){doMega(m,multiImage(m),cb);return;}
   applyEntry(m,multiImage(m),cb);
 }
 function multiNext(){
@@ -104,6 +105,7 @@ function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
   a.mon.mougekiLock=null;
+  clearEeveeEffects(a.mon);
   multiClearBehind(a.mon);a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
   slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;
   me=a.side==='me'?a.replacement:multiLiving('me')[0]||myTeam[0];foe=a.side==='foe'?a.replacement:multiLiving('foe')[0]||foeTeam[0];
