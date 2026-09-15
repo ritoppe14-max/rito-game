@@ -381,7 +381,7 @@ vm.runInContext(`{
   reset('vaporeon');hit(M.hydroVortex);const oldMe=me,oldFoe=foe;doSwitch('me',1,()=>{});doSwitch('foe',1,()=>{});check(!oldMe.hydroTurns&&!oldFoe.hydroDot,'Switch clears ongoing effects');
   reset('flareon');hit(M.infernoFlame);const fireHp=me.curHp;
   check(me.status==='burn'&&me.safeBurn,'Flareon self burn');
-  check(calcDamage(me,foe,M.quickattack,false).dmg===calcDamage({...me,status:null},foe,M.quickattack,false).dmg,'No self-burn attack penalty');
+  check(calcDamage({...me,abilEff:null},foe,M.quickattack,false).dmg===calcDamage({...me,abilEff:null,status:null},foe,M.quickattack,false).dmg,'No self-burn attack penalty');
   applyResidual(me,'myImg',foe);check(me.curHp===fireHp,'No self-burn residual');
   reset('espeon');const original=foe;hit(M.psychicEndless);check(foe!==original&&foeA===1,'Single forced switch');
   foeTeam=[foe];foeA=0;hit(M.psychicEndless);check(foeTeam[0]===foe,'No bench completes');
@@ -425,3 +425,65 @@ vm.runInContext(`{
   }finally{Math.random=random;weather=null;}
 }`,c);
 console.log('Scyther and Scizor: move pools, speed, Technician and sure-hit double wing OK');
+vm.runInContext(`{
+  const reset=(a,b)=>{
+    multi=null;battleSize=1;mode='cpu';weather=null;hazards=emptyHazards();grassTurns=electricTurns=psychicTurns=mistTurns=0;
+    me=makeMon(SP_BY_ID[a],'none');foe=makeMon(SP_BY_ID[b],'none');
+    myTeam=[me];foeTeam=[foe];myA=foeA=0;me.maxHp=me.curHp=foe.maxHp=foe.curHp=100000;
+    turnAct={me:{type:'move'},foe:{type:'move'}};
+  };
+  const use=move=>{let calls=0;attack(me,foe,{...move,forceHit:true},'foeImg',()=>calls++);check(calls===1,'New abilities callback: '+move.name);};
+  const random=Math.random;
+  try{
+    Math.random=()=>.1;
+    reset('jolteon','gyarados');check(SPECIES[SP_BY_ID.jolteon].learnset.includes('electroball'),'Jolteon can learn Electro Ball');
+    const speed=effSpeed;
+    try{effSpeed=m=>m.testSpeed;
+      for(const [a,b,p] of [[1,10,20],[1,1,30],[2,1,60],[3,1,90],[4,1,120],[8,1,120]])check(electroBallPower({testSpeed:a},{testSpeed:b})===p,'Electro Ball ratio '+a+'/'+b);
+    }finally{effSpeed=speed;}
+    const slow=calcDamage(me,foe,M.electroball,false).dmg;me.stages.spe=6;
+    check(calcDamage(me,foe,M.electroball,false).dmg>slow,'Electro Ball reads current speed boosts');
+    reset('gyarados','jolteon');use({...M.thunderbolt,multiHit:2});
+    check(foe.curHp<100000&&foe.stages.spe===1,'Jolteon takes electric damage and gains speed once per move');
+    foe.protectActive=true;use(M.waterfall);check(foe.stages.spe===1,'No speed boost when protected');
+    reset('metagross','jolteon');use(M.earthquake);check(foe.stages.spe===0,'Mold Breaker bypasses voltage');
+    reset('flareon','gyarados');foe.abilEff=null;
+    const normal=calcDamage(me,foe,M.quickattack,false).dmg;
+    for(const status of ['burn','poison','paralyze','sleep']){me.status=status;const damage=calcDamage(me,foe,M.quickattack,false).dmg;check(damage>=normal*1.5-1&&damage<=normal*1.5+1,'Guts '+status);}
+    reset('leafeon','gyarados');use({...M.xscissor,multiHit:2});
+    check(me.stages.atk===1&&me.stages.def===-1,'Chlorophyll once for multi-hit');
+    use(M.swordsdance);check(me.stages.atk===3&&me.stages.def===-1,'No Chlorophyll on status move');
+    reset('gyarados','espeon');use(M.toxic);check(me.status==='toxic'&&!foe.status,'Toxic reflected');
+    reset('gyarados','espeon');use(M.thunderwave);check(me.status==='paralyze'&&!foe.status,'Thunder Wave reflected');
+    reset('gyarados','espeon');use(M.charm);check(me.stages.atk===-1&&me.stages.spa===-1&&foe.stages.atk===0,'Stat status reflected');
+    reset('espeon','espeon');use(M.toxic);check(me.status==='toxic'&&!foe.status,'Two mirrors do not loop');
+    reset('gyarados','espeon');use(M.swordsdance);check(me.stages.atk===2&&foe.stages.atk===0,'Self buffs not reflected');
+    reset('gyarados','espeon');use({...M.icebeam,freeze:1});check(foe.curHp<100000&&!foe.status&&me.status==='freeze','Damage retained but freeze reflected');
+    reset('gyarados','espeon');use({...M.shadowball,targetDrop:{chance:1,stats:{spd:-1}}});check(me.stages.spd===-1&&foe.stages.spd===0,'Secondary stat drop reflected');
+    reset('metagross','espeon');use(M.toxic);check(foe.status==='toxic'&&!me.status,'Mold Breaker bypasses mirror');
+    reset('glaceon','espeon');use(M.glacialAurora);check(me.auroraTurns===5&&!foe.auroraTurns,'Custom ongoing effect reflected');
+    reset('gyarados','glaceon');Math.random=()=>.49;use(M.rocktomb);check(foe.curHp===100000&&foe.stages.spe===0,'Snow Cloak cancels damage and speed drop below .5');
+    Math.random=()=>.5;use(M.rocktomb);check(foe.curHp<100000&&foe.stages.spe===-1,'Snow Cloak does not cancel at .5');
+    reset('gyarados','glaceon');Math.random=()=>.1;use(M.waterfall);check(foe.curHp<100000,'Snow Cloak does not block unrelated moves');
+    reset('metagross','glaceon');use(M.rocktomb);check(foe.curHp<100000&&foe.stages.spe===-1,'Mold Breaker bypasses Snow Cloak');
+    builds.p1.flareon={ability:'flashfire',moves:SPECIES[SP_BY_ID.flareon].moves.slice()};
+    builds.p1.espeon={ability:'synchronize',moves:SPECIES[SP_BY_ID.espeon].moves.slice()};
+    check(makeMon(SP_BY_ID.flareon,'none').abilEff==='guts'&&makeMon(SP_BY_ID.espeon,'none').abilEff==='magicmirror','Saved builds migrate to new abilities');
+    for(const size of [2,3]){
+      battleSize=size;mode='friend';
+      const p1=Array.from({length:size},()=>({sp:SP_BY_ID.leafeon,item:'none'}));
+      const p2=['espeon','glaceon','jolteon'].slice(0,size).map(id=>({sp:SP_BY_ID[id],item:'none'}));
+      startBattleWith(p1,p1.map((_,i)=>i),p2,p2.map((_,i)=>i));
+      const actor=multiLiving('me')[0],enemies=multiLiving('foe');
+      enemies.forEach(m=>{m.maxHp=m.curHp=100000;});actor.maxHp=actor.curHp=100000;
+      let done=0;
+      attack(actor,enemies[0],{name:'spread speed test',type:'grass',cat:'phys',power:50,spread:true,forceHit:true,targetDrop:{chance:1,stats:{spe:-1}}},multiImage(enemies[0]),()=>done++);
+      check(done===1&&enemies[0].curHp<100000&&enemies[0].stages.spe===0&&actor.stages.spe===-1,'Mirror reflects only debuff in multi '+size);
+      check(enemies[1].curHp===100000&&enemies[1].stages.spe===0,'Snow Cloak cancels secondary spread target '+size);
+      if(size===3)check(enemies[2].curHp<100000&&enemies[2].stages.spe===0,'Voltage and speed drop both resolve on third target');
+      check(actor.stages.atk===1&&actor.stages.def===-1,'Chlorophyll once per spread');
+    }
+    multi=null;
+  }finally{Math.random=random;}
+}`,c);
+console.log('Custom Eevee abilities: Electro Ball, voltage, Guts, Chlorophyll, mirror and Snow Cloak OK');

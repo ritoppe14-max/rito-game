@@ -294,7 +294,11 @@ Object.assign(ABIL,{waterabsorb:{name:"ちょすい",eff:"waterabsorb"},voltabso
 Object.assign(ABDESC,{waterabsorb:"水技を無効化し最大HPの1/4回復",voltabsorb:"電気技を無効化し最大HPの1/4回復",chlorophyll:"晴れのとき素早さ2倍",synchronize:"毒・猛毒・やけど・まひを与えた相手も同じ状態にする",snowcloak:"雪・あられのとき相手の技の命中率0.8倍"});
 ABIL.technician={name:"テクニシャン",eff:"technician"};
 ABDESC.technician="威力60以下の攻撃技の威力を1.5倍にする";
+ABIL.guts={name:"こんじょう",eff:"guts"};
+ABIL.magicmirror={name:"マジックミラー",eff:"magicmirror"};
+Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）"});
 const M={
+  electroball:{name:"エレキボール",type:"electric",cat:"spec",power:20,electroBall:true,desc:"威力20～120。自分/相手の素早さ比×30（最低20、4倍以上で120）"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
   bulletpunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:40,prio:1},
   hydroVortex:{name:"水流ハイドロ渦潮",type:"water",cat:"spec",power:100,eeveeMove:true,desc:"3ターン、対象に20ダメージ。自分と場の味方を毎ターン20回復"},
@@ -639,9 +643,9 @@ SPECIES.push(
  S("metagross","メタグロス","image/image/メタグロス.gif",["steel","psychic"],{hp:80,atk:135,def:130,spa:95,spd:90,spe:70},"moldbreaker",["meteorMash","psychic","earthquake","bulletpunch"],[{stone:"metagronite",stoneName:"メタグロナイト",name:"メガメタグロス",img:"image/image/メガメタグロス.gif",types:["steel","psychic"],base:{hp:80,atk:145,def:150,spa:105,spd:110,spe:110},abil:"moldbreaker"}]),
  S("vaporeon","シャワーズ","image/image/シャワーズ.gif",["water"],{hp:130,atk:65,def:60,spa:110,spd:95,spe:65},"waterabsorb",["surf","icebeam","shadowball","protect","hydroVortex"]),
  S("jolteon","サンダース","image/image/サンダース.gif",["electric"],{hp:65,atk:65,def:60,spa:110,spd:95,spe:130},"voltabsorb",["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder"]),
- S("flareon","ブースター","image/image/ブースター.gif",["fire"],{hp:65,atk:130,def:60,spa:95,spd:110,spe:65},"flashfire",["flaredrive","quickattack","facade","protect","infernoFlame"]),
+ S("flareon","ブースター","image/image/ブースター.gif",["fire"],{hp:65,atk:130,def:60,spa:95,spd:110,spe:65},"guts",["flaredrive","quickattack","facade","protect","infernoFlame"]),
  S("leafeon","リーフィア","image/image/リーフィア.gif",["grass"],{hp:65,atk:110,def:130,spa:60,spd:65,spe:95},"chlorophyll",["leafblade","xscissor","swordsdance","quickattack","grassCrusher"]),
- S("espeon","エーフィ","image/image/エーフィ.gif",["psychic"],{hp:65,atk:65,def:60,spa:130,spd:95,spe:110},"synchronize",["psychic","shadowball","calmMind","dazzlinggleam","psychicEndless"]),
+ S("espeon","エーフィ","image/image/エーフィ.gif",["psychic"],{hp:65,atk:65,def:60,spa:130,spd:95,spe:110},"magicmirror",["psychic","shadowball","calmMind","dazzlinggleam","psychicEndless"]),
  S("glaceon","グレイシア","image/image/グレイシア.gif",["ice"],{hp:65,atk:60,def:110,spa:130,spd:95,spe:65},"snowcloak",["icebeam","freezedry","shadowball","protect","glacialAurora"])
 );
 Object.assign(BIRD_FIFTH,{vaporeon:"hydroVortex",jolteon:"divineThunder",flareon:"infernoFlame",leafeon:"grassCrusher",espeon:"psychicEndless",glaceon:"glacialAurora"});
@@ -664,6 +668,7 @@ const FALINKS_HEI=[
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
@@ -1419,9 +1424,10 @@ function applyEntry(m,imgId,cb){
 }
 
 // ===== ダメージ計算 =====
+function electroBallPower(attacker,defender){return Math.max(20,Math.min(120,Math.floor(30*effSpeed(attacker)/Math.max(1,effSpeed(defender)))));}
 function calcDamage(attacker,defender,move,isCrit){
   if(attacker.itemKey==="mougekiScarf"||attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
-  if(!move.ignoreAbility&&((defender.abilEff==="waterabsorb"&&move.type==="water")||(defender.abilEff==="voltabsorb"&&move.type==="electric")||(defender.abilEff==="levitate"&&move.type==="ground")))return {dmg:0,eff:0,stab:false};
+  if(!move.ignoreAbility&&((defender.abilEff==="waterabsorb"&&move.type==="water")||(defender.abilEff==="levitate"&&move.type==="ground")))return {dmg:0,eff:0,stab:false};
   if(move.cat==="status"||((move.chargedPower!==undefined?move.chargedPower:move.power)<=0)) return {dmg:0,eff:1,stab:false};
   if(attacker.itemKey!=="mougekiScarf"&&(move.ignoreAbility?null:defender.abilEff)==="disguise"&&!defender.usedDisguise)return {dmg:0,eff:0,stab:false,disguise:true};
   const skinType=attacker.abilEff==="aerilate"?"flying":attacker.abilEff==="dragonskin"?"dragon":null;
@@ -1435,6 +1441,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(!move.ignoreAbility&&attacker.abilEff==="unaware") defStage=0;
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
+  if(move.cat==="phys"&&!move.useDef&&attacker.abilEff==="guts"&&attacker.status)atkStat*=1.5;
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(move.cat==="phys"&&attacker.abilEff==="birdFlame")atkStat*=attacker.birdFlameMult||1;
   if(move.cat==="phys"&&!move.ignoreAbility&&(move.ignoreAbility?null:defender.abilEff)==="birdSnow"&&(defender.birdHail||["snow","hail","freeze","ひょうけつ","ゆき","あられ"].includes(weather)||defender.status==="freeze"))defStat*=1.5;
@@ -1454,12 +1461,13 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.itemKey==="powerband") atkStat*=1.05;
   if(attacker.abilEff==="supremeoverlord"){const team=attacker===me?myTeam:foeTeam;atkStat*=1+Math.min(5,team.filter(m=>m.fainted).length)*.1;}
   if(attacker.abilEff==="sheerforce"&&sheerForceBoosts(move)) atkStat*=1.3;    // ちからずく
-  if(attacker.status==="burn"&&!attacker.safeBurn&&move.cat==="phys") atkStat*=0.5;                // やけど
+  if(attacker.status==="burn"&&!attacker.safeBurn&&attacker.abilEff!=="guts"&&move.cat==="phys") atkStat*=0.5;                // やけど
   if(weather==="sand"&&defender.types.includes("rock")&&move.cat==="spec") defStat*=1.5; // 砂:いわ特防↑
   let stab=attacker.abilEff==="libero"?1.2:(attacker.types.includes(moveType)?1.3:1.0);
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
+  if(move.electroBall&&!move.maxMove)movePower=electroBallPower(attacker,defender);
   if(attacker.abilEff==="technician"&&movePower>0&&movePower<=60)movePower*=1.5;
   if(attacker.abilEff==="steelknight"&&movePower<=65) movePower*=1.5;
   if(move.removeItem&&defender.itemKey&&defender.itemKey!=="none")movePower*=1.5;
@@ -1537,7 +1545,6 @@ function effSpeed(m){
   if(m.abilEff==="unburden"&&!m.itemKey||m.abilEff==="unburden"&&m.itemKey==="none")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
   if(m.itemKey==="scarf"||m.itemKey==="mougekiScarf")s*=1.5;
-  if(m.abilEff==="chlorophyll"&&weather==="sun")s*=2;
   return s;
 }
 function movePriority(mon,move){
@@ -1582,7 +1589,7 @@ function applyMaxMoveEffect(attacker,defender,move){
   else if(t==="fairy"){mistTurns=5;pushLog("  ✨ ミストフィールドになった！","#ee99ac");}
   const self={poison:{spa:1},fighting:{atk:1},flying:{spe:1},ground:{spd:1},steel:{def:1}}[t];
   const target=move.targetDrop||{normal:{spe:-1},bug:{spa:-1},dragon:{def:-1},ghost:{def:-1},dark:{spd:-1}}[t];
-  if(self)applyDrop(attacker,self); if(target&&defender.curHp>0)applyDrop(defender,target);
+  if(self)applyDrop(attacker,self); if(target&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),target.stats||target);
   if(move.cureGrassStatus&&defender.status&&["poison","toxic","burn","paralyze","sleep","hypersleep"].includes(defender.status)){defender.status=null;pushLog(`  ・ ${defender.name} の状態異常が回復した！`,"#7ac74c");renderStages();}
 }
 function runMultiHit(attacker,defender,move,defImgId,cb){
@@ -1980,12 +1987,17 @@ function psychicForceSwitch(attacker,move,cb){
 }
 function eeveeAttack(attacker,defender,move,img,cb){
   const targets=move.spread?(typeof multi!=="undefined"&&multi?multiLiving(birdSide(attacker)==="me"?"foe":"me"):enemyTargets(birdSide(attacker))).slice():[defender];
-  let anyHit=false;
+  let anyHit=false,forcedMirror=null;
   series(targets.map(target=>done=>{
     if(target.fainted||attacker.fainted){done();return;}
     let hit=false;
     attack(attacker,target,{...move,eeveeResolved:true,eeveeSpread:!!move.spread,spread:false,birdOnHit:()=>{hit=true;}},birdImage(target),()=>{
-      if(hit){anyHit=true;if(move.name===M.hydroVortex.name&&!target.fainted)target.hydroDot=3;if(move.name===M.glacialAurora.name&&!target.fainted)target.auroraTurns=5;}
+      if(hit){
+        anyHit=true;const effect=mirrorTarget(attacker,target,move);
+        if(move.name===M.hydroVortex.name&&!effect.fainted)effect.hydroDot=3;
+        if(move.name===M.glacialAurora.name&&!effect.fainted)effect.auroraTurns=5;
+        if(move.name===M.psychicEndless.name&&effect===attacker)forcedMirror=target;
+      }
       done();
     });
   }),()=>{
@@ -1993,13 +2005,33 @@ function eeveeAttack(attacker,defender,move,img,cb){
       if(move.name===M.hydroVortex.name)attacker.hydroTurns=3;
       if(move.name===M.divineThunder.name)attacker.thunderRise=3;
       if(move.name===M.infernoFlame.name){attacker.status="burn";attacker.safeBurn=true;pushLog(`  ★ ${attacker.name} は業火のやけど状態！ 継続ダメージ・攻撃半減なし！`);renderStages();}
-      if(move.name===M.psychicEndless.name){psychicForceSwitch(attacker,move,cb);return;}
+      if(move.name===M.psychicEndless.name){psychicForceSwitch(forcedMirror||attacker,{...move,mirrorReflected:!!forcedMirror},cb);return;}
     }
     cb();
   });
 }
+function ignoresDefenderAbility(attacker,move){return !!(move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf");}
+function speedLoweringMove(move){return !!(move.targetDrop?.stats?.spe<0||move.preTargetDrop?.spe<0||(move.maxMove&&move.type==="normal"));}
+function snowAvoidsMove(attacker,defender,move){
+  if(defender.abilEff!=="snowcloak"||ignoresDefenderAbility(attacker,move)||!speedLoweringMove(move))return false;
+  const checks=move.abilityContext.snowChecks||(move.abilityContext.snowChecks=new Map());
+  if(!checks.has(defender))checks.set(defender,Math.random()<.5);
+  if(!checks.get(defender))return false;
+  pushLog(`  ★ ${defender.name} のゆきがくれ！ ${move.name} を無効化した！`);return true;
+}
+function voltageOnHit(attacker,defender,move,damage){
+  if(damage<=0||defender.curHp<=0||defender.abilEff!=="voltabsorb"||ignoresDefenderAbility(attacker,move))return;
+  const seen=move.abilityContext.voltageHits||(move.abilityContext.voltageHits=new Set());
+  if(seen.has(defender))return;seen.add(defender);applyDrop(defender,{spe:1});
+  pushLog(`  ★ ${defender.name} のちくでん！`);
+}
+function mirrorTarget(attacker,defender,move){
+  if(defender.abilEff==="magicmirror"&&!ignoresDefenderAbility(attacker,move)&&!move.mirrorReflected&&defender.curHp>0)return attacker;
+  return defender;
+}
+function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
 function attack(attacker,defender,move,defImgId,cb){
-  if(move.eeveeMove&&!move.eeveeResolved){eeveeAttack(attacker,defender,move,defImgId,cb);return;}
+  move={...move,abilityContext:move.abilityContext||{}};
   if(attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
   if(attacker.itemKey==="mougekiScarf"){
     if(attacker.mougekiLock&&attacker.mougekiLock!==move.name){pushLog("  └ もうげきスカーフで技が固定されている！");cb();return;}
@@ -2011,9 +2043,12 @@ function attack(attacker,defender,move,defImgId,cb){
     birdAttack(attacker,defender,move,defImgId,cb);return;
   }
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
+  if(attacker.abilEff==="chlorophyll"&&move.cat!=="status"&&move.power>0&&!move.abilityContext.leafBoosted){move.abilityContext.leafBoosted=true;applyDrop(attacker,{def:-1,atk:1});pushLog(`  ★ ${attacker.name} のようりょくそ！`);}
+  if(move.eeveeMove&&!move.eeveeResolved){eeveeAttack(attacker,defender,move,defImgId,cb);return;}
   if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
+  if(snowAvoidsMove(attacker,defender,move)){cb();return;}
   if(attacker.id==="aegislash"){
     if(move.shieldForm)setAegislashForm(attacker,"shield");
     else if(move.bladeForm||(move.cat!=="status"&&move.power>0))setAegislashForm(attacker,"blade");
@@ -2036,7 +2071,7 @@ function attack(attacker,defender,move,defImgId,cb){
   const onceFlag=move.onceFlag||"usedPlayTogether";
   if(move.onceBattle&&attacker[onceFlag]){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.onceBattle)attacker[onceFlag]=true;
-  if(move.preTargetDrop&&defender.curHp>0)applyDrop(defender,move.preTargetDrop);
+  if(move.preTargetDrop&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),move.preTargetDrop);
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
   const acted=attacker.acted||0; attacker.acted=acted+1;
   if(attacker.abilEff==="gulpMissile"&&!attacker.isDynamax&&["なみのり","ダイビング"].includes(move.name)){
@@ -2050,6 +2085,10 @@ function attack(attacker,defender,move,defImgId,cb){
     const h=Math.max(1,Math.floor(attacker.maxHp*.20));
     attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h); renderHp();
     pushLog(`  ★ いたずらごころで HP${h}回復！`,"#46d160");
+  }
+  if(reflectableStatus(move)&&mirrorTarget(attacker,defender,move)===attacker){
+    pushLog(`  ★ ${defender.name} のマジックミラー！ ${move.name} を反射！`);
+    const original=attacker;attacker=defender;defender=original;defImgId=birdImage(defender);move={...move,mirrorReflected:true};
   }
   if(move.protect){
     if(attacker.protectCooldown>0){setTimeout(()=>{pushLog("  └ まもるは連続で使えない！","#9fb3d6");cb();},350);return;}
@@ -2082,14 +2121,14 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{pushLog(`  └ ${defender.name} の ワイドガードで 攻撃を防いだ！`,"#7ad1ff");cb();},350);return;
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
-  const falinksPart=falinksPartInfo(defender,move), accuracy=move.forceHit?1:Math.min(1,(falinksPart&&falinksPart.accuracy||move.accuracy||1)*(attacker.abilEff==="compoundeyes"?1.3:1)*(attacker.abilEff==="hustle"?.8:1)*(!move.ignoreAbility&&defender.abilEff==="snowcloak"&&["snow","hail"].includes(weather)?.8:1));
+  const falinksPart=falinksPartInfo(defender,move), accuracy=move.forceHit?1:Math.min(1,(falinksPart&&falinksPart.accuracy||move.accuracy||1)*(attacker.abilEff==="compoundeyes"?1.3:1)*(attacker.abilEff==="hustle"?.8:1));
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);host.careCritGuardPending=true;renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！ 次のターンは急所に当たらない！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.reflect){ setTimeout(()=>{attacker.reflectTurns=5;pushLog(`  └ ${attacker.name} は リフレクターを 張った！`,"#7ad1ff");cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
-    const targetSide=defender===me?"me":"foe";
+    const targetSide=birdSide(defender);
     setTimeout(()=>{
       setHazard(targetSide,move.hazard,attacker);
       cb();
@@ -2136,13 +2175,19 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{defender.sweetAromaTurns=move.sweetAroma;pushLog(`  └ ${defender.name} は あまいかおりに 包まれた！`,"#ffcb05");cb();},450);
     return;
   }
+  if(move.cat==="status"){
+    if(move.targetDrop&&Math.random()<(move.targetDrop.chance??1))applyDrop(defender,move.targetDrop.stats);
+    for(const status of ["burn","freeze","poison","paralyze"])if(move[status]&&Math.random()<move[status])applyStatus(defender,status,attacker);
+    if(move.sleep&&canStatus(defender,"sleep",attacker)){defender.status="sleep";defender.sleepTurns=2;renderStages();}
+    cb();return;
+  }
   const critRate=attacker.id==="raichuA"&&attacker.itemKey==="pancake"?.5:(move.critRate||(move.highCrit?0.125:0.066));
   const isCrit=!defender.careCritGuard&&(move.ignoreAbility?null:defender.abilEff)!=="shellarmor"&&(move.forceCrit||Math.random()<critRate);
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
   if(res.disguise){defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
   const sheer=attacker.abilEff==="sheerforce"&&sheerForceBoosts(move), extraBlocked=defender.itemKey==="cloak";
-  if(res.eff===0&&!move.ignoreAbility&&((defender.abilEff==="eartheater"&&calcMove.type==="ground")||(defender.abilEff==="waterabsorb"&&calcMove.type==="water")||(defender.abilEff==="voltabsorb"&&calcMove.type==="electric"))){
+  if(res.eff===0&&!move.ignoreAbility&&((defender.abilEff==="eartheater"&&calcMove.type==="ground")||(defender.abilEff==="waterabsorb"&&calcMove.type==="water"))){
     const h=Math.max(1,Math.floor(defender.maxHp/4));
     defender.curHp=Math.min(defender.maxHp,defender.curHp+h); renderHp();
     setTimeout(()=>{pushLog(`  └ ${defender.name} は ${defender.abilName}で HP${h}回復！`,"#46d160");cb();},450); return;
@@ -2180,6 +2225,9 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     defender.curHp=Math.max(0,defender.curHp-dmg); renderHp();
     if(actualDamage>0)birdContact(attacker,defender,move,actualDamage);
+    voltageOnHit(attacker,defender,move,actualDamage);
+    const effectTarget=mirrorTarget(attacker,defender,move),effectSource=effectTarget===attacker?defender:attacker;
+    if(effectTarget===attacker&&["freeze","burn","poison","paralyze","hypersleep","flinch","targetDrop","salt","switchLock","trapTurns","soundBlock","removeItem"].some(k=>move[k]))pushLog("  ★ マジックミラーで追加効果を反射！");
     if(actualDamage>0&&(move.ignoreAbility?null:defender.abilEff)==="gulpMissile"&&defender.gulpReady){
       defender.gulpReady=false;
       if(attacker.curHp>0){
@@ -2234,26 +2282,32 @@ function attack(attacker,defender,move,defImgId,cb){
       const attackerSide=(attacker===me||attacker.host===me)?"me":"foe";
       enemyTargets(attackerSide).filter(other=>other!==defender&&!other.fainted&&other.curHp>0).forEach(other=>{
         const spreadRes=calcDamage(attacker,other,calcMove,false);
-        if(spreadRes.eff===0) return;
+        if(spreadRes.eff===0||snowAvoidsMove(attacker,other,move)) return;
         const spreadDamage=Math.min(other.curHp,spreadRes.dmg);
         if(other.iceShieldHp>0){absorbIceShield(other,spreadRes.dmg);birdContact(attacker,other,move,0);return;}
         other.curHp=Math.max(0,other.curHp-spreadDamage);
         if(spreadDamage>0)birdContact(attacker,other,move,spreadDamage);
+        voltageOnHit(attacker,other,move,spreadDamage);
         pushLog(`  └ ${other.name} にも ${spreadDamage} ダメージ！`);
-        if(!sheer&&move.paralyze&&other.curHp>0&&Math.random()<move.paralyze) applyStatus(other,"paralyze",attacker);
+        const secondary=mirrorTarget(attacker,other,move),secondarySource=secondary===attacker?other:attacker;
+        if(!sheer&&other.curHp>0){
+          for(const status of ["freeze","burn","poison","paralyze"])if(move[status]&&Math.random()<move[status])applyStatus(secondary,status,secondarySource);
+          if(move.targetDrop&&Math.random()<(move.targetDrop.chance??1))applyDrop(secondary,move.targetDrop.stats);
+          if(move.flinch&&!secondary.turnMoved&&hasPendingMove(secondary)&&Math.random()<move.flinch)secondary.flinched=true;
+        }
         if(other.curHp<=0&&!other.fainted){applyNeigh(attacker,other);faintMon(other,other.isHei?`hei-${other.host===me?"me":"foe"}-${other.name}`:imgOf(attackerSide==="me"?"foe":"me"));}
       });
       renderHp(); renderHeis();
     }
     if((move.ignoreAbility?null:defender.abilEff)==="pepperguard"&&attacker.curHp>0&&defender.curHp>0) applyStatus(attacker,"burn",defender);
-    if(move.salt&&defender.curHp>0){defender.salted=true;pushLog(`  ・ ${defender.name} は しおづけになった！`,"#7ad1ff");}
-    if(move.switchLock&&defender.curHp>0){
-      defender.switchLock=move.switchLock;
-      if(!move.trapTurns)pushLog(`  ・ ${defender.name} は ${move.switchLock}ターン交代できない！`,"#ff7043");
+    if(move.salt&&effectTarget.curHp>0){effectTarget.salted=true;pushLog(`  ・ ${effectTarget.name} は しおづけになった！`,"#7ad1ff");}
+    if(move.switchLock&&effectTarget.curHp>0){
+      effectTarget.switchLock=move.switchLock;
+      if(!move.trapTurns)pushLog(`  ・ ${effectTarget.name} は ${move.switchLock}ターン交代できない！`,"#ff7043");
     }
-    if(move.trapTurns&&defender.curHp>0){
-      defender.trapTurns=move.trapTurns; defender.trapDenom=move.trapDenom; defender.trapLabel=move.trapLabel||"マグマストームの熱"; defender.trapColor=move.trapColor||"#ff7043";
-      pushLog(`  ・ ${defender.name} は ${move.name} の熱に包まれた！`,"#ff7043");
+    if(move.trapTurns&&effectTarget.curHp>0){
+      effectTarget.trapTurns=move.trapTurns; effectTarget.trapDenom=move.trapDenom; effectTarget.trapLabel=move.trapLabel||"マグマストームの熱"; effectTarget.trapColor=move.trapColor||"#ff7043";
+      pushLog(`  ・ ${effectTarget.name} は ${move.name} の熱に包まれた！`,"#ff7043");
     }
     if(move.duraludonDisaster){
       const attackerSide=(attacker===me||attacker.host===me)?"me":"foe", targetSide=attackerSide==="me"?"foe":"me";
@@ -2261,12 +2315,12 @@ function attack(attacker,defender,move,defImgId,cb){
       attacker.duraludonShieldTurns=3;
       pushLog(`  ★ ${attacker.name} の ジュラルディザスター！ ${sideLabel(targetSide)} の交代に最大HP30%ダメージ・3ターン被ダメージ2/3！`,"#b6a136");
     }
-    if(move.soundBlock&&defender.curHp>0){defender.soundBlocked=move.soundBlock;pushLog(`  ・ ${defender.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
+    if(move.soundBlock&&effectTarget.curHp>0){effectTarget.soundBlocked=move.soundBlock;pushLog(`  ・ ${effectTarget.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
     if(move.beatup&&actualDamage>0)summonFalinksHeis(attacker);
-    if(move.removeItem&&actualDamage>0&&defender.itemKey&&defender.itemKey!=="none"){
-      const removed=ITEMS[defender.itemKey]?.name||defender.itemKey;
-      defender.itemKey="none";defender.stoneMatches=false;
-      pushLog(`  └ ${defender.name} の ${removed} を はたきおとした！`,"#ffcb05");
+    if(move.removeItem&&actualDamage>0&&effectTarget.itemKey&&effectTarget.itemKey!=="none"){
+      const removed=ITEMS[effectTarget.itemKey]?.name||effectTarget.itemKey;
+      effectTarget.itemKey="none";effectTarget.stoneMatches=false;
+      pushLog(`  └ ${effectTarget.name} の ${removed} を はたきおとした！`,"#ffcb05");
       setAbLine();
     }
     applyMoveRecoil(attacker,move,actualDamage);
@@ -2286,19 +2340,19 @@ function attack(attacker,defender,move,defImgId,cb){
         pushLog(`  ★ ${defender.name} の おぼんのみ！ HP${h}回復！`,"#46d160");
       }
     }
-    if(!sheer&&move.freeze&&defender.curHp>0&&Math.random()<move.freeze) applyStatus(defender,"freeze",attacker);
-    if(!sheer&&move.burn&&defender.curHp>0&&Math.random()<move.burn) applyStatus(defender,"burn",attacker);
-    if(!sheer&&move.poison&&defender.curHp>0&&Math.random()<move.poison) applyStatus(defender,"poison",attacker);
-    if(!sheer&&move.paralyze&&defender.curHp>0&&Math.random()<move.paralyze) applyStatus(defender,"paralyze",attacker);
-    if(move.hypersleep&&defender.curHp>0){
-      defender.status="hypersleep"; defender.sleepTurns=0;
-      renderStages(); pushLog(`  ・ ${defender.name} は 超眠気に なった！`,"#9fb3d6");
+    if(!sheer&&move.freeze&&effectTarget.curHp>0&&Math.random()<move.freeze) applyStatus(effectTarget,"freeze",effectSource);
+    if(!sheer&&move.burn&&effectTarget.curHp>0&&Math.random()<move.burn) applyStatus(effectTarget,"burn",effectSource);
+    if(!sheer&&move.poison&&effectTarget.curHp>0&&Math.random()<move.poison) applyStatus(effectTarget,"poison",effectSource);
+    if(!sheer&&move.paralyze&&effectTarget.curHp>0&&Math.random()<move.paralyze) applyStatus(effectTarget,"paralyze",effectSource);
+    if(move.hypersleep&&effectTarget.curHp>0){
+      effectTarget.status="hypersleep"; effectTarget.sleepTurns=0;
+      renderStages(); pushLog(`  ・ ${effectTarget.name} は 超眠気に なった！`,"#9fb3d6");
     }
-    if(!sheer&&move.flinch&&defender.curHp>0&&!defender.turnMoved&&hasPendingMove(defender)&&Math.random()<move.flinch){
-      defender.flinched=true;
-      pushLog(`  ・ ${defender.name} は ひるんだ！`,"#ffcb05");
+    if(!sheer&&move.flinch&&effectTarget.curHp>0&&!effectTarget.turnMoved&&hasPendingMove(effectTarget)&&Math.random()<move.flinch){
+      effectTarget.flinched=true;
+      pushLog(`  ・ ${effectTarget.name} は ひるんだ！`,"#ffcb05");
     }
-    if(!move.maxMove&&!sheer&&move.targetDrop&&defender.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(defender,move.targetDrop.stats);
+    if(!move.maxMove&&!sheer&&move.targetDrop&&effectTarget.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(effectTarget,move.targetDrop.stats);
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status") applyDrop(attacker,{spa:1});
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
