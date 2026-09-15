@@ -487,3 +487,12 @@ vm.runInContext(`{
   }finally{Math.random=random;}
 }`,c);
 console.log('Custom Eevee abilities: Electro Ball, voltage, Guts, Chlorophyll, mirror and Snow Cloak OK');
+vm.runInContext(`
+  check(COMPETITIVE_MOVE_100.length===100,'Competitive move collection has exactly 100 moves');
+  check(new Set(COMPETITIVE_MOVE_100).size===100,'Competitive move collection has no duplicates');
+  COMPETITIVE_MOVE_100.forEach(key=>{
+    check(M[key],'Competitive move is defined: '+key);
+    check(SPECIES.some(sp=>(sp.learnset||[]).includes(key)),'Competitive move has a learner: '+key);
+  });
+`,c);
+console.log('Competitive 100 moves and learnsets OK');

@@ -759,6 +759,15 @@ const LEARN={
 };
 // ポケモン徹底攻略のSV→剣盾→サンムーンの順で確認した、専用技以外の対戦用55技。
 const COMPETITIVE_MOVE_55=["earthquake","rockslide","stoneedge","ironhead","poisonjab","crunch","suckerpunch","shadowclaw","shadowball","darkpulse","icebeam","icefang","icepunch","flamethrower","fireblast","firepunch","thunderbolt","thunder","thunderwave","energyball","focusblast","psychic","surf","hydropump","waterfall","aquajet","liquidation","crabhammer","bugbite","xscissor","megahorn","dragonclaw","meteor","dpulse","dragontail","hurricane","airslash","playrough","closecombat","bodypress","fakeout","uturn","protect","substitute","toxic","stealthrock","spikes","stickyweb","swordsdance","calmMind","nastyPlot","dragondance","irondefense","buildup","reflect"];
+// ポケモン徹底攻略のSV技リストと各ポケモン図鑑で確認した対戦用100技。
+// 前半55技に加え、交代・積み・範囲攻撃など対戦で使われる45技を明示的に管理する。
+const COMPETITIVE_MOVE_100=[...COMPETITIVE_MOVE_55,
+  "knockoff","foulplay","taunt","encore","trick","snarl","hex","poltergeist","bodyslam","doubleedge",
+  "hypervoice","woodhammer","seedbomb","bulletseed","leafstorm","gigadrain","discharge","voltswitch","scald","muddywater",
+  "flipturn","wavecrash","icywind","blizzard","haze","psyshock","expandingforce","storedpower","futuresight","vacuumwave",
+  "brickbreak","bulldoze","stompingtantrum","bugbuzz","lunge","pounce","rockblast","phantomforce","meteorMash","flashcannon2",
+  "aircutter","poisonfang","crosspoison","synthesis","sleeppowder"
+];
 // 実際の育成画面へ追加する習得可能な対戦技（SV→剣盾→サンムーン基準）。
 const COMPETITIVE_COMPAT={
   sableye:["reflect","calmMind","willowisp"], chansey:["reflect","substitute"], porygon2:["reflect","calmMind","shadowball"], yadoran:["reflect","calmMind","nastyPlot"], latios:["reflect","nastyPlot"],
