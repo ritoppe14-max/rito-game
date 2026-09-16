@@ -517,6 +517,7 @@ vm.runInContext(`
   announceAbility({abilName:'テスト特性'});
   check(document.getElementById('abilityToast').textContent==='特性：テスト特性 発動！','Ability activation toast text');
   const clobbopus=SPECIES[SP_BY_ID.clobbopus];
+  check(clobbopus.base.atk===102,'Clobbopus attack base stat is 102');
   check(CLOBBOPUS_ADDED_MOVES.length===24&&CLOBBOPUS_ADDED_MOVES.every(key=>M[key]&&clobbopus.learnset.includes(key)),'Clobbopus receives all requested moves');
   check(M.machpunch.power===50&&M.machpunch.prio===1&&M.clobbopusBulletPunch.power===50&&M.clobbopusBulletPunch.prio===1,'Clobbopus priority moves');
   check(M.circlethrow.power===55&&M.circlethrow.prio===-6&&M.circlethrow.targetForceSwitch,'Circle Throw forces the target to switch');
