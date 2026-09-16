@@ -99,6 +99,9 @@ vm.runInContext(`
   check(calcDamage(fire,duraEviolite,M.fireblast,false).dmg<calcDamage(fire,duraPlain,M.fireblast,false).dmg,'Duraludon receives Eviolite bulk');
   hazards=emptyHazards();setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);setHazard('foe','rocks',dura);
   check(hazards.foe.rocks===3,'Stealth Rock three layers');
+  check(M.stealthrock.cat==='status'&&M.stealthrock.power===0&&M.stealthrock.hazard==='rocks','Stealth Rock is an entry hazard for normal users');
+  check(M.duraludonStealthRock.power===65&&M.duraludonStealthRock.hazardAfterDamage==='rocks'&&spMoves(SPECIES[SP_BY_ID.duraludon]).includes('duraludonStealthRock'),'Only Duraludon has direct-damage Stealth Rock');
+  const rockTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');me=dura;foe=rockTarget;hazards.foe=emptyHazards().foe;setHazard('foe','rocks',dura);const entryHp=rockTarget.curHp;applyHazards('foe',()=>{});check(rockTarget.curHp<entryHp,'Stealth Rock damages on switching in');
   dura.duraludonShieldTurns=3;const shielded=calcDamage(fire,dura,M.fireblast,false).dmg;dura.duraludonShieldTurns=0;const plain=calcDamage(fire,dura,M.fireblast,false).dmg;
   check(shielded<=Math.ceil(plain*2/3),'Duraludon disaster shield');
   const cream=makeMon(SP_BY_ID.alcremie,'none','p1'),ally=makeMon(SP_BY_ID.duraludon,'none','p1'),enemy=makeMon(SP_BY_ID.centiskorch,'none','cpu');

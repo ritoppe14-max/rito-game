@@ -144,7 +144,6 @@ function multiEnd(){
     const target=multiLiving(multiOther(s))[0]||multi.teams[multiOther(s)][0];
     me=s==='me'?m:target;foe=s==='foe'?m:target;
     applyResidual(m,multiImage(m),target);
-    applyStealthRockResidual(s,m,multiImage(m));
     if(m.curHp<=0){faintMon(m,multiImage(m));return;}
     if(m.itemKey==='toxicorb'&&!m.status)applyStatus(m,'poison',m);
     if(m.abilEff==='poisonheal'&&(m.status==='poison'||m.status==='toxic'))m.curHp=Math.min(m.maxHp,m.curHp+Math.max(1,Math.floor(m.maxHp/7)));
