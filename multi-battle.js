@@ -32,17 +32,18 @@ renderActive=function(){if(multi)renderMulti();else multiOriginal.renderActive()
 faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){m.fainted=true;m.curHp=0;multiClearBehind(m);pushLog(`${m.name} は たおれた！`);}renderMulti();};
 enemyTargets=function(s){return multi?multiVisible(multiOther(s)):multiOriginal.enemyTargets(s);};
 show=function(id){if(id!=='battle'&&multi){multi=null;document.getElementById('multiField')?.remove();document.getElementById('multi-action-me')?.remove();document.getElementById('multi-action-foe')?.remove();document.querySelector('#battle .field').style.display='';}multiOriginal.show(id);};
-function startMultiFriend(size){battleSize=size;mode='friend';openPartyBuilder('p1');}
+function startMultiFriend(size){sixBattle=false;battleSize=size;mode='friend';openPartyBuilder('p1');}
+function startSixFriend(){sixBattle=true;battleSize=1;mode='friend';openPartyBuilder('p1');}
 const singleFriendSetup=startFriendSetup;
-startFriendSetup=function(){battleSize=1;singleFriendSetup();};
+startFriendSetup=function(){battleSize=1;sixBattle=false;singleFriendSetup();};
 const singleFriendSelect=startFriendSelect;
 startFriendSelect=function(){
-  if(battleSize===1)return singleFriendSelect();
-  const count=battlePartyCount(battleSize);
+  if(battleSize===1&&!sixBattle)return singleFriendSelect();
+  const count=sixBattle?6:battlePartyCount(battleSize);
   const select=(owner,src,reveal,cb)=>{selCtx={owner,src,reveal,sel:[],count,label:`${owner==='p1'?'プレイヤー1':'プレイヤー2'}：${count}体選択（最初の${battleSize}体が先発）`,cb};show('preview');renderPreview();};
   select('p1',party,party2,()=>{const p1=selCtx.sel.slice();select('p2',party2,party,()=>startBattleWith(party,p1,party2,selCtx.sel.slice()));});
 };
-document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(6)">👥 6体・フレンド対戦（同じ端末）</button>');
+document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startSixFriend()">👥 6体・フレンド対戦（同じ端末）</button>');
 function startMultiBattle(p1,sel1,p2,sel2){
   multiOriginal.show('battle');
   myTeam=sel1.map(i=>makeMon(p1[i].sp,p1[i].item,'p1'));

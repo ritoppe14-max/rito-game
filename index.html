@@ -1001,7 +1001,7 @@ function partyMoveChoices(sp,pool,slot){
   if(slot===4&&sp.id==="aegislash")return ["gilgamesh"];
   return pool.filter(k=>!(["ritualBlade","duraludonDisaster","holecake"].includes(k)));
 }
-function startCpu(){ battleSize=1;mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
+function startCpu(){ battleSize=1;sixBattle=false;mode='cpu'; lunaticStage=false; npcLevel=Number(document.getElementById("npcLevel").value)||1; enterPreview(); }
 function startLunaticStage(){ mode='lunatic'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage2(){ mode='lunatic2'; lunaticStage=true; npcLevel=10; enterPreview(); }
 function startLunaticStage3(){ mode='lunatic3'; lunaticStage=true; npcLevel=10; enterPreview(); }
@@ -1170,18 +1170,18 @@ function setTrainAbil(k){ buildOf(SPECIES[trainSel],trainOwner).ability=k; saveG
 function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=sp.moves.slice(); buildOf(sp,trainOwner).ability=sp.abil; saveGame(); renderTrain(); }
 
 // ===== 見せ合い → 3体選出 =====
-let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1;
+let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1, sixBattle=false;
 function battlePartyCount(size){return size===6?6:size>1?size*2:3;}
-function startGroupBattle(size){mode="cpu";lunaticStage=false;battleSize=size;npcLevel=Number(document.getElementById("npcLevel").value)||1;enterPreview();}
+function startGroupBattle(size){mode="cpu";lunaticStage=false;sixBattle=size===6;battleSize=sixBattle?1:size;npcLevel=Number(document.getElementById("npcLevel").value)||1;enterPreview();}
 function enterPreview(){   // CPU戦
-  const required=battleSize>1?battlePartyCount(battleSize):(lunaticStage||mode==='dynamaxUnlock')?3:6;
+  const required=sixBattle?6:battleSize>1?battlePartyCount(battleSize):(lunaticStage||mode==='dynamaxUnlock')?3:6;
   if(party.length<required){
     alert(`挑戦するにはパーティに${required}体以上必要です（現在${party.length}体）。パーティを編成してください。`);
     openPartyBuilder('cpu');
     return;
   }
   if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic5') buildLunaticParty5(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
-  const count=battleSize>1?battlePartyCount(battleSize):3;
+  const count=sixBattle?6:battleSize>1?battlePartyCount(battleSize):3;
   selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, count, label:`あなたのパーティ — 出す${count}体をえらぶ`,
     cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
   show("preview"); renderPreview();
@@ -1279,7 +1279,7 @@ function toggleSel(i){
   renderPreview();
 }
 function cpuSelect3(){
-  const count=battleSize>1?battlePartyCount(battleSize):3;
+  const count=sixBattle?6:battleSize>1?battlePartyCount(battleSize):3;
   if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'){
     if(mode==='lunatic3'||mode==='lunatic4'){ cpuSel=[0,1,2]; return; }
     if(mode==='lunatic5'){ cpuSel=[0]; return; }

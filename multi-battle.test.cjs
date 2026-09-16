@@ -8,7 +8,7 @@ vm.runInContext(fs.readFileSync('multi-battle.js','utf8'),c);
 vm.runInContext(`
   function check(ok,msg){if(!ok)throw Error(msg);}
   check(battlePartyCount(2)===4&&battlePartyCount(3)===6&&battlePartyCount(6)===6,'Battle party counts include 6 vs 6');
-  for(const size of [2,3,6]){
+  for(const size of [2,3]){
     battleSize=size;mode='friend';
     const p=Array.from({length:size*2},()=>({sp:SP_BY_ID.duraludon,item:'none'}));
     startBattleWith(p,p.map((_,i)=>i),p,p.map((_,i)=>i));
@@ -32,6 +32,11 @@ vm.runInContext(`
     check(d.curHp<hp,'real damage');
     show('home');check(!multi,'leave battle');
   }
+  sixBattle=true;battleSize=1;mode='friend';
+  const sixParty=Array.from({length:6},()=>({sp:SP_BY_ID.duraludon,item:'none'}));
+  startBattleWith(sixParty,[0,1,2,3,4,5],sixParty,[0,1,2,3,4,5]);
+  check(!multi&&myTeam.length===6&&foeTeam.length===6&&me===myTeam[0]&&foe===foeTeam[0],'6 vs 6 is one active Pokemon with five on the bench');
+  sixBattle=false;
   const dura=makeMon(SP_BY_ID.duraludon,'none','p1'), fire=makeMon(SP_BY_ID.centiskorch,'none','cpu');
   me=dura;foe=fire;battleSize=1;
   const single=calcDamage(dura,fire,M.duraludonCannon,false);
