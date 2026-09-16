@@ -268,6 +268,8 @@ ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
 ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
 ABDESC.grimneigh="自分の技で相手を倒すと特攻が1段階上がる";
 ABDESC.chillingneigh="自分の技で相手を倒すと攻撃が1段階上がる";
+ABIL.berserker={name:"バーサーカー",eff:"berserker"};
+ABDESC.berserker="相手を倒すとバーサーカーセグレイブに変身。変身後は倒すたび攻撃+1段階";
 ABIL.birdSnow={name:"ゆきがくれ",eff:"birdSnow"};
 ABIL.birdStatic={name:"せいでんき",eff:"birdStatic"};
 ABIL.birdFlame={name:"ほのおのからだ",eff:"birdFlame"};
@@ -353,6 +355,8 @@ const M={
   hydreigonmeteor:{name:"りゅうせいぐん",type:"dragon",cat:"spec",power:120,hydreigonMeteor:true},
   dragonrage2:{name:"りゅうのいごり",type:"dragon",cat:"phys",power:120,selfDrop:{atk:-1}},
   dpulse:{name:"ドラゴンパルス",type:"dragon",cat:"spec",power:85},
+  glaiveRush:{name:"きょけんとつげき",type:"dragon",cat:"phys",power:120},
+  frozenGlaiveRush:{name:"ヒョウケツキョケン",type:"dragon",cat:"phys",power:140,frozenGlaive:true,desc:"使用後、防御・特防が半減。次の攻撃が必中"},
   duraludonPulse:{name:"りゅうのはどう",type:"dragon",cat:"spec",power:80,spread:true},
   dragontail:{name:"ドラゴンテール",type:"dragon",cat:"phys",power:70,prio:-2,switchAfter:true},
   latiospulse:{name:"りゅうのはどう",type:"dragon",cat:"spec",power:30,infiniteCharge:true},
@@ -658,6 +662,7 @@ SPECIES.push(
  S("scizor","ハッサム","image/image/ハッサム.gif",["bug","steel"],{hp:70,atk:130,def:100,spa:55,spd:80,spe:65},"technician",["bulletpunch","xscissor","uturn","swordsdance"])
 );
 SPECIES.push(S("gyarados","ギャラドス","image/image/ギャラドス.gif",["water","flying"],{hp:95,atk:125,def:79,spa:60,spd:100,spe:81},"intimidate",["waterfall","icefang","earthquake","dragondance"]));
+SPECIES.push(S("baxcalibur","セグレイブ","image/image/セグレイブ.gif",["dragon","ice"],{hp:115,atk:145,def:92,spa:75,spd:86,spe:87},"berserker",["glaiveRush","iciclecrash","earthquake","swordsdance"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -677,11 +682,14 @@ SPECIES.forEach(sp=>{
   sp.megas.forEach(mg=>{mg.base.def+=GLOBAL_DEF_SPD_BONUS;mg.base.spd+=GLOBAL_DEF_SPD_BONUS;});
 });
 FALINKS_HEI.forEach(hei=>{hei.base.def+=GLOBAL_DEF_SPD_BONUS;hei.base.spd+=GLOBAL_DEF_SPD_BONUS;});
+// バーサーカー化後は、ユーザー指定の最終種族値をそのまま使う。
+const BERSERKER_BAXCALIBUR={name:"バーサーカーセグレイブ",img:"image/image/バーサーカーセグレイブ.gif",types:["dragon","ice"],base:{hp:165,atk:185,def:115,spa:105,spd:101,spe:87}};
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
+  baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -812,6 +820,7 @@ const ABILS={
   lizardon:["sunpower"], gorillander:["grassmaker"], cinderace:["blaze","libero"], absol:["pressure"], lucario:["focus"], zacian:["intrepidsword"], idaitou:["swiftswim","adaptability","moldbreaker"], loudbone:["unaware"], garganacl:["purifyingSalt"], scovillain:["moody"], latios:["speedboost"], dragapult:["clearbody"], noivern:["aerilate","dragonskin"], escavalier:["shellarmor"], accelgor:["speedboost"], braviary:["defiant"], mandibuzz:["roughskin"], cramorant:["damp"], durant:["sandforce"], haxorus:["moldbreaker"], runerigus:["wandering"], duraludon:["heavymetal"], empoleon:["torrent"], inteleon:["sniper"], dubwool:["fluffiness"], corviknight:["mirrorarmor"], thievul:["unburden"], obstagoon:["defiant"], drednaw:["strongjaw"], hold:["hugepower"], galvantula:["compoundeyes"], joltik:["compoundeyes"], mamoswine:["thickfat"], glalie:["moody"], kingler:["shellarmor"], cloyster:["shellarmor"], wishiwashi:["schooling"], pyukumuku:["innardsout"], crustle:["shellarmor"], alcremie:["aromaveil"], raichuA:["chargeboost"], pincurchin:["electricmaker"],
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
+ABILS.baxcalibur=["berserker"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2035,6 +2044,22 @@ function birdEndTurn(mon,imgId){
 }
 function applyNeigh(attacker,defender){
   if(attacker.curHp<=0||attacker.fainted||defender.curHp>0||defender.fainted)return;
+  if(attacker.abilEff==="berserker"){
+    announceAbility(attacker);
+    if(!attacker.berserkerForm){
+      const form=BERSERKER_BAXCALIBUR, hpRatio=attacker.maxHp?attacker.curHp/attacker.maxHp:1;
+      attacker.berserkerForm=true;attacker.name=form.name;attacker.img=form.img;attacker.types=form.types.slice();attacker.base=Object.assign({},form.base);
+      attacker.maxHp=Math.floor((attacker.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(attacker.itemKey==="healcrown"?1.05:1));
+      attacker.curHp=Math.max(1,Math.min(attacker.maxHp,Math.round(attacker.maxHp*hpRatio)));
+      attacker.moves=attacker.moves.map(m=>m.name==="きょけんとつげき"?{...M.frozenGlaiveRush,fifthSlot:m.fifthSlot}:m);
+      if(attacker===me||attacker===foe)renderActive();
+      renderHp();renderStages();pushLog(`  ★ ${attacker.name} に変身した！`,'#b061ff');
+    }else{
+      applyDrop(attacker,{atk:1});
+      pushLog(`  ★ ${attacker.name} のバーサーカー！ こうげきが上がった！`,'#ff7043');
+    }
+    return;
+  }
   const stat=attacker.abilEff==="grimneigh"?"spa":attacker.abilEff==="chillingneigh"?"atk":null;
   if(stat){applyDrop(attacker,{[stat]:1});pushLog(`  ★ ${attacker.name} の ${attacker.abilName}！`,"#ffcb05");}
 }
@@ -2147,6 +2172,10 @@ function attack(attacker,defender,move,defImgId,cb){
   if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
+  if(attacker.frozenGlaiveSure&&move.cat!=="status"&&move.power>0){
+    attacker.frozenGlaiveSure=false;move={...move,forceHit:true};
+    pushLog(`  ★ ${attacker.name} の次の攻撃は必中！`,'#7ad1ff');
+  }
   if(snowAvoidsMove(attacker,defender,move)){cb();return;}
   if(attacker.id==="aegislash"){
     if(move.shieldForm)setAegislashForm(attacker,"shield");
@@ -2181,6 +2210,11 @@ function attack(attacker,defender,move,defImgId,cb){
   const canFirstTurn=attacker.firstTurnReady!==false;
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
+  if(move.frozenGlaive){
+    attacker.frozenGlaiveSure=true;
+    applyDrop(attacker,{def:-2,spd:-2});
+    pushLog(`  ★ ${attacker.name} は防御・特防を半減し、次の攻撃を必中にした！`,'#b061ff');
+  }
   if(attacker.abilEff==="prankster"&&move.cat==="status"){
     announceAbility(attacker);
     const h=Math.max(1,Math.floor(attacker.maxHp*.20));

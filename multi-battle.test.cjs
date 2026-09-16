@@ -532,5 +532,15 @@ vm.runInContext(`
   attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);const fifthHp=fifthTarget.curHp;
   attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);
   check(fifthDone===2&&fifthUser.usedFifthSlot&&fifthTarget.curHp===fifthHp,'Fifth move can only be used once per battle');
+  const bax=makeMon(SP_BY_ID.baxcalibur,'none','p1'),baxTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(bax.base.hp===115&&bax.base.atk===145&&bax.base.def===122&&bax.base.spa===75&&bax.base.spd===116&&bax.base.spe===87,'Baxcalibur base stats include global bulk bonus');
+  check(bax.abilEff==='berserker'&&bax.img==='image/image/セグレイブ.gif'&&M.glaiveRush.power===120,'Baxcalibur has Berserker and Glaive Rush');
+  applyNeigh(bax,{curHp:0,fainted:false});
+  check(bax.berserkerForm&&bax.name==='バーサーカーセグレイブ'&&bax.img==='image/image/バーサーカーセグレイブ.gif'&&bax.base.hp===165&&bax.base.atk===185&&bax.base.def===115&&bax.base.spa===105&&bax.base.spd===101&&bax.base.spe===87,'First KO transforms Baxcalibur into Berserker form');
+  check(bax.moves.some(m=>m.name==='ヒョウケツキョケン'&&m.power===140),'Berserker form replaces Glaive Rush with Frozen Huge Sword');
+  applyNeigh(bax,{curHp:0,fainted:false});check(bax.stages.atk===1,'Berserker gains attack after each later KO');
+  me=bax;foe=baxTarget;baxTarget.maxHp=baxTarget.curHp=100000;let swordDone=0;
+  attack(bax,baxTarget,bax.moves.find(m=>m.frozenGlaive),'foeImg',()=>swordDone++);
+  check(swordDone===1&&bax.frozenGlaiveSure&&bax.stages.def===-2&&bax.stages.spd===-2,'Frozen Huge Sword halves bulk and readies a sure-hit attack');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
