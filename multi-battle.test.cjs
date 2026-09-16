@@ -541,7 +541,14 @@ vm.runInContext(`
   applyNeigh(bax,{curHp:0,fainted:false});check(bax.stages.atk===1,'Berserker gains attack after each later KO');
   me=bax;foe=baxTarget;baxTarget.maxHp=baxTarget.curHp=100000;let swordDone=0;
   attack(bax,baxTarget,bax.moves.find(m=>m.frozenGlaive),'foeImg',()=>swordDone++);
-  check(swordDone===1&&bax.frozenGlaiveSure&&bax.stages.def===-2&&bax.stages.spd===-2,'Frozen Huge Sword halves bulk and readies a sure-hit attack');
+  const doubledIncoming=calcDamage(baxTarget,bax,M.waterfall,false).dmg;bax.frozenGlaiveVulnerableTurns=0;
+  const normalIncoming=calcDamage(baxTarget,bax,M.waterfall,false).dmg;bax.frozenGlaiveVulnerableTurns=1;
+  check(swordDone===1&&bax.frozenGlaiveVulnerableTurns===1&&bax.frozenGlaivePendingTurns===0&&bax.stages.def===0&&bax.stages.spd===0&&doubledIncoming===normalIncoming*2,'Frozen Huge Sword doubles incoming damage only this faster turn without stat drops');
+  const slowBax=makeMon(SP_BY_ID.baxcalibur,'none','p1');applyNeigh(slowBax,{curHp:0,fainted:false});slowBax.base.spe=1;let slowSwordDone=0;
+  attack(slowBax,baxTarget,slowBax.moves.find(m=>m.frozenGlaive),'foeImg',()=>slowSwordDone++);
+  check(slowSwordDone===1&&slowBax.frozenGlaiveVulnerableTurns===0&&slowBax.frozenGlaivePendingTurns===1,'Frozen Huge Sword delays vulnerability when slower');
+  advanceFrozenGlaiveVulnerability([slowBax]);check(slowBax.frozenGlaiveVulnerableTurns===1&&slowBax.frozenGlaivePendingTurns===0,'Delayed Frozen Huge Sword vulnerability starts next turn');
+  advanceFrozenGlaiveVulnerability([slowBax]);check(slowBax.frozenGlaiveVulnerableTurns===0,'Frozen Huge Sword vulnerability ends after one turn');
   const meow=makeMon(SP_BY_ID.meowscarada,'none','p1'),copied=makeMon(SP_BY_ID.gyarados,'none','cpu');
   me=meow;foe=copied;myTeam=[meow];foeTeam=[copied];
   check(meow.base.hp===76&&meow.base.atk===110&&meow.base.def===100&&meow.base.spa===81&&meow.base.spd===100&&meow.base.spe===123,'Meowscarada base stats include global bulk bonus');

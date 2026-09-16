@@ -156,6 +156,7 @@ function multiEnd(){
   applyHoleCake(multiLiving('me'));applyHoleCake(multiLiving('foe'));
   if(weatherTurns>0&&--weatherTurns===0)weather=null;
   if(electricTurns>0)electricTurns--;if(grassTurns>0)grassTurns--;if(psychicTurns>0)psychicTurns--;if(mistTurns>0)mistTurns--;
+  advanceFrozenGlaiveVulnerability([...multi.teams.me,...multi.teams.foe]);
   renderMulti();multiReplace();
 }
 function multiReplace(){

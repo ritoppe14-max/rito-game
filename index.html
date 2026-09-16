@@ -358,7 +358,7 @@ const M={
   dragonrage2:{name:"りゅうのいごり",type:"dragon",cat:"phys",power:120,selfDrop:{atk:-1}},
   dpulse:{name:"ドラゴンパルス",type:"dragon",cat:"spec",power:85},
   glaiveRush:{name:"きょけんとつげき",type:"dragon",cat:"phys",power:120},
-  frozenGlaiveRush:{name:"ヒョウケツキョケン",type:"dragon",cat:"phys",power:140,frozenGlaive:true,desc:"使用後、防御・特防が半減。次の攻撃が必中"},
+  frozenGlaiveRush:{name:"ヒョウケツキョケン",type:"dragon",cat:"phys",power:140,frozenGlaive:true,desc:"相手より速ければそのターン、遅ければ次のターンだけ受けるダメージが2倍"},
   duraludonPulse:{name:"りゅうのはどう",type:"dragon",cat:"spec",power:80,spread:true},
   dragontail:{name:"ドラゴンテール",type:"dragon",cat:"phys",power:70,prio:-2,switchAfter:true},
   latiospulse:{name:"りゅうのはどう",type:"dragon",cat:"spec",power:30,infiniteCharge:true},
@@ -1578,6 +1578,7 @@ function calcDamage(attacker,defender,move,isCrit){
   const typeEff=effMultiplier(moveType,defender.types);
   const rawEff=move.waterSuper&&defender.types.includes("water")?2:(attacker.itemKey==="mougekiScarf"&&typeEff===0?1:typeEff);
   const eff=move.fairyBypass&&defender.types.includes("fairy")?2:(move.ignoreType?1:rawEff); dmg*=eff;
+  if(defender.frozenGlaiveVulnerableTurns>0)dmg*=2;
   // ルナティックステージ2のメガボーマンダは弱点ダメージを4/3倍に抑える
   if((defender.lunatic2Boss||defender.lunatic3Boss)&&eff>1) dmg*=((4/3)/eff);
   // 天候によるタイプ補正
@@ -1716,6 +1717,13 @@ function sideLabel(s){return mode==='friend'?(s==="me"?"プレイヤー1":"プ�
 function hasRayAscension(mon){return !!(mon&&mon.id==="rayquaza"&&mon.moves.some(m=>m&&m.name==="ガリョウテンセイ"));}
 function canRayMega(mon){return hasRayAscension(mon)&&!rayMegaBlocked&&!rayMegaActive&&!mon.isMega&&!mon.isDynamax;}
 
+function advanceFrozenGlaiveVulnerability(mons){
+  mons.forEach(mon=>{
+    if(!mon)return;
+    if(mon.frozenGlaivePendingTurns>0){mon.frozenGlaivePendingTurns--;mon.frozenGlaiveVulnerableTurns=1;}
+    else if(mon.frozenGlaiveVulnerableTurns>0)mon.frozenGlaiveVulnerableTurns--;
+  });
+}
 function nextTurn(){ turnAct={me:null,foe:null}; requestAction("me"); }
 function requestAction(side){ inputSide=side; busy=false; renderMenu(side); }
 function renderMenu(side){
@@ -2197,10 +2205,6 @@ function attack(attacker,defender,move,defImgId,cb){
   if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
   move=maxMoveFor(attacker,move);
-  if(attacker.frozenGlaiveSure&&move.cat!=="status"&&move.power>0){
-    attacker.frozenGlaiveSure=false;move={...move,forceHit:true};
-    pushLog(`  ★ ${attacker.name} の次の攻撃は必中！`,'#7ad1ff');
-  }
   if(snowAvoidsMove(attacker,defender,move)){cb();return;}
   if(attacker.id==="aegislash"){
     if(move.shieldForm)setAegislashForm(attacker,"shield");
@@ -2236,9 +2240,10 @@ function attack(attacker,defender,move,defImgId,cb){
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
   if(move.frozenGlaive){
-    attacker.frozenGlaiveSure=true;
-    applyDrop(attacker,{def:-2,spd:-2});
-    pushLog(`  ★ ${attacker.name} は防御・特防を半減し、次の攻撃を必中にした！`,'#b061ff');
+    const thisTurn=effSpeed(attacker)>effSpeed(defender);
+    attacker.frozenGlaiveVulnerableTurns=thisTurn?1:0;
+    attacker.frozenGlaivePendingTurns=thisTurn?0:1;
+    pushLog(`  ★ ${attacker.name} は${thisTurn?"このターン":"次のターン"}、受けるダメージが2倍！`,'#b061ff');
   }
   if(attacker.abilEff==="prankster"&&move.cat==="status"){
     announceAbility(attacker);
@@ -2978,6 +2983,7 @@ function cpuForceReplace(cb){
   });
 }
 function endTurn(){
+  advanceFrozenGlaiveVulnerability([...myTeam,...foeTeam]);
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0)pushLog(`  ・ ${m.name} の げきりんが 終わった！`);}
