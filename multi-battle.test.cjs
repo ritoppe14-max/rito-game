@@ -542,5 +542,13 @@ vm.runInContext(`
   me=bax;foe=baxTarget;baxTarget.maxHp=baxTarget.curHp=100000;let swordDone=0;
   attack(bax,baxTarget,bax.moves.find(m=>m.frozenGlaive),'foeImg',()=>swordDone++);
   check(swordDone===1&&bax.frozenGlaiveSure&&bax.stages.def===-2&&bax.stages.spd===-2,'Frozen Huge Sword halves bulk and readies a sure-hit attack');
+  const meow=makeMon(SP_BY_ID.meowscarada,'none','p1'),copied=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  me=meow;foe=copied;myTeam=[meow];foeTeam=[copied];
+  check(meow.base.hp===76&&meow.base.atk===110&&meow.base.def===100&&meow.base.spa===81&&meow.base.spd===100&&meow.base.spe===123,'Meowscarada base stats include global bulk bonus');
+  check(meow.abilEff==='proteanCopy'&&meow.moves.some(m=>m.name==='トリックフラワー'&&m.forceCrit),'Meowscarada has custom Protean and Flower Trick');
+  copied.curHp=0;applyNeigh(meow,copied);
+  check(meow.meowscaradaOriginal&&meow.name===copied.name&&meow.abilEff===copied.abilEff&&meow.maxHp===Math.floor(copied.maxHp*.5)&&meow.curHp===meow.maxHp,'Protean copies the defeated Pokemon at 50% max HP');
+  meow.curHp=0;faintMon(meow,'myImg');
+  check(!meow.fainted&&!meow.meowscaradaOriginal&&meow.name==='マスカーニャ'&&meow.abilEff==='proteanCopy','Defeated copied form restores Meowscarada');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

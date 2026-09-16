@@ -29,7 +29,7 @@ renderHp=function(){if(multi)renderMulti();else multiOriginal.renderHp();};
 renderStages=function(){if(multi)renderMulti();else multiOriginal.renderStages();};
 renderHeis=function(){if(multi)renderMulti();else multiOriginal.renderHeis();};
 renderActive=function(){if(multi)renderMulti();else multiOriginal.renderActive();};
-faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){m.fainted=true;m.curHp=0;multiClearBehind(m);pushLog(`${m.name} は たおれた！`);}renderMulti();};
+faintMon=function(m,img){if(!multi)return multiOriginal.faintMon(m,img);if(!m.fainted){if(restoreMeowscarada(m,img)){renderMulti();return;}m.fainted=true;m.curHp=0;multiClearBehind(m);pushLog(`${m.name} は たおれた！`);}renderMulti();};
 enemyTargets=function(s){return multi?multiVisible(multiOther(s)):multiOriginal.enemyTargets(s);};
 show=function(id){if(id!=='battle'&&multi){multi=null;document.getElementById('multiField')?.remove();document.getElementById('multi-action-me')?.remove();document.getElementById('multi-action-foe')?.remove();document.querySelector('#battle .field').style.display='';}multiOriginal.show(id);};
 function startMultiFriend(size){sixBattle=false;battleSize=size;mode='friend';openPartyBuilder('p1');}

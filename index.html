@@ -270,6 +270,8 @@ ABDESC.grimneigh="自分の技で相手を倒すと特攻が1段階上がる";
 ABDESC.chillingneigh="自分の技で相手を倒すと攻撃が1段階上がる";
 ABIL.berserker={name:"バーサーカー",eff:"berserker"};
 ABDESC.berserker="相手を倒すとバーサーカーセグレイブに変身。変身後は倒すたび攻撃+1段階";
+ABIL.protean={name:"へんげんじざい",eff:"proteanCopy"};
+ABDESC.protean="相手を倒すと、そのポケモンの姿・技・特性になり最大HPの50%で戦う。倒れるとマスカーニャへ戻る";
 ABIL.birdSnow={name:"ゆきがくれ",eff:"birdSnow"};
 ABIL.birdStatic={name:"せいでんき",eff:"birdStatic"};
 ABIL.birdFlame={name:"ほのおのからだ",eff:"birdFlame"};
@@ -491,7 +493,7 @@ const M={
   mysticalfire:{name:"マジカルフレイム",type:"fire",cat:"spec",power:75,targetDrop:{chance:1,stats:{spa:-1}}},
   acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
   bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true},
-  bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true},
+  bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
   knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
   voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   dazzlinggleam:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true}, moonblast:{name:"ムーンフォース",type:"fairy",cat:"spec",power:95,targetDrop:{chance:.3,stats:{spa:-1}}}, drainingkiss2:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75}, playnice:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
@@ -663,6 +665,7 @@ SPECIES.push(
 );
 SPECIES.push(S("gyarados","ギャラドス","image/image/ギャラドス.gif",["water","flying"],{hp:95,atk:125,def:79,spa:60,spd:100,spe:81},"intimidate",["waterfall","icefang","earthquake","dragondance"]));
 SPECIES.push(S("baxcalibur","セグレイブ","image/image/セグレイブ.gif",["dragon","ice"],{hp:115,atk:145,def:92,spa:75,spd:86,spe:87},"berserker",["glaiveRush","iciclecrash","earthquake","swordsdance"]));
+SPECIES.push(S("meowscarada","マスカーニャ","image/image/マスカーニャ.gif",["grass","dark"],{hp:76,atk:110,def:70,spa:81,spd:70,spe:123},"protean",["flowertrick","knockoff","suckerpunch","uturn"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -690,6 +693,7 @@ const LEARN={
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
+  meowscarada:["flowertrick","knockoff","suckerpunch","uturn","playrough","leafstorm","gigadrain","taunt","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -821,6 +825,7 @@ const ABILS={
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
 ABILS.baxcalibur=["berserker"];
+ABILS.meowscarada=["protean"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2042,8 +2047,28 @@ function birdEndTurn(mon,imgId){
     renderHp();if(mon.curHp<=0)faintMon(mon,imgId);
   }
 }
+function transformMeowscarada(attacker,defender){
+  if(attacker.id!=="meowscarada"||attacker.meowscaradaOriginal||!defender||defender.isHei)return false;
+  attacker.meowscaradaOriginal={name:attacker.name,img:attacker.img,types:attacker.types.slice(),base:{...attacker.base},abilName:attacker.abilName,abilEff:attacker.abilEff,moves:attacker.moves.map(m=>({...m})),maxHp:attacker.maxHp,curHp:attacker.curHp,stages:{...attacker.stages}};
+  attacker.meowscaradaCopy=true;attacker.name=defender.name;attacker.img=defender.img;attacker.types=defender.types.slice();attacker.base={...defender.base};attacker.abilName=defender.abilName;attacker.abilEff=defender.abilEff;attacker.moves=defender.moves.map(m=>({...m}));attacker.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+  attacker.maxHp=Math.max(1,Math.floor(defender.maxHp*.5));attacker.curHp=attacker.maxHp;
+  if(attacker===me||attacker===foe)renderActive();renderHp();renderStages();
+  pushLog(`  ★ マスカーニャは ${defender.name} にへんしんした！ HPは最大HPの50%！`,'#b061ff');
+  return true;
+}
+function restoreMeowscarada(mon,imgId){
+  const original=mon?.meowscaradaOriginal;if(!original)return false;
+  mon.name=original.name;mon.img=original.img;mon.types=original.types.slice();mon.base={...original.base};mon.abilName=original.abilName;mon.abilEff=original.abilEff;mon.moves=original.moves.map(m=>({...m}));mon.maxHp=original.maxHp;mon.curHp=Math.max(1,Math.min(mon.maxHp,original.curHp));mon.stages={...original.stages};mon.fainted=false;mon.meowscaradaOriginal=null;mon.meowscaradaCopy=false;
+  const img=document.getElementById(imgId);if(img){img.src=IMG(mon.img);img.classList.remove('faint');}
+  if(mon===me||mon===foe)renderActive();renderHp();renderStages();renderDots();
+  pushLog('  ★ へんげんじざいが解け、マスカーニャに戻った！','#b061ff');
+  return true;
+}
 function applyNeigh(attacker,defender){
   if(attacker.curHp<=0||attacker.fainted||defender.curHp>0||defender.fainted)return;
+  if(attacker.abilEff==="proteanCopy"){
+    announceAbility(attacker);transformMeowscarada(attacker,defender);return;
+  }
   if(attacker.abilEff==="berserker"){
     announceAbility(attacker);
     if(!attacker.berserkerForm){
@@ -2661,6 +2686,7 @@ function setHazard(side,type,setter){
 function faintMon(mon,imgId){
   if(mon.isHei){mon.fainted=true;mon.curHp=0;pushLog(`  └ ${mon.name} は倒れた！`);renderHeis();return;}
   if(mon.fainted) return;
+  if(restoreMeowscarada(mon,imgId))return;
   mon.fainted=true;
   if(mon.abilEff==="innardsout"&&mon.innardsOutTarget&&!mon.innardsOutTarget.fainted&&mon.innardsOutDamage>0){
     const target=mon.innardsOutTarget,damage=mon.innardsOutDamage;
