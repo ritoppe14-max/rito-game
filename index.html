@@ -846,6 +846,21 @@ const NEW_COMPETITIVE_COMPAT={
   cinderace:["bounce","flamecharge"], lizardon:["fly","flamecharge","solarbeam"], corviknight:["fly"], noivern:["fly"], galvantula:["chargebeam"], joltik:["chargebeam"]
 };
 Object.entries(NEW_COMPETITIVE_COMPAT).forEach(([id,moves])=>{if(!LEARN[id])return;moves.filter(k=>M[k]&&!LEARN[id].includes(k)).forEach(k=>LEARN[id].push(k));});
+// タタッコ専用の指定技。既存ポケモン用の威力設定を変えないよう別定義にしている。
+Object.assign(M,{
+  machpunch:{name:"マッハパンチ",type:"fighting",cat:"phys",power:50,prio:1},
+  clobbopusBulletPunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:50,prio:1},
+  circlethrow:{name:"ともえなげ",type:"fighting",cat:"phys",power:55,prio:-6,targetForceSwitch:true},
+  doublekick:{name:"にどげり",type:"fighting",cat:"phys",power:30,multiHit:2},
+  clobbopusDrainPunch:{name:"ドレインパンチ",type:"fighting",cat:"phys",power:75,healDamage:.5},
+  clobbopusAcrobatics:{name:"アクロバット",type:"flying",cat:"phys",power:55,noItemDouble:true,desc:"持ち物がないと威力2倍"},
+  clobbopusShadowPunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:80},
+  flamewheel:{name:"かえんぐるま",type:"fire",cat:"phys",power:65,burn:.2},
+  clobbopusDualChop:{name:"ダブルチョップ",type:"dragon",cat:"phys",power:45,multiHit:2}
+});
+const CLOBBOPUS_ADDED_MOVES=["machpunch","clobbopusBulletPunch","poweruppunch","circlethrow","doublekick","clobbopusDrainPunch","closecombat","clobbopusAcrobatics","poisonjab","tenmillion","rockslide","firstimpression","lunge","clobbopusShadowPunch","ironhead","flamewheel","liquidation","flipturn","trailblaze","thunderpunch","zenheadbutt","clobbopusDualChop","throatchop","playrough"];
+const clobbopusLearn=LEARN.clobbopus||(LEARN.clobbopus=SPECIES[SP_BY_ID.clobbopus].moves.slice());
+clobbopusLearn.push(...CLOBBOPUS_ADDED_MOVES.filter(k=>M[k]&&!clobbopusLearn.includes(k)));
 M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 ABDESC.dauntlessshield="場に出たとき防御が1段階上がる";
@@ -1534,6 +1549,7 @@ function calcDamage(attacker,defender,move,isCrit){
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
   if(move.electroBall&&!move.maxMove)movePower=electroBallPower(attacker,defender);
+  if(move.noItemDouble&&(!attacker.itemKey||attacker.itemKey==="none"))movePower*=2;
   if(attacker.abilEff==="technician"&&movePower>0&&movePower<=60)movePower*=1.5;
   if(attacker.abilEff==="steelknight"&&movePower<=65) movePower*=1.5;
   if(move.removeItem&&defender.itemKey&&defender.itemKey!=="none")movePower*=1.5;
@@ -2053,6 +2069,17 @@ function psychicForceSwitch(attacker,move,cb){
   if(idx<0||(!ignores&&target.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
   doSwitch(side,idx,cb);
 }
+function forceOneTargetSwitch(attacker,defender,move,cb){
+  const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
+  if(typeof multi!=="undefined"&&multi){
+    const side=multi.slots.me.includes(defender)?"me":"foe",bench=multiBench(side);
+    if(!bench.length||(!ignores&&defender.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
+    multiSwitch({side,mon:defender,replacement:bench[0]},cb);return;
+  }
+  const side=defender===me?"me":"foe",team=teamOf(side),idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
+  if(idx<0||(!ignores&&defender.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
+  doSwitch(side,idx,cb);
+}
 function eeveeAttack(attacker,defender,move,img,cb){
   const targets=move.spread?(typeof multi!=="undefined"&&multi?multiLiving(birdSide(attacker)==="me"?"foe":"me"):enemyTargets(birdSide(attacker))).slice():[defender];
   let anyHit=false,forcedMirror=null;
@@ -2451,6 +2478,7 @@ function attack(attacker,defender,move,defImgId,cb){
       pushLog(`  ★ ${defender.name} の ${defender.abilName}！ ${attacker.name} に ${rh} ダメージ！`,"#ff7043");
       if(attacker.curHp<=0) faintMon(attacker,attacker===me?"myImg":"foeImg");
     }
+    if(move.targetForceSwitch&&actualDamage>0&&defender.curHp>0){forceOneTargetSwitch(attacker,defender,move,cb);return;}
     cb();
   },480);
 }

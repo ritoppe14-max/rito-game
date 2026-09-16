@@ -512,5 +512,12 @@ vm.runInContext(`
   check(FALINKS_HEI[0].base.def===95&&FALINKS_HEI[0].base.spd===85,'Hei helpers received +30 defense and special defense');
   announceAbility({abilName:'テスト特性'});
   check(document.getElementById('abilityToast').textContent==='特性：テスト特性 発動！','Ability activation toast text');
+  const clobbopus=SPECIES[SP_BY_ID.clobbopus];
+  check(CLOBBOPUS_ADDED_MOVES.length===24&&CLOBBOPUS_ADDED_MOVES.every(key=>M[key]&&clobbopus.learnset.includes(key)),'Clobbopus receives all requested moves');
+  check(M.machpunch.power===50&&M.machpunch.prio===1&&M.clobbopusBulletPunch.power===50&&M.clobbopusBulletPunch.prio===1,'Clobbopus priority moves');
+  check(M.circlethrow.power===55&&M.circlethrow.prio===-6&&M.circlethrow.targetForceSwitch,'Circle Throw forces the target to switch');
+  check(M.doublekick.power===30&&M.doublekick.multiHit===2&&M.clobbopusDualChop.power===45&&M.clobbopusDualChop.multiHit===2,'Clobbopus multi-hit moves');
+  const clobNoItem=makeMon(SP_BY_ID.clobbopus,'none','p1'),clobWithItem=makeMon(SP_BY_ID.clobbopus,'leftovers','p1'),clobTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg===calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg*2,'Acrobatics doubles without an item');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
