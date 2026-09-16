@@ -519,5 +519,7 @@ vm.runInContext(`
   check(M.doublekick.power===30&&M.doublekick.multiHit===2&&M.clobbopusDualChop.power===45&&M.clobbopusDualChop.multiHit===2,'Clobbopus multi-hit moves');
   const clobNoItem=makeMon(SP_BY_ID.clobbopus,'none','p1'),clobWithItem=makeMon(SP_BY_ID.clobbopus,'leftovers','p1'),clobTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg===calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg*2,'Acrobatics doubles without an item');
+  const clobEviolite=makeMon(SP_BY_ID.clobbopus,'eviolite','p1'),clobPlain=makeMon(SP_BY_ID.clobbopus,'none','p1');
+  check(calcDamage(clobTarget,clobEviolite,M.waterfall,false).dmg<calcDamage(clobTarget,clobPlain,M.waterfall,false).dmg,'Clobbopus receives Eviolite bulk');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

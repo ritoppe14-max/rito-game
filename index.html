@@ -1529,7 +1529,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
   if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
-  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther"]);
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
