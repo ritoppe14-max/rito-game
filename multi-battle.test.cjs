@@ -523,7 +523,8 @@ vm.runInContext(`
   check(M.circlethrow.power===55&&M.circlethrow.prio===-6&&M.circlethrow.targetForceSwitch,'Circle Throw forces the target to switch');
   check(M.doublekick.power===30&&M.doublekick.multiHit===2&&M.clobbopusDualChop.power===45&&M.clobbopusDualChop.multiHit===2,'Clobbopus multi-hit moves');
   const clobNoItem=makeMon(SP_BY_ID.clobbopus,'none','p1'),clobWithItem=makeMon(SP_BY_ID.clobbopus,'leftovers','p1'),clobTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
-  check(calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg===calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg*2,'Acrobatics doubles without an item');
+  const acrobaticsNoItem=calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg,acrobaticsWithItem=calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg;
+  check(Math.abs(acrobaticsNoItem-acrobaticsWithItem*2)<=1,'Acrobatics doubles without an item (rounding allowed)');
   const clobEviolite=makeMon(SP_BY_ID.clobbopus,'eviolite','p1'),clobPlain=makeMon(SP_BY_ID.clobbopus,'none','p1');
   check(calcDamage(clobTarget,clobEviolite,M.waterfall,false).dmg<calcDamage(clobTarget,clobPlain,M.waterfall,false).dmg,'Clobbopus receives Eviolite bulk');
   const fifthUser=makeMon(SP_BY_ID.falinks,'none','p1'),fifthTarget=makeMon(SP_BY_ID.gigalith,'none','cpu');
