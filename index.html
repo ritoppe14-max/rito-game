@@ -1339,8 +1339,8 @@ function makeMon(sp_i, itemKey, owner="p1"){
   const abilityKey=owner==="cpu" ? pickOne(sp.abils||[sp.abil]) : (savedBuild.ability||sp.abil);
   const moveKeys=owner==="cpu" ? sampleFour(sp.learnset) : spMoves(sp,owner);
   const ab=ABIL[abilityKey]||ABIL[sp.abil]; p.abilName=ab.name; p.abilEff=ab.eff;
-  p.moves=moveKeys.map(k=>M[k]);
-  if(BIRD_FIFTH[sp.id])p.moves=[...p.moves.slice(0,4),M[BIRD_FIFTH[sp.id]]];
+  p.moves=moveKeys.map((k,i)=>({...M[k],fifthSlot:i===4}));
+  if(BIRD_FIFTH[sp.id])p.moves=[...p.moves.slice(0,4),{...M[BIRD_FIFTH[sp.id]],fifthSlot:true}];
   p.itemKey=itemKey||"none";
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
@@ -1748,6 +1748,7 @@ function openMoves(side){
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
     if(m.itemKey==="mougekiScarf"&&m.mougekiLock&&mv.name!==m.mougekiLock)return;
+    if(mv.fifthSlot&&m.usedFifthSlot)return;
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
     if(m.id==="falinks"&&i===0&&m.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
@@ -2165,9 +2166,9 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.ritual){attacker.usedRitual=true;attacker.ritualTurns=5;}
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
-  const onceFlag=move.onceFlag||"usedPlayTogether";
-  if(move.onceBattle&&attacker[onceFlag]){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
-  if(move.onceBattle)attacker[onceFlag]=true;
+  const onceFlag=move.fifthSlot?"usedFifthSlot":move.onceFlag||"usedPlayTogether";
+  if((move.onceBattle||move.fifthSlot)&&attacker[onceFlag]){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
+  if(move.onceBattle||move.fifthSlot)attacker[onceFlag]=true;
   if(move.preTargetDrop&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),move.preTargetDrop);
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
   const acted=attacker.acted||0; attacker.acted=acted+1;
@@ -2790,7 +2791,7 @@ function cpuChoose(){
     const ri=foeTeam.findIndex(m=>m.id==="ragulaaji"&&!m.fainted);
     if(ri>=0&&ri!==foeA) return {type:"switch",idx:ri};
   }
-  let cand=foe.moves.filter(mv=>!(mv.firstTurnOnly&&(foe.acted||0)>0)&&!(psychicTurns>0&&mv.prio>0)&&!(mv.onceBattle&&foe[mv.onceFlag||"usedPlayTogether"])&&!(mv.ritual&&foe.usedRitual));
+  let cand=foe.moves.filter(mv=>!(mv.firstTurnOnly&&(foe.acted||0)>0)&&!(psychicTurns>0&&mv.prio>0)&&!(mv.onceBattle&&foe[mv.onceFlag||"usedPlayTogether"])&&!(mv.fifthSlot&&foe.usedFifthSlot)&&!(mv.ritual&&foe.usedRitual));
   if(!cand.length)cand=foe.moves;
   const valid=cand.filter(mv=>mv.cat==="status"||calcDamage(foe,me,mv,false).eff!==0);
   if(valid.length)cand=valid;

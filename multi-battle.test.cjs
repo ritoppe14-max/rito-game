@@ -195,7 +195,8 @@ vm.runInContext(`{
       const sp=SPECIES[SP_BY_ID[id]];
       for(const screen of ['homeDex','trainGrid','dexGrid'])check(document.getElementById(screen).innerHTML.includes(sp.name),'bird visible in '+screen);
       check(spMoves(sp)[4]===BIRD_FIFTH[id]&&sp.learnset.every(k=>M[k]),'valid bird moves');
-      check(makeMon(SP_BY_ID[id],'none','cpu').moves[4]===M[BIRD_FIFTH[id]],'CPU fifth slot');
+      const cpuBird=makeMon(SP_BY_ID[id],'none','cpu');
+      check(cpuBird.moves[4].name===M[BIRD_FIFTH[id]].name&&cpuBird.moves[4].fifthSlot,'CPU fifth slot');
     }
     const reset=(id='articuno')=>{me=makeMon(SP_BY_ID[id],'none');foe=makeMon(SP_BY_ID.clobbopus,'none');foe.maxHp=foe.curHp=100000;myTeam=[me];foeTeam=[foe];};
     reset();
@@ -357,7 +358,7 @@ vm.runInContext(`{
     const sp=SPECIES[SP_BY_ID[id]];check(sp&&sp.moves.every(k=>M[k])&&sp.learnset.every(k=>M[k]),id+' data and moves');
     if(id!=='metagross')for(const owner of ['p1','p2','cpu']){
       const mon=makeMon(SP_BY_ID[id],'none',owner);
-      check(mon.moves.length===5&&mon.moves[4]===M[BIRD_FIFTH[id]],id+' fixed fifth for '+owner);
+      check(mon.moves.length===5&&mon.moves[4].name===M[BIRD_FIFTH[id]].name&&mon.moves[4].fifthSlot,id+' fixed fifth for '+owner);
     }
   }
   const reset=(id)=>{
@@ -521,5 +522,12 @@ vm.runInContext(`
   check(calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg===calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg*2,'Acrobatics doubles without an item');
   const clobEviolite=makeMon(SP_BY_ID.clobbopus,'eviolite','p1'),clobPlain=makeMon(SP_BY_ID.clobbopus,'none','p1');
   check(calcDamage(clobTarget,clobEviolite,M.waterfall,false).dmg<calcDamage(clobTarget,clobPlain,M.waterfall,false).dmg,'Clobbopus receives Eviolite bulk');
+  const fifthUser=makeMon(SP_BY_ID.falinks,'none','p1'),fifthTarget=makeMon(SP_BY_ID.gigalith,'none','cpu');
+  check(fifthUser.moves[4].fifthSlot,'Fifth move is marked as once per battle');
+  me=fifthUser;foe=fifthTarget;let fifthDone=0;
+  const testFifth={...M.thunderbolt,fifthSlot:true,forceHit:true};
+  attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);const fifthHp=fifthTarget.curHp;
+  attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);
+  check(fifthDone===2&&fifthUser.usedFifthSlot&&fifthTarget.curHp===fifthHp,'Fifth move can only be used once per battle');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
