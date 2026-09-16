@@ -16,7 +16,8 @@ function multiSetBehind(mon,host){
 function multiImage(m){return 'multi-img-'+m.multiId;}
 function renderMulti(){
   if(!multi)return;
-  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${battleSize===2?'ダブル':'トリプル'}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center;opacity:${m.behindOf?.75:1};border-color:${m.behindOf?'#7ad1ff':'var(--line)'}"><img id="${multiImage(m)}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}${m.behindOf?` <span class="mini">（${m.behindOf.name}の後ろ）</span>`:''}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
+  const format=battleSize===2?'ダブル':battleSize===3?'トリプル':'6体バトル';
+  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${format}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center;opacity:${m.behindOf?.75:1};border-color:${m.behindOf?'#7ad1ff':'var(--line)'}"><img id="${multiImage(m)}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}${m.behindOf?` <span class="mini">（${m.behindOf.name}の後ろ）</span>`:''}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
 }
 function renderMultiActionPanels(){
   if(!multi)return;
@@ -37,11 +38,11 @@ startFriendSetup=function(){battleSize=1;singleFriendSetup();};
 const singleFriendSelect=startFriendSelect;
 startFriendSelect=function(){
   if(battleSize===1)return singleFriendSelect();
-  const count=battleSize*2;
+  const count=battlePartyCount(battleSize);
   const select=(owner,src,reveal,cb)=>{selCtx={owner,src,reveal,sel:[],count,label:`${owner==='p1'?'プレイヤー1':'プレイヤー2'}：${count}体選択（最初の${battleSize}体が先発）`,cb};show('preview');renderPreview();};
   select('p1',party,party2,()=>{const p1=selCtx.sel.slice();select('p2',party2,party,()=>startBattleWith(party,p1,party2,selCtx.sel.slice()));});
 };
-document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button>');
+document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(6)">👥 6体・フレンド対戦（同じ端末）</button>');
 function startMultiBattle(p1,sel1,p2,sel2){
   multiOriginal.show('battle');
   myTeam=sel1.map(i=>makeMon(p1[i].sp,p1[i].item,'p1'));

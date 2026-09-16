@@ -7,7 +7,8 @@ for(const m of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))vm.runInConte
 vm.runInContext(fs.readFileSync('multi-battle.js','utf8'),c);
 vm.runInContext(`
   function check(ok,msg){if(!ok)throw Error(msg);}
-  for(const size of [2,3]){
+  check(battlePartyCount(2)===4&&battlePartyCount(3)===6&&battlePartyCount(6)===6,'Battle party counts include 6 vs 6');
+  for(const size of [2,3,6]){
     battleSize=size;mode='friend';
     const p=Array.from({length:size*2},()=>({sp:SP_BY_ID.duraludon,item:'none'}));
     startBattleWith(p,p.map((_,i)=>i),p,p.map((_,i)=>i));
@@ -48,15 +49,15 @@ vm.runInContext(`
   const normalCrit=Object.assign({},intelSingle,{abilEff:null});
   check(calcDamage(intelSingle,fire,M.snipeshot,true).dmg>calcDamage(normalCrit,fire,M.snipeshot,true).dmg,'Sniper raises critical damage');
   const wool=makeMon(SP_BY_ID.dubwool,'none','p1'),woolPlain=Object.assign({},wool,{abilEff:null});
-  check(wool.base.hp===100&&wool.base.def===100&&calcDamage(fire,wool,M.crunch,false).dmg<calcDamage(fire,woolPlain,M.crunch,false).dmg,'Dubwool Fluffy halves physical damage');
+  check(wool.base.hp===100&&wool.base.def===130&&calcDamage(fire,wool,M.crunch,false).dmg<calcDamage(fire,woolPlain,M.crunch,false).dmg,'Dubwool Fluffy halves physical damage');
   const gengar=SPECIES[SP_BY_ID.gengar];
   check(gengar.types.includes('ghost')&&gengar.types.includes('poison')&&gengar.megas[0].base.spa===170&&gengar.megas[0].abil==='shadowtag','Gengar and Mega Gengar');
   const corviknight=SPECIES[SP_BY_ID.corviknight];
-  check(corviknight.types.includes('flying')&&corviknight.types.includes('steel')&&corviknight.base.def===105&&corviknight.abil==='mirrorarmor','Corviknight');
+  check(corviknight.types.includes('flying')&&corviknight.types.includes('steel')&&corviknight.base.def===135&&corviknight.abil==='mirrorarmor','Corviknight');
   const thievul=SPECIES[SP_BY_ID.thievul];
   check(thievul.types[0]==='dark'&&thievul.base.spa===87&&thievul.base.spe===90&&thievul.abil==='unburden','Thievul');
   const obstagoon=SPECIES[SP_BY_ID.obstagoon];
-  check(obstagoon.types.includes('dark')&&obstagoon.types.includes('normal')&&obstagoon.base.def===101&&obstagoon.abil==='defiant','Obstagoon');
+  check(obstagoon.types.includes('dark')&&obstagoon.types.includes('normal')&&obstagoon.base.def===131&&obstagoon.abil==='defiant','Obstagoon');
   const drednaw=makeMon(SP_BY_ID.drednaw,'none','p1'),drednawPlain=Object.assign({},makeMon(SP_BY_ID.drednaw,'none','p1'),{abilEff:null});
   check(drednaw.types.includes('water')&&drednaw.types.includes('rock')&&drednaw.base.atk===115&&calcDamage(drednaw,fire,M.crunch,false).dmg>calcDamage(drednawPlain,fire,M.crunch,false).dmg,'Drednaw Strong Jaw');
   const hold=makeMon(SP_BY_ID.hold,'none','p1'),holdPlain=Object.assign({},makeMon(SP_BY_ID.hold,'none','p1'),{abilEff:null});
@@ -64,27 +65,27 @@ vm.runInContext(`
   const galvantula=SPECIES[SP_BY_ID.galvantula];
   check(galvantula.types.includes('bug')&&galvantula.types.includes('electric')&&galvantula.base.spa===97&&galvantula.abil==='compoundeyes','Galvantula');
   const joltik=makeMon(SP_BY_ID.joltik,'eviolite','p1'),joltikPlain=makeMon(SP_BY_ID.joltik,'none','p1');
-  check(joltik.base.hp===75&&joltik.base.def===75&&joltik.base.spd===75&&calcDamage(fire,joltik,M.fireblast,false).dmg<calcDamage(fire,joltikPlain,M.fireblast,false).dmg,'Boosted Joltik receives Eviolite bulk');
+  check(joltik.base.hp===75&&joltik.base.def===105&&joltik.base.spd===105&&calcDamage(fire,joltik,M.fireblast,false).dmg<calcDamage(fire,joltikPlain,M.fireblast,false).dmg,'Boosted Joltik receives Eviolite bulk');
   const mamoswine=makeMon(SP_BY_ID.mamoswine,'none','p1'),mamoswinePlain=Object.assign({},makeMon(SP_BY_ID.mamoswine,'none','p1'),{abilEff:null});
   check(mamoswine.base.hp===110&&mamoswine.base.atk===130&&calcDamage(fire,mamoswine,M.fireblast,false).dmg<calcDamage(fire,mamoswinePlain,M.fireblast,false).dmg,'Mamoswine Thick Fat');
   const glalie=SPECIES[SP_BY_ID.glalie];
-  check(glalie.types[0]==='ice'&&Object.values(glalie.base).every(v=>v===80)&&glalie.abil==='moody','Glalie');
+  check(glalie.types[0]==='ice'&&glalie.base.hp===80&&glalie.base.atk===80&&glalie.base.def===110&&glalie.base.spa===80&&glalie.base.spd===110&&glalie.base.spe===80&&glalie.abil==='moody','Glalie');
   const crustle=SPECIES[SP_BY_ID.crustle];
   check(crustle.types.includes('bug')&&crustle.types.includes('rock')&&M.crustlerockTomb.power===80&&M.crustlerockTomb.switchLock===2&&M.crustlerockTomb.targetDrop.stats.spe===-1,'Crustle Rock Tomb');
   const kingler=SPECIES[SP_BY_ID.kingler];
   check(kingler.types[0]==='water'&&kingler.base.atk===150&&kingler.base.spe===50&&kingler.moves.includes('crabhammer'),'Kingler custom stats');
   const cloyster=SPECIES[SP_BY_ID.cloyster];
-  check(cloyster.types.includes('water')&&cloyster.types.includes('ice')&&cloyster.base.atk===85&&cloyster.base.def===180,'Cloyster custom attack');
+  check(cloyster.types.includes('water')&&cloyster.types.includes('ice')&&cloyster.base.atk===85&&cloyster.base.def===210,'Cloyster custom attack');
   const wishiwashi=makeMon(SP_BY_ID.wishiwashi,'none','p1');
-  check(wishiwashi.base.hp===90&&wishiwashi.base.def===120&&wishiwashi.base.spd===120,'Wishiwashi school form stats');
+  check(wishiwashi.base.hp===90&&wishiwashi.base.def===150&&wishiwashi.base.spd===150,'Wishiwashi school form stats');
   wishiwashi.curHp=Math.floor(wishiwashi.maxHp/4); updateWishiwashiForm(wishiwashi,'myImg');
-  check(!wishiwashi.schoolForm&&wishiwashi.base.def===20&&wishiwashi.base.spd===25,'Wishiwashi solo form at quarter HP');
+  check(!wishiwashi.schoolForm&&wishiwashi.base.def===50&&wishiwashi.base.spd===55,'Wishiwashi solo form at quarter HP');
   const pyukumuku=SPECIES[SP_BY_ID.pyukumuku];
-  check(pyukumuku.base.hp===150&&pyukumuku.base.def===50&&pyukumuku.base.spd===50&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
+  check(pyukumuku.base.hp===150&&pyukumuku.base.def===80&&pyukumuku.base.spd===80&&pyukumuku.abil==='innardsout','Pyukumuku custom stats and Innards Out');
   check(SPECIES[SP_BY_ID.joltik].learnset.includes('stickyweb')&&M.stickyweb.hazard==='stickyweb','Joltik Sticky Web');
   check(COMPETITIVE_MOVE_55.length===55&&SPECIES[SP_BY_ID.sableye].learnset.includes('reflect')&&M.reflect.reflect,'Competitive 55 and Sableye Reflect');
   const excadrill=SPECIES[SP_BY_ID.excadrill],gigalith=SPECIES[SP_BY_ID.gigalith];
-  check(excadrill.types.includes('ground')&&excadrill.types.includes('steel')&&excadrill.base.atk===135&&excadrill.abil==='sandrush'&&gigalith.base.def===130&&gigalith.abil==='sandstream','Excadrill and Gigalith');
+  check(excadrill.types.includes('ground')&&excadrill.types.includes('steel')&&excadrill.base.atk===135&&excadrill.abil==='sandrush'&&gigalith.base.def===160&&gigalith.abil==='sandstream','Excadrill and Gigalith');
   const absolMega=makeMon(SP_BY_ID.absol,'absolzite','p1'); absolMega.base={hp:65,atk:164,def:60,spa:115,spd:60,spe:151}; absolMega.abilEff='sharpness'; absolMega.isMega=true;
   const absolPlain=Object.assign({},absolMega,{abilEff:null});
   check(calcDamage(absolMega,fire,M.nightslash,false).dmg>calcDamage(absolPlain,fire,M.nightslash,false).dmg&&calcDamage(absolMega,fire,M.psychocut,false).dmg>calcDamage(absolPlain,fire,M.psychocut,false).dmg&&M.xscissor.cut,'Sharpness boosts cutting moves');
@@ -169,9 +170,9 @@ vm.runInContext(`
   check(aegIndex!==undefined&&aeg.name==='ギルガルド','Aegislash is registered');
   check(spMoves(aeg).length===5&&spMoves(aeg)[4]==='gilgamesh','Aegislash has its fixed fifth move');
   me=makeMon(aegIndex,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');
-  check(me.aegislashForm==='shield'&&me.base.def===150&&me.base.atk===50,'Aegislash starts in shield form');
+  check(me.aegislashForm==='shield'&&me.base.def===180&&me.base.atk===50,'Aegislash starts in shield form');
   attack(me,foe,M.aegislashShadowClaw,'foeImg',()=>{});
-  check(me.aegislashForm==='blade'&&me.base.atk===150&&me.base.def===50,'attacking changes Aegislash to blade form');
+  check(me.aegislashForm==='blade'&&me.base.atk===150&&me.base.def===80,'attacking changes Aegislash to blade form');
   attack(me,foe,M.kingsshield,'foeImg',()=>{});
   check(me.aegislashForm==='shield'&&me.protectActive&&me.kingShieldActive,'King Shield changes to shield form and protects');
   const physical={name:'test',type:'normal',cat:'phys',power:1};
@@ -494,5 +495,15 @@ vm.runInContext(`
     check(M[key],'Competitive move is defined: '+key);
     check(SPECIES.some(sp=>(sp.learnset||[]).includes(key)),'Competitive move has a learner: '+key);
   });
+  check(NEW_COMPETITIVE_MOVE_40.length===40,'New competitive collection has exactly 40 moves');
+  NEW_COMPETITIVE_MOVE_40.forEach(key=>{
+    check(!COMPETITIVE_MOVE_100.includes(key),'New competitive move is not in the existing 100: '+key);
+    check(M[key],'New competitive move is defined: '+key);
+    check(SPECIES.some(sp=>(sp.learnset||[]).includes(key)),'New competitive move has a learner: '+key);
+  });
+  check(GLOBAL_DEF_SPD_BONUS===30,'Global defense bonus is 30');
+  check(SPECIES[SP_BY_ID.gyarados].base.def===109&&SPECIES[SP_BY_ID.gyarados].base.spd===130,'Normal Pokemon received +30 defense and special defense');
+  check(SPECIES[SP_BY_ID.banette].megas[0].base.def===105&&SPECIES[SP_BY_ID.banette].megas[0].base.spd===113,'Mega Pokemon received +30 defense and special defense');
+  check(FALINKS_HEI[0].base.def===95&&FALINKS_HEI[0].base.spd===85,'Hei helpers received +30 defense and special defense');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

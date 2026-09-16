@@ -96,7 +96,7 @@
 
 <div class="wrap">
   <h1>⚔ <span>ポケモン対戦</span> ⚔</h1>
-  <div class="sub">6体パーティを編成 → 見せ合い → 3体えらんで 3on3バトル（交代・天候あり）</div>
+  <div class="sub">6体パーティを編成 → 見せ合い → シングル／ダブル／トリプル／6体バトル（交代・天候あり）</div>
 
   <div id="home">
     <div class="center" style="margin:12px 0"><button id="codeButton" class="btn blue" onclick="openDevCode()">🔐 コードを入力</button></div>
@@ -118,6 +118,7 @@
       <button class="btn ghost" id="friendBattleButton" onclick="startFriendSetup()">👥 フレンドとたいせん（2人）</button>
       <button class="btn blue" onclick="startGroupBattle(2)">⚔ ダブルバトル（2体 vs 2体）</button>
       <button class="btn blue" onclick="startGroupBattle(3)">⚔ トリプルバトル（3体 vs 3体）</button>
+      <button class="btn blue" onclick="startGroupBattle(6)">⚔ 6体バトル（6体 vs 6体）</button>
       <button class="btn ghost" onclick="showItemDex()">🎒 持ち物一覧</button>
       <button class="btn ghost" onclick="showPokemonDex()">📖 ポケモン一覧</button>
       <div class="sub" id="streakLabel">現在の連勝：0勝 ／ 最大連勝記録：0勝</div>
@@ -665,6 +666,14 @@ const FALINKS_HEI=[
   {name:"三男",base:{hp:60,atk:130,def:50,spa:50,spd:50,spe:60},abil:"unburden",item:"none",moves:["closecombat","megahorn","iceSpinner","machpunchZ","heicare"]},
   {name:"四男",base:{hp:80,atk:70,def:90,spa:85,spd:90,spe:102},abil:"rage",item:"none",moves:["sacredwave","darkpulse2","sludgeattack","scalesound","heicare"]}
 ];
+// 全ポケモンの耐久を一律強化。通常形態・メガ形態・ヘイ召喚の全員に適用する。
+const GLOBAL_DEF_SPD_BONUS=30;
+SPECIES.forEach(sp=>{
+  sp.base.def+=GLOBAL_DEF_SPD_BONUS;
+  sp.base.spd+=GLOBAL_DEF_SPD_BONUS;
+  sp.megas.forEach(mg=>{mg.base.def+=GLOBAL_DEF_SPD_BONUS;mg.base.spd+=GLOBAL_DEF_SPD_BONUS;});
+});
+FALINKS_HEI.forEach(hei=>{hei.base.def+=GLOBAL_DEF_SPD_BONUS;hei.base.spd+=GLOBAL_DEF_SPD_BONUS;});
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
@@ -801,6 +810,40 @@ const ABILS={
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
+// 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
+const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
+Object.assign(M,{
+  aquatail:{name:"アクアテール",type:"water",cat:"phys",power:90,accuracy:.9}, irontail:{name:"アイアンテール",type:"steel",cat:"phys",power:100,accuracy:.75,targetDrop:{chance:.3,stats:{def:-1}}},
+  superpower:{name:"ばかぢから",type:"fighting",cat:"phys",power:120,selfDrop:{atk:-1,def:-1}}, drillrun:{name:"ドリルライナー",type:"ground",cat:"phys",power:80,accuracy:.95,highCrit:true},
+  scorchingsands:{name:"ねっさのだいち",type:"ground",cat:"spec",power:70,burn:.3}, explosion:{name:"だいばくはつ",type:"normal",cat:"phys",power:250,recoilDamage:1},
+  gyroball:{name:"ジャイロボール",type:"steel",cat:"phys",power:80}, heatcrash:{name:"ヒートスタンプ",type:"fire",cat:"phys",power:100}, solarbeam:{name:"ソーラービーム",type:"grass",cat:"spec",power:120},
+  gunkshot:{name:"ダストシュート",type:"poison",cat:"phys",power:120,accuracy:.8,poison:.3}, acidspray:{name:"アシッドボム",type:"poison",cat:"spec",power:40,targetDrop:{chance:1,stats:{spd:-2}}},
+  mortalspin:{name:"キラースピン",type:"poison",cat:"phys",power:30,spread:true,poison:1}, dualchop:{name:"ダブルチョップ",type:"dragon",cat:"phys",power:40,multiHit:2,accuracy:.9},
+  breakingswipe:{name:"ワイドブレイカー",type:"dragon",cat:"phys",power:60,spread:true,targetDrop:{chance:1,stats:{atk:-1}}}, dragonrush:{name:"ドラゴンダイブ",type:"dragon",cat:"phys",power:100,accuracy:.75,flinch:.2},
+  lashout:{name:"うっぷんばらし",type:"dark",cat:"phys",power:75}, assurance:{name:"ダメおし",type:"dark",cat:"phys",power:60}, mistyexplosion:{name:"ミストバースト",type:"fairy",cat:"spec",power:100,recoilDamage:1},
+  terrainpulse:{name:"だいちのはどう",type:"normal",cat:"spec",power:50}, terablast:{name:"テラバースト",type:"normal",cat:"spec",power:80},
+  autotomize:{name:"ボディパージ",type:"steel",cat:"status",power:0,selfBoost:{chance:1,stats:{spe:2}}}, agility:{name:"こうそくいどう",type:"psychic",cat:"status",power:0,selfBoost:{chance:1,stats:{spe:2}}},
+  shellsmash:{name:"からをやぶる",type:"normal",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:2,spa:2,spe:2}},selfDrop:{def:-1,spd:-1}}, poweruppunch:{name:"グロウパンチ",type:"fighting",cat:"phys",power:40,selfBoost:{chance:1,stats:{atk:1}}},
+  trailblaze:{name:"くさわけ",type:"grass",cat:"phys",power:50,selfBoost:{chance:1,stats:{spe:1}}}, lowsweep:{name:"ローキック",type:"fighting",cat:"phys",power:65,targetDrop:{chance:1,stats:{spe:-1}}},
+  metalclaw:{name:"メタルクロー",type:"steel",cat:"phys",power:50,selfBoost:{chance:.1,stats:{atk:1}}}, slackoff:{name:"なまける",type:"normal",cat:"status",power:0,recover:.5},
+  amnesia:{name:"ドわすれ",type:"psychic",cat:"status",power:0,selfBoost:{chance:1,stats:{spd:2}}}, stockpile:{name:"たくわえる",type:"normal",cat:"status",power:0,selfBoost:{chance:1,stats:{def:1,spd:1}}},
+  honeclaws:{name:"つめとぎ",type:"dark",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1}}}, workup:{name:"ふるいたてる",type:"normal",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1,spa:1}}},
+  screech:{name:"いやなおと",type:"normal",cat:"status",power:0,accuracy:.85,targetDrop:{chance:1,stats:{def:-2}}}, curse:{name:"のろい",type:"ghost",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1,def:1}},selfDrop:{spe:-1}},
+  bounce:{name:"とびはねる",type:"flying",cat:"phys",power:85,accuracy:.85,paralyze:.3}, fly:{name:"そらをとぶ",type:"flying",cat:"phys",power:90,accuracy:.95},
+  rockpolish:{name:"ロックカット",type:"rock",cat:"status",power:0,selfBoost:{chance:1,stats:{spe:2}}}, flamecharge:{name:"ニトロチャージ",type:"fire",cat:"phys",power:50,selfBoost:{chance:1,stats:{spe:1}}},
+  chargebeam:{name:"チャージビーム",type:"electric",cat:"spec",power:50,accuracy:.9,selfBoost:{chance:.7,stats:{spa:1}}}, venoshock:{name:"ベノムショック",type:"poison",cat:"spec",power:65}
+});
+const NEW_COMPETITIVE_COMPAT={
+  gyarados:["aquatail","irontail","superpower","screech","bounce"], dracovish:["aquatail","superpower","breakingswipe"], arctovish:["aquatail","breakingswipe"], kingler:["aquatail","agility","screech"],
+  bangiras:["irontail","lashout","assurance","curse","rockpolish"], haxorus:["irontail","superpower","dualchop","breakingswipe","dragonrush","honeclaws"], excadrill:["drillrun","rockpolish","metalclaw"], mamoswine:["drillrun","iciclecrash"],
+  heatran:["scorchingsands","heatcrash","solarbeam","flash"], yadoran:["scorchingsands","slackoff","amnesia","trick"], metagross:["explosion","agility","metalclaw"], regirock:["explosion","curse","rockpolish"], gigalith:["explosion","curse","rockpolish"], ferrothorn:["gyroball","curse"],
+  gengar:["gunkshot","acidspray","venoshock"], toxapex:["gunkshot","acidspray","mortalspin","stockpile","venoshock"], doramidoro:["acidspray","venoshock"], dorapion:["gunkshot","venoshock"],
+  salamence:["breakingswipe","dragonrush","fly"], gabarias:["breakingswipe","dragonrush"], dracozolt:["breakingswipe","dragonrush"], alcremie:["mistyexplosion","terrainpulse"], pincurchin:["terrainpulse","chargebeam"], raichuA:["terrainpulse","chargebeam"],
+  duraludon:["autotomize","terablast"], archaludon:["autotomize","terablast"], cloyster:["shellsmash"], crustle:["shellsmash"], lucario:["poweruppunch","lowsweep","workup"], leafeon:["trailblaze"], gorillander:["trailblaze"], scovillain:["trailblaze","growth"],
+  scyther:["metalclaw"], scizor:["metalclaw"], hippowdon:["slackoff","curse"], vaporeon:["amnesia"], pyukumuku:["stockpile"], durant:["honeclaws"], braviary:["workup","fly"],
+  cinderace:["bounce","flamecharge"], lizardon:["fly","flamecharge","solarbeam"], corviknight:["fly"], noivern:["fly"], galvantula:["chargebeam"], joltik:["chargebeam"]
+};
+Object.entries(NEW_COMPETITIVE_COMPAT).forEach(([id,moves])=>{if(!LEARN[id])return;moves.filter(k=>M[k]&&!LEARN[id].includes(k)).forEach(k=>LEARN[id].push(k));});
 M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 ABDESC.dauntlessshield="場に出たとき防御が1段階上がる";
@@ -1126,16 +1169,17 @@ function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=
 
 // ===== 見せ合い → 3体選出 =====
 let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1;
+function battlePartyCount(size){return size===6?6:size>1?size*2:3;}
 function startGroupBattle(size){mode="cpu";lunaticStage=false;battleSize=size;npcLevel=Number(document.getElementById("npcLevel").value)||1;enterPreview();}
 function enterPreview(){   // CPU戦
-  const required=battleSize>1?battleSize*2:(lunaticStage||mode==='dynamaxUnlock')?3:6;
+  const required=battleSize>1?battlePartyCount(battleSize):(lunaticStage||mode==='dynamaxUnlock')?3:6;
   if(party.length<required){
     alert(`挑戦するにはパーティに${required}体以上必要です（現在${party.length}体）。パーティを編成してください。`);
     openPartyBuilder('cpu');
     return;
   }
   if(mode==='dynamaxUnlock') buildDynamaxUnlockParty(); else if(mode==='lunatic5') buildLunaticParty5(); else if(mode==='lunatic4') buildLunaticParty4(); else if(mode==='lunatic3') buildLunaticParty3(); else if(mode==='lunatic2') buildLunaticParty2(); else if(lunaticStage) buildLunaticParty(); else buildCpuParty();
-  const count=battleSize>1?battleSize*2:3;
+  const count=battleSize>1?battlePartyCount(battleSize):3;
   selCtx={ src:party, owner:"p1", sel:[], reveal:cpuParty, count, label:`あなたのパーティ — 出す${count}体をえらぶ`,
     cb:()=>{ mySel=selCtx.sel.slice(); cpuSelect3(); startBattleWith(party,mySel,cpuParty,cpuSel); } };
   show("preview"); renderPreview();
@@ -1233,7 +1277,7 @@ function toggleSel(i){
   renderPreview();
 }
 function cpuSelect3(){
-  const count=battleSize>1?battleSize*2:3;
+  const count=battleSize>1?battlePartyCount(battleSize):3;
   if(mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'){
     if(mode==='lunatic3'||mode==='lunatic4'){ cpuSel=[0,1,2]; return; }
     if(mode==='lunatic5'){ cpuSel=[0]; return; }
@@ -1269,7 +1313,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   if(sp.id==="aegislash")p.aegislashForm="shield";
   if(sp.id==="wishiwashi"){
     p.wishiwashiSchoolBase=Object.assign({},sp.base);
-    p.wishiwashiSoloBase={hp:45,atk:20,def:20,spa:25,spd:25,spe:40};
+    p.wishiwashiSoloBase={hp:45,atk:20,def:20+GLOBAL_DEF_SPD_BONUS,spa:25,spd:25+GLOBAL_DEF_SPD_BONUS,spe:40};
     p.schoolForm=true;
   }
   if(sp.id==="inteleon"&&battleSize>1)p.base.spa=125;
@@ -1964,7 +2008,7 @@ function applyNeigh(attacker,defender){
 function setAegislashForm(mon,form){
   if(!mon||mon.id!=="aegislash"||mon.aegislashForm===form)return;
   mon.aegislashForm=form;
-  mon.base=form==="blade"?{hp:60,atk:150,def:50,spa:150,spd:50,spe:60}:{hp:60,atk:50,def:150,spa:50,spd:150,spe:60};
+  mon.base=form==="blade"?{hp:60,atk:150,def:50+GLOBAL_DEF_SPD_BONUS,spa:150,spd:50+GLOBAL_DEF_SPD_BONUS,spe:60}:{hp:60,atk:50,def:150+GLOBAL_DEF_SPD_BONUS,spa:50,spd:150+GLOBAL_DEF_SPD_BONUS,spe:60};
   mon.img=form==="blade"?"image/image/ギルガルド(ブレード).gif":"image/image/ギルガルド(シールド).gif";
   if(mon===me||mon===foe)renderActive();
   pushLog(`  ★ ${mon.name} は ${form==="blade"?"ブレード":"シールド"}フォルムに 変化した！`,form==="blade"?"#ff7043":"#7ad1ff");
