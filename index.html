@@ -70,6 +70,7 @@
   .mega-anim{animation:megaPulse 1s ease}
   .dynamax-aura{filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 16px #b40000)}
   .log{background:#0c1322;border:2px solid var(--line);border-radius:12px;height:110px;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:12px}
+  #abilityToast{position:fixed;top:14px;left:50%;transform:translate(-50%,-16px);z-index:100;opacity:0;pointer-events:none;background:linear-gradient(135deg,#ffcb05,#ff8a3d);color:#182033;border:2px solid #fff3bc;border-radius:999px;padding:10px 22px;font-weight:900;font-size:16px;box-shadow:0 5px 18px rgba(0,0,0,.45);transition:opacity .18s,transform .18s}#abilityToast.show{opacity:1;transform:translate(-50%,0)}
   .cmd{margin-top:10px}
   .actrow{display:flex;gap:10px;justify-content:center}
   .actrow .btn{flex:1;max-width:200px}
@@ -157,6 +158,7 @@
   </div>
 
   <div id="battle" class="hidden">
+    <div id="abilityToast" aria-live="polite"></div>
     <div class="field">
       <div class="weatherBadge hidden" id="weatherBadge"></div>
       <div class="row"><div class="dots" id="foeDots"></div>
@@ -1421,11 +1423,20 @@ function renderWeather(){
   b.textContent=map[weather][0]; b.style.color=map[weather][1];
 }
 function pushLog(t,c){const l=document.getElementById("log");const d=document.createElement("div");d.textContent=t;if(c){d.style.color=c;d.style.fontWeight="700";}l.appendChild(d);l.scrollTop=l.scrollHeight;}
+let abilityToastTimer=null;
+function announceAbility(mon){
+  if(!mon?.abilName)return;
+  const toast=document.getElementById("abilityToast");if(!toast)return;
+  toast.textContent=`特性：${mon.abilName} 発動！`;
+  toast.classList.add("show");clearTimeout(abilityToastTimer);
+  abilityToastTimer=setTimeout(()=>toast.classList.remove("show"),1300);
+}
 
 // ===== 天候・登場特性 =====
 function setWeather(w,msg){ weather=w; weatherTurns=5; pushLog("  ☁ "+msg,"#7ad1ff"); renderWeather(); }
 function applyMoody(m){
   if(!m||m.fainted||m.abilEff!=="moody") return;
+  announceAbility(m);
   const keys=["atk","def","spa","spd","spe"];
   const up=keys[Math.floor(Math.random()*keys.length)];
   let down=keys[Math.floor(Math.random()*keys.length)];
@@ -1441,7 +1452,7 @@ function applyEntry(m,imgId,cb){
     const form=m.megaForm;m.name=form.name;m.img=form.img;m.types=form.types.slice();m.base={...form.base};m.isMega=true;
     renderActive();pushLog("⚔ ザマゼンタは たてのおうに変身した！","#ffcb05");
   }
-  if(m.abilEff==="dauntlessshield")applyDrop(m,{def:1});
+  if(m.abilEff==="dauntlessshield"){announceAbility(m);applyDrop(m,{def:1});}
   let did=false;
   const entrySide=m===me?"me":"foe", disaster=hazards[entrySide]?.disaster;
   if(disaster&&disaster.source!==m){
@@ -1452,6 +1463,7 @@ function applyEntry(m,imgId,cb){
     did=true;
   }
   if(m.abilEff==="intimidate"){
+    announceAbility(m);
     const target=m===me?foe:me;
     if(target&&!target.fainted){
       target.stages.atk=Math.max(-6,target.stages.atk-1);
@@ -1460,13 +1472,14 @@ function applyEntry(m,imgId,cb){
     }
   }
   if(m.abilEff==="moody"&&!m.moodyEntryDone){ m.moodyEntryDone=true; applyMoody(m); }
-  if(m.abilEff==="intrepidsword"&&!m.noIntrepid){m.stages.atk=Math.min(6,m.stages.atk+1);renderStages();pushLog(`  ★ ${m.name} の ふとうのけん！ こうげきが上がった！`,"#ff7043");}
-  if(m.abilEff==="grassmaker"){ grassTurns=5; pushLog("  ☘ グラスフィールドが広がった！","#7ac74c"); did=true; }
-  if(m.abilEff==="electricmaker"){ electricTurns=5; pushLog("  ⚡ エレキフィールドが広がった！","#f8d030"); did=true; }
-  if(m.abilEff==="drizzle"){ setWeather("rain","あめが ふりはじめた！"); did=true; }
-  else if(m.abilEff==="sandstream"){ setWeather("sand","すなあらしが ふきはじめた！"); did=true; }
-  else if(m.abilEff==="drought"){ setWeather("sun","ひざしが つよくなった！"); did=true; }
+  if(m.abilEff==="intrepidsword"&&!m.noIntrepid){announceAbility(m);m.stages.atk=Math.min(6,m.stages.atk+1);renderStages();pushLog(`  ★ ${m.name} の ふとうのけん！ こうげきが上がった！`,"#ff7043");}
+  if(m.abilEff==="grassmaker"){announceAbility(m); grassTurns=5; pushLog("  ☘ グラスフィールドが広がった！","#7ac74c"); did=true; }
+  if(m.abilEff==="electricmaker"){announceAbility(m); electricTurns=5; pushLog("  ⚡ エレキフィールドが広がった！","#f8d030"); did=true; }
+  if(m.abilEff==="drizzle"){announceAbility(m); setWeather("rain","あめが ふりはじめた！"); did=true; }
+  else if(m.abilEff==="sandstream"){announceAbility(m); setWeather("sand","すなあらしが ふきはじめた！"); did=true; }
+  else if(m.abilEff==="drought"){announceAbility(m); setWeather("sun","ひざしが つよくなった！"); did=true; }
   if(m.abilEff==="frisk"){
+    announceAbility(m);
     const target=m===me?foe:me;
     if(target&&target.moves&&target.moves.length){
       const mv=pickOne(target.moves);
@@ -1935,10 +1948,12 @@ function absorbIceShield(mon,damage){
 function birdContact(attacker,defender,move,damage){
   if(move.cat==="status")return;
   for(const mon of [attacker,defender])if(mon.abilEff==="birdFlame"&&!(mon===defender&&move.ignoreAbility)){
+    announceAbility(mon);
     mon.birdFlameMult=Math.min(2,(mon.birdFlameMult||1)*1.1);
     pushLog(`  ★ ${mon.name} のほのおのからだ！ 攻撃×${mon.birdFlameMult.toFixed(2)}`,"#ff7043");
   }
   if(defender.abilEff==="birdStatic"&&!move.ignoreAbility&&Math.random()<.5){
+    announceAbility(defender);
     if(!attacker.fainted&&attacker.curHp>0)applyStatus(attacker,"paralyze",defender);
     defender.birdNextSure=true;
     pushLog(`  ★ ${defender.name} のせいでんき！ 次の技が必中！`,"#f8d030");
@@ -2070,12 +2085,14 @@ function snowAvoidsMove(attacker,defender,move){
   const checks=move.abilityContext.snowChecks||(move.abilityContext.snowChecks=new Map());
   if(!checks.has(defender))checks.set(defender,Math.random()<.5);
   if(!checks.get(defender))return false;
+  announceAbility(defender);
   pushLog(`  ★ ${defender.name} のゆきがくれ！ ${move.name} を無効化した！`);return true;
 }
 function voltageOnHit(attacker,defender,move,damage){
   if(damage<=0||defender.curHp<=0||defender.abilEff!=="voltabsorb"||ignoresDefenderAbility(attacker,move))return;
   const seen=move.abilityContext.voltageHits||(move.abilityContext.voltageHits=new Set());
   if(seen.has(defender))return;seen.add(defender);applyDrop(defender,{spe:1});
+  announceAbility(defender);
   pushLog(`  ★ ${defender.name} のちくでん！`);
 }
 function mirrorTarget(attacker,defender,move){
@@ -2096,7 +2113,7 @@ function attack(attacker,defender,move,defImgId,cb){
     birdAttack(attacker,defender,move,defImgId,cb);return;
   }
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
-  if(attacker.abilEff==="chlorophyll"&&move.cat!=="status"&&move.power>0&&!move.abilityContext.leafBoosted){move.abilityContext.leafBoosted=true;applyDrop(attacker,{def:-1,atk:1});pushLog(`  ★ ${attacker.name} のようりょくそ！`);}
+  if(attacker.abilEff==="chlorophyll"&&move.cat!=="status"&&move.power>0&&!move.abilityContext.leafBoosted){announceAbility(attacker);move.abilityContext.leafBoosted=true;applyDrop(attacker,{def:-1,atk:1});pushLog(`  ★ ${attacker.name} のようりょくそ！`);}
   if(move.eeveeMove&&!move.eeveeResolved){eeveeAttack(attacker,defender,move,defImgId,cb);return;}
   if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
   if(defender.isHei)defImgId="hei-"+(defender.host===me?"me":"foe")+"-"+defender.name;
@@ -2128,6 +2145,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
   const acted=attacker.acted||0; attacker.acted=acted+1;
   if(attacker.abilEff==="gulpMissile"&&!attacker.isDynamax&&["なみのり","ダイビング"].includes(move.name)){
+    announceAbility(attacker);
     attacker.gulpReady=true;pushLog(`  ★ ${attacker.name} は うのミサイルを構えた！`,"#7ad1ff");
   }
   if(move.outrage&&attacker.outrageTurns===0) attacker.outrageTurns=1+Math.floor(Math.random()*3);
@@ -2135,11 +2153,13 @@ function attack(attacker,defender,move,defImgId,cb){
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
   if(attacker.abilEff==="prankster"&&move.cat==="status"){
+    announceAbility(attacker);
     const h=Math.max(1,Math.floor(attacker.maxHp*.20));
     attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h); renderHp();
     pushLog(`  ★ いたずらごころで HP${h}回復！`,"#46d160");
   }
   if(reflectableStatus(move)&&mirrorTarget(attacker,defender,move)===attacker){
+    announceAbility(defender);
     pushLog(`  ★ ${defender.name} のマジックミラー！ ${move.name} を反射！`);
     const original=attacker;attacker=defender;defender=original;defImgId=birdImage(defender);move={...move,mirrorReflected:true};
   }
@@ -2238,9 +2258,10 @@ function attack(attacker,defender,move,defImgId,cb){
   const isCrit=!defender.careCritGuard&&(move.ignoreAbility?null:defender.abilEff)!=="shellarmor"&&(move.forceCrit||Math.random()<critRate);
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
-  if(res.disguise){defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
+  if(res.disguise){announceAbility(defender);defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
   const sheer=attacker.abilEff==="sheerforce"&&sheerForceBoosts(move), extraBlocked=defender.itemKey==="cloak";
   if(res.eff===0&&!move.ignoreAbility&&((defender.abilEff==="eartheater"&&calcMove.type==="ground")||(defender.abilEff==="waterabsorb"&&calcMove.type==="water"))){
+    announceAbility(defender);
     const h=Math.max(1,Math.floor(defender.maxHp/4));
     defender.curHp=Math.min(defender.maxHp,defender.curHp+h); renderHp();
     setTimeout(()=>{pushLog(`  └ ${defender.name} は ${defender.abilName}で HP${h}回復！`,"#46d160");cb();},450); return;
@@ -2407,20 +2428,23 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     if(!move.maxMove&&!sheer&&move.targetDrop&&effectTarget.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(effectTarget,move.targetDrop.stats);
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
-    if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status") applyDrop(attacker,{spa:1});
+    if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status"){announceAbility(attacker);applyDrop(attacker,{spa:1});}
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(defender.curHp<=0&&!defender.fainted&&attacker.curHp>0&&attacker.abilEff==="rottenfeast"){
+      announceAbility(attacker);
       attacker.curHp=attacker.maxHp;renderHp();pushLog(`  ★ ${attacker.name} の ふはいたべ！ HPが全回復した！`,"#46d160");
     }
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
     if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
     if(move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="toxicdebris"&&defender.curHp>0){
+      announceAbility(defender);
       setHazard(attacker===me?"me":"foe","toxicspikes",defender);
     }
     if(move.cat==="phys"&&["roughskin","ironbarbs"].includes((move.ignoreAbility?null:defender.abilEff))&&attacker.curHp>0){
+      announceAbility(defender);
       const rh=Math.max(1,Math.floor(attacker.maxHp/8));
       attacker.curHp=Math.max(0,attacker.curHp-rh);
       renderHp();
@@ -2511,7 +2535,7 @@ function runHeiActions(done){
   series(tasks,done);
 }
 function canStatus(mon,status,source){
-  if(mon.abilEff==="purifyingSalt"&&source?.abilEff!=="moldbreaker") return false;
+  if(mon.abilEff==="purifyingSalt"&&source?.abilEff!=="moldbreaker"){announceAbility(mon);return false;}
   if(mon.status) return false;
   if(status==="burn"&&mon.types.includes("fire")) return false;
   if(status==="freeze"&&mon.types.includes("ice")) return false;
@@ -2587,7 +2611,7 @@ function hasPendingMove(mon){
   const side=mon===me?"me":"foe";
   return turnAct[side]&&turnAct[side].type==="move";
 }
-function applyDrop(mon,stats){let atkUp=false,defDown=false,spdDown=false,anyDown=false;for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;if(k==="atk"&&d>0)atkUp=true;if(k==="def"&&d<0)defDown=true;if(k==="spd"&&d<0)spdDown=true;if(d<0)anyDown=true;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}if(mon.abilEff==="defiant"&&anyDown){mon.stages.atk=Math.min(6,mon.stages.atk+2);pushLog(`  ★ ${mon.name} の まけんき！ こうげきが2段階上がった！`,"#ff7043");}if(mon.itemKey==="skywyrm"&&!mon.skyWyrmBoosted&&(atkUp||mon.stages.atk>0)&&(defDown||mon.stages.def<0)&&(spdDown||mon.stages.spd<0)){mon.skyWyrmBoosted=true;mon.stages.spe=Math.min(6,mon.stages.spe+1);pushLog(`  ★ ${mon.name} の てんくうのたつ！ すばやさが上がった！`,"#ffcb05");}renderStages();}
+function applyDrop(mon,stats){let atkUp=false,defDown=false,spdDown=false,anyDown=false,contraryTriggered=false;for(const k in stats){const raw=stats[k],d=mon.abilEff==="contrary"?-raw:raw,b=mon.stages[k];if(mon.abilEff==="contrary"&&raw!==0)contraryTriggered=true;mon.stages[k]=Math.max(-6,Math.min(6,b+d));if(mon.stages[k]===b)continue;if(k==="atk"&&d>0)atkUp=true;if(k==="def"&&d<0)defDown=true;if(k==="spd"&&d<0)spdDown=true;if(d<0)anyDown=true;const w=d<=-2?"ガクッと下がった":d<0?"下がった":d>=2?"ぐーんと上がった":"上がった";pushLog(`  ・ ${mon.name} の ${STAT_JP[k]}が ${w}`,d<0?"#9fb3d6":"#ff7043");}if(contraryTriggered)announceAbility(mon);if(mon.abilEff==="defiant"&&anyDown){announceAbility(mon);mon.stages.atk=Math.min(6,mon.stages.atk+2);pushLog(`  ★ ${mon.name} の まけんき！ こうげきが2段階上がった！`,"#ff7043");}if(mon.itemKey==="skywyrm"&&!mon.skyWyrmBoosted&&(atkUp||mon.stages.atk>0)&&(defDown||mon.stages.def<0)&&(spdDown||mon.stages.spd<0)){mon.skyWyrmBoosted=true;mon.stages.spe=Math.min(6,mon.stages.spe+1);pushLog(`  ★ ${mon.name} の てんくうのたつ！ すばやさが上がった！`,"#ffcb05");}renderStages();}
 
 // ききかいひ：攻撃後にHPが半分以下になったら自動で交代する。
 // この関数を通らずに次の攻撃へ進むと、攻撃完了後に例外が発生して
@@ -2597,7 +2621,7 @@ function tryEmergencyExit(side,mon,cb){
   const team=teamOf(side), current=activeIdxOf(side);
   const next=team.findIndex((p,i)=>i!==current&&!p.fainted);
   if(next<0){ cb(); return; }
-  pushLog(`  ★ ${mon.name} の ききかいひ！` ,"#ffcb05");
+  announceAbility(mon);pushLog(`  ★ ${mon.name} の ききかいひ！` ,"#ffcb05");
     if((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&side==='foe') doSwitch(side,next,cb);
   else requestForcedSwitch(side,cb);
 }

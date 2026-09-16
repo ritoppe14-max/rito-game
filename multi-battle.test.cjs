@@ -505,5 +505,7 @@ vm.runInContext(`
   check(SPECIES[SP_BY_ID.gyarados].base.def===109&&SPECIES[SP_BY_ID.gyarados].base.spd===130,'Normal Pokemon received +30 defense and special defense');
   check(SPECIES[SP_BY_ID.banette].megas[0].base.def===105&&SPECIES[SP_BY_ID.banette].megas[0].base.spd===113,'Mega Pokemon received +30 defense and special defense');
   check(FALINKS_HEI[0].base.def===95&&FALINKS_HEI[0].base.spd===85,'Hei helpers received +30 defense and special defense');
+  announceAbility({abilName:'テスト特性'});
+  check(document.getElementById('abilityToast').textContent==='特性：テスト特性 発動！','Ability activation toast text');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
