@@ -109,7 +109,7 @@ function multiSwitch(a,cb){
   a.mon.mougekiLock=null;
   clearEeveeEffects(a.mon);
   multiClearBehind(a.mon);a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
-  slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;
+  slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;a.replacement.justSwitched=true;
   me=a.side==='me'?a.replacement:multiLiving('me')[0]||myTeam[0];foe=a.side==='foe'?a.replacement:multiLiving('foe')[0]||foeTeam[0];
   renderMulti();applyHazards(a.side,()=>a.replacement.fainted?cb():multiEntry(a.side,a.replacement,cb));
 }
@@ -157,6 +157,7 @@ function multiEnd(){
   if(weatherTurns>0&&--weatherTurns===0)weather=null;
   if(electricTurns>0)electricTurns--;if(grassTurns>0)grassTurns--;if(psychicTurns>0)psychicTurns--;if(mistTurns>0)mistTurns--;
   advanceFrozenGlaiveVulnerability([...multi.teams.me,...multi.teams.foe]);
+  [...multi.teams.me,...multi.teams.foe].forEach(m=>{m.justSwitched=false;});
   renderMulti();multiReplace();
 }
 function multiReplace(){

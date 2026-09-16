@@ -559,5 +559,10 @@ vm.runInContext(`
   check(meow.meowscaradaOriginal&&meow.name===copied.name&&meow.abilEff===copied.abilEff&&meow.maxHp===Math.floor(copied.maxHp*.5)&&meow.curHp===meow.maxHp,'Protean copies the defeated Pokemon at 50% max HP');
   meow.curHp=0;faintMon(meow,'myImg');
   check(!meow.fainted&&!meow.meowscaradaOriginal&&meow.name==='マスカーニャ'&&meow.abilEff==='proteanCopy','Defeated copied form restores Meowscarada');
+  const umbreon=makeMon(SP_BY_ID.umbreon,'none','p1'),umbreonTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');me=umbreon;foe=umbreonTarget;
+  check(umbreon.moves[4].name==='ブラックムーンサイレンス'&&umbreon.moves[4].fifthSlot,'Umbreon has a fixed once-per-battle Black Moon fifth move');
+  umbreonTarget.justSwitched=true;const normalMoon=calcDamage(umbreon,({...umbreonTarget,justSwitched:false}),M.blackMoonSilence,false).dmg,switchedMoon=calcDamage(umbreon,umbreonTarget,M.blackMoonSilence,false).dmg;
+  attack(umbreon,umbreonTarget,umbreon.moves[4],'foeImg',()=>{});
+  check(umbreon.usedFifthSlot&&umbreon.blackMoonActive&&umbreon.blackMoonShieldHp>0&&switchedMoon>normalMoon,'Black Moon grants shield, recovery and switch damage boost');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

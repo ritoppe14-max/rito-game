@@ -494,7 +494,7 @@ const M={
   acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
   bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true},
   bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
-  knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
+  knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
   voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   dazzlinggleam:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true}, moonblast:{name:"ムーンフォース",type:"fairy",cat:"spec",power:95,targetDrop:{chance:.3,stats:{spa:-1}}}, drainingkiss2:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75}, playnice:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
   sacredsword:{name:"せいなるつるぎ",type:"fighting",cat:"phys",power:90}, brickbreak:{name:"かわらわり",type:"fighting",cat:"phys",power:75}, vacuumwave:{name:"しんくうは",type:"fighting",cat:"spec",power:40,prio:1}, bulldoze:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, stompingtantrum:{name:"10まんばりき",type:"ground",cat:"phys",power:75},
@@ -641,7 +641,7 @@ SPECIES.push(
  S("zapdos","サンダー","image/image/サンダー.gif",["electric","flying"],{hp:100,atk:100,def:95,spa:135,spd:100,spe:110},"birdStatic",["birdZapCannon","birdThunderbolt","hurricane","roost","thunderRoar"]),
  S("moltres","ファイヤー","image/image/ファイヤー.gif",["fire","flying"],{hp:100,atk:110,def:100,spa:135,spd:95,spe:100},"birdFlame",["birdSkyAttack","birdHeatWave","flamethrower","roost","volcanoReign"])
 );
-const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign"};
+const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence"};
 SPECIES.push(
  S("spectrier","レイスポス","image/image/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
  S("glastrier","ブリザポス","image/image/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
@@ -666,6 +666,7 @@ SPECIES.push(
 SPECIES.push(S("gyarados","ギャラドス","image/image/ギャラドス.gif",["water","flying"],{hp:95,atk:125,def:79,spa:60,spd:100,spe:81},"intimidate",["waterfall","icefang","earthquake","dragondance"]));
 SPECIES.push(S("baxcalibur","セグレイブ","image/image/セグレイブ.gif",["dragon","ice"],{hp:115,atk:145,def:92,spa:75,spd:86,spe:87},"berserker",["glaiveRush","iciclecrash","earthquake","swordsdance"]));
 SPECIES.push(S("meowscarada","マスカーニャ","image/image/マスカーニャ.gif",["grass","dark"],{hp:76,atk:110,def:70,spa:81,spd:70,spe:123},"protean",["flowertrick","knockoff","suckerpunch","uturn"]));
+SPECIES.push(S("umbreon","ブラッキー","image/image/ブラッキー.gif",["dark"],{hp:95,atk:65,def:110,spa:60,spd:130,spe:65},"synchronize",["foulplay","darkpulse","recover","protect"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -1573,6 +1574,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.statusPower&&defender.status) movePower*=move.statusPower;
   if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
   if(move.firstStrike&&!defender.turnMoved)movePower*=2;
+  if(move.blackMoon&&defender.justSwitched)movePower*=1.8;
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
   let dmg=(attack/defense)*42;
   const typeEff=effMultiplier(moveType,defender.types);
@@ -1985,6 +1987,7 @@ function absorbIceShield(mon,damage){
   pushLog(`  ❄ ${mon.name} の氷塊シールドが ${blocked} ダメージを防いだ！ 残り${mon.iceShieldHp}`,"#7ad1ff");
   if(!mon.iceShieldHp)pushLog(`  └ ${mon.name} の氷塊シールドが壊れた！ 本体への超過ダメージなし。`,"#7ad1ff");
 }
+function absorbBlackMoonShield(mon,damage){const blocked=Math.min(mon.blackMoonShieldHp,damage);mon.blackMoonShieldHp=Math.max(0,mon.blackMoonShieldHp-damage);pushLog(`  🌑 ${mon.name} の月影シールドが ${blocked} ダメージを防いだ！ 残り${mon.blackMoonShieldHp}`,"#b061ff");}
 function birdContact(attacker,defender,move,damage){
   if(move.cat==="status")return;
   for(const mon of [attacker,defender])if(mon.abilEff==="birdFlame"&&!(mon===defender&&move.ignoreAbility)){
@@ -2239,6 +2242,7 @@ function attack(attacker,defender,move,defImgId,cb){
   const canFirstTurn=attacker.firstTurnReady!==false;
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
+  if(move.blackMoon){attacker.blackMoonActive=true;attacker.blackMoonShieldHp=Math.max(1,Math.floor(attacker.curHp*.5));pushLog(`  🌑 ${attacker.name} に月影シールド！ 毎ターンHP5%回復！`,"#b061ff");}
   if(move.frozenGlaive){
     const thisTurn=effSpeed(attacker)>effSpeed(defender);
     attacker.frozenGlaiveVulnerableTurns=thisTurn?1:0;
@@ -2364,6 +2368,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
   let dmg=res.dmg, lifeTrigger=false;
   if(move.birdOnHit)move.birdOnHit();
+  if(defender.blackMoonShieldHp>0){absorbBlackMoonShield(defender,dmg);renderHp();setTimeout(cb,350);return;}
   if(defender.iceShieldHp>0){
     absorbIceShield(defender,dmg);birdContact(attacker,defender,move,0);renderHp();setTimeout(cb,350);return;
   }
@@ -2452,6 +2457,7 @@ function attack(attacker,defender,move,defImgId,cb){
         const spreadRes=calcDamage(attacker,other,calcMove,false);
         if(spreadRes.eff===0||snowAvoidsMove(attacker,other,move)) return;
         const spreadDamage=Math.min(other.curHp,spreadRes.dmg);
+        if(other.blackMoonShieldHp>0){absorbBlackMoonShield(other,spreadRes.dmg);return;}
         if(other.iceShieldHp>0){absorbIceShield(other,spreadRes.dmg);birdContact(attacker,other,move,0);return;}
         other.curHp=Math.max(0,other.curHp-spreadDamage);
         if(spreadDamage>0)birdContact(attacker,other,move,spreadDamage);
@@ -2790,14 +2796,14 @@ function doSwitch(side,idx,cb){
   if(side==="me"){
     const out=me; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
-    myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false;
+    myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false; me.justSwitched=true;
     pushLog(`${out.name} を ひっこめて ${me.name}！`);
     renderActive();
     applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
   }else{
     const out=foe; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
-    foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false;
+    foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false; foe.justSwitched=true;
     pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
     renderActive();
     applyHazards("foe",()=>{ if(foe.fainted) cb(); else applyEntry(foe,"foeImg",cb); });
@@ -2905,6 +2911,8 @@ function constantDamageFactor(mon){
 }
 function applyResidual(mon,imgId,source){
   if(mon.fainted) return;
+  if(mon.blackMoonActive){const h=Math.max(1,Math.floor(mon.maxHp*.05));mon.curHp=Math.min(mon.maxHp,mon.curHp+h);pushLog(`  🌑 ${mon.name} はブラックムーンでHP${h}回復！`,"#b061ff");}
+  if(mon.id==="umbreon"&&!mon.usedFifthSlot){mon.blackMoonWaitTurns=(mon.blackMoonWaitTurns||0)+1;if(mon.blackMoonWaitTurns>=3){const h=Math.max(1,Math.floor(mon.maxHp*.15));mon.curHp=Math.min(mon.maxHp,mon.curHp+h);pushLog(`  🌑 ${mon.name} はブラックムーンを温存しHP${h}回復！`,"#b061ff");}}
   eeveeEndTurn(mon,imgId);
   if(mon.fainted)return;
   birdEndTurn(mon,imgId);
@@ -2984,6 +2992,7 @@ function cpuForceReplace(cb){
 }
 function endTurn(){
   advanceFrozenGlaiveVulnerability([...myTeam,...foeTeam]);
+  [...myTeam,...foeTeam].forEach(mon=>{if(mon.justSwitched)mon.justSwitched=false;});
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0)pushLog(`  ・ ${m.name} の げきりんが 終わった！`);}
