@@ -66,6 +66,8 @@
   .hpnum{font-size:11px;color:var(--sub);text-align:right;margin-top:2px}
   .hit{animation:shake .4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
   .faint{opacity:.2;filter:grayscale(1)}
+  @keyframes switchGreen{0%{filter:drop-shadow(0 0 0 #46d160);transform:scale(.75);opacity:.15}55%{filter:drop-shadow(0 0 20px #46d160) brightness(1.7);transform:scale(1.12);opacity:1}100%{filter:none;transform:scale(1);opacity:1}}.switch-effect{animation:switchGreen .7s ease-out}
+  @keyframes faintBlue{0%{filter:drop-shadow(0 0 0 #65bfff);transform:scale(1);opacity:1}55%{filter:drop-shadow(0 0 24px #65bfff) brightness(1.8);transform:scale(1.14);opacity:.7}100%{filter:grayscale(1);transform:scale(.7);opacity:.2}}.faint-effect{animation:faintBlue .8s ease-in forwards}
   @keyframes megaPulse{0%{filter:none;transform:scale(1)}25%{filter:drop-shadow(0 0 14px #b061ff) drop-shadow(0 0 28px #8a2be2);transform:scale(1.18)}60%{filter:drop-shadow(0 0 22px #b061ff) brightness(1.5) saturate(1.6);transform:scale(1.1)}100%{filter:drop-shadow(0 0 6px #b061ff);transform:scale(1)}}
   .mega-anim{animation:megaPulse 1s ease}
   .dynamax-aura{filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 16px #b40000)}
@@ -2719,7 +2721,7 @@ function faintMon(mon,imgId){
     if(target.curHp<=0)faintMon(target,target===me?"myImg":"foeImg");
   }
   pushLog(`💥 ${mon.name} は たおれた！`);
-  document.getElementById(imgId).classList.add("faint");
+  document.getElementById(imgId).classList.add("faint","faint-effect");
   renderDots();
 }
 function hasPendingMove(mon){
@@ -2812,6 +2814,7 @@ function doSwitch(side,idx,cb){
     myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false; me.justSwitched=true;
     pushLog(`${out.name} を ひっこめて ${me.name}！`);
     renderActive();
+    const img=document.getElementById("myImg");img.classList.add("switch-effect");setTimeout(()=>img.classList.remove("switch-effect"),750);
     applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
   }else{
     const out=foe; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
@@ -2819,6 +2822,7 @@ function doSwitch(side,idx,cb){
     foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false; foe.justSwitched=true;
     pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
     renderActive();
+    const img=document.getElementById("foeImg");img.classList.add("switch-effect");setTimeout(()=>img.classList.remove("switch-effect"),750);
     applyHazards("foe",()=>{ if(foe.fainted) cb(); else applyEntry(foe,"foeImg",cb); });
   }
 }
