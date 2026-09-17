@@ -516,6 +516,11 @@ const M={
   alolanAvalanche:{name:"ゆきなだれ",type:"ice",cat:"phys",power:65,switchLock:2,exclusive:"alolanNinetales",desc:"命中した相手を2ターン交代できなくする"},
   alolanBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7,alolanFreeze:true,exclusive:"alolanNinetales",desc:"このポケモンが初めて命中させた時だけ、相手を1回行動できないこおりにする"},
   electricSpeedStrike:{name:"でんこうそくげき",type:"electric",cat:"phys",power:120,removeElectricType:true,desc:"使用後、自分の電気タイプを消す"},
+  sayakuCrunch:{name:"かみくだく",type:"dark",cat:"phys",power:85,sayakuCrunch:true,desc:"攻撃前にキバを選ぶ"},
+  sayakuRecoverFang:{name:"かいふくのキバ",type:"dark",cat:"phys",power:85,healDamage:.5},
+  sayakuDevourFang:{name:"むさぼるキバ",type:"dark",cat:"phys",power:85,targetDrop:{chance:1,stats:{def:-2}}},
+  sayakuDullFang:{name:"どんかんのキバ",type:"dark",cat:"phys",power:85,switchLock:2},
+  sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
   shadowpunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:60}, ragefist:{name:"ふんどのこぶし",type:"ghost",cat:"phys",power:50,rageFist:true,desc:"攻撃を受けるたびに威力+50（最大350）。交代で元に戻る"}, phantomforce:{name:"ゴーストダイブ",type:"ghost",cat:"phys",power:90}, psychicfangs:{name:"サイコファング",type:"psychic",cat:"phys",power:85}, futuresight:{name:"みらいよち",type:"psychic",cat:"spec",power:120}, zenheadbutt2:{name:"しねんのずつき",type:"psychic",cat:"phys",power:80,flinch:.2},
   flashcannon2:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,targetDrop:{chance:.1,stats:{spd:-1}}}, heavySlam:{name:"ヘビーボンバー",type:"steel",cat:"phys",power:100}, smartstrike:{name:"スマートホーン",type:"steel",cat:"phys",power:70}, meteorMash:{name:"コメットパンチ",type:"steel",cat:"phys",power:90,selfBoost:{chance:.2,stats:{atk:1}}},
   poisonfang:{name:"どくどくのキバ",type:"poison",cat:"phys",power:50,toxic:true}, poisonTail:{name:"ポイズンテール",type:"poison",cat:"phys",power:50,poison:.3}, crosspoison:{name:"クロスポイズン",type:"poison",cat:"phys",power:70,poison:.1}, sludgewave2:{name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.1},
@@ -703,6 +708,7 @@ SPECIES.push(S("dunsparce","ノコッチ","image/image/ノコッチ.gif",["norma
 SPECIES.push(S("dudunsparce","ノココッチ","image/image/ノココッチ.gif",["normal"],{hp:125,atk:100,def:80,spa:85,spd:75,spe:55},"serenegrace",["bodyslam","drillrun","zenheadbutt","roost"]));
 SPECIES.push(S("sawsbuck","メブキジカ","image/image/メブキジカ(はる).gif",["normal","grass"],{hp:80,atk:100,def:70,spa:60,spd:70,spe:95},"serenegrace",["doubleedge","woodhammer","zenheadbutt","swordsdance"]));
 SPECIES.push(S("nemoPawmot","ネモのパーモット","image/image/ネモのパーモット.gif",["electric","fighting"],{hp:70,atk:115,def:70,spa:70,spd:60,spe:105},"voltabsorb",["electricSpeedStrike","closecombat","machpunch","wildcharge"]));
+SPECIES.push(S("sayakuFeraligatr","サヤクのオーダイル","image/image/サヤクのオーダイル.gif",["water"],{hp:85,atk:105,def:100,spa:79,spd:83,spe:78},"torrent",["sayakuCrunch","sayakuWaterfall","icefang","earthquake"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -756,6 +762,7 @@ const LEARN={
   dudunsparce:["bodyslam","drillrun","zenheadbutt","roost","boomburst","hypervoice","protect","substitute"],
   sawsbuck:["doubleedge","woodhammer","zenheadbutt","swordsdance","wildcharge","megahorn","protect","substitute"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
+  sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -1086,6 +1093,11 @@ function openDevCode(){
       party.push({sp,item:"none",moves:["electricSpeedStrike","closecombat","machpunch","wildcharge"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();
       alert("ネモのパーモットを受け取った！");
     }else alert("ネモのパーモットは、すでに受け取っています。");
+  }else if(normalizedCode==="POKEMONSAYAKU"){
+    const sp=SP_BY_ID.sayakuFeraligatr;
+    if(!party.some(p=>SPECIES[p.sp]?.id==="sayakuFeraligatr")){
+      party=party.filter(p=>SPECIES[p.sp]?.id!=="ohdairu");party.push({sp,item:"none",moves:["sayakuCrunch","sayakuWaterfall","icefang","earthquake"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("サヤクのオーダイルを受け取った！");
+    }else alert("サヤクのオーダイルは、すでに受け取っています。");
   }else if(code!==null){
     alert("コードが違います。");
   }
@@ -1182,7 +1194,11 @@ function toggleParty(i){
   if(SPECIES[i].id==="rayquaza"&&localStorage.getItem("ritoLunatic5Clear")!=="1"){ alert("ルナティックステージ5をクリアするまでレックウザは使用できません。"); return; }
   const idx=curParty.findIndex(p=>p.sp===i);
   if(idx>=0){ curParty.splice(idx,1); }
-  else if(curParty.length<6){ curParty.push({sp:i,item:"none"}); }
+  else if(curParty.length<6){
+    const id=SPECIES[i].id;
+    if((id==="ohdairu"||id==="sayakuFeraligatr")&&curParty.some(p=>["ohdairu","sayakuFeraligatr"].includes(SPECIES[p.sp]?.id))){alert("オーダイルとサヤクのオーダイルは同時にパーティへ入れられません。");return;}
+    curParty.push({sp:i,item:"none"});
+  }
   saveGame(); renderParty();
 }
 function removeParty(slot){ curParty.splice(slot,1); saveGame(); renderParty(); }
@@ -1908,7 +1924,7 @@ function openSwitch(side){  // 通常の交代（行動として）
   h+=`</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
   c.innerHTML=h;
 }
-function chooseMove(side,i){ let mv=activeOf(side).moves[i]; const user=activeOf(side); if(user.id==="falinks"&&i===0&&user.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching; if(user.itemKey==="peacescroll"&&user.peaceTurns>0&&!mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv,part:selectedPart[side]||"waist"}); }
+function chooseMove(side,i){ let mv=activeOf(side).moves[i]; const user=activeOf(side); if(mv.sayakuCrunch){const c=document.getElementById("cmd");c.innerHTML=`<div class="center sub">かみくだくのキバを選ぶ</div><div class="moves">${[M.sayakuRecoverFang,M.sayakuDevourFang,M.sayakuDullFang].map(x=>`<button class="move" onclick="submitAction('${side}',{type:'move',move:M.${x===M.sayakuRecoverFang?'sayakuRecoverFang':x===M.sayakuDevourFang?'sayakuDevourFang':'sayakuDullFang'},part:selectedPart['${side}']||'waist'})"><div class="mn">${x.name}</div><div class="md">威力85</div></button>`).join('')}</div>`;return;} if(user.id==="falinks"&&i===0&&user.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching; if(user.itemKey==="peacescroll"&&user.peaceTurns>0&&!mv.infiniteCharge){pushLog(`  ・ ${user.name} は へいわせんこくで 技を使えない！`,"#9fb3d6");return;} if(psychicTurns>0&&mv.prio>0){pushLog("  ・ サイコフィールドで優先度技が使えない！","#f85888");return;} if(mv.name==="ガリョウテンセイ"){startRayCharge(side,mv);return;} if(mv.infiniteCharge){startLatiosCharge(side,mv);return;} submitAction(side,{type:"move",move:mv,part:selectedPart[side]||"waist"}); }
 function startLatiosCharge(side,mv){
   if(busy)return; busy=true; const mon=activeOf(side); let taps=0,finished=false;
   const c=document.getElementById("cmd");
@@ -2379,7 +2395,8 @@ function attack(attacker,defender,move,defImgId,cb){
   const canFirstTurn=attacker.firstTurnReady!==false;
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
-  if(move.blackMoon){attacker.blackMoonActive=true;attacker.blackMoonShieldHp=Math.max(1,Math.floor(attacker.curHp*.5));pushLog(`  🌑 ${attacker.name} に月影シールド！ 毎ターンHP5%回復！`,"#b061ff");}
+    if(move.blackMoon){attacker.blackMoonActive=true;attacker.blackMoonShieldHp=Math.max(1,Math.floor(attacker.curHp*.5));pushLog(`  🌑 ${attacker.name} に月影シールド！ 毎ターンHP5%回復！`,"#b061ff");}
+    if(move.sayakuShield){attacker.blackMoonShieldHp=Math.max(attacker.blackMoonShieldHp||0,Math.floor(attacker.maxHp*.30));attacker.sayakuShield=true;pushLog(`  🛡 ${attacker.name} に最大HP30%のシールド！ 状態異常を防ぐ！`,"#7ad1ff");}
   if(move.frozenGlaive){
     const thisTurn=effSpeed(attacker)>effSpeed(defender);
     attacker.frozenGlaiveVulnerableTurns=thisTurn?1:0;
@@ -2797,6 +2814,7 @@ function runHeiActions(done){
   series(tasks,done);
 }
 function canStatus(mon,status,source){
+  if(mon.sayakuShield&&mon.blackMoonShieldHp>0)return false;
   if(mon.abilEff==="purifyingSalt"&&source?.abilEff!=="moldbreaker"){announceAbility(mon);return false;}
   if(mon.status) return false;
   if(status==="burn"&&mon.types.includes("fire")) return false;
