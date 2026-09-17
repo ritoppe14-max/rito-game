@@ -129,6 +129,9 @@ vm.runInContext(`
   }
   me=makeMon(SP_BY_ID.zamazenta,'rustedshield');foe=makeMon(SP_BY_ID.clobbopus,'none');
   applyEntry(me,'myImg',()=>{});check(me.name==='ザマゼンタ(王)'&&me.types.includes('steel')&&me.stages.def===1,'shield form and defense');
+  me=makeMon(SP_BY_ID.zacian,'rustedsword');foe=makeMon(SP_BY_ID.clobbopus,'none');
+  transformZacian(me,'myImg',()=>{});check(me.name==='ザシアン(王)'&&me.stages.atk===0&&!me.noIntrepid,'Zacian does not raise Attack during Crown transformation');
+  applyEntry(me,'myImg',()=>{});check(me.stages.atk===1,'Zacian raises Attack after switching out and returning');
   me=makeMon(SP_BY_ID.mandibuzz,'none');foe=makeMon(SP_BY_ID.clobbopus,'none');me.curHp=10;foe.curHp=1;
   attack(me,foe,M.airslash,'foeImg',()=>{});check(me.curHp===me.maxHp,'KO full recovery');
   for(const fraction of [.9,.3]){

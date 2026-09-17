@@ -2981,11 +2981,13 @@ function transformZacian(mon,imgId,cb){
   const form=mon.megaForm;
   mon.name=form.name; mon.types=form.types.slice(); mon.base=Object.assign({},form.base);
   const ab=ABIL[form.abil]; mon.abilName=ab.name; mon.abilEff=ab.eff; mon.isMega=true;
+  // 王の姿への変化中は、ふとうのけんを発動しない。交代して再登場した時に発動する。
+  mon.noIntrepid=true;
   mon.img=form.img; mon.moves=mon.moves.map(m=>m.name==="アイアンヘッド"?M.behemothblade:m);
   const img=document.getElementById(imgId); img.src=IMG(form.img);
   document.getElementById(imgId==="myImg"?"myName":"foeName").textContent=mon.name;
   renderHp(); renderStages(); pushLog(`⚔ ${mon.name} に フォルムチェンジした！` ,"#ffcb05");
-  setTimeout(()=>applyEntry(mon,imgId,cb),700);
+  setTimeout(()=>applyEntry(mon,imgId,()=>{mon.noIntrepid=false;cb();}),700);
 }
 function doMega(mon,imgId,cb){
   if(mon.id==="rayquaza")rayMegaActive=true; else rayMegaBlocked=true;
