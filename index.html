@@ -443,7 +443,7 @@ const M={
   kingsshield:{name:"キングシールド",type:"steel",cat:"status",power:0,prio:6,shieldForm:true,kingsShield:true},
   wideguard:{name:"ワイドガード",type:"rock",cat:"status",power:0,prio:3,shieldForm:true,wideGuard:true},
   gilgamesh:{name:"妖刀・ギルガメッシュ",type:"ghost",cat:"phys",power:170,ignoreDefBoost:true,bladeForm:true,onceBattle:true,onceFlag:"usedGilgamesh",koBoost:{atk:1}},
-  suckerpunch:{name:"ふいうち",type:"dark",cat:"phys",power:70,prio:6,requiresAttack:true},
+  suckerpunch:{name:"ふいうち",type:"dark",cat:"phys",power:80,prio:1,requiresAttack:true},
   shadowsneak:{name:"かげうち",type:"ghost",cat:"phys",power:40,prio:1},
   playtogether:{name:"いっしょにあそぼ!",type:"fairy",cat:"phys",power:170,onceBattle:true,preTargetDrop:{def:-1}},
   yawn:{name:"あくび",type:"normal",cat:"status",power:0,yawn:true},
@@ -1960,7 +1960,7 @@ function runAttacks(movers,i,done){
   }
   atk.turnMoved=true;
   const defSide=m.who==="me"?"foe":"me";
-  if(m.move.requiresAttack&&(!turnAct[defSide]||turnAct[defSide].type!=="move")){
+  if(m.move.requiresAttack&&(!turnAct[defSide]||turnAct[defSide].type!=="move"||turnAct[defSide].move.cat==="status"||turnAct[defSide].move.power<=0)){
     pushLog(`  └ ${atk.name} の ふいうちは しっぱいした！`,"#9fb3d6");
     runAttacks(movers,i+1,done); return;
   }

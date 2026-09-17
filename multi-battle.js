@@ -124,6 +124,8 @@ function multiResolve(){
     const enemies=multiVisible(multiOther(a.side)),targets=(a.move.allyHeal||a.move.allyBoost)?multiLiving(a.side):enemies;
     const target=targets.includes(a.target)?a.target:targets[0];if(!target){cb();return;}
     const m=a.mon;
+    const targetAction=multi.actions.find(action=>action.mon===target);
+    if(a.move.requiresAttack&&(!targetAction||targetAction.type!=="move"||targetAction.move.cat==="status"||targetAction.move.power<=0)){pushLog(`  └ ${m.name} の ふいうちは しっぱいした！`,"#9fb3d6");cb();return;}
     if(m.holeCakeTurns>0){pushLog(`${m.name} は ホールケイプ中で 動けない！`);cb();return;}
     if(m.flinched||m.status==='paralyze'&&Math.random()<.2||m.status==='hypersleep'&&Math.random()<.25){pushLog(`${m.name} は動けない！`);cb();return;}
     if(m.status==='sleep'&&--m.sleepTurns>0){pushLog(`${m.name} は眠っている！`);cb();return;}if(m.status==='sleep')m.status=null;
