@@ -585,5 +585,8 @@ vm.runInContext(`
   check(chargedElectric>=normalElectric*1.9,'Electromorphosis doubles the charged Electric move');
   me=bellibolt;foe=whiscash;bellibolt.electricCharge=true;attack(bellibolt,whiscash,M.protect,'foeImg',()=>{});
   check(!bellibolt.electricCharge,'Electromorphosis charge ends after using a non-Electric move');
+  const toxicroak=makeMon(SP_BY_ID.toxicroak,'none','p1'),goodra=makeMon(SP_BY_ID.goodra,'none','p1');
+  check(toxicroak.types.join('/')==='poison/fighting'&&toxicroak.base.hp===83&&toxicroak.base.atk===106&&toxicroak.base.def===95&&toxicroak.base.spa===86&&toxicroak.base.spd===95&&toxicroak.base.spe===85&&toxicroak.img==='image/image/ドクロック.gif','Toxicroak has its image, types and base stats including global bulk bonus');
+  check(goodra.types.join('/')==='dragon'&&goodra.base.hp===90&&goodra.base.atk===100&&goodra.base.def===100&&goodra.base.spa===110&&goodra.base.spd===180&&goodra.base.spe===80&&goodra.img==='image/image/ヌメルゴン.gif','Goodra has its image, type and base stats including global bulk bonus');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
