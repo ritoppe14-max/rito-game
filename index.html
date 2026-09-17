@@ -2815,6 +2815,7 @@ function doSwitch(side,idx,cb){
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false; me.justSwitched=true;
     pushLog(`${out.name} を ひっこめて ${me.name}！`);
+    document.getElementById("myImg").classList.remove("faint","faint-effect");
     renderActive();
     const img=document.getElementById("myImg");img.classList.add("switch-effect");setTimeout(()=>img.classList.remove("switch-effect"),750);
     applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
@@ -2823,6 +2824,7 @@ function doSwitch(side,idx,cb){
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false; foe.justSwitched=true;
     pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
+    document.getElementById("foeImg").classList.remove("faint","faint-effect");
     renderActive();
     const img=document.getElementById("foeImg");img.classList.add("switch-effect");setTimeout(()=>img.classList.remove("switch-effect"),750);
     applyHazards("foe",()=>{ if(foe.fainted) cb(); else applyEntry(foe,"foeImg",cb); });
