@@ -245,7 +245,7 @@ const ABIL={
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
   sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
-  roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electromorphosis:{name:"でんきにかえる",eff:"electromorphosis"}, windpower:{name:"ふうりょくでんき",eff:"windpower"}, static:{name:"せいでんき",eff:null}, hustle:{name:"はりきり",eff:"hustle"}, flowerveil:{name:"フラワーベール",eff:null}, yogapower:{name:"ヨガパワー",eff:"hugepower"}, oblivious:{name:"どんかん",eff:null}, sapsipper:{name:"そうしょく",eff:null}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
+  roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electromorphosis:{name:"でんきにかえる",eff:"electromorphosis"}, windpower:{name:"ふうりょくでんき",eff:"windpower"}, static:{name:"せいでんき",eff:null}, hustle:{name:"はりきり",eff:"hustle"}, flowerveil:{name:"フラワーベール",eff:null}, yogapower:{name:"ヨガパワー",eff:"hugepower"}, guarddog:{name:"ばんけん",eff:"guarddog"}, oblivious:{name:"どんかん",eff:null}, sapsipper:{name:"そうしょく",eff:null}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
@@ -691,6 +691,7 @@ SPECIES.push(S("lilligantH","ドレディア(ヒスイ)","image/image/ドレデ�
 SPECIES.push(S("ampharos","デンリュウ","image/image/デンリュウ.gif",["electric"],{hp:90,atk:75,def:85,spa:115,spd:90,spe:55},"static",["thunderbolt","discharge","dpulse","focusblast"]));
 SPECIES.push(S("floetteEternal","フラエッテ(永遠の花)","image/image/フラエッテ(永遠の華).gif",["fairy"],{hp:74,atk:65,def:67,spa:125,spd:128,spe:92},"flowerveil",["moonblast","magicalshine","calmMind","protect"]));
 SPECIES.push(S("medicham","チャーレム","image/image/チャーレム.gif",["fighting","psychic"],{hp:60,atk:60,def:75,spa:60,spd:75,spe:80},"yogapower",["highjumpkick","zenheadbutt","icepunch","fakeout"],[{stone:"medichamite",stoneName:"チャーレムナイト",name:"メガチャーレム",img:"image/image/メガチャーレム.gif",types:["fighting","psychic"],base:{hp:60,atk:100,def:85,spa:80,spd:85,spe:100},abil:"yogapower"}]));
+SPECIES.push(S("manectric","ライボルト","image/image/メガライボルト.gif",["electric"],{hp:70,atk:75,def:60,spa:105,spd:60,spe:105},"intimidate",["thunderbolt","voltswitch","flamethrower","snarl"],[{stone:"manectite",stoneName:"ライボルトナイト",name:"メガライボルト",img:"image/image/メガライボルト.gif",types:["electric"],base:{hp:70,atk:75,def:80,spa:135,spd:80,spe:135},abil:"guarddog"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -736,6 +737,7 @@ const LEARN={
   ampharos:["thunderbolt","discharge","dpulse","focusblast","thunderwave","voltswitch","powergem","protect"],
   floetteEternal:["moonblast","magicalshine","calmMind","protect","drainingkiss","psychic","energyball"],
   medicham:["highjumpkick","zenheadbutt","icepunch","fakeout","firepunch","thunderpunch","drainpunch","bulletpunch","protect"],
+  manectric:["thunderbolt","voltswitch","flamethrower","snarl","thunder","discharge","thunderwave","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -1540,8 +1542,13 @@ function applyEntry(m,imgId,cb){
     announceAbility(m);
     const target=m===me?foe:me;
     if(target&&!target.fainted){
-      target.stages.atk=Math.max(-6,target.stages.atk-1);
-      pushLog(`  ★ ${m.name} の いかく！ ${target.name} の こうげきが下がった！`,"#ff7043");
+      if(target.abilEff==="guarddog"){
+        announceAbility(target);target.stages.atk=Math.min(6,target.stages.atk+1);
+        pushLog(`  ★ ${target.name} の ばんけん！ いかくを受けて こうげきが上がった！`,"#ffcb05");
+      }else{
+        target.stages.atk=Math.max(-6,target.stages.atk-1);
+        pushLog(`  ★ ${m.name} の いかく！ ${target.name} の こうげきが下がった！`,"#ff7043");
+      }
       renderStages(); did=true;
     }
   }
@@ -2175,24 +2182,24 @@ function psychicForceSwitch(attacker,move,cb){
   const side=birdSide(attacker)==="me"?"foe":"me";
   const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
   if(typeof multi!=="undefined"&&multi){
-    const bench=multiBench(side).slice(), outgoing=multiLiving(side).filter(m=>ignores||m.abilEff!=="heavymetal");
+    const bench=multiBench(side).slice(), outgoing=multiLiving(side).filter(m=>ignores||(m.abilEff!=="heavymetal"&&m.abilEff!=="guarddog"));
     const changes=outgoing.slice(0,bench.length).map((mon,i)=>done=>multiSwitch({side,mon,replacement:bench[i]},done));
     if(!changes.length)pushLog("  └ 交代できる控えがいないか、特性で交代を防いだ！");
     series(changes,cb);return;
   }
   const target=activeOf(side), team=teamOf(side), idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
-  if(idx<0||(!ignores&&target.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
+  if(idx<0||(!ignores&&(target.abilEff==="heavymetal"||target.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
   doSwitch(side,idx,cb);
 }
 function forceOneTargetSwitch(attacker,defender,move,cb){
   const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
   if(typeof multi!=="undefined"&&multi){
     const side=multi.slots.me.includes(defender)?"me":"foe",bench=multiBench(side);
-    if(!bench.length||(!ignores&&defender.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
+    if(!bench.length||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
     multiSwitch({side,mon:defender,replacement:bench[0]},cb);return;
   }
   const side=defender===me?"me":"foe",team=teamOf(side),idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
-  if(idx<0||(!ignores&&defender.abilEff==="heavymetal")){pushLog("  └ 相手は強制交代できない！");cb();return;}
+  if(idx<0||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
   doSwitch(side,idx,cb);
 }
 function eeveeAttack(attacker,defender,move,img,cb){
@@ -2252,6 +2259,7 @@ function mirrorTarget(attacker,defender,move){
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  if(defender&&defender.abilEff==="guarddog"&&attacker!==defender&&move.cat==="status"&&!isFriendlyMove(move)&&!move.ignoreAbility){announceAbility(defender);pushLog(`  ★ ${defender.name} の ばんけん！ ${move.name} を無効化した！`,"#ffcb05");cb();return;}
   if(attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
   if(attacker.itemKey==="mougekiScarf"){
     if(attacker.mougekiLock&&attacker.mougekiLock!==move.name){pushLog("  └ もうげきスカーフで技が固定されている！");cb();return;}

@@ -604,5 +604,13 @@ vm.runInContext(`
   check(medicham.types.join('/')==='fighting/psychic'&&medicham.base.hp===60&&medicham.base.atk===60&&medicham.base.def===105&&medicham.base.spa===60&&medicham.base.spd===105&&medicham.base.spe===80&&medicham.abilName==='ヨガパワー'&&medicham.img==='image/image/チャーレム.gif','Medicham has its image, base stats, Yoga Power and Medichamite');
   doMega(medicham,'myImg',()=>{});
   check(medicham.isMega&&medicham.name==='メガチャーレム'&&medicham.img==='image/image/メガチャーレム.gif'&&medicham.base.atk===100&&medicham.base.def===115&&medicham.base.spa===80&&medicham.base.spd===115&&medicham.base.spe===100,'Medichamite Mega Evolves Medicham into Mega Medicham');
+  const manectric=makeMon(SP_BY_ID.manectric,'manectite','p1');
+  check(manectric.types.join('/')==='electric'&&manectric.base.hp===70&&manectric.base.atk===75&&manectric.base.def===90&&manectric.base.spa===105&&manectric.base.spd===90&&manectric.base.spe===105&&manectric.abilEff==='intimidate','Manectric has its base stats and requested Intimidate');
+  doMega(manectric,'myImg',()=>{});
+  check(manectric.isMega&&manectric.name==='メガライボルト'&&manectric.img==='image/image/メガライボルト.gif'&&manectric.base.def===110&&manectric.base.spa===135&&manectric.base.spd===110&&manectric.base.spe===135&&manectric.abilEff==='guarddog','Manectite Mega Evolves Manectric into Guard Dog Mega Manectric');
+  me=apeTarget;foe=manectric;attack(apeTarget,manectric,M.thunderwave,'foeImg',()=>{});
+  check(!manectric.status,'Guard Dog blocks opposing status moves');
+  const intimidator=makeMon(SP_BY_ID.manectric,'none','p1');me=intimidator;foe=manectric;applyEntry(intimidator,'myImg',()=>{});
+  check(manectric.stages.atk===1,'Guard Dog raises attack when Intimidated');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
