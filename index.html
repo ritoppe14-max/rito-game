@@ -2434,7 +2434,7 @@ function attack(attacker,defender,move,defImgId,cb){
   attacker.firstTurnReady=false;
   pushLog(`${attacker.name} の ${move.name}！`);
     if(move.blackMoon){attacker.blackMoonActive=true;attacker.blackMoonShieldHp=Math.max(1,Math.floor(attacker.curHp*.5));pushLog(`  🌑 ${attacker.name} に月影シールド！ 毎ターンHP5%回復！`,"#b061ff");}
-    if(move.sayakuShield){attacker.blackMoonShieldHp=Math.max(attacker.blackMoonShieldHp||0,Math.floor(attacker.maxHp*.30));attacker.sayakuShield=true;pushLog(`  🛡 ${attacker.name} に最大HP30%のシールド！ 状態異常を防ぐ！`,"#7ad1ff");}
+    if(move.sayakuShield){attacker.blackMoonShieldHp=Math.max(attacker.blackMoonShieldHp||0,Math.floor(attacker.maxHp*.30));attacker.sayakuShield=true;pushLog(`  🛡 ${attacker.name} に シールド！ 最大HP30%を防ぎ、状態異常を防ぐ！`,"#7ad1ff");}
   if(move.frozenGlaive){
     const thisTurn=effSpeed(attacker)>effSpeed(defender);
     attacker.frozenGlaiveVulnerableTurns=thisTurn?1:0;
