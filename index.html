@@ -526,6 +526,7 @@ const M={
   garakuFieryWrath:{name:"もえあがるいかり",type:"dark",cat:"spec",power:90,spread:true,flinch:.4},
   garakuSuckerPunch:{name:"ふいうち",type:"dark",cat:"phys",power:90,prio:2,requiresStatus:true,flinch:1},
   garakuHurricane:{name:"ぼうふう",type:"flying",cat:"spec",power:90,prio:2,requiresAttack:true},
+  moaroThunderKick:{name:"らいめいげり",type:"fighting",cat:"phys",power:90,targetDrop:{chance:.8,stats:{def:-1}},paralyze:.2,desc:"80%で相手の防御を下げ、20%でまひ"},
   shadowpunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:60}, ragefist:{name:"ふんどのこぶし",type:"ghost",cat:"phys",power:50,rageFist:true,desc:"攻撃を受けるたびに威力+50（最大350）。交代で元に戻る"}, phantomforce:{name:"ゴーストダイブ",type:"ghost",cat:"phys",power:90}, psychicfangs:{name:"サイコファング",type:"psychic",cat:"phys",power:85}, futuresight:{name:"みらいよち",type:"psychic",cat:"spec",power:120}, zenheadbutt2:{name:"しねんのずつき",type:"psychic",cat:"phys",power:80,flinch:.2},
   flashcannon2:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,targetDrop:{chance:.1,stats:{spd:-1}}}, heavySlam:{name:"ヘビーボンバー",type:"steel",cat:"phys",power:100}, smartstrike:{name:"スマートホーン",type:"steel",cat:"phys",power:70}, meteorMash:{name:"コメットパンチ",type:"steel",cat:"phys",power:90,selfBoost:{chance:.2,stats:{atk:1}}},
   poisonfang:{name:"どくどくのキバ",type:"poison",cat:"phys",power:50,toxic:true}, poisonTail:{name:"ポイズンテール",type:"poison",cat:"phys",power:50,poison:.3}, crosspoison:{name:"クロスポイズン",type:"poison",cat:"phys",power:70,poison:.1}, sludgewave2:{name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.1},
@@ -716,6 +717,7 @@ SPECIES.push(S("nemoPawmot","ネモのパーモット","image/image/ネモのパ
 SPECIES.push(S("sayakuFeraligatr","サヤクのオーダイル","image/image/サヤクのオーダイル.gif",["water"],{hp:85,atk:105,def:100,spa:79,spd:83,spe:78},"torrent",["sayakuCrunch","sayakuWaterfall","icefang","earthquake"]));
 SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","image/image/クロノのバクフーン.gif",["fire"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"blaze",["kuronoEruption","kuronoFlameWheel","focusblast","crunch"]));
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","image/image/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"pressure",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
+SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -772,6 +774,7 @@ const LEARN={
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
   garakuMoltresG:["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost","darkpulse","airslash","protect"],
+  moaroZapdosG:["moaroThunderKick","bravebird","closecombat","drillrun","throatchop","uturn","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -1115,6 +1118,10 @@ function openDevCode(){
     const sp=SP_BY_ID.garakuMoltresG;
     if(!party.some(p=>SPECIES[p.sp]?.id==="garakuMoltresG")){party.push({sp,item:"none",moves:["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ガラクのガラルファイヤーを受け取った！");}
     else alert("ガラクのガラルファイヤーは、すでに受け取っています。");
+  }else if(normalizedCode==="POKEMONMOARO"){
+    const sp=SP_BY_ID.moaroZapdosG;
+    if(!party.some(p=>SPECIES[p.sp]?.id==="moaroZapdosG")){party.push({sp,item:"none",moves:["moaroThunderKick","bravebird","closecombat","drillrun"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("モアロのガラルサンダーを受け取った！");}
+    else alert("モアロのガラルサンダーは、すでに受け取っています。");
   }else if(code!==null){
     alert("コードが違います。");
   }
