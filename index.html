@@ -2159,7 +2159,7 @@ function absorbIceShield(mon,damage){
   pushLog(`  ❄ ${mon.name} の氷塊シールドが ${blocked} ダメージを防いだ！ 残り${mon.iceShieldHp}`,"#7ad1ff");
   if(!mon.iceShieldHp)pushLog(`  └ ${mon.name} の氷塊シールドが壊れた！ 本体への超過ダメージなし。`,"#7ad1ff");
 }
-function absorbBlackMoonShield(mon,damage){const blocked=Math.min(mon.blackMoonShieldHp,damage);mon.blackMoonShieldHp=Math.max(0,mon.blackMoonShieldHp-damage);pushLog(`  🌑 ${mon.name} の月影シールドが ${blocked} ダメージを防いだ！ 残り${mon.blackMoonShieldHp}`,"#b061ff");}
+function absorbBlackMoonShield(mon,damage){const blocked=Math.min(mon.blackMoonShieldHp,damage),overflow=Math.max(0,damage-blocked);mon.blackMoonShieldHp=Math.max(0,mon.blackMoonShieldHp-damage);const label=mon.sayakuShield?"シールド":"月影シールド";pushLog(`  🛡 ${mon.name} の${label}が ${blocked} ダメージを防いだ！ 残り${mon.blackMoonShieldHp}`,"#7ad1ff");if(mon.sayakuShield&&overflow>0){mon.curHp=Math.max(0,mon.curHp-overflow);pushLog(`  └ シールドを超えた ${overflow} ダメージを受けた！`,"#ff7043");}return overflow;}
 function birdContact(attacker,defender,move,damage){
   if(move.cat==="status")return;
   for(const mon of [attacker,defender])if(mon.abilEff==="birdFlame"&&!(mon===defender&&move.ignoreAbility)){
@@ -2561,7 +2561,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
   let dmg=res.dmg, lifeTrigger=false;
   if(move.birdOnHit)move.birdOnHit();
-  if(defender.blackMoonShieldHp>0){absorbBlackMoonShield(defender,dmg);renderHp();setTimeout(cb,350);return;}
+  if(defender.blackMoonShieldHp>0){absorbBlackMoonShield(defender,dmg);renderHp();if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);setTimeout(cb,350);return;}
   if(defender.iceShieldHp>0){
     absorbIceShield(defender,dmg);birdContact(attacker,defender,move,0);renderHp();setTimeout(cb,350);return;
   }
