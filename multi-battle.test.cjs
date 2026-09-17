@@ -594,5 +594,9 @@ vm.runInContext(`
   check(M.tailwind.cat==='status'&&M.tailwind.windMove&&effSpeed(kilowattrel)===windSpeed*2,'Tailwind is a wind status move that doubles speed for two turns');
   kilowattrel.tailwindTurns=0;windPowerOnHit(apeTarget,kilowattrel,M.hurricane,1);
   check(kilowattrel.electricCharge,'Wind Power charges when Kilowattrel receives a wind move');
+  const lilligant=makeMon(SP_BY_ID.lilligant,'none','p1'),lilligantH=makeMon(SP_BY_ID.lilligantH,'none','p1'),ampharos=makeMon(SP_BY_ID.ampharos,'none','p1');
+  check(lilligant.types.join('/')==='grass'&&lilligant.base.hp===70&&lilligant.base.atk===60&&lilligant.base.def===105&&lilligant.base.spa===110&&lilligant.base.spd===105&&lilligant.base.spe===90&&lilligant.img==='image/image/ドレディア.gif','Lilligant has its image, type and base stats including global bulk bonus');
+  check(lilligantH.types.join('/')==='grass/fighting'&&lilligantH.base.hp===70&&lilligantH.base.atk===105&&lilligantH.base.def===105&&lilligantH.base.spa===50&&lilligantH.base.spd===105&&lilligantH.base.spe===105&&lilligantH.img==='image/image/ドレディア(ヒスイ).gif','Hisuian Lilligant has its image, types and base stats including global bulk bonus');
+  check(ampharos.types.join('/')==='electric'&&ampharos.base.hp===90&&ampharos.base.atk===75&&ampharos.base.def===115&&ampharos.base.spa===115&&ampharos.base.spd===120&&ampharos.base.spe===55&&ampharos.img==='image/image/デンリュウ.gif','Ampharos has its image, type and base stats including global bulk bonus');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
