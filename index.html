@@ -1414,7 +1414,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
   show("battle");
   document.getElementById("endArea").classList.add("hidden");
   document.getElementById("log").innerHTML="";
-  ["myImg","foeImg"].forEach(id=>document.getElementById(id).classList.remove("faint","mega-anim","dynamax-aura"));
+  ["myImg","foeImg"].forEach(id=>document.getElementById(id).classList.remove("faint","faint-effect","switch-effect","mega-anim","dynamax-aura"));
   renderActive(); renderWeather();
   pushLog(mode==='friend'?`▶ プレイヤー2は ${foe.name} を くりだした！`:`▶ あいては ${foe.name} を くりだした！`);
   pushLog(mode==='friend'?`▶ プレイヤー1は ${me.name} を くりだした！`:`▶ ゆけ！ ${me.name}！`);
@@ -1428,6 +1428,8 @@ function renderActive(){
   document.getElementById("foeImg").src=IMG(foe.img);
   document.getElementById("myImg").classList.toggle("faint",me.fainted);
   document.getElementById("foeImg").classList.toggle("faint",foe.fainted);
+  if(!me.fainted)document.getElementById("myImg").classList.remove("faint-effect");
+  if(!foe.fainted)document.getElementById("foeImg").classList.remove("faint-effect");
   document.getElementById("myName").textContent=me.name;
   document.getElementById("foeName").textContent=foe.name;
   setAbLine(); renderHp(); renderStages(); renderDots();
