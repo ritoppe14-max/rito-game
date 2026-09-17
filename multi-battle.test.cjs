@@ -574,5 +574,9 @@ vm.runInContext(`
   check(ape.moves.some(m=>m.name==='ふんどのこぶし')&&rageMax>rageBase&&Math.min(350,50+ape.rageFistHits*50)===350,'Rage Fist reaches power 350 after six hits');
   ape.rageFistHits=4;myTeam=[ape,makeMon(SP_BY_ID.gyarados,'none','p1')];foeTeam=[apeTarget];me=ape;foe=apeTarget;doSwitch('me',1,()=>{});
   check(ape.rageFistHits===0,'Switching resets Rage Fist power');
+  const armarouge=makeMon(SP_BY_ID.armarouge,'none','p1'),ceruledge=makeMon(SP_BY_ID.ceruledge,'none','p1');
+  check(armarouge.types.join('/')==='fire/psychic'&&armarouge.base.hp===85&&armarouge.base.atk===60&&armarouge.base.def===130&&armarouge.base.spa===125&&armarouge.base.spd===110&&armarouge.base.spe===75&&armarouge.img==='image/image/グレンアルマ.gif','Armarouge has its image, types and base stats including global bulk bonus');
+  check(ceruledge.types.join('/')==='fire/ghost'&&ceruledge.base.hp===75&&ceruledge.base.atk===125&&ceruledge.base.def===110&&ceruledge.base.spa===60&&ceruledge.base.spd===130&&ceruledge.base.spe===85&&ceruledge.img==='image/image/ソウブレイズ.gif','Ceruledge has its image, types and base stats including global bulk bonus');
+  check(M.armorcannon.power===120&&M.armorcannon.selfDrop.stats.def===-1&&M.bitterblade.power===90&&M.bitterblade.healDamage===.5,'Armarouge and Ceruledge signature moves are configured');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
