@@ -246,7 +246,7 @@ const ABIL={
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
   sandforce:{name:"すなのちから",eff:"sandforce"}, frisk:{name:"おみとおし",eff:"frisk"}, quickdraw:{name:"クイックドロウ",eff:"quickdraw"}, damp:{name:"しめりけ",eff:"damp"}, sunpower:{name:"サンパワー",eff:"sunpower"}, dragonskin:{name:"ドラゴンスキン",eff:"dragonskin"}, sharpness:{name:"きれあじ",eff:"sharpness"}, levitate:{name:"ふゆう",eff:"levitate"}, armorhide:{name:"がんらしいん",eff:"armorhide"}, strongjaw:{name:"がんじょうあご",eff:"strongjaw"}, axarts:{name:"アクスーツ",eff:"axarts"}, toughclaws:{name:"かたいつめ",eff:"toughclaws"}, grassmaker:{name:"グラスメイカー",eff:"grassmaker"}, libero:{name:"リベロ",eff:"libero"}, sheerforce:{name:"ちからずく",eff:"sheerforce"}, corrosion:{name:"まひょうく",eff:"corrosion"}, speedboost:{name:"かそく",eff:"speedboost"},
   roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electromorphosis:{name:"でんきにかえる",eff:"electromorphosis"}, windpower:{name:"ふうりょくでんき",eff:"windpower"}, static:{name:"せいでんき",eff:null}, hustle:{name:"はりきり",eff:"hustle"}, flowerveil:{name:"フラワーベール",eff:null}, yogapower:{name:"ヨガパワー",eff:"hugepower"}, guarddog:{name:"ばんけん",eff:"guarddog"}, oblivious:{name:"どんかん",eff:null}, sapsipper:{name:"そうしょく",eff:null}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
-  aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, rockhead:{name:"いしあたま",eff:"rockhead"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
+  aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, rockhead:{name:"いしあたま",eff:"rockhead"}, serenegrace:{name:"てんのめぐみ",eff:null}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
@@ -697,6 +697,8 @@ SPECIES.push(S("manectric","ライボルト","image/image/ライボルト.gif",[
 SPECIES.push(S("alolanNinetales","アローラキュウコン","image/image/アローラキュウコン.gif",["ice","fairy"],{hp:73,atk:67,def:75,spa:81,spd:100,spe:109},"snowcloak",["alolanAvalanche","alolanBlizzard","moonblast","calmMind"]));
 SPECIES.push(S("amoonguss","モロバレル","image/image/モロバレル.gif",["grass","poison"],{hp:114,atk:85,def:70,spa:85,spd:80,spe:30},"regenerator",["spore","gigadrain","sludgebomb","protect"]));
 SPECIES.push(S("arcanineH","ウインディ(ヒスイ)","image/image/ウィンディ(ヒスイ).gif",["fire","rock"],{hp:95,atk:115,def:80,spa:95,spd:80,spe:90},"intimidate",["flaredrive","rockslide","wildcharge","crunch"]));
+SPECIES.push(S("dunsparce","ノコッチ","image/image/ノコッチ.gif",["normal"],{hp:100,atk:70,def:70,spa:65,spd:65,spe:45},"serenegrace",["bodyslam","drillrun","zenheadbutt","roost"]));
+SPECIES.push(S("dudunsparce","ノココッチ","image/image/ノココッチ.gif",["normal"],{hp:125,atk:100,def:80,spa:85,spd:75,spe:55},"serenegrace",["bodyslam","drillrun","zenheadbutt","roost"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -746,6 +748,8 @@ const LEARN={
   alolanNinetales:["alolanAvalanche","alolanBlizzard","moonblast","icebeam","freezedry","dazzlinggleam","calmMind","protect"],
   amoonguss:["spore","gigadrain","sludgebomb","protect","synthesis","foulplay","energyball","toxic"],
   arcanineH:["flaredrive","rockslide","wildcharge","crunch","stoneedge","firefang","flareblitz","closecombat","playrough","protect"],
+  dunsparce:["bodyslam","drillrun","zenheadbutt","roost","protect","substitute"],
+  dudunsparce:["bodyslam","drillrun","zenheadbutt","roost","boomburst","hypervoice","protect","substitute"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -879,6 +883,8 @@ Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramor
 ABILS.baxcalibur=["berserker"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
+ABILS.dunsparce=["serenegrace"];
+ABILS.dudunsparce=["serenegrace"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -1533,6 +1539,16 @@ function applyMoody(m){
 }
 function applyEntry(m,imgId,cb){
   m.birdFirstAttackReady=true;
+  if(m.id==="dudunsparce"&&!m.dudunsparceFormChecked){
+    m.dudunsparceFormChecked=true;
+    if(Math.random()<.2){
+      const hpRatio=m.maxHp?m.curHp/m.maxHp:1;
+      m.name="ノコココッチ";m.img="image/image/ノコココッチ.gif";m.base=Object.fromEntries(Object.entries(m.base).map(([stat,value])=>[stat,value+10]));m.isNokokocchi=true;
+      m.maxHp=Math.floor((m.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(m.itemKey==="healcrown"?1.05:1));m.curHp=Math.max(1,Math.min(m.maxHp,Math.round(m.maxHp*hpRatio)));
+      const img=document.getElementById(imgId);if(img)img.src=IMG(m.img);renderActive();renderHp();
+      pushLog("★ ノココッチは ノコココッチになった！ 全種族値が+10！","#ffcb05");
+    }
+  }
   if(m.id==="zamazenta"&&m.stoneMatches&&!m.isMega){
     const form=m.megaForm;m.name=form.name;m.img=form.img;m.types=form.types.slice();m.base={...form.base};m.isMega=true;
     renderActive();pushLog("⚔ ザマゼンタは たてのおうに変身した！","#ffcb05");
@@ -1604,7 +1620,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
   if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
-  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus"]);
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus","dunsparce"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;

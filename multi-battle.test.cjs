@@ -628,5 +628,10 @@ vm.runInContext(`
   check(hisuianArcanine.types.join('/')==='fire/rock'&&hisuianArcanine.base.hp===95&&hisuianArcanine.base.atk===115&&hisuianArcanine.base.def===110&&hisuianArcanine.base.spa===95&&hisuianArcanine.base.spd===110&&hisuianArcanine.base.spe===90&&hisuianArcanine.abilEff==='intimidate'&&hisuianArcanine.img==='image/image/ウィンディ(ヒスイ).gif','Hisuian Arcanine has its image, types, Intimidate and base stats including global bulk bonus');
   hisuianArcanine.abilEff='rockhead';hisuianArcanine.curHp=100;applyMoveRecoil(hisuianArcanine,M.flaredrive,90);
   check(ABIL.rockhead.name==='いしあたま'&&hisuianArcanine.curHp===100&&ABILS.arcanineH.includes('intimidate')&&ABILS.arcanineH.includes('rockhead'),'Hisuian Arcanine can select Rock Head and takes no recoil');
+  const dunsparce=makeMon(SP_BY_ID.dunsparce,'eviolite','p1'),dunsparcePlain=makeMon(SP_BY_ID.dunsparce,'none','p1');
+  check(dunsparce.types.join('/')==='normal'&&dunsparce.base.hp===100&&dunsparce.base.atk===70&&dunsparce.base.def===100&&dunsparce.base.spa===65&&dunsparce.base.spd===95&&dunsparce.base.spe===45&&calcDamage(apeTarget,dunsparce,M.waterfall,false).dmg<calcDamage(apeTarget,dunsparcePlain,M.waterfall,false).dmg,'Dunsparce is eligible for Eviolite');
+  const dudunsparce=makeMon(SP_BY_ID.dudunsparce,'none','p1'),dudunsparceTarget=makeMon(SP_BY_ID.gyarados,'none','cpu'),savedRandom=Math.random;
+  me=dudunsparce;foe=dudunsparceTarget;Math.random=()=>.1;applyEntry(dudunsparce,'myImg',()=>{});Math.random=savedRandom;
+  check(dudunsparce.name==='ノコココッチ'&&dudunsparce.img==='image/image/ノコココッチ.gif'&&dudunsparce.base.hp===135&&dudunsparce.base.atk===110&&dudunsparce.base.def===120&&dudunsparce.base.spa===95&&dudunsparce.base.spd===115&&dudunsparce.base.spe===65,'Dudunsparce has a 20 percent entry transformation into plus-ten Nokokocchi');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
