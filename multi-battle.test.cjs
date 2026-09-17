@@ -606,6 +606,7 @@ vm.runInContext(`
   check(medicham.isMega&&medicham.name==='メガチャーレム'&&medicham.img==='image/image/メガチャーレム.gif'&&medicham.base.atk===100&&medicham.base.def===115&&medicham.base.spa===80&&medicham.base.spd===115&&medicham.base.spe===100,'Medichamite Mega Evolves Medicham into Mega Medicham');
   const manectric=makeMon(SP_BY_ID.manectric,'manectite','p1');
   check(manectric.types.join('/')==='electric'&&manectric.base.hp===70&&manectric.base.atk===75&&manectric.base.def===90&&manectric.base.spa===105&&manectric.base.spd===90&&manectric.base.spe===105&&manectric.abilEff==='intimidate','Manectric has its base stats and requested Intimidate');
+  check(manectric.img==='image/image/ライボルト.gif','Manectric uses its normal image before Mega Evolution');
   doMega(manectric,'myImg',()=>{});
   check(manectric.isMega&&manectric.name==='メガライボルト'&&manectric.img==='image/image/メガライボルト.gif'&&manectric.base.def===110&&manectric.base.spa===135&&manectric.base.spd===110&&manectric.base.spe===135&&manectric.abilEff==='guarddog','Manectite Mega Evolves Manectric into Guard Dog Mega Manectric');
   me=apeTarget;foe=manectric;attack(apeTarget,manectric,M.thunderwave,'foeImg',()=>{});
