@@ -613,5 +613,13 @@ vm.runInContext(`
   check(!manectric.status,'Guard Dog blocks opposing status moves');
   const intimidator=makeMon(SP_BY_ID.manectric,'none','p1');me=intimidator;foe=manectric;applyEntry(intimidator,'myImg',()=>{});
   check(manectric.stages.atk===1,'Guard Dog raises attack when Intimidated');
+  const alolanNinetales=makeMon(SP_BY_ID.alolanNinetales,'none','p1'),alolanTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(alolanNinetales.types.join('/')==='ice/fairy'&&alolanNinetales.base.hp===73&&alolanNinetales.base.atk===67&&alolanNinetales.base.def===105&&alolanNinetales.base.spa===81&&alolanNinetales.base.spd===130&&alolanNinetales.base.spe===109&&alolanNinetales.img==='image/image/アローラキュウコン.gif','Alolan Ninetales has its image, types and base stats including global bulk bonus');
+  me=alolanNinetales;foe=alolanTarget;attack(alolanNinetales,alolanTarget,M.alolanAvalanche,'foeImg',()=>{});
+  check(M.alolanAvalanche.power===65&&alolanTarget.switchLock===2,'Alolan Ninetales Avalanche has power 65 and prevents switching');
+  attack(alolanNinetales,alolanTarget,{...M.alolanBlizzard,forceHit:true},'foeImg',()=>{});
+  check(alolanTarget.status==='freeze'&&alolanTarget.alolanFreezeTurns===1&&alolanNinetales.usedAlolanBlizzardFreeze,'Alolan Ninetales Blizzard freezes for one action only once per battle');
+  alolanTarget.status=null;alolanTarget.alolanFreezeTurns=0;attack(alolanNinetales,alolanTarget,{...M.alolanBlizzard,forceHit:true},'foeImg',()=>{});
+  check(!alolanTarget.status,'Alolan Ninetales Blizzard does not freeze a second time');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

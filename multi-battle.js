@@ -131,7 +131,10 @@ function multiResolve(){
     if(m.holeCakeTurns>0){pushLog(`${m.name} は ホールケイプ中で 動けない！`);cb();return;}
     if(m.flinched||m.status==='paralyze'&&Math.random()<.2||m.status==='hypersleep'&&Math.random()<.25){pushLog(`${m.name} は動けない！`);cb();return;}
     if(m.status==='sleep'&&--m.sleepTurns>0){pushLog(`${m.name} は眠っている！`);cb();return;}if(m.status==='sleep')m.status=null;
-    if(m.status==='freeze'){if(Math.random()>=.25){cb();return;}m.status=null;}
+    if(m.status==='freeze'){
+      if(m.alolanFreezeTurns>0){m.alolanFreezeTurns--;m.status=null;pushLog(`${m.name} は アローラキュウコンの ふぶきで こおって動けない！`);cb();return;}
+      if(Math.random()>=.25){cb();return;}m.status=null;
+    }
     multi.actionLog[a.side].push(`${m.name} の ${a.move.name}`);renderMultiActionPanels();
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
