@@ -567,5 +567,12 @@ vm.runInContext(`
   umbreonTarget.justSwitched=true;const normalMoon=calcDamage(umbreon,({...umbreonTarget,justSwitched:false}),M.blackMoonSilence,false).dmg,switchedMoon=calcDamage(umbreon,umbreonTarget,M.blackMoonSilence,false).dmg;
   attack(umbreon,umbreonTarget,umbreon.moves[4],'foeImg',()=>{});
   check(umbreon.usedFifthSlot&&umbreon.blackMoonActive&&umbreon.blackMoonShieldHp>0&&switchedMoon>normalMoon,'Black Moon grants shield, recovery and switch damage boost');
+  const ape=makeMon(SP_BY_ID.annihilape,'none','p1'),apeTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(ape.types.join('/')==='fighting/ghost'&&ape.base.hp===110&&ape.base.atk===115&&ape.base.def===110&&ape.base.spa===50&&ape.base.spd===120&&ape.base.spe===90&&ape.img==='image/image/コノヨザル.gif','Annihilape has its image, types and base stats including global bulk bonus');
+  const rageBase=calcDamage(ape,apeTarget,M.ragefist,false).dmg;ape.rageFistHits=6;
+  const rageMax=calcDamage(ape,apeTarget,M.ragefist,false).dmg;
+  check(ape.moves.some(m=>m.name==='ふんどのこぶし')&&rageMax>rageBase&&Math.min(350,50+ape.rageFistHits*50)===350,'Rage Fist reaches power 350 after six hits');
+  ape.rageFistHits=4;myTeam=[ape,makeMon(SP_BY_ID.gyarados,'none','p1')];foeTeam=[apeTarget];me=ape;foe=apeTarget;doSwitch('me',1,()=>{});
+  check(ape.rageFistHits===0,'Switching resets Rage Fist power');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

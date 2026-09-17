@@ -107,6 +107,7 @@ function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
   a.mon.mougekiLock=null;
+  a.mon.rageFistHits=0;
   clearEeveeEffects(a.mon);
   multiClearBehind(a.mon);a.mon.stages={atk:0,spa:0,def:0,spd:0,spe:0};a.mon.subHp=0;a.mon.electroBeamReady=false;
   slots[i]=a.replacement;a.replacement.firstTurnReady=true;a.replacement.acted=0;a.replacement.justSwitched=true;
