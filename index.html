@@ -1381,7 +1381,7 @@ function startFriendSelect(){  // フレンド戦：6体を見せ合ってから
 }
 function buildCpuParty(){
   // ランダムに6体
-  const pool=SPECIES.map((sp,i)=>sp.hidden?-1:i).filter(i=>i>=0);
+  const pool=SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]?-1:i).filter(i=>i>=0);
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   const picks=pool.slice(0,6);
   cpuParty=picks.map(si=>{
