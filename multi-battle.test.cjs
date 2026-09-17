@@ -621,5 +621,8 @@ vm.runInContext(`
   check(alolanTarget.status==='freeze'&&alolanTarget.alolanFreezeTurns===1&&alolanNinetales.usedAlolanBlizzardFreeze,'Alolan Ninetales Blizzard freezes for one action only once per battle');
   alolanTarget.status=null;alolanTarget.alolanFreezeTurns=0;attack(alolanNinetales,alolanTarget,{...M.alolanBlizzard,forceHit:true},'foeImg',()=>{});
   check(!alolanTarget.status,'Alolan Ninetales Blizzard does not freeze a second time');
+  const amoonguss=makeMon(SP_BY_ID.amoonguss,'none','p1');
+  check(amoonguss.types.join('/')==='grass/poison'&&amoonguss.base.hp===114&&amoonguss.base.atk===85&&amoonguss.base.def===100&&amoonguss.base.spa===85&&amoonguss.base.spd===110&&amoonguss.base.spe===30&&amoonguss.abilEff===null&&amoonguss.abilName==='さいせいりょく'&&amoonguss.img==='image/image/モロバレル.gif','Amoonguss has its image, types, Regenerator and base stats including global bulk bonus');
+  check(amoonguss.moves.some(m=>m.name==='キノコのほうし')&&amoonguss.moves.some(m=>m.name==='ギガドレイン')&&amoonguss.moves.some(m=>m.name==='ヘドロばくだん'),'Amoonguss has its requested battle moves');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

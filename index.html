@@ -695,6 +695,7 @@ SPECIES.push(S("floetteEternal","フラエッテ(永遠の花)","image/image/フ
 SPECIES.push(S("medicham","チャーレム","image/image/チャーレム.gif",["fighting","psychic"],{hp:60,atk:60,def:75,spa:60,spd:75,spe:80},"yogapower",["highjumpkick","zenheadbutt","icepunch","fakeout"],[{stone:"medichamite",stoneName:"チャーレムナイト",name:"メガチャーレム",img:"image/image/メガチャーレム.gif",types:["fighting","psychic"],base:{hp:60,atk:100,def:85,spa:80,spd:85,spe:100},abil:"yogapower"}]));
 SPECIES.push(S("manectric","ライボルト","image/image/ライボルト.gif",["electric"],{hp:70,atk:75,def:60,spa:105,spd:60,spe:105},"intimidate",["thunderbolt","voltswitch","flamethrower","snarl"],[{stone:"manectite",stoneName:"ライボルトナイト",name:"メガライボルト",img:"image/image/メガライボルト.gif",types:["electric"],base:{hp:70,atk:75,def:80,spa:135,spd:80,spe:135},abil:"guarddog"}]));
 SPECIES.push(S("alolanNinetales","アローラキュウコン","image/image/アローラキュウコン.gif",["ice","fairy"],{hp:73,atk:67,def:75,spa:81,spd:100,spe:109},"snowcloak",["alolanAvalanche","alolanBlizzard","moonblast","calmMind"]));
+SPECIES.push(S("amoonguss","モロバレル","image/image/モロバレル.gif",["grass","poison"],{hp:114,atk:85,def:70,spa:85,spd:80,spe:30},"regenerator",["spore","gigadrain","sludgebomb","protect"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -742,6 +743,7 @@ const LEARN={
   medicham:["highjumpkick","zenheadbutt","icepunch","fakeout","firepunch","thunderpunch","drainpunch","bulletpunch","protect"],
   manectric:["thunderbolt","voltswitch","flamethrower","snarl","thunder","discharge","thunderwave","protect"],
   alolanNinetales:["alolanAvalanche","alolanBlizzard","moonblast","icebeam","freezedry","dazzlinggleam","calmMind","protect"],
+  amoonguss:["spore","gigadrain","sludgebomb","protect","synthesis","foulplay","energyball","toxic"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
