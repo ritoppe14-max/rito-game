@@ -633,5 +633,11 @@ vm.runInContext(`
   const dudunsparce=makeMon(SP_BY_ID.dudunsparce,'none','p1'),dudunsparceTarget=makeMon(SP_BY_ID.gyarados,'none','cpu'),savedRandom=Math.random;
   me=dudunsparce;foe=dudunsparceTarget;Math.random=()=>.1;applyEntry(dudunsparce,'myImg',()=>{});Math.random=savedRandom;
   check(dudunsparce.name==='ノコココッチ'&&dudunsparce.img==='image/image/ノコココッチ.gif'&&dudunsparce.base.hp===135&&dudunsparce.base.atk===110&&dudunsparce.base.def===120&&dudunsparce.base.spa===95&&dudunsparce.base.spd===115&&dudunsparce.base.spe===65,'Dudunsparce has a 20 percent entry transformation into plus-ten Nokokocchi');
+  const sawsbuck=makeMon(SP_BY_ID.sawsbuck,'none','p1'),sawsbuckAttacker=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  applySawsbuckSeason(sawsbuck,3);check(sawsbuck.name==='メブキジカ(はるのすがた)'&&sawsbuck.img==='image/image/メブキジカ(はる).gif'&&sawsbuck.base.hp===102&&sawsbuck.base.atk===100&&sawsbuck.base.def===100&&sawsbuck.base.spa===60&&sawsbuck.base.spd===100&&sawsbuck.base.spe===95&&sawsbuck.abilEff==='springconfusion','Sawsbuck spring form has Spring Confusion and plus 22 HP');
+  springConfusionOnHit(sawsbuckAttacker,sawsbuck,M.waterfall,1);check(sawsbuckAttacker.confusionTurns===2,'Spring Confusion confuses the attacker for two turns');
+  applySawsbuckSeason(sawsbuck,7);check(sawsbuck.name==='メブキジカ(なつのすがた)'&&sawsbuck.base.atk===120&&sawsbuck.base.spa===80&&sawsbuck.base.hp===80&&sawsbuck.abilEff===null,'Sawsbuck summer form boosts Attack and Special Attack by 20');
+  applySawsbuckSeason(sawsbuck,9);check(sawsbuck.name==='メブキジカ(あきのすがた)'&&sawsbuck.base.spe===115&&sawsbuck.base.def===100&&sawsbuck.base.spd===100,'Sawsbuck autumn form boosts Speed by 20');
+  applySawsbuckSeason(sawsbuck,11);check(sawsbuck.name==='メブキジカ(ふゆのすがた)'&&sawsbuck.base.def===120&&sawsbuck.base.spd===120&&sawsbuck.base.spe===95,'Sawsbuck winter form boosts Defense and Special Defense by 20');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

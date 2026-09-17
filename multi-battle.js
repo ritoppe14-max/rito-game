@@ -130,6 +130,7 @@ function multiResolve(){
     if(a.move.requiresAttack&&(!targetAction||targetAction.type!=="move"||targetAction.move.cat==="status"||targetAction.move.power<=0)){pushLog(`  └ ${m.name} の ふいうちは しっぱいした！`,"#9fb3d6");cb();return;}
     if(m.holeCakeTurns>0){pushLog(`${m.name} は ホールケイプ中で 動けない！`);cb();return;}
     if(m.flinched||m.status==='paralyze'&&Math.random()<.2||m.status==='hypersleep'&&Math.random()<.25){pushLog(`${m.name} は動けない！`);cb();return;}
+    if(m.confusionTurns>0){m.confusionTurns--;if(Math.random()<1/3){pushLog(`${m.name} は混乱して動けない！`);cb();return;}}
     if(m.status==='sleep'&&--m.sleepTurns>0){pushLog(`${m.name} は眠っている！`);cb();return;}if(m.status==='sleep')m.status=null;
     if(m.status==='freeze'){
       if(m.alolanFreezeTurns>0){m.alolanFreezeTurns--;m.status=null;pushLog(`${m.name} は アローラキュウコンの ふぶきで こおって動けない！`);cb();return;}
