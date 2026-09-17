@@ -578,5 +578,12 @@ vm.runInContext(`
   check(armarouge.types.join('/')==='fire/psychic'&&armarouge.base.hp===85&&armarouge.base.atk===60&&armarouge.base.def===130&&armarouge.base.spa===125&&armarouge.base.spd===110&&armarouge.base.spe===75&&armarouge.img==='image/image/グレンアルマ.gif','Armarouge has its image, types and base stats including global bulk bonus');
   check(ceruledge.types.join('/')==='fire/ghost'&&ceruledge.base.hp===75&&ceruledge.base.atk===125&&ceruledge.base.def===110&&ceruledge.base.spa===60&&ceruledge.base.spd===130&&ceruledge.base.spe===85&&ceruledge.img==='image/image/ソウブレイズ.gif','Ceruledge has its image, types and base stats including global bulk bonus');
   check(M.armorcannon.power===120&&M.armorcannon.selfDrop.stats.def===-1&&M.bitterblade.power===90&&M.bitterblade.healDamage===.5,'Armarouge and Ceruledge signature moves are configured');
+  const bellibolt=makeMon(SP_BY_ID.bellibolt,'none','p1'),whiscash=makeMon(SP_BY_ID.whiscash,'none','cpu');
+  check(bellibolt.types.join('/')==='electric'&&bellibolt.base.hp===109&&bellibolt.base.atk===64&&bellibolt.base.def===121&&bellibolt.base.spa===103&&bellibolt.base.spd===113&&bellibolt.base.spe===45&&bellibolt.img==='image/image/ハラバリー.gif','Bellibolt has its image, type and base stats including global bulk bonus');
+  check(whiscash.types.join('/')==='water/ground'&&whiscash.base.hp===110&&whiscash.base.atk===78&&whiscash.base.def===103&&whiscash.base.spa===76&&whiscash.base.spd===101&&whiscash.base.spe===60&&whiscash.img==='image/image/ナマズン.gif','Whiscash has its image, types and base stats including global bulk bonus');
+  bellibolt.electricCharge=true;const normalElectric=calcDamage(bellibolt,apeTarget,M.thunderbolt,false).dmg,chargedElectric=calcDamage(bellibolt,apeTarget,{...M.thunderbolt,electromorphosisBoost:true},false).dmg;
+  check(chargedElectric>=normalElectric*1.9,'Electromorphosis doubles the charged Electric move');
+  me=bellibolt;foe=whiscash;bellibolt.electricCharge=true;attack(bellibolt,whiscash,M.protect,'foeImg',()=>{});
+  check(!bellibolt.electricCharge,'Electromorphosis charge ends after using a non-Electric move');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
