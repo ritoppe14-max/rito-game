@@ -2376,6 +2376,7 @@ function mirrorTarget(attacker,defender,move){
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  if(attacker.id==="kuronoTyphlosion"&&move.cat!=="status"&&move.power>0)move={...move,healDamage:.6};
   if(attacker.abilEff==="garakuFury"&&move.cat!=="status"&&((attacker.garakuAttackCount||0)+1)%3===0){move.flinch=1;move.garakuGuaranteedFlinch=true;}
   if(defender&&defender.abilEff==="guarddog"&&attacker!==defender&&move.cat==="status"&&!isFriendlyMove(move)&&!move.ignoreAbility){announceAbility(defender);pushLog(`  ★ ${defender.name} の ばんけん！ ${move.name} を無効化した！`,"#ffcb05");cb();return;}
   if(attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
