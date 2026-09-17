@@ -676,6 +676,7 @@ SPECIES.push(S("umbreon","ブラッキー","image/image/ブラッキー.gif",["d
 SPECIES.push(S("decidueye","ジュナイパー","image/image/ジュナイパー.gif",["grass","ghost"],{hp:78,atk:107,def:75,spa:100,spd:100,spe:70},"overgrow",["shadowStitch","decidueyeLeafStorm","leafblade","roost"]));
 SPECIES.push(S("torracat","ニャヒート","image/image/ニャヒート.gif",["fire"],{hp:80,atk:120,def:80,spa:80,spd:85,spe:110},"blaze",["daifungeki","flaredrive","crunch","firepunch"]));
 SPECIES.push(S("barraskewda","カマスジョー","image/image/カマスジョー.gif",["water"],{hp:61,atk:123,def:60,spa:60,spd:50,spe:136},"swiftswim",["liquidation","crunch","closecombat","aquajet"]));
+SPECIES.push(S("torkoal","コータス","image/image/コータス.gif",["fire"],{hp:70,atk:85,def:140,spa:85,spd:70,spe:20},"drought",["eruption","flamethrower","earthpower","stealthrock"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -707,6 +708,7 @@ const LEARN={
   decidueye:["shadowStitch","decidueyeLeafStorm","leafblade","roost","suckerpunch","shadowclaw","bravebird","protect"],
   torracat:["daifungeki","flaredrive","crunch","firepunch","flamethrower","fireblast","protect"],
   barraskewda:["liquidation","crunch","closecombat","aquajet","waterfall","icefang","psychicfangs","drillrun","protect"],
+  torkoal:["eruption","flamethrower","earthpower","stealthrock","fireblast","heatcrash","bodypress","protect","toxic"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
