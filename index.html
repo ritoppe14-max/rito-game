@@ -720,6 +720,9 @@ SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","image/im
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
+const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
+function refreshCodePokemonVisibility(){Object.entries(CODE_POKEMON_UNLOCKS).forEach(([id,flag])=>{const sp=SPECIES[SP_BY_ID[id]];if(sp)sp.hidden=localStorage.getItem(flag)!==="1";});}
+refreshCodePokemonVisibility();
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai","inteleon"]);
 const FALINKS_HEI=[
@@ -974,7 +977,7 @@ function createBuild(){
 }
 const builds={p1:createBuild(), p2:createBuild()};
 let trainOwner="p1";
-const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear"];
+const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro"];
 function saveGame(){
   const flags={};
   SAVE_FLAGS.forEach(k=>{if(localStorage.getItem(k)==="1")flags[k]=1;});
@@ -1038,6 +1041,7 @@ SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.st
 // ===== 編成データ（保持）=====
 let party=[], party2=[], partyProfiles=[party,[],[]], activePartyProfile=0, curParty=null, builderMode='cpu'; // P1=party / P2=party2
 loadGame();
+refreshCodePokemonVisibility();
 
 function show(id){["home","party","train","preview","battle"].forEach(s=>document.getElementById(s).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="party")renderParty();if(id==="home")renderHome();if(id==="train")renderTrain();}
 function typeTags(types){return types.map(t=>`<span class="type t-${t}">${TYPE_JP[t]}</span>`).join("");}
@@ -1100,25 +1104,30 @@ function openDevCode(){
     renderHome();
     alert("ダイマックス解放ステージをクリアしました。");
   }else if(normalizedCode==="POKEMONNEMO"){
+    localStorage.setItem("ritoCodeNemo","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.nemoPawmot;
     if(!party.some(p=>SPECIES[p.sp]?.id==="nemoPawmot")){
       party.push({sp,item:"none",moves:["electricSpeedStrike","closecombat","machpunch","wildcharge"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();
       alert("ネモのパーモットを受け取った！");
     }else alert("ネモのパーモットは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONSAYAKU"){
+    localStorage.setItem("ritoCodeSayaku","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.sayakuFeraligatr;
     if(!party.some(p=>SPECIES[p.sp]?.id==="sayakuFeraligatr")){
       party=party.filter(p=>SPECIES[p.sp]?.id!=="ohdairu");party.push({sp,item:"none",moves:["sayakuCrunch","sayakuWaterfall","icefang","earthquake"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("サヤクのオーダイルを受け取った！");
     }else alert("サヤクのオーダイルは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONKURONO"){
+    localStorage.setItem("ritoCodeKurono","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.kuronoTyphlosion;
     if(!party.some(p=>SPECIES[p.sp]?.id==="kuronoTyphlosion")){party.push({sp,item:"none",moves:["kuronoEruption","kuronoFlameWheel","focusblast","crunch"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("クロノのバクフーンを受け取った！");}
     else alert("クロノのバクフーンは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONGARAKU"){
+    localStorage.setItem("ritoCodeGaraku","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.garakuMoltresG;
     if(!party.some(p=>SPECIES[p.sp]?.id==="garakuMoltresG")){party.push({sp,item:"none",moves:["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ガラクのガラルファイヤーを受け取った！");}
     else alert("ガラクのガラルファイヤーは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONMOARO"){
+    localStorage.setItem("ritoCodeMoaro","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.moaroZapdosG;
     if(!party.some(p=>SPECIES[p.sp]?.id==="moaroZapdosG")){party.push({sp,item:"none",moves:["moaroThunderKick","bravebird","closecombat","drillrun"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("モアロのガラルサンダーを受け取った！");}
     else alert("モアロのガラルサンダーは、すでに受け取っています。");
