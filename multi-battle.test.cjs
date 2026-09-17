@@ -588,5 +588,11 @@ vm.runInContext(`
   const toxicroak=makeMon(SP_BY_ID.toxicroak,'none','p1'),goodra=makeMon(SP_BY_ID.goodra,'none','p1');
   check(toxicroak.types.join('/')==='poison/fighting'&&toxicroak.base.hp===83&&toxicroak.base.atk===106&&toxicroak.base.def===95&&toxicroak.base.spa===86&&toxicroak.base.spd===95&&toxicroak.base.spe===85&&toxicroak.img==='image/image/ドクロック.gif','Toxicroak has its image, types and base stats including global bulk bonus');
   check(goodra.types.join('/')==='dragon'&&goodra.base.hp===90&&goodra.base.atk===100&&goodra.base.def===100&&goodra.base.spa===110&&goodra.base.spd===180&&goodra.base.spe===80&&goodra.img==='image/image/ヌメルゴン.gif','Goodra has its image, type and base stats including global bulk bonus');
+  const kilowattrel=makeMon(SP_BY_ID.kilowattrel,'none','p1');
+  check(kilowattrel.types.join('/')==='electric/flying'&&kilowattrel.base.hp===70&&kilowattrel.base.atk===70&&kilowattrel.base.def===90&&kilowattrel.base.spa===105&&kilowattrel.base.spd===90&&kilowattrel.base.spe===125&&kilowattrel.img==='image/image/タイカイデン.gif','Kilowattrel has its image, types and base stats including global bulk bonus');
+  const windSpeed=effSpeed(kilowattrel);kilowattrel.tailwindTurns=2;
+  check(M.tailwind.cat==='status'&&M.tailwind.windMove&&effSpeed(kilowattrel)===windSpeed*2,'Tailwind is a wind status move that doubles speed for two turns');
+  kilowattrel.tailwindTurns=0;windPowerOnHit(apeTarget,kilowattrel,M.hurricane,1);
+  check(kilowattrel.electricCharge,'Wind Power charges when Kilowattrel receives a wind move');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

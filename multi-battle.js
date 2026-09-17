@@ -156,6 +156,7 @@ function multiEnd(){
     if(m.abilEff==='speedboost')applyDrop(m,{spe:1});
     if(m.yawnTurns>0&&--m.yawnTurns===0&&!m.status){m.status='sleep';m.sleepTurns=2+Math.floor(Math.random()*2);}
     if(m.switchLock>0)m.switchLock--;
+    if(m.tailwindTurns>0)m.tailwindTurns--;
     if(m.duraludonShieldTurns>0)m.duraludonShieldTurns--;
     if(m.outrageTurns>0&&--m.outrageTurns===0)m.outrageMove=null;
   }));
