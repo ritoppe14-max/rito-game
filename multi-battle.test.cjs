@@ -639,5 +639,11 @@ vm.runInContext(`
   applySawsbuckSeason(sawsbuck,7);check(sawsbuck.name==='メブキジカ(なつのすがた)'&&sawsbuck.base.atk===120&&sawsbuck.base.spa===80&&sawsbuck.base.hp===80&&sawsbuck.abilEff===null,'Sawsbuck summer form boosts Attack and Special Attack by 20');
   applySawsbuckSeason(sawsbuck,9);check(sawsbuck.name==='メブキジカ(あきのすがた)'&&sawsbuck.base.spe===115&&sawsbuck.base.def===100&&sawsbuck.base.spd===100,'Sawsbuck autumn form boosts Speed by 20');
   applySawsbuckSeason(sawsbuck,11);check(sawsbuck.name==='メブキジカ(ふゆのすがた)'&&sawsbuck.base.def===120&&sawsbuck.base.spd===120&&sawsbuck.base.spe===95,'Sawsbuck winter form boosts Defense and Special Defense by 20');
+  const nemoPawmot=makeMon(SP_BY_ID.nemoPawmot,'none','p1'),nemoTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(nemoPawmot.name==='ネモのパーモット'&&nemoPawmot.img==='image/image/ネモのパーモット.gif'&&M.electricSpeedStrike.power===120,'Nemo Pawmot and its exclusive Electric Speed Strike are available');
+  const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});
+  const teraElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;
+  check(nemoPawmot.isElectricTera&&nemoPawmot.typeLocked&&nemoPawmot.types.join('/')==='electric'&&teraElectricDamage>=normalElectricDamage*1.5,'Electric Tera makes Nemo Pawmot Electric-only and raises Electric STAB to two times');
+  attack(nemoPawmot,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(!nemoPawmot.types.includes('electric'),'Electric Speed Strike removes the user Electric type after use');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');

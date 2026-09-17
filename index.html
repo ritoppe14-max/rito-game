@@ -71,6 +71,7 @@
   @keyframes megaPulse{0%{filter:none;transform:scale(1)}25%{filter:drop-shadow(0 0 14px #b061ff) drop-shadow(0 0 28px #8a2be2);transform:scale(1.18)}60%{filter:drop-shadow(0 0 22px #b061ff) brightness(1.5) saturate(1.6);transform:scale(1.1)}100%{filter:drop-shadow(0 0 6px #b061ff);transform:scale(1)}}
   .mega-anim{animation:megaPulse 1s ease}
   .dynamax-aura{filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 16px #b40000)}
+  .electric-tera-aura{filter:drop-shadow(0 0 8px #ffe600) drop-shadow(0 0 20px #ffbf00) brightness(1.25)}
   .log{background:#0c1322;border:2px solid var(--line);border-radius:12px;height:110px;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:12px}
   #abilityToast{position:fixed;top:14px;left:50%;transform:translate(-50%,-16px);z-index:100;opacity:0;pointer-events:none;background:linear-gradient(135deg,#ffcb05,#ff8a3d);color:#182033;border:2px solid #fff3bc;border-radius:999px;padding:10px 22px;font-weight:900;font-size:16px;box-shadow:0 5px 18px rgba(0,0,0,.45);transition:opacity .18s,transform .18s}#abilityToast.show{opacity:1;transform:translate(-50%,0)}
   .cmd{margin-top:10px}
@@ -514,6 +515,7 @@ const M={
   blizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7}, earthquake2:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, earthpower2:{name:"だいちのちから",type:"ground",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}}, smackdown:{name:"うちおとす",type:"rock",cat:"phys",power:50}, rocktomb2:{name:"がんせきふうじ",type:"rock",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}},
   alolanAvalanche:{name:"ゆきなだれ",type:"ice",cat:"phys",power:65,switchLock:2,exclusive:"alolanNinetales",desc:"命中した相手を2ターン交代できなくする"},
   alolanBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7,alolanFreeze:true,exclusive:"alolanNinetales",desc:"このポケモンが初めて命中させた時だけ、相手を1回行動できないこおりにする"},
+  electricSpeedStrike:{name:"でんこうそくげき",type:"electric",cat:"phys",power:120,removeElectricType:true,desc:"使用後、自分の電気タイプを消す"},
   shadowpunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:60}, ragefist:{name:"ふんどのこぶし",type:"ghost",cat:"phys",power:50,rageFist:true,desc:"攻撃を受けるたびに威力+50（最大350）。交代で元に戻る"}, phantomforce:{name:"ゴーストダイブ",type:"ghost",cat:"phys",power:90}, psychicfangs:{name:"サイコファング",type:"psychic",cat:"phys",power:85}, futuresight:{name:"みらいよち",type:"psychic",cat:"spec",power:120}, zenheadbutt2:{name:"しねんのずつき",type:"psychic",cat:"phys",power:80,flinch:.2},
   flashcannon2:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,targetDrop:{chance:.1,stats:{spd:-1}}}, heavySlam:{name:"ヘビーボンバー",type:"steel",cat:"phys",power:100}, smartstrike:{name:"スマートホーン",type:"steel",cat:"phys",power:70}, meteorMash:{name:"コメットパンチ",type:"steel",cat:"phys",power:90,selfBoost:{chance:.2,stats:{atk:1}}},
   poisonfang:{name:"どくどくのキバ",type:"poison",cat:"phys",power:50,toxic:true}, poisonTail:{name:"ポイズンテール",type:"poison",cat:"phys",power:50,poison:.3}, crosspoison:{name:"クロスポイズン",type:"poison",cat:"phys",power:70,poison:.1}, sludgewave2:{name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.1},
@@ -700,6 +702,7 @@ SPECIES.push(S("arcanineH","ウインディ(ヒスイ)","image/image/ウィン�
 SPECIES.push(S("dunsparce","ノコッチ","image/image/ノコッチ.gif",["normal"],{hp:100,atk:70,def:70,spa:65,spd:65,spe:45},"serenegrace",["bodyslam","drillrun","zenheadbutt","roost"]));
 SPECIES.push(S("dudunsparce","ノココッチ","image/image/ノココッチ.gif",["normal"],{hp:125,atk:100,def:80,spa:85,spd:75,spe:55},"serenegrace",["bodyslam","drillrun","zenheadbutt","roost"]));
 SPECIES.push(S("sawsbuck","メブキジカ","image/image/メブキジカ(はる).gif",["normal","grass"],{hp:80,atk:100,def:70,spa:60,spd:70,spe:95},"serenegrace",["doubleedge","woodhammer","zenheadbutt","swordsdance"]));
+SPECIES.push(S("nemoPawmot","ネモのパーモット","image/image/ネモのパーモット.gif",["electric","fighting"],{hp:70,atk:115,def:70,spa:70,spd:60,spe:105},"voltabsorb",["electricSpeedStrike","closecombat","machpunch","wildcharge"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
@@ -752,6 +755,7 @@ const LEARN={
   dunsparce:["bodyslam","drillrun","zenheadbutt","roost","protect","substitute"],
   dudunsparce:["bodyslam","drillrun","zenheadbutt","roost","boomburst","hypervoice","protect","substitute"],
   sawsbuck:["doubleedge","woodhammer","zenheadbutt","swordsdance","wildcharge","megahorn","protect","substitute"],
+  nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -1076,6 +1080,12 @@ function openDevCode(){
     saveGame();
     renderHome();
     alert("ダイマックス解放ステージをクリアしました。");
+  }else if(normalizedCode==="POKEMONNEMO"){
+    const sp=SP_BY_ID.nemoPawmot;
+    if(!party.some(p=>SPECIES[p.sp]?.id==="nemoPawmot")){
+      party.push({sp,item:"none",moves:["electricSpeedStrike","closecombat","machpunch","wildcharge"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();
+      alert("ネモのパーモットを受け取った！");
+    }else alert("ネモのパーモットは、すでに受け取っています。");
   }else if(code!==null){
     alert("コードが違います。");
   }
@@ -1397,7 +1407,7 @@ document.getElementById("startBtn").onclick=()=>{
 
 // ===== バトル =====
 let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0, rayMegaBlocked=false, rayMegaActive=false;
-let mode='cpu', megaArm={me:false,foe:false}, maxArm={me:false,foe:false}, maxUsed={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
+let mode='cpu', megaArm={me:false,foe:false}, maxArm={me:false,foe:false}, teraArm={me:false,foe:false}, maxUsed={me:false,foe:false}, teraUsed={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
 function emptyHazards(){return {me:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null},foe:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null}};}
 let hazards=emptyHazards();
 function sawsbuckSeasonForMonth(month){
@@ -1474,7 +1484,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
     me.heis=myTeam.slice(1,battleSize);foe.heis=foeTeam.slice(1,battleSize);
     me.heis.forEach(h=>{h.isHei=true;h.host=me;});foe.heis.forEach(h=>{h.isHei=true;h.host=foe;});
   }
-  busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; maxUsed={me:false,foe:false}; rayMegaBlocked=false; rayMegaActive=false; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
+  busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; teraArm={me:false,foe:false}; maxUsed={me:false,foe:false}; teraUsed={me:false,foe:false}; rayMegaBlocked=false; rayMegaActive=false; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
   show("battle");
   document.getElementById("endArea").classList.add("hidden");
   document.getElementById("log").innerHTML="";
@@ -1652,6 +1662,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.status==="burn"&&!attacker.safeBurn&&attacker.abilEff!=="guts"&&move.cat==="phys") atkStat*=0.5;                // やけど
   if(weather==="sand"&&defender.types.includes("rock")&&move.cat==="spec") defStat*=1.5; // 砂:いわ特防↑
   let stab=attacker.abilEff==="libero"?1.2:(attacker.types.includes(moveType)?1.3:1.0);
+  if(attacker.isElectricTera&&moveType==="electric")stab=2.0;
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
   // ふんか：残りHPの割合で威力が変化（最大150、最低10）
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
@@ -1835,12 +1846,14 @@ function renderMenu(side){
     `<button class="btn mega ${megaArm[side]?'armed':''}" onclick="toggleMega('${side}')">${megaArm[side]?'✨ メガ準備OK':'🔮 メガシンカ'}</button>` : "";
   const maxBtn = (localStorage.getItem("ritoDynamaxClear")==="1" && !rayMegaActive && !maxUsed[side] && !m.isDynamax && m.id!=="zacian" && m.id!=="eternatus" && (!m.isMega || GMAX_IDS.has(m.id)) && m.dynamaxTurns===0) ?
     `<button class="btn mega ${maxArm[side]?'armed':''}" onclick="toggleMax('${side}')">${maxArm[side]?'✨ マックス準備OK':'🟥 マックス'}</button>` : "";
+  const teraBtn=(m.id==="nemoPawmot"&&!teraUsed[side]&&!m.isElectricTera)?`<button class="btn mega ${teraArm[side]?'armed':''}" onclick="toggleTera('${side}')">${teraArm[side]?'⚡ 電気テラス準備OK':'⚡ 電気テラスタル'}</button>`:"";
   c.innerHTML=`${head}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
      <button class="btn ghost" onclick="openSwitch('${side}')">こうたい</button></div>
-     <div class="center">${megaBtn}${maxBtn}</div>`;
+     <div class="center">${megaBtn}${maxBtn}${teraBtn}</div>`;
 }
 function toggleMega(side){ if(busy)return; const m=activeOf(side); if(m&&m.id==="rayquaza"&&!canRayMega(m))return; megaArm[side]=!megaArm[side]; if(megaArm[side]&&(!m||(!GMAX_IDS.has(m.id)&&m.id!=="rayquaza")))maxArm[side]=false; renderMenu(side); }
 function toggleMax(side){ if(busy)return; const m=activeOf(side); maxArm[side]=!maxArm[side]; if(maxArm[side]&&(!m||!GMAX_IDS.has(m.id)))megaArm[side]=false; renderMenu(side); }
+function toggleTera(side){if(busy)return;teraArm[side]=!teraArm[side];if(teraArm[side]){megaArm[side]=false;maxArm[side]=false;}renderMenu(side);}
 const DEV_DYNAMAX_KEYS=new Set(["1","2","3","4","q","w","e","r","t"]);
 const devPressedKeys=new Set();
 let devComboUnlocked=false;
@@ -1973,6 +1986,7 @@ function doResolve(){
     if(A.type==="switch") t.push(cb=>doSwitch("me",A.idx,cb));
     if(B.type==="switch") t.push(cb=>doSwitch("foe",B.idx,cb));
     series(t,next);};
+  const phaseTera=(next)=>{const t=[];[["me",me,"myImg",A],["foe",foe,"foeImg",B]].forEach(([side,mon,img,action])=>{if(action.type==="move"&&teraArm[side]&&mon.id==="nemoPawmot"&&!teraUsed[side]){teraArm[side]=false;teraUsed[side]=true;t.push(cb=>doElectricTera(mon,img,cb));}});series(t,next);};
   const phaseMega=(next)=>{const t=[];
     if(!rayMegaActive&&A.type==="move"&&megaArm.me&&((me.stoneMatches&&!me.isMega)||(canRayMega(me)))){megaArm.me=false;t.push(cb=>doMega(me,"myImg",cb));}
     const cpuRainMega=(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&B.type==="switch"&&foe.id==="ragulaaji"&&weather==="rain";
@@ -2007,7 +2021,7 @@ function doResolve(){
     });
     runAttacks(movers,0,next);
   };
-  phaseSwitch(()=>phaseMax(()=>phaseMega(()=>phaseAttack(()=>endTurn()))));
+  phaseSwitch(()=>phaseMax(()=>phaseTera(()=>phaseMega(()=>phaseAttack(()=>endTurn())))));
 }
 function runAttacks(movers,i,done){
   if(i>=movers.length){done();return;}
@@ -2671,6 +2685,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(!move.maxMove&&!sheer&&move.targetDrop&&effectTarget.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(effectTarget,move.targetDrop.stats);
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status"){announceAbility(attacker);applyDrop(attacker,{spa:1});}
+    if(move.removeElectricType&&attacker.curHp>0){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
@@ -2875,6 +2890,11 @@ function tryEmergencyExit(side,mon,cb){
 }
 
 // ===== メガシンカ =====
+function doElectricTera(mon,imgId,cb){
+  mon.types=["electric"];mon.isElectricTera=true;mon.typeLocked=true;
+  const img=document.getElementById(imgId);img.classList.add("electric-tera-aura","mega-anim");renderActive();pushLog(`⚡ ${mon.name} は 電気テラスタルした！ 電気タイプになった！`,"#ffcb05");
+  setTimeout(()=>{img.classList.remove("mega-anim");cb();},700);
+}
 function doDynamax(mon,imgId,cb){
   if(mon.id!=="rayquaza")rayMegaBlocked=true;
   const wasGmax=GMAX_IDS.has(mon.id);
