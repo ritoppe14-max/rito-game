@@ -132,7 +132,8 @@ function multiResolve(){
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
     m.turnMoved=true;
-    attack(m,target,a.move,multiImage(target),()=>{
+    const actualMove=m.outrageTurns>0?(m.outrageMove||M.outrage):a.move;
+    attack(m,target,actualMove,multiImage(target),()=>{
       renderMulti();
       if(a.move.switchAfter&&multiBench(a.side).length)multiSwitch({side:a.side,mon:m,replacement:multiBench(a.side)[0]},cb);
       else cb();
@@ -152,6 +153,7 @@ function multiEnd(){
     if(m.yawnTurns>0&&--m.yawnTurns===0&&!m.status){m.status='sleep';m.sleepTurns=2+Math.floor(Math.random()*2);}
     if(m.switchLock>0)m.switchLock--;
     if(m.duraludonShieldTurns>0)m.duraludonShieldTurns--;
+    if(m.outrageTurns>0&&--m.outrageTurns===0)m.outrageMove=null;
   }));
   applyHoleCake(multiLiving('me'));applyHoleCake(multiLiving('foe'));
   if(weatherTurns>0&&--weatherTurns===0)weather=null;
