@@ -1706,10 +1706,15 @@ function applyMaxMoveEffect(attacker,defender,move){
   if(move.cureGrassStatus&&defender.status&&["poison","toxic","burn","paralyze","sleep","hypersleep"].includes(defender.status)){defender.status=null;pushLog(`  ・ ${defender.name} の状態異常が回復した！`,"#7ac74c");renderStages();}
 }
 function runMultiHit(attacker,defender,move,defImgId,cb){
+  if(move.fifthSlot){
+    if(attacker.usedFifthSlot){pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();return;}
+    attacker.usedFifthSlot=true;
+  }
   const count=attacker.itemKey==="steadydice"?3:move.multiHit;
   const hitMove=Object.assign({},move,{multiHit:null,accuracy:attacker.itemKey==="steadydice"?1:move.accuracy,selfBoost:null,selfDrop:null});
   // 祭神旋風刃は発動時だけ使用済みにし、5回の個別ヒットでは再判定しない。
   delete hitMove.ritual;
+  delete hitMove.fifthSlot;
   let i=0;
   const next=()=>{
     if(i>=count||defender.fainted||attacker.fainted){

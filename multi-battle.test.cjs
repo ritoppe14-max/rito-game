@@ -529,6 +529,9 @@ vm.runInContext(`
   check(calcDamage(clobTarget,clobEviolite,M.waterfall,false).dmg<calcDamage(clobTarget,clobPlain,M.waterfall,false).dmg,'Clobbopus receives Eviolite bulk');
   const fifthUser=makeMon(SP_BY_ID.falinks,'none','p1'),fifthTarget=makeMon(SP_BY_ID.gigalith,'none','cpu');
   check(fifthUser.moves[4].fifthSlot,'Fifth move is marked as once per battle');
+  me=fifthUser;foe=fifthTarget;let ritualDone=0;attack(fifthUser,fifthTarget,{...fifthUser.moves[4],forceHit:true},'foeImg',()=>ritualDone++);
+  check(ritualDone===1&&fifthUser.usedFifthSlot&&fifthTarget.curHp<fifthTarget.maxHp,'Falinks fifth move resolves all hits on its first use');
+  fifthUser.usedFifthSlot=false;fifthTarget.curHp=fifthTarget.maxHp;
   me=fifthUser;foe=fifthTarget;let fifthDone=0;
   const testFifth={...M.thunderbolt,fifthSlot:true,forceHit:true};
   attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);const fifthHp=fifthTarget.curHp;
