@@ -598,5 +598,7 @@ vm.runInContext(`
   check(lilligant.types.join('/')==='grass'&&lilligant.base.hp===70&&lilligant.base.atk===60&&lilligant.base.def===105&&lilligant.base.spa===110&&lilligant.base.spd===105&&lilligant.base.spe===90&&lilligant.img==='image/image/ドレディア.gif','Lilligant has its image, type and base stats including global bulk bonus');
   check(lilligantH.types.join('/')==='grass/fighting'&&lilligantH.base.hp===70&&lilligantH.base.atk===105&&lilligantH.base.def===105&&lilligantH.base.spa===50&&lilligantH.base.spd===105&&lilligantH.base.spe===105&&lilligantH.img==='image/image/ドレディア(ヒスイ).gif','Hisuian Lilligant has its image, types and base stats including global bulk bonus');
   check(ampharos.types.join('/')==='electric'&&ampharos.base.hp===90&&ampharos.base.atk===75&&ampharos.base.def===115&&ampharos.base.spa===115&&ampharos.base.spd===120&&ampharos.base.spe===55&&ampharos.img==='image/image/デンリュウ.gif','Ampharos has its image, type and base stats including global bulk bonus');
+  const eternalFloette=makeMon(SP_BY_ID.floetteEternal,'none','p1');
+  check(eternalFloette.types.join('/')==='fairy'&&eternalFloette.base.hp===74&&eternalFloette.base.atk===65&&eternalFloette.base.def===97&&eternalFloette.base.spa===125&&eternalFloette.base.spd===158&&eternalFloette.base.spe===92&&eternalFloette.img==='image/image/フラエッテ(永遠の華).gif','Eternal Flower Floette uses its distinct base stats and image');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
