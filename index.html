@@ -721,7 +721,7 @@ SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/�
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
-function refreshCodePokemonVisibility(){Object.entries(CODE_POKEMON_UNLOCKS).forEach(([id,flag])=>{const sp=SPECIES[SP_BY_ID[id]];if(sp)sp.hidden=localStorage.getItem(flag)!==="1";});}
+function refreshCodePokemonVisibility(){Object.entries(CODE_POKEMON_UNLOCKS).forEach(([id,flag])=>{const sp=SPECIES[SP_BY_ID[id]];if(sp)sp.hidden=localStorage.getItem(flag)!=="1";});}
 refreshCodePokemonVisibility();
 // キョダイマックス可能なポケモン（画像がない場合は通常画像のまま表示）
 const GMAX_IDS=new Set(["lizardon","centiskorch","gorillander","cinderace","darkrai","inteleon"]);
