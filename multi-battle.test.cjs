@@ -654,6 +654,8 @@ vm.runInContext(`
   applyLycanrocForm(lycanroc,17);check(lycanroc.name==='ルガルガン(たそがれのすがた)'&&lycanroc.img==='image/image/ユガルガン.gif'&&lycanroc.base.atk===117,'Lycanroc is Dusk form from 17 through 18');
   applyLycanrocForm(lycanroc,18);check(lycanroc.name==='ルガルガン(まよなかのすがた)'&&lycanroc.img==='image/image/ヨルガルガン.gif'&&lycanroc.base.hp===85,'Lycanroc is Midnight form from 18 through 3');
   applyLycanrocForm(lycanroc,3);check(lycanroc.name==='ルガルガン(たそがれのすがた)'&&lycanroc.img==='image/image/ユガルガン.gif','Lycanroc is Dusk form from 3 through 4');
+  const hippowdonMale=makeMon(SP_BY_ID.hippowdon,'none','p1'),hippowdonFemale=makeMon(SP_BY_ID.hippowdonF,'none','p1');
+  check(hippowdonMale.name==='カバルドン♂'&&hippowdonMale.img==='image/image/カバルドン♂.gif'&&hippowdonFemale.name==='カバルドン♀'&&hippowdonFemale.img==='image/image/カバルドン♀.gif'&&hippowdonFemale.base.hp===hippowdonMale.base.hp-5&&hippowdonFemale.base.atk===hippowdonMale.base.atk-5&&hippowdonFemale.base.def===hippowdonMale.base.def-5&&hippowdonFemale.base.spa===hippowdonMale.base.spa-5&&hippowdonFemale.base.spd===hippowdonMale.base.spd-5&&hippowdonFemale.base.spe===hippowdonMale.base.spe-5&&hippowdonFemale.abilEff==='moxie','Hippowdon male and female are selectable with distinct stats and Moxie');
   const nemoPawmot=makeMon(SP_BY_ID.nemoPawmot,'none','p1'),nemoTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(nemoPawmot.name==='ネモのパーモット'&&nemoPawmot.img==='image/image/ネモのパーモット.gif'&&M.electricSpeedStrike.power===120,'Nemo Pawmot and its exclusive Electric Speed Strike are available');
   const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});

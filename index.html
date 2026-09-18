@@ -269,8 +269,10 @@ ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
 ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
+ABIL.moxie={name:"じしんかじょう",eff:"moxie"};
 ABDESC.grimneigh="自分の技で相手を倒すと特攻が1段階上がる";
 ABDESC.chillingneigh="自分の技で相手を倒すと攻撃が1段階上がる";
+ABDESC.moxie="自分の技で相手を倒すと攻撃が1段階上がる";
 ABIL.berserker={name:"バーサーカー",eff:"berserker"};
 ABDESC.berserker="相手を倒すとバーサーカーセグレイブに変身。変身後は倒すたび攻撃+1段階";
 ABIL.protean={name:"へんげんじざい",eff:"proteanCopy"};
@@ -588,7 +590,8 @@ const SPECIES=[
  S("regirock","レジロック","image/image/レジロック.gif",["rock"],{hp:90,atk:100,def:210,spa:50,spd:110,spe:50},"clearbody",["stoneedge","earthquake","stealthrock","spikes"],[]),
  S("excadrill","ドリュウズ","image/image/ドリュウズ.gif",["ground","steel"],{hp:110,atk:135,def:60,spa:50,spd:65,spe:88},"sandrush",["earthquake","ironhead","rockslide","swordsdance"],[]),
  S("gigalith","ギガイアス","image/image/ギガイアス.gif",["rock"],{hp:85,atk:135,def:130,spa:60,spd:80,spe:25},"sandstream",["stoneedge","rockslide","earthquake","stealthrock"],[]),
- S("hippowdon","カバルドン","image/image/カバルドン.gif",["ground"],{hp:118,atk:112,def:128,spa:68,spd:82,spe:47},"sandstream",["earthquake","stoneedge","stealthrock","spikes"],[]),
+ S("hippowdon","カバルドン♂","image/image/カバルドン♂.gif",["ground"],{hp:118,atk:112,def:128,spa:68,spd:82,spe:47},"sandstream",["earthquake","stoneedge","stealthrock","spikes"],[]),
+ S("hippowdonF","カバルドン♀","image/image/カバルドン♀.gif",["ground"],{hp:113,atk:107,def:123,spa:63,spd:77,spe:42},"moxie",["earthquake","stoneedge","stealthrock","spikes"],[]),
  S("gliscor","グライオン","image/image/グライオン.gif",["ground","flying"],{hp:85,atk:95,def:135,spa:45,spd:85,spe:95},"poisonheal",["earthquake","stoneedge","stealthrock","spikes"],[]),
  S("kangaskhan","ガルーラ","image/image/ガルーラ.gif",["normal"],{hp:105,atk:95,def:80,spa:40,spd:80,spe:90},"intimidate",["earthquake","crunch","closecombat","rockslide"],
    [{stone:"kangaskhanite",stoneName:"ガルーラナイト",name:"メガガルーラ",img:"image/image/メガルーラ.gif",types:["normal"],base:{hp:105,atk:125,def:100,spa:60,spd:100,spe:100},abil:"parentalbond"}]),
@@ -826,6 +829,7 @@ const LEARN={
   excadrill:["earthquake","ironhead","rockslide","swordsdance","stoneedge","xscissor","stealthrock","protect"],
   gigalith:["stoneedge","rockslide","earthquake","stealthrock","ironhead","bodypress","protect"],
   hippowdon:["earthquake","stoneedge","icefang","stealthrock","spikes","protect"],
+  hippowdonF:["earthquake","stoneedge","icefang","stealthrock","spikes","protect"],
   gliscor:["earthquake","stoneedge","xscissor","stealthrock","spikes","substitute","protect"],
   kangaskhan:["earthquake","crunch","closecombat","rockslide","takedown","suckerpunch","fakeout","icepunch","protect"],
   salamence:["dragonclaw","scaleshot","doublewing","dragondance","takedown","outrage","ironhead","roost","earthquake","airslash","stoneedge","fireblast","protect"],
@@ -923,6 +927,7 @@ ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
 ABILS.dudunsparce=["serenegrace"];
+ABILS.hippowdonF=["moxie"];
 ABILS.trevenant=["naturalcure","harvest"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
@@ -2293,7 +2298,7 @@ function applyNeigh(attacker,defender){
     }
     return;
   }
-  const stat=attacker.abilEff==="grimneigh"?"spa":attacker.abilEff==="chillingneigh"?"atk":null;
+  const stat=attacker.abilEff==="grimneigh"?"spa":attacker.abilEff==="chillingneigh"||attacker.abilEff==="moxie"?"atk":null;
   if(stat){applyDrop(attacker,{[stat]:1});pushLog(`  ★ ${attacker.name} の ${attacker.abilName}！`,"#ffcb05");}
 }
 function setAegislashForm(mon,form){
