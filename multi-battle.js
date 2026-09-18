@@ -17,7 +17,7 @@ function multiImage(m){return 'multi-img-'+m.multiId;}
 function renderMulti(){
   if(!multi)return;
   const format=battleSize===2?'ダブル':battleSize===3?'トリプル':'6体バトル';
-  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${format}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center;opacity:${m.behindOf?.75:1};border-color:${m.behindOf?'#7ad1ff':'var(--line)'}"><img id="${multiImage(m)}" class="${m.fainted?'faint-effect':m.justSwitched?'switch-effect':m.isElectricTera?'electric-tera-aura':''}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}${m.behindOf?` <span class="mini">（${m.behindOf.name}の後ろ）</span>`:''}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
+  document.getElementById('multiField').innerHTML=['foe','me'].map(s=>`<div class="sub">${sideLabel(s)}・${format}（残り${multi.teams[s].filter(m=>!m.fainted).length}体）</div><div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">${multi.slots[s].map(m=>m?`<div class="mon-card" style="flex:1;min-width:100px;text-align:center;opacity:${m.behindOf?.75:1};border-color:${m.behindOf?'#7ad1ff':'var(--line)'}"><img id="${multiImage(m)}" class="${m.fainted?'faint-effect':m.justSwitched?'switch-effect':m.isElectricTera?'electric-tera-aura':m.id==='morpeko'?(m.morpekoFull?'morpeko-full-aura':'morpeko-hungry-aura'):''}" src="${IMG(m.img)}" style="width:100px;height:100px;object-fit:contain;opacity:${m.fainted?.35:1}"><div>${m.name}${m.behindOf?` <span class="mini">（${m.behindOf.name}の後ろ）</span>`:''}</div><div>HP ${m.curHp} / ${m.maxHp}</div><progress value="${m.curHp}" max="${m.maxHp}" style="width:100%"></progress><div>${stgText(m)||'能力変化なし'}</div></div>`:'').join('')}</div>`).join('');
 }
 function renderMultiActionPanels(){
   if(!multi)return;
@@ -66,7 +66,7 @@ function multiEntry(s,m,cb){
   applyEntry(m,multiImage(m),cb);
 }
 function multiNext(){
-  if(!multi)return;multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
+  if(!multi)return;['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
   [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;});
   multiChoose('me');
 }

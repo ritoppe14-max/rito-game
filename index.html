@@ -72,6 +72,7 @@
   .mega-anim{animation:megaPulse 1s ease}
   .dynamax-aura{filter:drop-shadow(0 0 7px #ff2020) drop-shadow(0 0 16px #b40000)}
   .electric-tera-aura{filter:drop-shadow(0 0 8px #ffe600) drop-shadow(0 0 20px #ffbf00) brightness(1.25)}
+  .morpeko-full-aura{filter:drop-shadow(0 0 8px #ffe600) drop-shadow(0 0 20px #ffbf00) brightness(1.2)}.morpeko-hungry-aura{filter:drop-shadow(0 0 8px #bf5cff) drop-shadow(0 0 20px #6d18b8) brightness(1.2)}
   .log{background:#0c1322;border:2px solid var(--line);border-radius:12px;height:110px;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:12px}
   #abilityToast{position:fixed;top:14px;left:50%;transform:translate(-50%,-16px);z-index:100;opacity:0;pointer-events:none;background:linear-gradient(135deg,#ffcb05,#ff8a3d);color:#182033;border:2px solid #fff3bc;border-radius:999px;padding:10px 22px;font-weight:900;font-size:16px;box-shadow:0 5px 18px rgba(0,0,0,.45);transition:opacity .18s,transform .18s}#abilityToast.show{opacity:1;transform:translate(-50%,0)}
   .cmd{margin-top:10px}
@@ -241,7 +242,7 @@ const ABIL={
   pressure:{name:"プレッシャー",eff:null}, prankster:{name:"いたずらごころ",eff:"prankster"}, eartheater:{name:"どしょく",eff:"eartheater"}, nightmarez:{name:"ナイトメアZ",eff:"nightmarez"},
   focus:{name:"せいしんりょく",eff:"focus"}, aurashield:{name:"はどうのぼうご",eff:"aurashield"},
   unaware:{name:"てんねん",eff:"unaware"}, purifyingSalt:{name:"きよめのしお",eff:"purifyingSalt"},
-  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"},
+  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"}, morpekoFull:{name:"まんぷくスイッチ",eff:"morpekoFull"}, morpekoHungry:{name:"はらぺこスイッチ",eff:"morpekoHungry"},
   hugepower:{name:"ちからもち",eff:"hugepower"}, swiftswim:{name:"すいすい",eff:"swiftswim"},
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
@@ -252,7 +253,7 @@ const ABIL={
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
-const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",hugepower:"こうげき(物理)が2倍",
+const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
   intrepidsword:"登場時こうげき+1",
   focus:"ひるまない",aurashield:"物理技のダメージを半減",
@@ -526,6 +527,8 @@ const M={
   sayakuDevourFang:{name:"むさぼるキバ",type:"dark",cat:"phys",power:85,targetDrop:{chance:1,stats:{def:-2}},sayakuFang:true},
   sayakuDullFang:{name:"どんかんのキバ",type:"dark",cat:"phys",power:85,switchLock:2,sayakuFang:true,sayakuDullFang:true},
   sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
+  morpekoAuraWheel:{name:"オーラぐるま",type:"electric",cat:"phys",power:70,prio:1,morpekoMove:true,morpekoSpeed:true,desc:"満腹時はでんき、はらぺこ時はあく。使用後に素早さ+1"},
+  morpekoFifth:{name:"激車輪猛烈極悪電流",type:"electric",cat:"phys",power:110,prio:2,morpekoMove:true,morpekoFifth:true,desc:"満腹時はでんき、はらぺこ時はあく。状態に応じて自分を強化"},
   kuronoEruption:{name:"ふんか",type:"fire",cat:"spec",power:40,multiHit:3,spread:true,desc:"威力40×3の全体攻撃"},
   kuronoFlameWheel:{name:"かえんぐるま",type:"fire",cat:"phys",power:40,multiHit:2,sayakuShield:true,desc:"威力40×2。使用後に最大HP30%のシールド"},
   garakuFieryWrath:{name:"もえあがるいかり",type:"dark",cat:"spec",power:90,spread:true,flinch:.4},
@@ -674,7 +677,7 @@ SPECIES.push(
  S("zapdos","サンダー","image/image/サンダー.gif",["electric","flying"],{hp:100,atk:100,def:95,spa:135,spd:100,spe:110},"birdStatic",["birdZapCannon","birdThunderbolt","hurricane","roost","thunderRoar"]),
  S("moltres","ファイヤー","image/image/ファイヤー.gif",["fire","flying"],{hp:100,atk:110,def:100,spa:135,spd:95,spe:100},"birdFlame",["birdSkyAttack","birdHeatWave","flamethrower","roost","volcanoReign"])
 );
-const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence"};
+const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence",morpeko:"morpekoFifth"};
 SPECIES.push(
  S("spectrier","レイスポス","image/image/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
  S("glastrier","ブリザポス","image/image/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
@@ -732,6 +735,7 @@ SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","image/image/ク
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","image/image/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"garakuFury",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 SPECIES.push(S("machamp","カイリキー","image/image/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
+SPECIES.push(S("morpeko","モルペコ","image/image/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1534,6 +1538,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.electricCharge=false; p.tailwindTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
+  if(p.id==="morpeko"){p.morpekoBaseMaxHp=p.maxHp;p.morpekoFull=true;p.maxHp=Math.floor(p.maxHp*1.2);p.curHp=p.maxHp;}
   return p;
 }
 function startBattleWith(p1party,p1sel,p2party,p2sel){
@@ -1586,6 +1591,10 @@ function renderActive(){
   document.getElementById("foeImg").classList.toggle("faint",foe.fainted);
   document.getElementById("myImg").classList.toggle("electric-tera-aura",!!me.isElectricTera&&!me.fainted);
   document.getElementById("foeImg").classList.toggle("electric-tera-aura",!!foe.isElectricTera&&!foe.fainted);
+  document.getElementById("myImg").classList.toggle("morpeko-full-aura",me.id==="morpeko"&&me.morpekoFull&&!me.fainted);
+  document.getElementById("foeImg").classList.toggle("morpeko-full-aura",foe.id==="morpeko"&&foe.morpekoFull&&!foe.fainted);
+  document.getElementById("myImg").classList.toggle("morpeko-hungry-aura",me.id==="morpeko"&&!me.morpekoFull&&!me.fainted);
+  document.getElementById("foeImg").classList.toggle("morpeko-hungry-aura",foe.id==="morpeko"&&!foe.morpekoFull&&!foe.fainted);
   if(!me.fainted)document.getElementById("myImg").classList.remove("faint-effect");
   if(!foe.fainted)document.getElementById("foeImg").classList.remove("faint-effect");
   document.getElementById("myName").textContent=me.name;
@@ -1724,7 +1733,9 @@ function calcDamage(attacker,defender,move,isCrit){
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
   if(move.cat==="phys"&&!move.useDef&&attacker.abilEff==="guts"&&attacker.status)atkStat*=1.5;
+  if(attacker.abilEff==="morpekoHungry")atkStat*=1.2;
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
+  if(defender.abilEff==="morpekoFull")defStat*=1.2;
   if(move.cat==="phys"&&attacker.abilEff==="birdFlame")atkStat*=attacker.birdFlameMult||1;
   if(move.cat==="phys"&&!move.ignoreAbility&&(move.ignoreAbility?null:defender.abilEff)==="birdSnow"&&(defender.birdHail||["snow","hail","freeze","ひょうけつ","ゆき","あられ"].includes(weather)||defender.status==="freeze"))defStat*=1.5;
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
@@ -1834,11 +1845,22 @@ function effSpeed(m){
   // ドレディアだけは晴れで素早さ2倍。リーフィアのようりょくそは専用の攻撃効果を維持する。
   if(m.id==="lilligant"&&m.abilEff==="chlorophyll"&&weather==="sun")s*=2;
   if(m.id==="sayakuFeraligatr"&&m.curHp<=m.maxHp/2)s*=1.2;
+  if(m.abilEff==="morpekoHungry")s*=1.2;
   if(m.abilEff==="unburden"&&!m.itemKey||m.abilEff==="unburden"&&m.itemKey==="none")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
   if(m.tailwindTurns>0)s*=2;
   if(m.itemKey==="scarf"||m.itemKey==="mougekiScarf")s*=1.5;
   return s;
+}
+function switchMorpeko(mon,target){
+  if(mon.id!=="morpeko"||mon.fainted)return;
+  if(mon.morpekoFull){
+    mon.morpekoFull=false;mon.abilName=ABIL.morpekoHungry.name;mon.abilEff="morpekoHungry";mon.maxHp=mon.morpekoBaseMaxHp;mon.curHp=Math.min(mon.curHp,mon.maxHp);
+    if(target&&!target.fainted&&target.curHp>0){const psychic=target.types.includes("ghost")||target.types.includes("psychic"),d=psychic?60:20;target.curHp=Math.max(0,target.curHp-d);target.tauntTurns=psychic?1:2;pushLog(`  ★ ${mon.name} ははらぺこに！ ${target.name} に${d}ダメージ・${target.tauntTurns}ターンちょうはつ！`,"#b061ff");}
+  }else{
+    mon.morpekoFull=true;mon.abilName=ABIL.morpekoFull.name;mon.abilEff="morpekoFull";mon.maxHp=Math.floor(mon.morpekoBaseMaxHp*1.2);const h=Math.max(1,Math.floor(mon.maxHp*.09));mon.curHp=Math.min(mon.maxHp,mon.curHp+h);pushLog(`  ★ ${mon.name} はまんぷくに！ HP${h}回復！`,"#46d160");
+  }
+  renderHp();renderStages();if(mon===me||mon===foe)renderActive();
 }
 function movePriority(mon,move){
   return (move.prio||0)
@@ -2427,6 +2449,8 @@ function attack(attacker,defender,move,defImgId,cb){
   // えんかくで控えを狙った時は、場にいる相手の画像へ命中・ひんし演出を出さない。
   if(move.longReachBench)defImgId=null;
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
+  if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
+  if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
   // サヤクのオーダイルのげきりゅう：HP半分以下では、かみくだくで選ぶキバの追加効果を2倍にする。
   if(attacker.id==="sayakuFeraligatr"&&attacker.abilEff==="torrent"&&attacker.curHp<=attacker.maxHp/2&&move.sayakuFang){
     announceAbility(attacker);
@@ -2803,6 +2827,11 @@ function attack(attacker,defender,move,defImgId,cb){
       pushLog(`  ・ ${effectTarget.name} は ひるんだ！`,"#ffcb05");
     }
     if(!move.maxMove&&!sheer&&move.targetDrop&&effectTarget.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(effectTarget,move.targetDrop.stats);
+    if(move.morpekoSpeed&&attacker.curHp>0)applyDrop(attacker,{spe:1});
+    if(move.morpekoFifth&&attacker.curHp>0){
+      if(attacker.morpekoFull){applyDrop(attacker,{def:1,spd:1});const h=Math.max(1,Math.floor(attacker.maxHp*.2));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);pushLog(`  ★ ${attacker.name} はHP${h}回復した！`,"#46d160");}
+      else applyDrop(attacker,{atk:1,spa:1,spe:1});
+    }
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status"){announceAbility(attacker);applyDrop(attacker,{spa:1});}
     if(move.removeElectricType&&attacker.curHp>0&&!attacker.isElectricTera){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
@@ -3337,6 +3366,8 @@ function endTurn(){
   applyTrevenantEndEffects([me,foe]);
   [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="toxicorb"&&m.acted>=1&&!m.status){applyStatus(m,"poison",m);}});
   [me,foe].forEach(m=>{if(m&&m.switchLock>0)m.switchLock--;});
+  [me,foe].forEach(m=>{if(m&&m.tauntTurns>0)m.tauntTurns--;});
+  [me,foe].forEach(m=>{if(m&&m.id==="morpeko"&&!m.fainted)switchMorpeko(m,m===me?foe:me);});
   [me,foe].forEach(m=>{if(m&&m.soundBlocked>0)m.soundBlocked--;});
   [me,foe].forEach(m=>{if(m&&m.coachTurns>0)m.coachTurns--;});
   [me,foe].forEach(m=>{if(m&&m.ritualTurns>0)m.ritualTurns--;});
