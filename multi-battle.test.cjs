@@ -645,6 +645,8 @@ vm.runInContext(`
   const amoonguss=makeMon(SP_BY_ID.amoonguss,'none','p1');
   check(amoonguss.types.join('/')==='grass/poison'&&amoonguss.base.hp===114&&amoonguss.base.atk===85&&amoonguss.base.def===100&&amoonguss.base.spa===85&&amoonguss.base.spd===110&&amoonguss.base.spe===30&&amoonguss.abilEff===null&&amoonguss.abilName==='さいせいりょく'&&amoonguss.img==='image/image/モロバレル.gif','Amoonguss has its image, types, Regenerator and base stats including global bulk bonus');
   check(amoonguss.moves.some(m=>m.name==='キノコのほうし')&&amoonguss.moves.some(m=>m.name==='ギガドレイン')&&amoonguss.moves.some(m=>m.name==='ヘドロばくだん'),'Amoonguss has its requested battle moves');
+  const mandibuzz=makeMon(SP_BY_ID.mandibuzz,'none','p1'),mandibuzzTarget=makeMon(SP_BY_ID.clobbopus,'none','cpu');
+  mandibuzz.curHp=Math.floor(mandibuzz.maxHp*.3);mandibuzzTarget.curHp=0;applyNeigh(mandibuzz,mandibuzzTarget);check(mandibuzz.abilEff==='rottenfeast'&&mandibuzz.curHp===mandibuzz.maxHp,'Mandibuzz Rotten Feast fully restores HP after a KO');
   const hisuianArcanine=makeMon(SP_BY_ID.arcanineH,'none','p1');
   check(hisuianArcanine.types.join('/')==='fire/rock'&&hisuianArcanine.base.hp===95&&hisuianArcanine.base.atk===115&&hisuianArcanine.base.def===110&&hisuianArcanine.base.spa===95&&hisuianArcanine.base.spd===110&&hisuianArcanine.base.spe===90&&hisuianArcanine.abilEff==='intimidate'&&hisuianArcanine.img==='image/image/ウィンディ(ヒスイ).gif','Hisuian Arcanine has its image, types, Intimidate and base stats including global bulk bonus');
   hisuianArcanine.abilEff='rockhead';hisuianArcanine.curHp=100;applyMoveRecoil(hisuianArcanine,M.flaredrive,90);

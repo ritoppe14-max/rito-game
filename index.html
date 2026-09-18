@@ -2291,6 +2291,12 @@ function restoreMeowscarada(mon,imgId){
 }
 function applyNeigh(attacker,defender){
   if(attacker.curHp<=0||attacker.fainted||defender.curHp>0||defender.fainted)return;
+  if(attacker.abilEff==="rottenfeast"){
+    announceAbility(attacker);
+    attacker.curHp=attacker.maxHp;renderHp();
+    pushLog(`  ★ ${attacker.name} の ふはいたべ！ HPが全回復した！`,"#46d160");
+    return;
+  }
   if(attacker.abilEff==="proteanCopy"){
     announceAbility(attacker);transformMeowscarada(attacker,defender);return;
   }
@@ -2803,10 +2809,6 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
-    if(defender.curHp<=0&&!defender.fainted&&attacker.curHp>0&&attacker.abilEff==="rottenfeast"){
-      announceAbility(attacker);
-      attacker.curHp=attacker.maxHp;renderHp();pushLog(`  ★ ${attacker.name} の ふはいたべ！ HPが全回復した！`,"#46d160");
-    }
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
     if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
