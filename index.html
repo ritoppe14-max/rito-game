@@ -242,7 +242,7 @@ const ABIL={
   pressure:{name:"プレッシャー",eff:null}, prankster:{name:"いたずらごころ",eff:"prankster"}, eartheater:{name:"どしょく",eff:"eartheater"}, nightmarez:{name:"ナイトメアZ",eff:"nightmarez"},
   focus:{name:"せいしんりょく",eff:"focus"}, aurashield:{name:"はどうのぼうご",eff:"aurashield"},
   unaware:{name:"てんねん",eff:"unaware"}, purifyingSalt:{name:"きよめのしお",eff:"purifyingSalt"},
-  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"}, morpekoFull:{name:"まんぷくスイッチ",eff:"morpekoFull"}, morpekoHungry:{name:"はらぺこスイッチ",eff:"morpekoHungry"},
+  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"}, morpekoFull:{name:"まんぷくスイッチ",eff:"morpekoFull"}, morpekoHungry:{name:"はらぺこスイッチ",eff:"morpekoHungry"}, snomScissors:{name:"はみはみハサミ",eff:"snomScissors"},
   hugepower:{name:"ちからもち",eff:"hugepower"}, swiftswim:{name:"すいすい",eff:"swiftswim"},
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
@@ -253,7 +253,7 @@ const ABIL={
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
-const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",hugepower:"こうげき(物理)が2倍",
+const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",snomScissors:"物理技を受けるとゆきにする（氷タイプの防御1.5倍・ふぶき必中）",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
   intrepidsword:"登場時こうげき+1",
   focus:"ひるまない",aurashield:"物理技のダメージを半減",
@@ -529,6 +529,7 @@ const M={
   sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
   morpekoAuraWheel:{name:"オーラぐるま",type:"electric",cat:"phys",power:70,prio:1,morpekoMove:true,morpekoSpeed:true,desc:"満腹時はでんき、はらぺこ時はあく。使用後に素早さ+1"},
   morpekoFifth:{name:"激車輪猛烈極悪電流",type:"electric",cat:"phys",power:110,prio:2,morpekoMove:true,morpekoFifth:true,desc:"満腹時はでんき、はらぺこ時はあく。状態に応じて自分を強化"},
+  snomBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:120,accuracy:.6,desc:"威力120・命中60%。ゆきの間は必中"},
   kuronoEruption:{name:"ふんか",type:"fire",cat:"spec",power:40,multiHit:3,spread:true,desc:"威力40×3の全体攻撃"},
   kuronoFlameWheel:{name:"かえんぐるま",type:"fire",cat:"phys",power:40,multiHit:2,sayakuShield:true,desc:"威力40×2。使用後に最大HP30%のシールド"},
   garakuFieryWrath:{name:"もえあがるいかり",type:"dark",cat:"spec",power:90,spread:true,flinch:.4},
@@ -736,6 +737,7 @@ SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","image/im
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 SPECIES.push(S("machamp","カイリキー","image/image/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","image/image/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
+SPECIES.push(S("snom","ユキハミ","image/image/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1629,7 +1631,7 @@ function renderWeather(){
   const b=document.getElementById("weatherBadge");
   if(!weather){b.classList.add("hidden");return;}
   b.classList.remove("hidden");
-  const map={rain:["🌧 あめ","#6390f0"],sand:["🏜 すなあらし","#b6a136"],sun:["☀ ひざし","#ee8130"],hail:["🌨 あられ","#a8d8e8"]};
+  const map={rain:["🌧 あめ","#6390f0"],sand:["🏜 すなあらし","#b6a136"],sun:["☀ ひざし","#ee8130"],hail:["🌨 あられ","#a8d8e8"],snow:["❄ ゆき","#dff6ff"]};
   b.textContent=map[weather][0]; b.style.color=map[weather][1];
 }
 function pushLog(t,c){const l=document.getElementById("log");const d=document.createElement("div");d.textContent=t;if(c){d.style.color=c;d.style.fontWeight="700";}l.appendChild(d);l.scrollTop=l.scrollHeight;}
@@ -1741,7 +1743,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
   if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
-  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus","dunsparce"]);
+  const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus","dunsparce","snom"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
   if(defender.coachTurns>0&&(move.cat==="phys"||move.cat==="spec"))defStat*=1.2;
   if(defender.itemKey==="peacescroll"&&defender.peaceTurns>0)defStat*=3;
@@ -1756,6 +1758,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="sheerforce"&&sheerForceBoosts(move)) atkStat*=1.3;    // ちからずく
   if(attacker.status==="burn"&&!attacker.safeBurn&&attacker.abilEff!=="guts"&&move.cat==="phys") atkStat*=0.5;                // やけど
   if(weather==="sand"&&defender.types.includes("rock")&&move.cat==="spec") defStat*=1.5; // 砂:いわ特防↑
+  if(weather==="snow"&&defender.types.includes("ice")&&move.cat==="phys") defStat*=1.5;
   let stab=attacker.abilEff==="libero"?1.2:(attacker.types.includes(moveType)?1.3:1.0);
   if(attacker.isElectricTera&&moveType==="electric")stab=2.0;
   if(attacker.abilEff==="adaptability"&&stab>1) stab=2.0;
@@ -2568,7 +2571,7 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{pushLog(`  └ ${defender.name} の ワイドガードで 攻撃を防いだ！`,"#7ad1ff");cb();},350);return;
   }
   if(move.firstTurnOnly&&!canFirstTurn){ setTimeout(()=>{pushLog("  └ しかし うまく きまらなかった！","#9fb3d6");cb();},450); return; }
-  const falinksPart=falinksPartInfo(defender,move), accuracy=move.forceHit?1:Math.min(1,(falinksPart&&falinksPart.accuracy||move.accuracy||1)*(attacker.abilEff==="compoundeyes"?1.3:1)*(attacker.abilEff==="hustle"?.8:1));
+  const falinksPart=falinksPartInfo(defender,move), accuracy=move.forceHit||weather==="snow"&&move.name==="ふぶき"?1:Math.min(1,(falinksPart&&falinksPart.accuracy||move.accuracy||1)*(attacker.abilEff==="compoundeyes"?1.3:1)*(attacker.abilEff==="hustle"?.8:1));
   if(accuracy&&Math.random()>accuracy){ setTimeout(()=>{pushLog("  └ しかし はずれた！","#9fb3d6");if(move.selfDropOnMiss)applyDrop(attacker,move.selfDropOnMiss);if(move.missRecoil&&attacker.abilEff!=="damp"){const r=Math.max(1,Math.floor(attacker.maxHp*move.missRecoil));attacker.curHp=Math.max(0,attacker.curHp-r);renderHp();pushLog(`  └ ${attacker.name} は反動で ${r} ダメージ！`,`#ff7043`);if(attacker.curHp<=0&&!attacker.fainted)faintMon(attacker,attacker===me?"myImg":"foeImg");}cb();},450); return; }
   if(move.cat==="status"&&move.heiCoaching){ setTimeout(()=>{const h=Math.max(1,Math.floor(attacker.maxHp*.5));attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h);attacker.coachTurns=1;renderHp();pushLog(`  └ ${attacker.name} は HP${h}回復し、防御・特防がそのターン1.2倍！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);host.careCritGuardPending=true;renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！ 次のターンは急所に当たらない！`,'#46d160');cb();},450); return; }
@@ -2679,6 +2682,7 @@ function attack(attacker,defender,move,defImgId,cb){
       defender.innardsOutTarget=attacker;
     }
     defender.curHp=Math.max(0,defender.curHp-dmg); renderHp();
+    if(actualDamage>0&&move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="snomScissors"){announceAbility(defender);setWeather("snow","ゆきが 降り始めた！");}
     if(actualDamage>0&&defender.id==="annihilape"){
       defender.rageFistHits=Math.min(6,(defender.rageFistHits||0)+1);
       pushLog(`  ★ ${defender.name} の ふんどのこぶしが強くなった！（威力${50+defender.rageFistHits*50}）`,"#b061ff");

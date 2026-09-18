@@ -682,6 +682,12 @@ vm.runInContext(`
   const hungryAura=M.morpekoAuraWheel;attack(morpeko,morpekoTarget,hungryAura,'foeImg',()=>{});check(morpeko.stages.spe===1,'Aura Wheel boosts Morpeko speed');
   morpeko.usedFifthSlot=false;morpekoTarget.curHp=morpekoTarget.maxHp;attack(morpeko,morpekoTarget,morpeko.moves[4],'foeImg',()=>{});check(morpeko.stages.atk===1&&morpeko.stages.spa===1&&morpeko.stages.spe===2,'Hungry fifth move boosts Attack, Special Attack and Speed');
   morpeko.curHp=Math.floor(morpeko.maxHp*.4);switchMorpeko(morpeko,morpekoTarget);check(morpeko.morpekoFull&&morpeko.maxHp===morpekoFullHp&&morpeko.curHp>Math.floor(morpeko.morpekoBaseMaxHp*.4),'Morpeko full switch restores HP');
+  const snom=makeMon(SP_BY_ID.snom,'eviolite','p1'),snomTarget=makeMon(SP_BY_ID.gyarados,'none','cpu'),snomPlain=makeMon(SP_BY_ID.snom,'none','p1');me=snom;foe=snomTarget;myTeam=[snom];foeTeam=[snomTarget];
+  check(snom.types.join('/')==='ice/bug'&&snom.base.hp===90&&snom.base.atk===75&&snom.base.def===135&&snom.base.spa===90&&snom.base.spd===120&&snom.base.spe===60&&snom.img==='image/image/ユキハミ.gif'&&M.snomBlizzard.power===120&&M.snomBlizzard.accuracy===.6,'Snom has requested multiplied stats, image and Blizzard');
+  check(calcDamage(snomTarget,snom,M.waterfall,false).dmg<calcDamage(snomTarget,snomPlain,M.waterfall,false).dmg,'Snom receives Eviolite bulk');
+  weather=null;attack(snomTarget,snom,M.waterfall,'myImg',()=>{});check(weather==='snow','Snom Scissors changes weather to snow after physical damage');
+  const snowDamage=calcDamage(snomTarget,snom,M.waterfall,false).dmg,plainSnowDamage=calcDamage(snomTarget,{...snom,types:['bug']},M.waterfall,false).dmg;check(snowDamage<plainSnowDamage,'Snow gives Ice Pokemon 1.5 times physical Defense');
+  snomTarget.maxHp=snomTarget.curHp=100000;const oldSnomRandom=Math.random;Math.random=()=>.9;attack(snom,snomTarget,M.snomBlizzard,'foeImg',()=>{});Math.random=oldSnomRandom;check(snomTarget.curHp<100000,'Snom Blizzard always hits in snow');weather=null;
   const nemoPawmot=makeMon(SP_BY_ID.nemoPawmot,'none','p1'),nemoTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(nemoPawmot.name==='ネモのパーモット'&&nemoPawmot.img==='image/image/ネモのパーモット.gif'&&M.electricSpeedStrike.power===120,'Nemo Pawmot and its exclusive Electric Speed Strike are available');
   const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});
