@@ -313,7 +313,7 @@ ABDESC.technician="威力60以下の攻撃技の威力を1.5倍にする";
 ABIL.guts={name:"こんじょう",eff:"guts"};
 ABIL.magicmirror={name:"マジックミラー",eff:"magicmirror"};
 ABIL.longreach={name:"えんかく",eff:"longreach"};
-Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"かげぬいで前の相手を通常威力、控え1体を威力30%で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）"});
+Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"かげぬいで前の相手を通常威力、控え1体を威力30%上昇で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）"});
 const M={
   electroball:{name:"エレキボール",type:"electric",cat:"spec",power:20,electroBall:true,desc:"威力20～120。自分/相手の素早さ比×30（最低20、4倍以上で120）"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
@@ -2030,7 +2030,7 @@ function submitAction(side,action){
   }
   if(action.type==="move"&&!action.targetReady&&selectableTargets(side,action.move).length>1){
     pendingTarget={side,action};
-    document.getElementById("cmd").innerHTML=`<div>攻撃対象を選択${canLongReachBench(activeOf(side),action.move)?'（控えは威力30%）':''}</div>`+selectableTargets(side,action.move).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
+    document.getElementById("cmd").innerHTML=`<div>攻撃対象を選択${canLongReachBench(activeOf(side),action.move)?'（控えは威力30%上昇）':''}</div>`+selectableTargets(side,action.move).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
   }
   if(action.type==="move"&&!action.heiReady){openHeiActions(side,action);return;}
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
@@ -2609,7 +2609,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(res.eff===0&&move.outrage){attacker.outrageTurns=0;attacker.outrageMove=null;}
   if(res.eff===0){ setTimeout(()=>{pushLog(`  └ ${defender.name} には こうかが ないようだ！`,"#9fb3d6");cb();},450); return; }
   let dmg=res.dmg, lifeTrigger=false;
-  if(move.longReachBench)dmg=Math.max(1,Math.floor(dmg*.30));
+  if(move.longReachBench)dmg=Math.max(1,Math.floor(dmg*1.30));
   if(move.birdOnHit)move.birdOnHit();
   if(defender.blackMoonShieldHp>0){absorbBlackMoonShield(defender,dmg);renderHp();if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);setTimeout(cb,350);return;}
   if(defender.iceShieldHp>0){
