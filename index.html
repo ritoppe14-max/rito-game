@@ -1891,7 +1891,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
     attacker.usedFifthSlot=true;
   }
   const count=attacker.itemKey==="steadydice"?3:move.multiHit;
-  const hitMove=Object.assign({},move,{multiHit:null,accuracy:attacker.itemKey==="steadydice"?1:move.accuracy,selfBoost:null,selfDrop:null});
+  const hitMove=Object.assign({},move,{multiHit:null,accuracy:attacker.itemKey==="steadydice"?1:move.accuracy,selfBoost:null,selfDrop:null,fifthDefenseBypass:!!move.fifthSlot});
   // 祭神旋風刃は発動時だけ使用済みにし、5回の個別ヒットでは再判定しない。
   delete hitMove.ritual;
   delete hitMove.fifthSlot;
@@ -2519,7 +2519,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.allyBoost){setTimeout(()=>{applyDrop(allyTarget,move.allyBoost);pushLog(`  └ ${allyTarget.name} は デコレーションで こうげき・とくこうUP！`,"#ffcb05");cb();},450);return;}
   if(move.holeCake){setTimeout(()=>{attacker.holeCakeTurns=3;pushLog(`  ★ ${attacker.name} は ホールケイプ・マルホイップを展開した！ 3ターン行動できない！`,"#ffcb05");cb();},450);return;}
   if(move.decorateAlly&&allyTarget&&!allyTarget.fainted){applyDrop(allyTarget,{atk:1,spa:1});pushLog(`  └ ${allyTarget.name} は デコレーションで こうげき・とくこうUP！`,"#ffcb05");}
-  if(defender.protectActive&&!isFriendlyMove(move)&&!move.onceBattle&&!move.ignoreProtect){
+  if(defender.protectActive&&!isFriendlyMove(move)&&!move.onceBattle&&!move.fifthSlot&&!move.fifthDefenseBypass&&!move.ignoreProtect){
     if(defender.kingShieldActive&&move.cat==="phys")applyDrop(attacker,{atk:-1});
     if(move.maxMove&&move.cat!=="status"&&move.power>0){
       setTimeout(()=>{const d=Math.max(1,Math.floor(defender.maxHp*.25));defender.curHp=Math.max(0,defender.curHp-d);renderHp();pushLog(`  └ ダイマックス技が まもるを 貫通し ${d} ダメージ！`,"#e84b4b");if(defender.curHp<=0&&!defender.fainted)faintMon(defender,defImgId);cb();},350);
@@ -2619,7 +2619,7 @@ function attack(attacker,defender,move,defImgId,cb){
     setTimeout(()=>{const blocked=Math.min(defender.alcremieShieldHp,dmg);defender.alcremieShieldHp=Math.max(0,defender.alcremieShieldHp-dmg);pushLog(`  └ ${defender.name} の マルホイップシールドが ${blocked} ダメージを 防いだ！`,"#ffcb05");if(defender.alcremieShieldHp<=0)pushLog(`  └ ${defender.name} の マルホイップシールドが 消えた！`,"#ffcb05");renderHp();cb();},450);
     return;
   }
-  if(defender.subHp>0&&!move.onceBattle&&!move.ignoreSubstitute){
+  if(defender.subHp>0&&!move.onceBattle&&!move.fifthSlot&&!move.fifthDefenseBypass&&!move.ignoreSubstitute){
     setTimeout(()=>{
       const actualDamage=Math.min(defender.subHp,dmg);
       defender.subHp=Math.max(0,defender.subHp-dmg); renderHp();

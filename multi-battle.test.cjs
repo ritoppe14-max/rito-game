@@ -528,6 +528,7 @@ vm.runInContext(`
   const machamp=makeMon(SP_BY_ID.machamp,'none','p1'),machampTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(machamp.types.join('/')==='fighting'&&machamp.base.hp===90&&machamp.base.atk===130&&machamp.base.def===110&&machamp.base.spa===65&&machamp.base.spd===115&&machamp.base.spe===55&&machamp.img==='image/image/カイリキー.gif'&&machamp.moves[4].name==='怪力豪傑爆裂パンチ'&&machamp.moves[4].fifthSlot,'Machamp has a fixed fifth Blast Punch');
   me=machamp;foe=machampTarget;machampTarget.maxHp=machampTarget.curHp=100000;attack(machamp,machampTarget,machamp.moves[4],'foeImg',()=>{});check(machamp.usedFifthSlot&&machampTarget.stages.def===-4,'Machamp Blast Punch hits seven times and drops Defense on hits one, three, five and seven');
+  machamp.usedFifthSlot=false;machampTarget.curHp=machampTarget.maxHp;machampTarget.protectActive=true;attack(machamp,machampTarget,machamp.moves[4],'foeImg',()=>{});check(machampTarget.curHp<machampTarget.maxHp,'Multi-hit fifth move bypasses Protect');
   const clobNoItem=makeMon(SP_BY_ID.clobbopus,'none','p1'),clobWithItem=makeMon(SP_BY_ID.clobbopus,'leftovers','p1'),clobTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   const acrobaticsNoItem=calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg,acrobaticsWithItem=calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg;
   check(Math.abs(acrobaticsNoItem-acrobaticsWithItem*2)<=1,'Acrobatics doubles without an item (rounding allowed)');
@@ -543,6 +544,8 @@ vm.runInContext(`
   attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);const fifthHp=fifthTarget.curHp;
   attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>fifthDone++);
   check(fifthDone===2&&fifthUser.usedFifthSlot&&fifthTarget.curHp===fifthHp,'Fifth move can only be used once per battle');
+  fifthUser.usedFifthSlot=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.protectActive=true;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp,'Fifth move bypasses Protect');
+  fifthUser.usedFifthSlot=false;fifthTarget.protectActive=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.subHp=100000;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp&&fifthTarget.subHp===100000,'Fifth move bypasses Substitute');
   const bax=makeMon(SP_BY_ID.baxcalibur,'none','p1'),baxTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(bax.base.hp===115&&bax.base.atk===145&&bax.base.def===122&&bax.base.spa===75&&bax.base.spd===116&&bax.base.spe===87,'Baxcalibur base stats include global bulk bonus');
   check(bax.abilEff==='berserker'&&bax.img==='image/image/セグレイブ.gif'&&M.glaiveRush.power===120,'Baxcalibur has Berserker and Glaive Rush');
