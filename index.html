@@ -519,7 +519,7 @@ const M={
   blizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7}, earthquake2:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, earthpower2:{name:"だいちのちから",type:"ground",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}}, smackdown:{name:"うちおとす",type:"rock",cat:"phys",power:50}, rocktomb2:{name:"がんせきふうじ",type:"rock",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}},
   alolanAvalanche:{name:"ゆきなだれ",type:"ice",cat:"phys",power:65,switchLock:2,exclusive:"alolanNinetales",desc:"命中した相手を2ターン交代できなくする"},
   alolanBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7,alolanFreeze:true,exclusive:"alolanNinetales",desc:"このポケモンが初めて命中させた時だけ、相手を1回行動できないこおりにする"},
-  electricSpeedStrike:{name:"でんこうそくげき",type:"electric",cat:"phys",power:120,removeElectricType:true,requiresElectricType:true,desc:"電気タイプでなければ失敗。使用後に自分の電気タイプを消す"},
+  electricSpeedStrike:{name:"でんこうそくげき",type:"electric",cat:"phys",power:120,removeElectricType:true,requiresElectricType:true,desc:"電気タイプでなければ失敗。使用後に自分の電気タイプを消す（電気テラス中は消えない）"},
   sayakuCrunch:{name:"かみくだく",type:"dark",cat:"phys",power:85,sayakuCrunch:true,desc:"攻撃前にキバを選ぶ"},
   sayakuRecoverFang:{name:"かいふくのキバ",type:"dark",cat:"phys",power:85,healDamage:.5},
   sayakuDevourFang:{name:"むさぼるキバ",type:"dark",cat:"phys",power:85,targetDrop:{chance:1,stats:{def:-2}}},
@@ -2775,7 +2775,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(!move.maxMove&&!sheer&&move.targetDrop&&effectTarget.curHp>0&&Math.random()<move.targetDrop.chance) applyDrop(effectTarget,move.targetDrop.stats);
     if(!sheer&&move.selfBoost) tryStatEffect(attacker,move.selfBoost);
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status"){announceAbility(attacker);applyDrop(attacker,{spa:1});}
-    if(move.removeElectricType&&attacker.curHp>0){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
+    if(move.removeElectricType&&attacker.curHp>0&&!attacker.isElectricTera){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);

@@ -661,6 +661,7 @@ vm.runInContext(`
   const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});
   const teraElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;
   check(nemoPawmot.isElectricTera&&nemoPawmot.typeLocked&&nemoPawmot.types.join('/')==='electric'&&teraElectricDamage>=normalElectricDamage*1.5,'Electric Tera makes Nemo Pawmot Electric-only and raises Electric STAB to two times');
-  attack(nemoPawmot,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(!nemoPawmot.types.includes('electric'),'Electric Speed Strike removes the user Electric type after use');
+  attack(nemoPawmot,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(nemoPawmot.types.includes('electric'),'Electric Speed Strike preserves Electric type during Electric Tera');
+  const normalNemo=makeMon(SP_BY_ID.nemoPawmot,'none','p1');me=normalNemo;foe=nemoTarget;attack(normalNemo,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(!normalNemo.types.includes('electric'),'Electric Speed Strike removes the user Electric type without Electric Tera');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
