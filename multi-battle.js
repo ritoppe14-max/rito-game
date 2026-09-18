@@ -106,6 +106,7 @@ function multiConfirm(s){
 function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
+  clearTrevenantLinks(a.mon);
   a.mon.mougekiLock=null;
   a.mon.rageFistHits=0;
   a.mon.electricCharge=false;
@@ -149,6 +150,7 @@ function multiResolve(){
   }),multiEnd);
 }
 function multiEnd(){
+  applyTrevenantEndEffects([...multiLiving('me'),...multiLiving('foe')]);
   ['me','foe'].forEach(s=>multiLiving(s).slice().forEach(m=>{
     const target=multiLiving(multiOther(s))[0]||multi.teams[multiOther(s)][0];
     me=s==='me'?m:target;foe=s==='foe'?m:target;
