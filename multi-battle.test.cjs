@@ -649,6 +649,11 @@ vm.runInContext(`
   applySawsbuckSeason(sawsbuck,7);check(sawsbuck.name==='メブキジカ(なつのすがた)'&&sawsbuck.base.atk===120&&sawsbuck.base.spa===80&&sawsbuck.base.hp===80&&sawsbuck.abilEff===null,'Sawsbuck summer form boosts Attack and Special Attack by 20');
   applySawsbuckSeason(sawsbuck,9);check(sawsbuck.name==='メブキジカ(あきのすがた)'&&sawsbuck.base.spe===115&&sawsbuck.base.def===100&&sawsbuck.base.spd===100,'Sawsbuck autumn form boosts Speed by 20');
   applySawsbuckSeason(sawsbuck,11);check(sawsbuck.name==='メブキジカ(ふゆのすがた)'&&sawsbuck.base.def===120&&sawsbuck.base.spd===120&&sawsbuck.base.spe===95,'Sawsbuck winter form boosts Defense and Special Defense by 20');
+  const lycanroc=makeMon(SP_BY_ID.lycanroc,'none','p1');
+  applyLycanrocForm(lycanroc,4);check(lycanroc.name==='ルガルガン(まひるのすがた)'&&lycanroc.img==='image/image/ヒルガルガン.gif'&&lycanroc.base.spe===112,'Lycanroc is Midday form from 4 through 17');
+  applyLycanrocForm(lycanroc,17);check(lycanroc.name==='ルガルガン(たそがれのすがた)'&&lycanroc.img==='image/image/ユガルガン.gif'&&lycanroc.base.atk===117,'Lycanroc is Dusk form from 17 through 18');
+  applyLycanrocForm(lycanroc,18);check(lycanroc.name==='ルガルガン(まよなかのすがた)'&&lycanroc.img==='image/image/ヨルガルガン.gif'&&lycanroc.base.hp===85,'Lycanroc is Midnight form from 18 through 3');
+  applyLycanrocForm(lycanroc,3);check(lycanroc.name==='ルガルガン(たそがれのすがた)'&&lycanroc.img==='image/image/ユガルガン.gif','Lycanroc is Dusk form from 3 through 4');
   const nemoPawmot=makeMon(SP_BY_ID.nemoPawmot,'none','p1'),nemoTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(nemoPawmot.name==='ネモのパーモット'&&nemoPawmot.img==='image/image/ネモのパーモット.gif'&&M.electricSpeedStrike.power===120,'Nemo Pawmot and its exclusive Electric Speed Strike are available');
   const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});
