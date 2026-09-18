@@ -313,7 +313,7 @@ ABDESC.technician="威力60以下の攻撃技の威力を1.5倍にする";
 ABIL.guts={name:"こんじょう",eff:"guts"};
 ABIL.magicmirror={name:"マジックミラー",eff:"magicmirror"};
 ABIL.longreach={name:"えんかく",eff:"longreach"};
-Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"前の相手を通常威力で攻撃でき、控えも威力30%で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）"});
+Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"かげぬいで前の相手を通常威力、控え1体を威力30%で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）"});
 const M={
   electroball:{name:"エレキボール",type:"electric",cat:"spec",power:20,electroBall:true,desc:"威力20～120。自分/相手の素早さ比×30（最低20、4倍以上で120）"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
@@ -2030,7 +2030,7 @@ function submitAction(side,action){
   }
   if(action.type==="move"&&!action.targetReady&&selectableTargets(side,action.move).length>1){
     pendingTarget={side,action};
-    document.getElementById("cmd").innerHTML=`<div>攻撃対象を選択${activeOf(side).abilEff==="longreach"?'（控えは威力30%）':''}</div>`+selectableTargets(side,action.move).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
+    document.getElementById("cmd").innerHTML=`<div>攻撃対象を選択${canLongReachBench(activeOf(side),action.move)?'（控えは威力30%）':''}</div>`+selectableTargets(side,action.move).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
   }
   if(action.type==="move"&&!action.heiReady){openHeiActions(side,action);return;}
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
@@ -2054,9 +2054,10 @@ function confirmAllyTarget(index){
 }
 function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");if(host.shadowTargets&&host.shadowTargets.some(m=>!m.fainted&&m.curHp>0))return host.shadowTargets.filter(m=>!m.fainted&&m.curHp>0);return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
 function benchTargets(side){if(typeof multi!=="undefined"&&multi)return multiBench(side==="me"?"foe":"me");const enemySide=side==="me"?"foe":"me";return teamOf(enemySide).filter((m,i)=>i!==activeIdxOf(enemySide)&&!m.fainted&&m.curHp>0);}
-function selectableTargets(side,move){const front=enemyTargets(side),attacker=activeOf(side);return attacker&&attacker.abilEff==="longreach"&&move&&move.cat!=="status"?[...front,...benchTargets(side)]:front;}
+function canLongReachBench(attacker,move){return !!(attacker&&attacker.abilEff==="longreach"&&move&&move.name==="かげぬい");}
+function selectableTargets(side,move){const front=enemyTargets(side),attacker=activeOf(side);return canLongReachBench(attacker,move)?[...front,...benchTargets(side)]:front;}
 function resolveAttackTarget(side,target,move){const list=selectableTargets(side,move);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
-function confirmAttackTarget(i){const {side,action}=pendingTarget,target=selectableTargets(side,action.move)[i];if(!target)return;pendingTarget=null;action.target=target;action.targetReady=true;if(benchTargets(side).includes(target))action.move=Object.assign({},action.move,{longReachBench:true});submitAction(side,action);}
+function confirmAttackTarget(i){const {side,action}=pendingTarget,target=selectableTargets(side,action.move)[i];if(!target)return;pendingTarget=null;action.target=target;action.targetReady=true;if(canLongReachBench(activeOf(side),action.move)&&benchTargets(side).includes(target))action.move=Object.assign({},action.move,{longReachBench:true});submitAction(side,action);}
 function isFriendlyMove(move){return !!(move.birdShield||move.heiCare||move.heiCoaching||move.allyHeal||move.allyBoost||move.holeCake||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
 function handoff(side){
   const c=document.getElementById("cmd");
