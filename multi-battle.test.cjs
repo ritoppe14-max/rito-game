@@ -525,6 +525,9 @@ vm.runInContext(`
   check(M.machpunch.power===50&&M.machpunch.prio===1&&M.clobbopusBulletPunch.power===50&&M.clobbopusBulletPunch.prio===1,'Clobbopus priority moves');
   check(M.circlethrow.power===55&&M.circlethrow.prio===-6&&M.circlethrow.targetForceSwitch,'Circle Throw forces the target to switch');
   check(M.doublekick.power===30&&M.doublekick.multiHit===2&&M.clobbopusDualChop.power===45&&M.clobbopusDualChop.multiHit===2,'Clobbopus multi-hit moves');
+  const machamp=makeMon(SP_BY_ID.machamp,'none','p1'),machampTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(machamp.types.join('/')==='fighting'&&machamp.base.hp===90&&machamp.base.atk===130&&machamp.base.def===110&&machamp.base.spa===65&&machamp.base.spd===115&&machamp.base.spe===55&&machamp.img==='image/image/カイリキー.gif'&&machamp.moves[4].name==='怪力豪傑爆裂パンチ'&&machamp.moves[4].fifthSlot,'Machamp has a fixed fifth Blast Punch');
+  me=machamp;foe=machampTarget;machampTarget.maxHp=machampTarget.curHp=100000;attack(machamp,machampTarget,machamp.moves[4],'foeImg',()=>{});check(machamp.usedFifthSlot&&machampTarget.stages.def===-3,'Machamp Blast Punch hits seven times and drops Defense every second hit');
   const clobNoItem=makeMon(SP_BY_ID.clobbopus,'none','p1'),clobWithItem=makeMon(SP_BY_ID.clobbopus,'leftovers','p1'),clobTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   const acrobaticsNoItem=calcDamage(clobNoItem,clobTarget,M.clobbopusAcrobatics,false).dmg,acrobaticsWithItem=calcDamage(clobWithItem,clobTarget,M.clobbopusAcrobatics,false).dmg;
   check(Math.abs(acrobaticsNoItem-acrobaticsWithItem*2)<=1,'Acrobatics doubles without an item (rounding allowed)');

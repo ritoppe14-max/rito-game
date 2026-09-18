@@ -538,6 +538,7 @@ const M={
   poisonpowder:{name:"どくのこな",type:"poison",cat:"status",power:0,poison:1}, stunspore:{name:"しびれごな",type:"grass",cat:"status",power:0,paralyze:1}, sleeppowder:{name:"ねむりごな",type:"grass",cat:"status",power:0,sleep:true}, synthesis:{name:"こうごうせい",type:"grass",cat:"status",power:0,recover:.5}, strengthsap:{name:"ちからをすいとる",type:"grass",cat:"status",power:0,recover:.5},
   batonpass:{name:"バトンタッチ",type:"normal",cat:"status",power:0,switchAfter:true}, memento:{name:"おきみやげ",type:"dark",cat:"status",power:0}, disable:{name:"かなしばり",type:"normal",cat:"status",power:0}, imprison:{name:"ふういん",type:"psychic",cat:"status",power:0}, safeguard:{name:"しんぴのまもり",type:"normal",cat:"status",power:0},
   trevenantPainSplit:{name:"いたみわけ",type:"ghost",cat:"status",power:0,painSplit:true,desc:"HP割合が相手より低い時だけ成功。4ターン、相手が自分よりHP割合が高い間、相手に最大HP10%ダメージ・自分は最大HP10%回復"},
+  machampBlastPunch:{name:"怪力豪傑爆裂パンチ",type:"fighting",cat:"phys",power:20,multiHit:7,multiDropEvery:2,multiDrop:{def:-1},desc:"威力20×7。2発ごとに相手の防御を1段階下げる"},
   trevenantWoodHammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:65,multiHit:2,recoilDamage:.05,desc:"威力65×2。与えたダメージの5%を自分も受ける"},
   trevenantCurse:{name:"のろい",type:"ghost",cat:"status",power:0,trevenantCurse:true,desc:"交代まで、毎ターン自分と相手の最大HPを7%削る"},
   woodHorn:{name:"ウッドホーン",type:"grass",cat:"phys",power:60,healDamage:.2,desc:"与えたダメージの20%を回復"},
@@ -689,7 +690,7 @@ SPECIES.push(
  S("espeon","エーフィ","image/image/エーフィ.gif",["psychic"],{hp:65,atk:65,def:60,spa:130,spd:95,spe:110},"magicmirror",["psychic","shadowball","calmMind","dazzlinggleam","psychicEndless"]),
  S("glaceon","グレイシア","image/image/グレイシア.gif",["ice"],{hp:65,atk:60,def:110,spa:130,spd:95,spe:65},"snowcloak",["icebeam","freezedry","shadowball","protect","glacialAurora"])
 );
-Object.assign(BIRD_FIFTH,{vaporeon:"hydroVortex",jolteon:"divineThunder",flareon:"infernoFlame",leafeon:"grassCrusher",espeon:"psychicEndless",glaceon:"glacialAurora"});
+Object.assign(BIRD_FIFTH,{vaporeon:"hydroVortex",jolteon:"divineThunder",flareon:"infernoFlame",leafeon:"grassCrusher",espeon:"psychicEndless",glaceon:"glacialAurora",machamp:"machampBlastPunch"});
 SPECIES.push(
  S("scyther","ストライク","image/image/ストライク.gif",["bug","flying"],{hp:70,atk:110,def:80,spa:55,spd:80,spe:125},"technician",["scytherDoubleWing","xscissor","uturn","swordsdance"]),
  S("scizor","ハッサム","image/image/ハッサム.gif",["bug","steel"],{hp:70,atk:130,def:100,spa:55,spd:80,spe:65},"technician",["bulletpunch","xscissor","uturn","swordsdance"])
@@ -729,6 +730,7 @@ SPECIES.push(S("sayakuFeraligatr","サヤクのオーダイル","image/image/サ
 SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","image/image/クロノのバクフーン.gif",["fire"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"blaze",["kuronoEruption","kuronoFlameWheel","focusblast","crunch"]));
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","image/image/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"garakuFury",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
+SPECIES.push(S("machamp","カイリキー","image/image/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -791,6 +793,7 @@ const LEARN={
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
   garakuMoltresG:["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost","darkpulse","airslash","protect"],
   moaroZapdosG:["moaroThunderKick","bravebird","closecombat","drillrun","throatchop","uturn","protect"],
+  machamp:["closecombat","bulletpunch","rockslide","knockoff","machpunch","icepunch","thunderpunch","protect"],
   scyther:["scytherDoubleWing","xscissor","uturn","swordsdance","quickattack","nightslash","protect","roost"],
   scizor:["bulletpunch","xscissor","uturn","swordsdance","ironhead","quickattack","knockoff","protect","roost"],
   dracovish:["crunch","waterfall","dragonclaw","icefang","fishiousrend","freezedry"],
@@ -1897,7 +1900,9 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
       if(move.selfDrop)applyDrop(attacker,move.selfDrop);
       cb();return;
     }
-    i++; const currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove; attack(attacker,defender,currentMove,defImgId,next);
+    i++; let currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove;
+    if(move.multiDropEvery&&i%move.multiDropEvery===0)currentMove=Object.assign({},currentMove,{targetDrop:{chance:1,stats:move.multiDrop}});
+    attack(attacker,defender,currentMove,defImgId,next);
   };
   next();
 }
