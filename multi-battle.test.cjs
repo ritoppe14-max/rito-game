@@ -656,11 +656,15 @@ vm.runInContext(`
   applyLycanrocForm(lycanroc,3);check(lycanroc.name==='ルガルガン(たそがれのすがた)'&&lycanroc.img==='image/image/ユガルガン.gif','Lycanroc is Dusk form from 3 through 4');
   const hippowdonMale=makeMon(SP_BY_ID.hippowdon,'none','p1'),hippowdonFemale=makeMon(SP_BY_ID.hippowdonF,'none','p1');
   check(hippowdonMale.name==='カバルドン♂'&&hippowdonMale.img==='image/image/カバルドン♂.gif'&&hippowdonFemale.name==='カバルドン♀'&&hippowdonFemale.img==='image/image/カバルドン♀.gif'&&hippowdonFemale.base.hp===hippowdonMale.base.hp-5&&hippowdonFemale.base.atk===hippowdonMale.base.atk-5&&hippowdonFemale.base.def===hippowdonMale.base.def-5&&hippowdonFemale.base.spa===hippowdonMale.base.spa-5&&hippowdonFemale.base.spd===hippowdonMale.base.spd-5&&hippowdonFemale.base.spe===hippowdonMale.base.spe-5&&hippowdonFemale.abilEff==='moxie','Hippowdon male and female are selectable with distinct stats and Moxie');
+  const decidueye=makeMon(SP_BY_ID.decidueye,'none','p1'),fieldTarget=makeMon(SP_BY_ID.gyarados,'none','cpu'),benchTarget=makeMon(SP_BY_ID.clobbopus,'none','cpu');
+  me=decidueye;foe=fieldTarget;myTeam=[decidueye];foeTeam=[fieldTarget,benchTarget];myA=0;foeA=0;
+  check(M.shadowStitch.benchSelect&&!M.shadowStitch.benchAttack&&benchTargets('me')[0]===benchTarget&&resolveAttackTarget('me',benchTarget,M.shadowStitch)===benchTarget,'Shadow Stitch selects one opposing bench target');
+  const fieldHp=fieldTarget.curHp,benchHp=benchTarget.curHp;attack(decidueye,benchTarget,M.shadowStitch,'foeImg',()=>{});check(fieldTarget.curHp===fieldHp&&benchTarget.curHp<benchHp,'Shadow Stitch damages only the selected bench target');
   const nemoPawmot=makeMon(SP_BY_ID.nemoPawmot,'none','p1'),nemoTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(nemoPawmot.name==='ネモのパーモット'&&nemoPawmot.img==='image/image/ネモのパーモット.gif'&&M.electricSpeedStrike.power===120,'Nemo Pawmot and its exclusive Electric Speed Strike are available');
   const normalElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;me=nemoPawmot;foe=nemoTarget;doElectricTera(nemoPawmot,'myImg',()=>{});
   const teraElectricDamage=calcDamage(nemoPawmot,nemoTarget,M.electricSpeedStrike,false).dmg;
-  check(nemoPawmot.isElectricTera&&nemoPawmot.typeLocked&&nemoPawmot.types.join('/')==='electric'&&teraElectricDamage>=normalElectricDamage*1.5,'Electric Tera makes Nemo Pawmot Electric-only and raises Electric STAB to two times');
+  check(nemoPawmot.isElectricTera&&nemoPawmot.typeLocked&&nemoPawmot.types.join('/')==='electric'&&teraElectricDamage>=normalElectricDamage*1.5&&!nemoTarget.isElectricTera,'Electric Tera affects only the Pokemon that Terastallized');
   attack(nemoPawmot,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(nemoPawmot.types.includes('electric'),'Electric Speed Strike preserves Electric type during Electric Tera');
   const normalNemo=makeMon(SP_BY_ID.nemoPawmot,'none','p1');me=normalNemo;foe=nemoTarget;attack(normalNemo,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(!normalNemo.types.includes('electric'),'Electric Speed Strike removes the user Electric type without Electric Tera');
 `,c);

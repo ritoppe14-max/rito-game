@@ -504,7 +504,7 @@ const M={
   acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
   bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true},
   bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
-  shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,benchAttack:true,desc:"必中。相手の交代可能な控えにも威力+20%で攻撃"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
+  shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,benchSelect:true,desc:"必中。相手の控えから1体を選んで攻撃"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
   knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
   voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   dazzlinggleam:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true}, moonblast:{name:"ムーンフォース",type:"fairy",cat:"spec",power:95,targetDrop:{chance:.3,stats:{spa:-1}}}, drainingkiss2:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75}, playnice:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
@@ -2019,6 +2019,14 @@ function submitAction(side,action){
     document.getElementById("cmd").innerHTML='<div>味方の対象を選択</div>'+friendlyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAllyTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('')+'<div class="center"><button class="btn ghost" onclick="openMoves(\''+side+'\')">← もどる</button></div>';
     return;
   }
+  if(action.type==="move"&&action.move.benchSelect&&!action.benchTargetReady){
+    const targets=benchTargets(side);
+    if(targets.length){
+      pendingTarget={side,action,bench:true};
+      document.getElementById("cmd").innerHTML='<div>控えの攻撃対象を選択</div>'+targets.map((m,i)=>`<button class="btn ghost" onclick="confirmBenchTarget(${i})">${m.name} (${m.curHp}/${m.maxHp})</button>`).join('')+'<div class="center"><button class="btn ghost" onclick="openMoves(\''+side+'\')">← もどる</button></div>';
+      return;
+    }
+  }
   if(action.type==="move"&&!action.targetReady&&enemyTargets(side).length>1){
     pendingTarget={side,action};
     document.getElementById("cmd").innerHTML='<div>攻撃対象を選択</div>'+enemyTargets(side).map((m,i)=>`<button class="btn ghost" onclick="confirmAttackTarget(${i})">${m.name}${m.isBanetteShadow||m.shadowTargets?'':` (${m.curHp}/${m.maxHp})`}</button>`).join('');return;
@@ -2044,8 +2052,10 @@ function confirmAllyTarget(index){
   submitAction(p.side,p.action);
 }
 function enemyTargets(side){const host=activeOf(side==="me"?"foe":"me");if(host.shadowTargets&&host.shadowTargets.some(m=>!m.fainted&&m.curHp>0))return host.shadowTargets.filter(m=>!m.fainted&&m.curHp>0);return [host,...(host.heis||[])].filter(m=>!m.fainted&&m.curHp>0);}
-function resolveAttackTarget(side,target){const list=enemyTargets(side);return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
+function benchTargets(side){if(typeof multi!=="undefined"&&multi)return multiBench(side==="me"?"foe":"me");const enemySide=side==="me"?"foe":"me";return teamOf(enemySide).filter((m,i)=>i!==activeIdxOf(enemySide)&&!m.fainted&&m.curHp>0);}
+function resolveAttackTarget(side,target,move){const list=enemyTargets(side);if(move&&move.benchSelect&&benchTargets(side).includes(target))return target;return list.includes(target)?target:list[0]||activeOf(side==="me"?"foe":"me");}
 function confirmAttackTarget(i){const {side,action}=pendingTarget;action.target=enemyTargets(side)[i];action.targetReady=true;submitAction(side,action);}
+function confirmBenchTarget(i){const p=pendingTarget;if(!p)return;const target=benchTargets(p.side)[i];if(!target)return;pendingTarget=null;p.action.target=target;p.action.benchTargetReady=true;submitAction(p.side,p.action);}
 function isFriendlyMove(move){return !!(move.birdShield||move.heiCare||move.heiCoaching||move.allyHeal||move.allyBoost||move.holeCake||move.selfBoost&&move.cat==="status"||move.recover||move.roost||move.protect||move.substitute);}
 function handoff(side){
   const c=document.getElementById("cmd");
@@ -2105,7 +2115,7 @@ function doResolve(){
 }
 function runAttacks(movers,i,done){
   if(i>=movers.length){done();return;}
-  const m=movers[i], atk=m.hei?m.mon:activeOf(m.who), def=resolveAttackTarget(m.who,m.target), defImg=m.who==="me"?"foeImg":"myImg";
+  const m=movers[i], atk=m.hei?m.mon:activeOf(m.who), def=resolveAttackTarget(m.who,m.target,m.move), defImg=m.who==="me"?"foeImg":"myImg";
   if(!m.hei&&atk!==m.mon){ runAttacks(movers,i+1,done); return; }
   if(m.hei&&activeOf(m.who)!==m.host){ runAttacks(movers,i+1,done); return; }
   if(atk.fainted){ runAttacks(movers,i+1,done); return; }
@@ -2784,10 +2794,6 @@ function attack(attacker,defender,move,defImgId,cb){
       attacker.curHp=attacker.maxHp;renderHp();pushLog(`  ★ ${attacker.name} の ふはいたべ！ HPが全回復した！`,"#46d160");
     }
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
-    if(move.benchAttack&&actualDamage>0){
-      const side=defender===me?"me":"foe", benches=(typeof multi!=="undefined"&&multi)?multiBench(side):teamOf(side).filter((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
-      benches.forEach(target=>{const d=Math.max(1,Math.floor(calcDamage(attacker,target,move,false).dmg*1.2));target.curHp=Math.max(0,target.curHp-d);pushLog(`  └ ${target.name}（控え）にも ${d} ダメージ！`);if(target.curHp<=0)faintMon(target,birdImage(target));});renderHp();
-    }
     if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
     if(move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="toxicdebris"&&defender.curHp>0){
