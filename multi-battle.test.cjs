@@ -546,6 +546,11 @@ vm.runInContext(`
   check(fifthDone===2&&fifthUser.usedFifthSlot&&fifthTarget.curHp===fifthHp,'Fifth move can only be used once per battle');
   fifthUser.usedFifthSlot=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.protectActive=true;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp,'Fifth move bypasses Protect');
   fifthUser.usedFifthSlot=false;fifthTarget.protectActive=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.subHp=100000;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp&&fifthTarget.subHp===100000,'Fifth move bypasses Substitute');
+  const sayaku=makeMon(SP_BY_ID.sayakuFeraligatr,'none','p1'),sayakuTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  me=sayaku;foe=sayakuTarget;myTeam=[sayaku];foeTeam=[sayakuTarget];sayaku.curHp=Math.floor(sayaku.maxHp/2);sayakuTarget.maxHp=sayakuTarget.curHp=100000;
+  const sayakuStartHp=sayaku.curHp,sayakuRecoverDamage=calcDamage(sayaku,sayakuTarget,M.sayakuRecoverFang,false).dmg;attack(sayaku,sayakuTarget,M.sayakuRecoverFang,'foeImg',()=>{});check(sayaku.curHp===Math.min(sayaku.maxHp,sayakuStartHp+sayakuRecoverDamage),'Sayaku Torrent doubles Recover Fang healing below half HP');
+  sayaku.curHp=Math.floor(sayaku.maxHp/2);sayakuTarget.stages.def=0;attack(sayaku,sayakuTarget,M.sayakuDevourFang,'foeImg',()=>{});check(sayakuTarget.stages.def===-4,'Sayaku Torrent doubles Devour Fang Defense drop below half HP');
+  sayaku.curHp=Math.floor(sayaku.maxHp/2);sayakuTarget.justSwitched=true;sayakuTarget.switchLock=0;attack(sayaku,sayakuTarget,M.sayakuDullFang,'foeImg',()=>{});check(sayakuTarget.switchLock===4,'Sayaku Torrent doubles Dull Fang switch lock below half HP');
   const bax=makeMon(SP_BY_ID.baxcalibur,'none','p1'),baxTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
   check(bax.base.hp===115&&bax.base.atk===145&&bax.base.def===122&&bax.base.spa===75&&bax.base.spd===116&&bax.base.spe===87,'Baxcalibur base stats include global bulk bonus');
   check(bax.abilEff==='berserker'&&bax.img==='image/image/セグレイブ.gif'&&M.glaiveRush.power===120,'Baxcalibur has Berserker and Glaive Rush');
