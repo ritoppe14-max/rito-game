@@ -2417,6 +2417,8 @@ function mirrorTarget(attacker,defender,move){
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  // えんかくで控えを狙った時は、場にいる相手の画像へ命中・ひんし演出を出さない。
+  if(move.longReachBench)defImgId=null;
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
   if(attacker.id==="kuronoTyphlosion"&&move.cat!=="status"&&move.power>0)move={...move,healDamage:.6};
   if(attacker.abilEff==="harvest"&&(move.healDamage||move.recover||move.allyHeal))move={...move,healDamage:move.healDamage?move.healDamage+.1:move.healDamage,recover:move.recover?move.recover+.1:move.recover,allyHeal:move.allyHeal?move.allyHeal+.1:move.allyHeal};
@@ -2630,7 +2632,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(defender.itemKey==="sash"&&!defender.usedSash&&defender.curHp===defender.maxHp&&dmg>=defender.curHp){dmg=defender.curHp-1;defender.usedSash=true;pushLog(`  ★ ${defender.name} の きあいのタスキ！ HP1で耐えた！`,"#7ad1ff");}
   if(defender.itemKey==="life"&&!defender.usedLife&&res.eff>1){ dmg=Math.max(1,Math.floor(dmg*3/4)); lifeTrigger=true; }
   setTimeout(()=>{
-    const img=document.getElementById(defImgId); img.classList.add("hit"); setTimeout(()=>img.classList.remove("hit"),400);
+    const img=defImgId&&document.getElementById(defImgId); if(img){img.classList.add("hit");setTimeout(()=>img.classList.remove("hit"),400);}
     const actualDamage=Math.min(defender.curHp,dmg);
     if(actualDamage>=defender.curHp&&(move.ignoreAbility?null:defender.abilEff)==="innardsout"){
       defender.innardsOutDamage=defender.curHp;
@@ -2966,7 +2968,7 @@ function faintMon(mon,imgId){
     if(target.curHp<=0)faintMon(target,target===me?"myImg":"foeImg");
   }
   pushLog(`💥 ${mon.name} は たおれた！`);
-  document.getElementById(imgId).classList.add("faint","faint-effect");
+  const img=imgId&&document.getElementById(imgId);if(img)img.classList.add("faint","faint-effect");
   renderDots();
 }
 function hasPendingMove(mon){
