@@ -1089,7 +1089,7 @@ function renderHome(){
   const hero=document.getElementById("homeHero");
   hero.innerHTML = party.length? party.filter(p=>SPECIES[p.sp]).map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${(ITEMS[p.item]||ITEMS.none).name}</div></div>`).join("")
     : `<div class="sub">まだパーティがありません。「パーティを編成する」から6体えらんでね。</div>`;
-  document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`).join("");
+  document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>{const shown=displaySpecies(sp);return sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(shown.img)}"><div class="nm">${shown.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`;}).join("");
 }
 function selectPartyProfile(i){
   partyProfiles[activePartyProfile]=party;
@@ -1223,11 +1223,11 @@ function renderParty(){
     }
   }
   const g=document.getElementById("dexGrid"); g.innerHTML="";
-  SPECIES.forEach((sp,i)=>{ if(sp.hidden)return;
+  SPECIES.forEach((sp,i)=>{ if(sp.hidden)return;const shown=displaySpecies(sp);
     const inParty=curParty.some(p=>p.sp===i);
     const full=curParty.length>=6;
     g.innerHTML+=`<div class="mon-card ${inParty?'sel':''} ${(!inParty&&full)?'dim':''}" onclick="toggleParty(${i})">
-      <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div>
+      <img src="${IMG(shown.img)}"><div class="nm">${shown.name}</div>
       <div class="types">${typeTags(sp.types)}</div>
       <div class="mini">${spAbil(sp,owner).name}</div>
       <div class="mini">${sp.megas.length?'★メガ可':''}</div>
@@ -1291,9 +1291,9 @@ function renderTrain(){
   document.getElementById("trainP1Btn").className=trainOwner==="p1"?"btn blue":"btn ghost";
   document.getElementById("trainP2Btn").className=trainOwner==="p2"?"btn blue":"btn ghost";
   const g=document.getElementById("trainGrid"); g.innerHTML="";
-  SPECIES.forEach((sp,i)=>{ if(sp.hidden)return;
+  SPECIES.forEach((sp,i)=>{ if(sp.hidden)return;const shown=displaySpecies(sp);
     g.innerHTML+=`<div class="mon-card ${trainSel===i?'sel':''}" onclick="selectTrain(${i})">
-      <img src="${IMG(sp.img)}"><div class="nm">${sp.name}</div>
+      <img src="${IMG(shown.img)}"><div class="nm">${shown.name}</div>
       <div class="types">${typeTags(sp.types)}</div>
       <div class="mini">${trainOwner==="p1"?"1P":"フレンド"} 特性:${spAbil(sp,trainOwner).name}</div></div>`;
   });
@@ -1491,6 +1491,11 @@ function sawsbuckSeasonForMonth(month){
   if(month>=7&&month<9)return {name:"なつ",img:"image/image/メブキジカ(なつ).gif",bonus:{atk:20,spa:20}};
   if(month>=9&&month<11)return {name:"あき",img:"image/image/メブキジカ(あき).gif",bonus:{spe:20}};
   return {name:"ふゆ",img:"image/image/メブキジカ(ふゆ).gif",bonus:{def:20,spd:20}};
+}
+function displaySpecies(sp,month=new Date().getMonth()+1,hour=new Date().getHours()){
+  if(sp.id==="sawsbuck"){const season=sawsbuckSeasonForMonth(month);return {...sp,name:`メブキジカ(${season.name}のすがた)`,img:season.img};}
+  if(sp.id==="lycanroc"){const form=lycanrocFormForHour(hour);return {...sp,name:form.name,img:form.img};}
+  return sp;
 }
 function applySawsbuckSeason(mon,month=new Date().getMonth()+1){
   if(mon.id!=="sawsbuck")return;
