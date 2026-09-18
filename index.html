@@ -1579,6 +1579,8 @@ function renderActive(){
   document.getElementById("foeImg").src=IMG(foe.img);
   document.getElementById("myImg").classList.toggle("faint",me.fainted);
   document.getElementById("foeImg").classList.toggle("faint",foe.fainted);
+  document.getElementById("myImg").classList.toggle("electric-tera-aura",!!me.isElectricTera&&!me.fainted);
+  document.getElementById("foeImg").classList.toggle("electric-tera-aura",!!foe.isElectricTera&&!foe.fainted);
   if(!me.fainted)document.getElementById("myImg").classList.remove("faint-effect");
   if(!foe.fainted)document.getElementById("foeImg").classList.remove("faint-effect");
   document.getElementById("myName").textContent=me.name;
