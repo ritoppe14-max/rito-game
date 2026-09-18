@@ -2610,7 +2610,7 @@ function attack(attacker,defender,move,defImgId,cb){
   }
   const critRate=attacker.id==="raichuA"&&attacker.itemKey==="pancake"?.5:(move.critRate||(move.highCrit?0.125:0.066));
   const isCrit=!defender.careCritGuard&&(move.ignoreAbility?null:defender.abilEff)!=="shellarmor"&&(move.forceCrit||Math.random()<critRate);
-  const dullFangPower=move.sayakuDullFang&&defender.justSwitched?(move.sayakuTorrentBoost?4:2):1;
+  const dullFangPower=move.sayakuDullFang&&defender.justSwitched?2:1;
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower*dullFangPower}):dullFangPower>1?Object.assign({},move,{power:move.power*dullFangPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
   if(res.disguise){announceAbility(defender);defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
