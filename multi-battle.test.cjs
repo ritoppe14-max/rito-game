@@ -47,6 +47,7 @@ vm.runInContext(`
   check(M.duraludonDisaster.type==='dragon','Duraludon Disaster is Dragon type');
   check(M.duraludonDisaster.onceBattle&&M.duraludonDisaster.onceFlag==='usedDuraludonDisaster','Duraludon Disaster is once per battle');
   check(SP_BY_ID.empoleon!==undefined&&M.hydrocannon.power===120&&M.hydrocannon.trapTurns===3&&M.hydrocannon.trapDenom===10,'Empoleon Hydro Cannon and residual effect');
+  check(SPECIES[SP_BY_ID.gabarias].megas.find(m=>m.stone==='gabariasiteZ').types.join('/')==='dragon','Mega Garchomp Z is Dragon type only');
   battleSize=1;const intelSingle=makeMon(SP_BY_ID.inteleon,'none','p1');battleSize=2;const intelMulti=makeMon(SP_BY_ID.inteleon,'none','p1');
   check(intelSingle.base.spa===140&&intelMulti.base.spa===125&&intelSingle.base.spe===150,'Inteleon single and multi stats');
   intelSingle.isDynamax=true;intelSingle.isGigantamax=true;const gmaxSnipe=maxMoveFor(intelSingle,M.snipeshot);
