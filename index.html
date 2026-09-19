@@ -550,8 +550,9 @@ const M={
   machampBlastPunch:{name:"怪力豪傑爆裂パンチ",type:"fighting",cat:"phys",power:20,multiHit:7,multiDropHits:[1,3,5,7],multiDrop:{def:-1},desc:"威力20×7。1・3・5・7発目に相手の防御を1段階下げる"},
   trevenantWoodHammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:65,multiHit:2,recoilDamage:.05,desc:"威力65×2。与えたダメージの5%を自分も受ける"},
   trevenantCurse:{name:"のろい",type:"ghost",cat:"status",power:0,trevenantCurse:true,desc:"交代まで、毎ターン自分と相手の最大HPを7%削る"},
+  rivalKaiCurse:{name:"のろい",type:"ghost",cat:"status",power:0,rivalKaiCurse:true,desc:"自分の最大HPの1/4を削り、使用者がひんしになるまで相手の最大HPを毎ターン1/4削る"},
   woodHorn:{name:"ウッドホーン",type:"grass",cat:"phys",power:60,healDamage:.2,desc:"与えたダメージの20%を回復"},
-  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2}, waterfang:{name:"みずのキバ",type:"water",cat:"phys",power:75,bite:true,sawbladeFang:true}, bite:{name:"かみつく",type:"dark",cat:"phys",power:60,bite:true}, frozenBite:{name:"れいとうがみつき",type:"ice",cat:"spec",power:85,bite:true}, grassknot:{name:"くさむすび",type:"grass",cat:"spec",power:80}, sunnyday:{name:"にほんばれ",type:"fire",cat:"status",power:0,weatherSet:"sun"}, snowfall:{name:"ゆきふらし",type:"ice",cat:"status",power:0,weatherSet:"snow"}, frostbreath:{name:"こおりのいぶき",type:"ice",cat:"spec",power:60,forceCrit:true}, waterpulse:{name:"みずのはどう",type:"water",cat:"spec",power:60}, raincaller:{name:"あめふらし",type:"water",cat:"status",power:0,weatherSet:"rain"}, slam:{name:"たたきつける",type:"normal",cat:"phys",power:80,accuracy:.75}, drillniner:{name:"ドリルナイナー",type:"ground",cat:"phys",power:80,accuracy:.95,highCrit:true},
+  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2}, waterfang:{name:"みずのキバ",type:"water",cat:"phys",power:75,bite:true,sawbladeFang:true}, bite:{name:"かみつく",type:"dark",cat:"phys",power:60,bite:true}, frozenBite:{name:"れいとうがみつき",type:"ice",cat:"spec",power:85,bite:true}, grassknot:{name:"くさむすび",type:"grass",cat:"spec",power:80}, sunnyday:{name:"にほんばれ",type:"fire",cat:"status",power:0,weatherSet:"sun"}, snowfall:{name:"ゆきふらし",type:"ice",cat:"status",power:0,weatherSet:"snow"}, frostbreath:{name:"こおりのいぶき",type:"ice",cat:"spec",power:60,forceCrit:true}, waterpulse:{name:"みずのはどう",type:"water",cat:"spec",power:60}, raincaller:{name:"あめふらし",type:"water",cat:"status",power:0,weatherSet:"rain"}, slam:{name:"たたきつける",type:"normal",cat:"phys",power:80,accuracy:.75}, drillniner:{name:"ドリルナイナー",type:"ground",cat:"phys",power:80,accuracy:.95,highCrit:true}, burial:{name:"まいそう",type:"ghost",cat:"phys",power:80}, jawlock:{name:"くらいつく",type:"dark",cat:"phys",power:80,bite:true,switchLock:2,desc:"命中した相手を2ターン交代できなくする"}, dragonbreath:{name:"りゅうのいぶき",type:"dragon",cat:"spec",power:60,paralyze:.3}, hyperbeam:{name:"はかいこうせん",type:"normal",cat:"spec",power:150,accuracy:.9,recharge:true},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -811,7 +812,7 @@ const LEARN={
   hekopuon:["waterfang","thunderfang","firefang","icefang","crunch","bite","waterfall","psychicfangs","aquajet","darkpulse","dragondance"],
   seerakasumon:["wavecrash","hydropump","crunch","icebeam","fishiousrend","frozenBite","nastyPlot","calmMind","agility","thunderfang","thunderbolt","grassknot","sunnyday","snowfall","darkpulse","flashcannon","blizzard","hydrocannon"],
   ryugainosogyo:["frostbreath","hydropump","waterpulse","psychic","thunderwave","calmMind","raincaller","bugbuzz","icebeam","blizzard","slam","aquacutter","lunge","drillniner","swordsdance"],
-  rivalKai:["wavecrash","crunch","icefang","aquajet"],
+  rivalKai:["wavecrash","crunch","icefang","aquajet","gravevisit","burial","jawlock","dragonbreath","outrage","psychicfangs","dragondance","hyperbeam","rivalKaiCurse"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -2612,6 +2613,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.weatherSet){setWeather(move.weatherSet,move.weatherSet==="sun"?"ひざしが つよくなった！":"ゆきが 降り始めた！");cb();return;}
   if(move.painSplit){setTimeout(()=>{if(defender.curHp/defender.maxHp<=attacker.curHp/attacker.maxHp){pushLog(`  └ ${defender.name} のHP割合が高くないため失敗！`,"#9fb3d6");cb();return;}defender.painSplitSource=attacker;defender.painSplitTurns=4;pushLog(`  └ ${defender.name} に いたみわけ！ 4ターン持続する！`,"#b061ff");cb();},450);return;}
   if(move.trevenantCurse){setTimeout(()=>{defender.trevenantCurseSource=attacker;pushLog(`  └ ${defender.name} に のろいをかけた！ 交代まで両者のHPが削られる！`,"#b061ff");cb();},450);return;}
+  if(move.rivalKaiCurse){setTimeout(()=>{const cost=Math.max(1,Math.floor(attacker.maxHp*.25));attacker.curHp=Math.max(0,attacker.curHp-cost);renderHp();pushLog(`  └ ${attacker.name} は HPを${cost}削って ${defender.name} に のろいをかけた！`,"#b061ff");if(attacker.curHp<=0){faintMon(attacker,attacker===me?"myImg":"foeImg");cb();return;}defender.rivalKaiCurseSource=attacker;cb();},450);return;}
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=birdSide(defender);
@@ -3373,6 +3375,13 @@ function applyTrevenantEndEffects(activeMons){
       pushLog(`  ・ のろい！ ${target.name} と ${curseSource.name} は HPが削られた！`,"#b061ff");
       if(target.curHp<=0)faintMon(target,target===me?"myImg":"foeImg");
       if(curseSource.curHp<=0)faintMon(curseSource,curseSource===me?"myImg":"foeImg");
+    }
+    const rivalKaiCurseSource=target.rivalKaiCurseSource;
+    if(rivalKaiCurseSource&&!rivalKaiCurseSource.fainted){
+      const damage=Math.max(1,Math.floor(target.maxHp*.25));
+      target.curHp=Math.max(0,target.curHp-damage);
+      pushLog(`  ・ のろい！ ${target.name} は HPが${damage}削られた！`,"#b061ff");
+      if(target.curHp<=0)faintMon(target,target===me?"myImg":"foeImg");
     }
   });
   activeMons.forEach(m=>{if(!m||m.fainted)return;if(m.abilEff==="naturalcure"&&m.curHp<=m.maxHp*.30){const h=Math.max(1,Math.floor(m.maxHp*.10));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ★ ${m.name} の しぜんかいふく！ ${h}回復！`,"#46d160");}if(m.abilEff==="harvest"){const h=Math.max(1,Math.floor(m.maxHp*.07));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ★ ${m.name} の しゅうかく！ ${h}回復！`,"#46d160");}});
