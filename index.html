@@ -113,6 +113,8 @@
       <button class="btn blue" onclick="show('train')">🎓 ポケモンを育成する（技・特性）</button>
       <button class="btn blue" onclick="openPartyBuilder('cpu')">🛠 パーティを編成する（6体）</button>
       <button class="btn" id="goBattle" onclick="startCpu()" disabled>⚔ CPUとたたかう（要：6体）</button>
+      <button class="btn mega" onclick="startPokemonStadium()">🏟️ ポケモンスタジアム（ランダム3体・全5戦）</button>
+      <button class="btn mega" onclick="startPokemonTower()">🏰 ポケモンタワー（最大999階）</button>
       <button class="btn mega" onclick="startLunaticStage()"><img src="image/image/ザシアン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ</button>
       <button class="btn mega" onclick="startLunaticStage2()"><img src="image/image/メガボーマンダ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ2</button>
       <button class="btn mega" onclick="startLunaticStage3()"><img src="image/image/メガヒードラン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ3</button>
@@ -1370,7 +1372,7 @@ function setTrainAbil(k){ buildOf(SPECIES[trainSel],trainOwner).ability=k; saveG
 function resetTrain(){ const sp=SPECIES[trainSel]; buildOf(sp,trainOwner).moves=sp.moves.slice(); buildOf(sp,trainOwner).ability=sp.abil; saveGame(); renderTrain(); }
 
 // ===== 見せ合い → 3体選出 =====
-let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1, sixBattle=false;
+let cpuParty=[], mySel=[], cpuSel=[], selCtx=null, npcLevel=1, lunaticStage=false, battleSize=1, sixBattle=false, stadiumRun=null, towerRun=null;
 function battlePartyCount(size){return size===6?6:size>1?size*2:3;}
 function startGroupBattle(size){mode="cpu";lunaticStage=false;sixBattle=size===6;battleSize=sixBattle?1:size;npcLevel=Number(document.getElementById("npcLevel").value)||1;enterPreview();}
 function enterPreview(){   // CPU戦
@@ -1450,6 +1452,76 @@ function buildCpuParty(){
   const rag=cpuParty.find(p=>SPECIES[p.sp].id==="ragulaaji");
   const pel=cpuParty.find(p=>SPECIES[p.sp].id==="pelipper");
   if(rag&&pel){ rag.item="ragulaajite"; }
+}
+function shuffled(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function normalSpeciesPool(){return SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]?-1:i).filter(i=>i>=0);}
+function randomBattleItem(sp,megaChance=0){
+  if(sp.megas?.length&&Math.random()<megaChance)return pickOne(sp.megas).stone;
+  return pickOne(["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"]);
+}
+function randomBattleMoves(sp,plan="random"){
+  const pool=(sp.learnset||sp.moves||[]).filter(k=>M[k]&&!M[k].fifthSlot);
+  const preferred=sp.base.atk>=sp.base.spa?"phys":"spec", attacks=pool.filter(k=>M[k].cat===preferred), others=pool.filter(k=>M[k].cat!==preferred&&M[k].cat!=="status"), status=pool.filter(k=>M[k].cat==="status");
+  let keys=[];
+  if(plan==="twoPreferred")keys=[...shuffled(attacks).slice(0,2),...shuffled([...others,...status]).slice(0,2)];
+  else if(plan==="threePreferred")keys=[...shuffled(attacks).slice(0,3),...(status.length?shuffled(status).slice(0,1):shuffled(others).slice(0,1))];
+  else keys=shuffled(pool).slice(0,4);
+  for(const k of pool)if(keys.length<4&&!keys.includes(k))keys.push(k);
+  return keys.slice(0,4);
+}
+function randomBattleEntry(si,options={}){const sp=SPECIES[si];return {sp:si,item:randomBattleItem(sp,options.megaChance||0),moves:randomBattleMoves(sp,options.plan),hpMult:options.hpMult||1};}
+function startPokemonStadium(){
+  battleSize=1;sixBattle=false;lunaticStage=false;mode="stadium";towerRun=null;
+  const ten=shuffled(normalSpeciesPool()).slice(0,10);
+  stadiumRun={round:1,wins:0,roster:ten.map(si=>randomBattleEntry(si)),team:null,foes:null,pendingOwn:-1};
+  selCtx={src:stadiumRun.roster,owner:"p1",sel:[],count:3,label:"ポケモンスタジアム：配られた10体から3体をえらぶ",cb:()=>{stadiumRun.team=selCtx.sel.map(i=>stadiumRun.roster[i]);startStadiumRound();}};
+  show("preview");renderPreview();
+}
+function buildStadiumFoes(){const level=stadiumRun.round;return shuffled(normalSpeciesPool()).slice(0,3).map(si=>randomBattleEntry(si,{megaChance:Math.min(.75,.1*level)}));}
+function startStadiumRound(){
+  npcLevel=stadiumRun.round;stadiumRun.foes=buildStadiumFoes();
+  startBattleWith(stadiumRun.team,[0,1,2],stadiumRun.foes,[0,1,2]);
+  pushLog(`🏟️ ポケモンスタジアム ${stadiumRun.round}回戦／5回戦（CPU Lv.${npcLevel}）`,'#ffcb05');
+}
+function stadiumSwapOwn(i){stadiumRun.pendingOwn=i;const c=document.getElementById("cmd");c.innerHTML=`<div class="center sub">交換したい相手のポケモンを1体えらぶ</div><div class="switchrow">${stadiumRun.foes.map((p,j)=>`<div class="sw" onclick="stadiumSwapFoe(${j})"><img src="${IMG(SPECIES[p.sp].img)}"><div>${SPECIES[p.sp].name}</div></div>`).join("")}</div><button class="btn ghost" onclick="stadiumBeginNext()">交換しない</button>`;}
+function stadiumSwapFoe(i){const own=stadiumRun.pendingOwn;if(own>=0){const t=stadiumRun.team[own];stadiumRun.team[own]=stadiumRun.foes[i];stadiumRun.foes[i]=t;}stadiumBeginNext();}
+function stadiumBeginNext(){stadiumRun.round++;stadiumRun.pendingOwn=-1;startStadiumRound();}
+function stadiumAfterWin(){
+  stadiumRun.wins++;if(stadiumRun.round>=5){busy=true;clearCmd();document.getElementById("endArea").classList.remove("hidden");const r=document.getElementById("resultTxt");r.textContent="🏆 ポケモンスタジアム完全制覇！ 5連勝！";r.style.color="var(--accent)";return;}
+  busy=true;const c=document.getElementById("cmd");c.innerHTML=`<div class="center sub">${stadiumRun.round}回戦クリア！ 次の対戦前に全回復します。相手のポケモン1体と交換しますか？</div><div class="switchrow">${stadiumRun.team.map((p,i)=>`<div class="sw" onclick="stadiumSwapOwn(${i})"><img src="${IMG(SPECIES[p.sp].img)}"><div>${SPECIES[p.sp].name}</div><div class="mini">交換する</div></div>`).join("")}</div><button class="btn blue" onclick="stadiumBeginNext()">交換しないで次へ</button>`;
+}
+function startPokemonTower(){
+  battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;
+  if(party.length<3){alert("ポケモンタワーにはパーティに3体以上必要です。");openPartyBuilder("cpu");return;}
+  towerRun={floor:1,team:null};
+  selCtx={src:party,owner:"p1",sel:[],count:3,label:"ポケモンタワー：出す3体をえらぶ",cb:()=>{towerRun.team=selCtx.sel.map(i=>party[i]);startTowerFloor();}};
+  show("preview");renderPreview();
+}
+function towerLevel(floor){return Math.min(10,Math.ceil(floor/10));}
+function towerItemChance(floor){return Math.min(1,Math.max(0,(floor-100)/100));}
+function towerMegaChance(floor){return Math.min(.95,Math.max(0,(floor-400)*.0095));}
+function towerHpMultiplier(floor){return 1+Math.max(0,(floor-500)/100);}
+function towerStrongIds(floor){
+  if(floor<600)return [];
+  if(floor<700)return ["rayquaza","latios","articuno"];
+  if(floor<800)return ["rayquaza","latios","zamazenta","articuno","zacian"];
+  if(floor<900)return ["rayquaza","latios","zamazenta","zacian","articuno","zapdos","moltres"];
+  return ["rayquaza","latios","zamazenta","zacian","articuno","zapdos","moltres","heatran"];
+}
+function buildTowerFoes(floor){
+  if(floor===999){return ["hekopuon","morpeko","rayquaza"].map(id=>{const si=SP_BY_ID[id],entry=randomBattleEntry(si,{megaChance:id==="rayquaza"?1:0,plan:"threePreferred",hpMult:towerHpMultiplier(floor)});if(id==="rayquaza")entry.item="rayquazanite";return entry;});}
+  const strong=towerStrongIds(floor), plan=floor>=400?"threePreferred":floor>=300?"twoPreferred":"random", picks=shuffled(normalSpeciesPool()).slice(0,3);
+  if(strong.length&&((floor<900&&floor%10===0)||(floor>=900&&floor%5===0))){const si=SP_BY_ID[pickOne(strong)];if(si!==undefined)picks[0]=si;}
+  return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
+}
+function startTowerFloor(){
+  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=buildTowerFoes(floor);towerRun.foes=foes;
+  startBattleWith(towerRun.team,[0,1,2],foes,[0,1,2]);
+  pushLog(`🏰 ポケモンタワー ${floor}階（CPU Lv.${npcLevel}）`,'#ffcb05');
+}
+function towerAfterWin(){
+  if(towerRun.floor>=999){busy=true;clearCmd();document.getElementById("endArea").classList.remove("hidden");const r=document.getElementById("resultTxt");r.textContent="🏆 ポケモンタワー999階を制覇！";r.style.color="var(--accent)";return;}
+  towerRun.floor++;startTowerFloor();
 }
 function renderPreview(){
     const top=document.getElementById("previewTopLabel"), foeP=document.getElementById("foePreview");
@@ -1576,6 +1648,8 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
   const foeOwner=mode==="friend" ? "p2" : "cpu";
   myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
   foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
+  const applyBattleEntry=(mon,entry)=>{if(entry?.moves)mon.moves=entry.moves.filter(k=>M[k]).map(k=>M[k]);if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}};
+  myTeam.forEach((mon,i)=>applyBattleEntry(mon,p1party[p1sel[i]]));foeTeam.forEach((mon,i)=>applyBattleEntry(mon,p2party[p2sel[i]]));
   if(mode==="lunatic"||mode==="lunatic2"||mode==="lunatic3"||mode==="lunatic4"||mode==="lunatic5"||mode==="dynamaxUnlock") foeTeam.forEach((mon,i)=>{
     // 先発順や配列位置ではなくポケモンIDで固定データを割り当てる
     const fixed=p2party.find(p=>SPECIES[p.sp].id===mon.id)||p2party[p2sel[i]];
@@ -2136,7 +2210,7 @@ function doResolve(){
   const phaseMega=(next)=>{const t=[];
     if(!rayMegaActive&&A.type==="move"&&megaArm.me&&((me.stoneMatches&&!me.isMega)||(canRayMega(me)))){megaArm.me=false;t.push(cb=>doMega(me,"myImg",cb));}
     const cpuRainMega=(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&B.type==="switch"&&foe.id==="ragulaaji"&&weather==="rain";
-    if(!rayMegaActive&&foe.stoneMatches&&!foe.isMega&&((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')||megaArm.foe||cpuRainMega)){megaArm.foe=false;t.push(cb=>doMega(foe,"foeImg",cb));}
+    if(!rayMegaActive&&foe.stoneMatches&&!foe.isMega&&((mode==='cpu'||mode==='stadium'||mode==='tower'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')||megaArm.foe||cpuRainMega)){megaArm.foe=false;t.push(cb=>doMega(foe,"foeImg",cb));}
     series(t,next);};
   const phaseMax=(next)=>{const t=[];
     if(!rayMegaActive&&A.type==="move"&&maxArm.me&&!me.isDynamax&&me.id!=="zacian"&&me.id!=="eternatus"&&(!me.isMega||GMAX_IDS.has(me.id))){maxArm.me=false;t.push(cb=>doDynamax(me,"myImg",cb));}
@@ -3216,6 +3290,10 @@ function applyHazards(side,cb){
 // ===== CPU思考 =====
 function cpuChoose(){
   if(foe.itemKey==="mougekiScarf"&&foe.mougekiLock){const move=foe.moves.find(m=>m.name===foe.mougekiLock);if(move)return {type:"move",move};}
+  if(mode==='tower'&&towerRun?.floor===999&&me.justSwitched&&Math.random()<.30){
+    const weakMove=foe.moves.filter(mv=>mv.cat!=="status"&&effMultiplier(mv.type,me.types)>1).sort((a,b)=>calcDamage(foe,me,b,false).dmg-calcDamage(foe,me,a,false).dmg)[0];
+    if(weakMove)return {type:"move",move:weakMove};
+  }
   if(mode==='lunatic'&&foe.id==='hippowdon'&&foe.acted===0&&Math.random()<.70) return {type:"move",move:M.stealthrock};
   if(mode==='lunatic'&&foe.id==='cinderace'&&foe.curHp<=foe.maxHp*.2&&Math.random()<.85) return {type:"move",move:M.suckerpunch};
   // ペリッパー先発→雨が降ったらラグラージに交代
@@ -3489,6 +3567,8 @@ function pickForced(side,i){
 }
 function finish(meWon){
   busy=true; clearCmd();
+  if(mode==='stadium'&&meWon){stadiumAfterWin();return;}
+  if(mode==='tower'&&meWon){towerAfterWin();return;}
   if(mode==='lunatic'&&meWon) localStorage.setItem("ritoLunaticClear","1");
   if(mode==='lunatic2'&&meWon) localStorage.setItem("ritoLunatic2Clear","1");
   if(mode==='lunatic3'&&meWon) localStorage.setItem("ritoLunatic3Clear","1");
