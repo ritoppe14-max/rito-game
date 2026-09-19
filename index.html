@@ -1528,17 +1528,17 @@ function startPokemonTower(){
   battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;
   if(party.length<3){alert("ポケモンタワーにはパーティに3体以上必要です。");openPartyBuilder("cpu");return;}
   clearTowerProgress();
-  towerRun={floor:1,team:null};
+  towerRun={floor:1,team:null,seed:Math.floor(Math.random()*4294967296)>>>0};
   selCtx={src:party,owner:"p1",sel:[],count:3,label:"ポケモンタワー：出す3体をえらぶ",cb:()=>{towerRun.team=selCtx.sel.map(i=>party[i]);startTowerFloor();}};
   show("preview");renderPreview();
 }
 const TOWER_SAVE_KEY="ritoPokemonTowerSave";
-function saveTowerProgress(){if(!towerRun?.team)return;localStorage.setItem(TOWER_SAVE_KEY,JSON.stringify({floor:towerRun.floor,team:towerRun.team,foes:towerRun.foes||null,foesFloor:towerRun.foesFloor||null}));}
+function saveTowerProgress(){if(!towerRun?.team)return;localStorage.setItem(TOWER_SAVE_KEY,JSON.stringify({floor:towerRun.floor,team:towerRun.team,seed:towerRun.seed,foes:towerRun.foes||null,foesFloor:towerRun.foesFloor||null}));}
 function clearTowerProgress(){localStorage.removeItem(TOWER_SAVE_KEY);}
 function resumePokemonTower(){
   let saved=null;try{saved=JSON.parse(localStorage.getItem(TOWER_SAVE_KEY)||"null");}catch(e){}
   if(!saved||!Number.isInteger(saved.floor)||saved.floor<1||saved.floor>999||!Array.isArray(saved.team)||saved.team.length!==3){alert("再開できるポケモンタワーのセーブデータがありません。");return;}
-  battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;towerRun={floor:saved.floor,team:saved.team,foes:saved.foes||null,foesFloor:saved.foesFloor||null};startTowerFloor();
+  battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;towerRun={floor:saved.floor,team:saved.team,seed:Number.isInteger(saved.seed)?saved.seed:(Math.floor(Math.random()*4294967296)>>>0),foes:saved.foes||null,foesFloor:saved.foesFloor||null};startTowerFloor();
 }
 function chooseTowerTeam(){
   if(party.length<3){alert("パーティに3体以上必要です。");return;}
@@ -1562,8 +1562,14 @@ function buildTowerFoes(floor){
   if(strong.length&&((floor<900&&floor%10===0)||(floor>=900&&floor%5===0))){const si=SP_BY_ID[pickOne(strong)];if(si!==undefined)picks[0]=si;}
   return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
 }
+function buildTowerFoesForRun(floor){
+  let state=((towerRun?.seed||0)^Math.imul(floor,0x9e3779b9))>>>0;
+  const originalRandom=Math.random;
+  Math.random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
+  try{return buildTowerFoes(floor);}finally{Math.random=originalRandom;}
+}
 function startTowerFloor(){
-  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=towerRun.foes&&towerRun.foesFloor===floor?towerRun.foes:buildTowerFoes(floor);towerRun.foes=foes;towerRun.foesFloor=floor;
+  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=towerRun.foes&&towerRun.foesFloor===floor?towerRun.foes:buildTowerFoesForRun(floor);towerRun.foes=foes;towerRun.foesFloor=floor;
   startBattleWith(towerRun.team,[0,1,2],foes,[0,1,2]);
   pushLog(`🏰 ポケモンタワー ${floor}階（CPU Lv.${npcLevel}）`,'#ffcb05');
 }
