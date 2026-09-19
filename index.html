@@ -191,7 +191,7 @@
     <div class="cmd" id="cmd"></div>
     <div class="center hidden" id="endArea">
       <div class="result" id="resultTxt"></div>
-      <button class="btn ghost" onclick="show('home')">メニューにもどる</button><button class="btn blue" onclick="startCpu()">🔁 連戦する</button>
+      <button class="btn ghost" onclick="show('home')">メニューにもどる</button><button class="btn blue" onclick="startCpu()">🔁 連戦する</button><button class="btn mega hidden" id="towerResumeAfterLoss" onclick="resumePokemonTower()">🏰 セーブ地点から再開</button>
     </div>
   </div>
 </div>
@@ -1745,6 +1745,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
   busy=false; megaArm={me:false,foe:false}; maxArm={me:false,foe:false}; teraArm={me:false,foe:false}; maxUsed={me:false,foe:false}; teraUsed={me:false,foe:false}; rayMegaBlocked=false; rayMegaActive=false; weather=null; weatherTurns=0; grassTurns=0; electricTurns=0; psychicTurns=0; mistTurns=0; hazards=emptyHazards();
   show("battle");
   document.getElementById("endArea").classList.add("hidden");
+  document.getElementById("towerResumeAfterLoss").classList.add("hidden");
   document.getElementById("log").innerHTML="";
   ["myImg","foeImg"].forEach(id=>document.getElementById(id).classList.remove("faint","faint-effect","switch-effect","mega-anim","dynamax-aura"));
   renderActive(); renderWeather();
@@ -3692,6 +3693,11 @@ function finish(meWon){
   if(mode==='cpu'){let n=Number(localStorage.getItem("ritoStreak")||0);n=meWon?n+1:0;const best=Math.max(Number(localStorage.getItem("ritoMaxStreak")||0),n);localStorage.setItem("ritoStreak",String(n));localStorage.setItem("ritoMaxStreak",String(best));saveGame();}
   document.getElementById("endArea").classList.remove("hidden");
   const r=document.getElementById("resultTxt");
+  if(mode==='tower'&&!meWon){
+    let saved=null;try{saved=JSON.parse(localStorage.getItem(TOWER_SAVE_KEY)||"null");}catch(e){}
+    r.textContent=saved?.floor?`😵 あなたの負け… ${saved.floor}階のセーブ地点から再開できます。`:"😵 あなたの負け…";
+    r.style.color="var(--hp-red)";if(saved?.floor)document.getElementById("towerResumeAfterLoss").classList.remove("hidden");return;
+  }
   if(mode==='friend') r.textContent = meWon?"🏆 プレイヤー1の勝ち！":"🏆 プレイヤー2の勝ち！";
   else r.textContent = meWon?"🏆 あなたの勝ち！":"😵 あなたの負け…";
   r.style.color=meWon?"var(--accent)":"var(--hp-red)";
