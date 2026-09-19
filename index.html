@@ -551,6 +551,7 @@ const M={
   trevenantWoodHammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:65,multiHit:2,recoilDamage:.05,desc:"威力65×2。与えたダメージの5%を自分も受ける"},
   trevenantCurse:{name:"のろい",type:"ghost",cat:"status",power:0,trevenantCurse:true,desc:"交代まで、毎ターン自分と相手の最大HPを7%削る"},
   woodHorn:{name:"ウッドホーン",type:"grass",cat:"phys",power:60,healDamage:.2,desc:"与えたダメージの20%を回復"},
+  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -742,6 +743,7 @@ SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","image/image/�
 SPECIES.push(S("machamp","カイリキー","image/image/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","image/image/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","image/image/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
+SPECIES.push(S("umisasoru","ウミサソル","image/image/ウミサソル.png",["water","bug"],{hp:85,atk:145,def:65,spa:105,spd:65,spe:115},"sharpness",["aquacutter","nightslash","xscissor","aquajet"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -801,6 +803,7 @@ const LEARN={
   lycanroc:["stoneedge","crunch","closecombat","suckerpunch","rockslide","drillrun","playrough","protect"],
   morpeko:["morpekoAuraWheel","morpekoPayback","morpekoSpark","bulletseed","voltswitch","morpekoStompingTantrum","psychicfangs","partingshot","fakeout","crunch","thunderbolt","protect"],
   snom:["snomBlizzard","icywind","auroraVeil","calmMind","magicalshine","airslash","bugbuzz","icebeam","protect"],
+  umisasoru:["aquacutter","nightslash","xscissor","furycutter","psychocut","aquajet","swordsdance","aquabreak","wavecrash","suckerpunch","lunge","strugglebug","hydropump","hydrocannon","quiverdance","bugbuzz","confuseray"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -946,6 +949,7 @@ ABILS.dudunsparce=["serenegrace"];
 ABILS.hippowdonF=["moxie"];
 ABILS.decidueye=["longreach"];
 ABILS.trevenant=["naturalcure","harvest"];
+ABILS.umisasoru=["sharpness","swiftswim"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2647,6 +2651,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.cat==="status"){
     if(move.targetDrop&&Math.random()<(move.targetDrop.chance??1))applyDrop(defender,move.targetDrop.stats);
     for(const status of ["burn","freeze","poison","paralyze"])if(move[status]&&Math.random()<move[status])applyStatus(defender,status,attacker);
+    if(move.confuseTurns){defender.confusionTurns=move.confuseTurns;renderStages();pushLog(`  └ ${defender.name} は ${move.confuseTurns}ターン混乱した！`,"#b061ff");}
     if(move.sleep&&canStatus(defender,"sleep",attacker)){defender.status="sleep";defender.sleepTurns=2;renderStages();}
     cb();return;
   }
