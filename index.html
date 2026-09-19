@@ -761,7 +761,7 @@ SPECIES.push(S("ooguchizanzame","オオグチザンザメ","image/image/オオ�
 SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",["water","steel"],{hp:135,atk:75,def:145,spa:64,spd:73,spe:23},"rottenfeast",["waterfall","ironhead","crunch","aquajet"]));
 SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
 SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
-SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["dragon","dark"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","gammaRadiation","dragonpulse"]));
+SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["poison","dragon"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","gammaRadiation","dragonpulse"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
