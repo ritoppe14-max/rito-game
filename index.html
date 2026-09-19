@@ -51,6 +51,7 @@
   /* battle */
   .field{background:linear-gradient(#243a66,#16213a);border:2px solid var(--line);border-radius:14px;padding:14px;position:relative}
   .weatherBadge{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;padding:2px 12px;border-radius:12px;background:rgba(0,0,0,.35)}
+  .towerBadge{position:absolute;top:8px;right:8px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px;background:rgba(0,0,0,.48);color:#ffcb05;border:1px solid rgba(255,203,5,.55)}
   .row{display:flex;align-items:center;justify-content:space-between;margin:6px 0}
   .mon{display:flex;align-items:center;gap:12px}
   .mon img{width:116px;height:116px;object-fit:contain;image-rendering:pixelated}
@@ -168,6 +169,7 @@
     <div id="abilityToast" aria-live="polite"></div>
     <div class="field">
       <div class="weatherBadge hidden" id="weatherBadge"></div>
+      <div class="towerBadge hidden" id="towerFloorBadge"></div>
       <div class="row"><div class="dots" id="foeDots"></div>
         <div class="mon" style="flex-direction:row-reverse">
           <img id="foeImg"><div class="info">
@@ -1777,7 +1779,7 @@ function renderActive(){
   if(!foe.fainted)document.getElementById("foeImg").classList.remove("faint-effect");
   document.getElementById("myName").textContent=me.name;
   document.getElementById("foeName").textContent=foe.name;
-  setAbLine(); renderHp(); renderStages(); renderDots();
+  setAbLine(); renderHp(); renderStages(); renderDots(); renderTowerFloor();
   renderHeis();
 }
 function setAbLine(){const it=(m,side)=>(side==='foe'&&(mode==='cpu'||mode==='friend'))?"":(m.itemKey!=="none"?" ／ "+ITEMS[m.itemKey].name:"");
@@ -1810,6 +1812,7 @@ function renderWeather(){
   const map={rain:["🌧 あめ","#6390f0"],sand:["🏜 すなあらし","#b6a136"],sun:["☀ ひざし","#ee8130"],hail:["🌨 あられ","#a8d8e8"],snow:["❄ ゆき","#dff6ff"]};
   b.textContent=map[weather][0]; b.style.color=map[weather][1];
 }
+function renderTowerFloor(){const b=document.getElementById("towerFloorBadge");if(mode!=="tower"||!towerRun){b.classList.add("hidden");return;}b.classList.remove("hidden");b.textContent=`🏰 ${towerRun.floor}階 / 999階`;}
 function pushLog(t,c){const l=document.getElementById("log");const d=document.createElement("div");d.textContent=t;if(c){d.style.color=c;d.style.fontWeight="700";}l.appendChild(d);l.scrollTop=l.scrollHeight;}
 let abilityToastTimer=null;
 function announceAbility(mon){
