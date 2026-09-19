@@ -759,6 +759,7 @@ SPECIES.push(S("oomizutengu","オオミズテング","image/image/オオミズ�
 SPECIES.push(S("ooguchizanzame","オオグチザンザメ","image/image/オオグチザンザメ.png",["water"],{hp:165,atk:95,def:105,spa:85,spd:65,spe:45},"strongjaw",["wavecrash","crunch","icefang","aquajet"]));
 SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",["water","steel"],{hp:135,atk:75,def:145,spa:64,spd:73,spe:23},"rottenfeast",["waterfall","ironhead","crunch","aquajet"]));
 SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
+SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -827,6 +828,7 @@ const LEARN={
   ooguchizanzame:["wavecrash","crunch","icefang","aquajet","waterfall","hydropump","icebeam","psychicfangs","bite","jawlock","dragondance"],
   gosokudan:["waterfall","ironhead","crunch","aquajet","wavecrash","hydropump","icebeam","flashcannon","swordsdance","irondefense"],
   hougaisougyo:["sludgewave2","hydropump","waterpulse","icebeam","surf","scald","darkpulse","thunderbolt","calmMind","toxic"],
+  kimeironmozura:["crunch","waterfall","earthquake","icefang","wavecrash","aquajet","drillrun","psychicfangs","dragondance"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -981,6 +983,7 @@ ABILS.oomizutengu=["electromorphosis"];
 ABILS.ooguchizanzame=["strongjaw","thickfat"];
 ABILS.gosokudan=["rottenfeast","waterbubble"];
 ABILS.hougaisougyo=["poisonfangAbility"];
+ABILS.kimeironmozura=["strongjaw"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
