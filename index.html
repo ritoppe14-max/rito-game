@@ -551,7 +551,7 @@ const M={
   trevenantWoodHammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:65,multiHit:2,recoilDamage:.05,desc:"威力65×2。与えたダメージの5%を自分も受ける"},
   trevenantCurse:{name:"のろい",type:"ghost",cat:"status",power:0,trevenantCurse:true,desc:"交代まで、毎ターン自分と相手の最大HPを7%削る"},
   woodHorn:{name:"ウッドホーン",type:"grass",cat:"phys",power:60,healDamage:.2,desc:"与えたダメージの20%を回復"},
-  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2}, waterfang:{name:"みずのキバ",type:"water",cat:"phys",power:75,bite:true,sawbladeFang:true}, bite:{name:"かみつく",type:"dark",cat:"phys",power:60,bite:true},
+  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2}, waterfang:{name:"みずのキバ",type:"water",cat:"phys",power:75,bite:true,sawbladeFang:true}, bite:{name:"かみつく",type:"dark",cat:"phys",power:60,bite:true}, frozenBite:{name:"れいとうがみつき",type:"ice",cat:"spec",power:85,bite:true}, grassknot:{name:"くさむすび",type:"grass",cat:"spec",power:80}, sunnyday:{name:"にほんばれ",type:"fire",cat:"status",power:0,weatherSet:"sun"}, snowfall:{name:"ゆきふらし",type:"ice",cat:"status",power:0,weatherSet:"snow"},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -745,6 +745,7 @@ SPECIES.push(S("morpeko","モルペコ","image/image/モルペコ.gif",["electri
 SPECIES.push(S("snom","ユキハミ","image/image/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
 SPECIES.push(S("umisasoru","ウミサソル","image/image/ウミサソル.png",["water","bug"],{hp:85,atk:145,def:65,spa:105,spd:65,spe:115},"sharpness",["aquacutter","nightslash","xscissor","aquajet"]));
 SPECIES.push(S("hekopuon","ヘコプオン","image/image/ヘコプオン.png",["water","dark"],{hp:128,atk:137,def:85,spa:67,spd:85,spe:102},"sawbladeFangs",["waterfang","thunderfang","firefang","icefang"]));
+SPECIES.push(S("seerakasumon","シーラカスモン","image/image/シーラカスモン.png",["water","ice"],{hp:150,atk:60,def:130,spa:100,spd:74,spe:85},"strongjaw",["wavecrash","hydropump","crunch","icebeam"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -806,6 +807,7 @@ const LEARN={
   snom:["snomBlizzard","icywind","auroraVeil","calmMind","magicalshine","airslash","bugbuzz","icebeam","protect"],
   umisasoru:["aquacutter","nightslash","xscissor","furycutter","psychocut","aquajet","swordsdance","aquabreak","wavecrash","suckerpunch","lunge","strugglebug","hydropump","hydrocannon","quiverdance","bugbuzz","confuseray"],
   hekopuon:["waterfang","thunderfang","firefang","icefang","crunch","bite","waterfall","psychicfangs","aquajet","darkpulse","dragondance"],
+  seerakasumon:["wavecrash","hydropump","crunch","icebeam","fishiousrend","frozenBite","nastyPlot","calmMind","agility","thunderfang","thunderbolt","grassknot","sunnyday","snowfall","darkpulse","flashcannon","blizzard","hydrocannon"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -953,6 +955,7 @@ ABILS.decidueye=["longreach"];
 ABILS.trevenant=["naturalcure","harvest"];
 ABILS.umisasoru=["sharpness","swiftswim"];
 ABILS.hekopuon=["sawbladeFangs"];
+ABILS.seerakasumon=["strongjaw","swiftswim"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2600,6 +2603,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.cat==="status"&&move.tailwind){ setTimeout(()=>{const side=typeof multi!=="undefined"&&multi?(multi.slots.me.includes(attacker)?"me":"foe"):(attacker===me?"me":"foe"),members=typeof multi!=="undefined"&&multi?multi.teams[side]:(side==="me"?myTeam:foeTeam);members.filter(m=>!m.fainted).forEach(m=>m.tailwindTurns=2);pushLog(`  └ ${attacker.name} は おいかぜを起こした！ 2ターンの間、味方のすばやさが2倍！`,"#7ad1ff");cb();},450); return; }
   if(move.cat==="status"&&move.reflect){ setTimeout(()=>{attacker.reflectTurns=5;pushLog(`  └ ${attacker.name} は リフレクターを 張った！`,"#7ad1ff");cb();},450); return; }
   if(move.auroraVeil){if(weather!=="snow"){pushLog("  └ ゆきが降っていないため失敗！","#9fb3d6");cb();return;}birdAllies(attacker).filter(m=>m.types.includes("ice")&&!m.fainted).forEach(m=>m.auroraVeilTurns=5);pushLog(`  └ ${attacker.name} は オーロラベールを張った！ 氷タイプは5ターン被ダメージ半減！`,"#7ad1ff");cb();return;}
+  if(move.weatherSet){setWeather(move.weatherSet,move.weatherSet==="sun"?"ひざしが つよくなった！":"ゆきが 降り始めた！");cb();return;}
   if(move.painSplit){setTimeout(()=>{if(defender.curHp/defender.maxHp<=attacker.curHp/attacker.maxHp){pushLog(`  └ ${defender.name} のHP割合が高くないため失敗！`,"#9fb3d6");cb();return;}defender.painSplitSource=attacker;defender.painSplitTurns=4;pushLog(`  └ ${defender.name} に いたみわけ！ 4ターン持続する！`,"#b061ff");cb();},450);return;}
   if(move.trevenantCurse){setTimeout(()=>{defender.trevenantCurseSource=attacker;pushLog(`  └ ${defender.name} に のろいをかけた！ 交代まで両者のHPが削られる！`,"#b061ff");cb();},450);return;}
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
