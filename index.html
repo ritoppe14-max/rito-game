@@ -114,7 +114,7 @@
       <button class="btn blue" onclick="openPartyBuilder('cpu')">🛠 パーティを編成する（6体）</button>
       <button class="btn" id="goBattle" onclick="startCpu()" disabled>⚔ CPUとたたかう（要：6体）</button>
       <button class="btn mega" onclick="startPokemonStadium()">🏟️ ポケモンスタジアム（ランダム3体・全5戦）</button>
-      <button class="btn mega" onclick="startPokemonTower()">🏰 ポケモンタワー（最大999階）</button>
+      <span><button class="btn mega" onclick="startPokemonTower()">🏰 ポケモンタワー（最大999階）</button> <button class="btn ghost" style="padding:5px 8px" onclick="alert('999階クリアで激レアポケモン入手可能!?')">ℹ 詳細</button></span>
       <button class="btn ghost" onclick="resumePokemonTower()">💾 ポケモンタワーを再開</button>
       <button class="btn mega" onclick="startLunaticStage()"><img src="image/image/ザシアン.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ</button>
       <button class="btn mega" onclick="startLunaticStage2()"><img src="image/image/メガボーマンダ.gif" style="width:24px;height:24px;vertical-align:middle;image-rendering:pixelated"> ルナティックステージ2</button>
@@ -533,7 +533,7 @@ const M={
   sayakuCrunch:{name:"かみくだく",type:"dark",cat:"phys",power:85,sayakuCrunch:true,desc:"攻撃前にキバを選ぶ"},
   sayakuRecoverFang:{name:"かいふくのキバ",type:"dark",cat:"phys",power:85,healDamage:.5,sayakuFang:true},
   sayakuDevourFang:{name:"むさぼるキバ",type:"dark",cat:"phys",power:85,targetDrop:{chance:1,stats:{def:-2}},sayakuFang:true},
-  sayakuDullFang:{name:"どんかんのキバ",type:"dark",cat:"phys",power:85,switchLock:2,sayakuFang:true,sayakuDullFang:true},
+  sayakuDullFang:{name:"どんかんのキバ",type:"dark",cat:"phys",power:85,switchLock:2,targetDrop:{chance:1,stats:{spe:-1}},sayakuFang:true,sayakuDullFang:true},
   sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
   morpekoAuraWheel:{name:"オーラぐるま",type:"electric",cat:"phys",power:70,prio:1,morpekoMove:true,morpekoSpeed:true,desc:"満腹時はでんき、はらぺこ時はあく。使用後に素早さ+1"},
   morpekoFifth:{name:"激車輪猛烈極悪電流",type:"electric",cat:"phys",power:140,prio:2,morpekoMove:true,morpekoFifth:true,ignoreDefBoost:true,desc:"威力140。満腹時はでんき、はらぺこ時はあく。相手の防御上昇を無視し、状態に応じて自分を強化"},
@@ -1533,12 +1533,12 @@ function startPokemonTower(){
   show("preview");renderPreview();
 }
 const TOWER_SAVE_KEY="ritoPokemonTowerSave";
-function saveTowerProgress(){if(!towerRun?.team)return;localStorage.setItem(TOWER_SAVE_KEY,JSON.stringify({floor:towerRun.floor,team:towerRun.team}));}
+function saveTowerProgress(){if(!towerRun?.team)return;localStorage.setItem(TOWER_SAVE_KEY,JSON.stringify({floor:towerRun.floor,team:towerRun.team,foes:towerRun.foes||null,foesFloor:towerRun.foesFloor||null}));}
 function clearTowerProgress(){localStorage.removeItem(TOWER_SAVE_KEY);}
 function resumePokemonTower(){
   let saved=null;try{saved=JSON.parse(localStorage.getItem(TOWER_SAVE_KEY)||"null");}catch(e){}
   if(!saved||!Number.isInteger(saved.floor)||saved.floor<1||saved.floor>999||!Array.isArray(saved.team)||saved.team.length!==3){alert("再開できるポケモンタワーのセーブデータがありません。");return;}
-  battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;towerRun={floor:saved.floor,team:saved.team};startTowerFloor();
+  battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;towerRun={floor:saved.floor,team:saved.team,foes:saved.foes||null,foesFloor:saved.foesFloor||null};startTowerFloor();
 }
 function saveAndExitTower(){
   if(mode!=="tower"||!towerRun)return;
@@ -1567,13 +1567,13 @@ function buildTowerFoes(floor){
   return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
 }
 function startTowerFloor(){
-  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=buildTowerFoes(floor);towerRun.foes=foes;
+  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=towerRun.foes&&towerRun.foesFloor===floor?towerRun.foes:buildTowerFoes(floor);towerRun.foes=foes;towerRun.foesFloor=floor;saveTowerProgress();
   startBattleWith(towerRun.team,[0,1,2],foes,[0,1,2]);
   pushLog(`🏰 ポケモンタワー ${floor}階（CPU Lv.${npcLevel}）`,'#ffcb05');
 }
 function towerAfterWin(){
   if(towerRun.floor>=999){localStorage.setItem("ritoTower999Clear","1");refreshCodePokemonVisibility();saveGame();clearTowerProgress();busy=true;clearCmd();document.getElementById("endArea").classList.remove("hidden");const r=document.getElementById("resultTxt");r.textContent="🏆 ポケモンタワー999階を制覇！ コクガイノリュウが解放された！";r.style.color="var(--accent)";return;}
-  towerRun.floor++;saveTowerProgress();
+  towerRun.floor++;towerRun.foes=null;towerRun.foesFloor=null;saveTowerProgress();
   if(towerRun.floor>1&&(towerRun.floor-1)%30===0){busy=true;clearCmd();const c=document.getElementById("cmd");c.innerHTML=`<div class="center sub">${towerRun.floor-1}階クリア！ 次の30階に向けて、出す3体を選び直せます。</div><div class="center"><button class="btn mega" onclick="chooseTowerTeam()">3体を選び直す</button> <button class="btn blue" onclick="startTowerFloor()">同じ3体で続ける</button></div>`;return;}
   startTowerFloor();
 }
