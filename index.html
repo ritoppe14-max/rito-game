@@ -761,7 +761,7 @@ SPECIES.push(S("ooguchizanzame","オオグチザンザメ","image/image/オオ�
 SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",["water","steel"],{hp:135,atk:75,def:145,spa:64,spd:73,spe:23},"rottenfeast",["waterfall","ironhead","crunch","aquajet"]));
 SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
 SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
-SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["dragon","dark"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","dragonpulse","shadowball","recover"]));
+SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["dragon","dark"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","dragonpulse","shadowball"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1040,7 +1040,8 @@ clobbopusLearn.push(...CLOBBOPUS_ADDED_MOVES.filter(k=>M[k]&&!clobbopusLearn.inc
 M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 M.mygamma={name:"マイノガンマ",type:"dragon",cat:"spec",power:90,magicGamma:true,desc:"威力90＋消費した魔力×5。魔力の消費量に応じて、さらに威力が最大2倍"};
-LEARN.kokugainoryu=["mygamma","dragonpulse","shadowball","recover"];
+M.radiationSpear={name:"ホウシャズメ",type:"poison",cat:"spec",power:40,multiHit:2,radiationGain:20,desc:"威力40×2。相手の放射能ゲージ+20%。20%ごとに素早さ-1、100%で最大HP100%の特性貫通ダメージ"};
+LEARN.kokugainoryu=["mygamma","radiationSpear","dragonpulse","shadowball","recover"];
 ABDESC.dauntlessshield="場に出たとき防御が1段階上がる";
 ABDESC.gulpMissile="なみのり・ダイビングで構え、被弾時HP50%以上なら相手最大HP1/8＋防御低下、50%未満なら1/4＋麻痺";
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
@@ -1210,7 +1211,7 @@ function openDevCode(){
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.kokugainoryu;
-    if(!party.some(p=>SPECIES[p.sp]?.id==="kokugainoryu")){party.push({sp,item:"none",moves:["mygamma","dragonpulse","shadowball","recover"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("コクガイノリュウを受け取った！");}
+    if(!party.some(p=>SPECIES[p.sp]?.id==="kokugainoryu")){party.push({sp,item:"none",moves:["mygamma","radiationSpear","dragonpulse","shadowball"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("コクガイノリュウを受け取った！");}
     else {saveGame();renderHome();alert("コクガイノリュウは、すでに受け取っています。");}
   }else if(code!==null){
     alert("コードが違います。");
@@ -1856,6 +1857,14 @@ function gainMagic(mon,label){
   mon.magicGauge=Math.min(100,before+10);
   if(mon.magicGauge>before){announceAbility(mon);pushLog(`  ★ ${mon.name} の まりょく！ ${label}で魔力${mon.magicGauge}%（+${mon.magicGauge-before}%）`,'#b061ff');}
 }
+function addRadiation(target,gain){
+  const before=target.radiationGauge||0;
+  target.radiationGauge=Math.min(100,before+gain);
+  const oldSteps=Math.floor(before/20),newSteps=Math.floor(target.radiationGauge/20);
+  if(newSteps>oldSteps){target.stages.spe=Math.max(-6,target.stages.spe-(newSteps-oldSteps));renderStages();pushLog(`  ☢ ${target.name} の放射能ゲージ ${target.radiationGauge}%！ 素早さが下がった！`,'#b061ff');}
+  else pushLog(`  ☢ ${target.name} の放射能ゲージ ${target.radiationGauge}%！`,'#b061ff');
+  if(target.radiationGauge>=100&&target.curHp>0){const damage=target.maxHp;target.curHp=0;renderHp();pushLog(`  ☢ 放射能ゲージが100%！ 特性を貫通する最大HP100%ダメージ！`,'#ff7043');}
+}
 function calcDamage(attacker,defender,move,isCrit){
   if(attacker.itemKey==="mougekiScarf"||attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
   if(!move.ignoreAbility&&((defender.abilEff==="waterabsorb"&&move.type==="water")||(defender.abilEff==="levitate"&&move.type==="ground")||(defender.abilEff==="sapsipperSpa"&&move.type==="grass")))return {dmg:0,eff:0,stab:false};
@@ -2070,6 +2079,8 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
       cb();return;
     }
     i++; let currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove;
+    // ホウシャズメの放射能ゲージは、2回攻撃全体で1回だけ上げる。
+    if(move.radiationGain&&i>1)currentMove=Object.assign({},currentMove,{radiationApplied:true});
     if((move.multiDropEvery&&i%move.multiDropEvery===0)||(move.multiDropHits&&move.multiDropHits.includes(i)))currentMove=Object.assign({},currentMove,{targetDrop:{chance:1,stats:move.multiDrop}});
     attack(attacker,defender,currentMove,defImgId,next);
   };
@@ -2849,6 +2860,7 @@ function attack(attacker,defender,move,defImgId,cb){
     electromorphosisOnHit(attacker,defender,move,actualDamage);
     windPowerOnHit(attacker,defender,move,actualDamage);
     const effectTarget=mirrorTarget(attacker,defender,move),effectSource=effectTarget===attacker?defender:attacker;
+    if(actualDamage>0&&move.radiationGain&&!move.radiationApplied){move.radiationApplied=true;addRadiation(defender,move.radiationGain);}
     if(effectTarget===attacker&&["freeze","burn","poison","paralyze","hypersleep","flinch","targetDrop","salt","switchLock","trapTurns","soundBlock","removeItem"].some(k=>move[k]))pushLog("  ★ マジックミラーで追加効果を反射！");
     if(actualDamage>0&&(move.ignoreAbility?null:defender.abilEff)==="gulpMissile"&&defender.gulpReady){
       defender.gulpReady=false;
