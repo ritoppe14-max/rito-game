@@ -2466,7 +2466,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
   if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
-  if(attacker.id==="morpeko"&&move.morpekoPayback){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2};}
+  if(attacker.id==="morpeko"&&move.morpekoPayback&&!move.morpekoPaybackResolved){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2,morpekoPaybackResolved:true};}
   if(attacker.id==="morpeko"&&move.morpekoSpark)move=attacker.morpekoFull?{...move,targetForceSwitch:true,forceSwitchLock:2}:{...move,paralyze:1};
   // サヤクのオーダイルのげきりゅう：HP半分以下では、かみくだくで選ぶキバの追加効果を2倍にする。
   if(attacker.id==="sayakuFeraligatr"&&attacker.abilEff==="torrent"&&attacker.curHp<=attacker.maxHp/2&&move.sayakuFang){
