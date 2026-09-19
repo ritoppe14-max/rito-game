@@ -529,6 +529,9 @@ const M={
   sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
   morpekoAuraWheel:{name:"オーラぐるま",type:"electric",cat:"phys",power:70,prio:1,morpekoMove:true,morpekoSpeed:true,desc:"満腹時はでんき、はらぺこ時はあく。使用後に素早さ+1"},
   morpekoFifth:{name:"激車輪猛烈極悪電流",type:"electric",cat:"phys",power:140,prio:2,morpekoMove:true,morpekoFifth:true,ignoreDefBoost:true,desc:"威力140。満腹時はでんき、はらぺこ時はあく。相手の防御上昇を無視し、状態に応じて自分を強化"},
+  morpekoPayback:{name:"ダメおし",type:"dark",cat:"phys",power:55,morpekoPayback:true,desc:"はらぺこ時、最初に対面した相手には威力2倍"},
+  morpekoSpark:{name:"スパーク",type:"electric",cat:"phys",power:75,morpekoSpark:true,desc:"はらぺこ時は確定まひ。満腹時は控えを引きずり出し、2ターン交代不能"},
+  morpekoStompingTantrum:{name:"じだんだ",type:"ground",cat:"phys",power:75},
   snomBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:120,accuracy:.6,desc:"威力120・命中60%。ゆきの間は必中"},
   kuronoEruption:{name:"ふんか",type:"fire",cat:"spec",power:40,multiHit:3,spread:true,desc:"威力40×3の全体攻撃"},
   kuronoFlameWheel:{name:"かえんぐるま",type:"fire",cat:"phys",power:40,multiHit:2,sayakuShield:true,desc:"威力40×2。使用後に最大HP30%のシールド"},
@@ -795,6 +798,7 @@ const LEARN={
   dudunsparce:["bodyslam","drillrun","zenheadbutt","roost","boomburst","hypervoice","protect","substitute"],
   sawsbuck:["doubleedge","woodhammer","zenheadbutt","swordsdance","wildcharge","megahorn","protect","substitute"],
   lycanroc:["stoneedge","crunch","closecombat","suckerpunch","rockslide","drillrun","playrough","protect"],
+  morpeko:["morpekoAuraWheel","morpekoPayback","morpekoSpark","bulletseed","voltswitch","morpekoStompingTantrum","psychicfangs","partingshot","fakeout","crunch","thunderbolt","protect"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -2380,18 +2384,18 @@ function psychicForceSwitch(attacker,move,cb){
   }
   const target=activeOf(side), team=teamOf(side), idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
   if(idx<0||(!ignores&&(target.abilEff==="heavymetal"||target.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
-  doSwitch(side,idx,cb);
+  doSwitch(side,idx,()=>{if(move.forceSwitchLock)activeOf(side).switchLock=move.forceSwitchLock;cb();});
 }
 function forceOneTargetSwitch(attacker,defender,move,cb){
   const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
   if(typeof multi!=="undefined"&&multi){
     const side=multi.slots.me.includes(defender)?"me":"foe",bench=multiBench(side);
     if(!bench.length||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
-    multiSwitch({side,mon:defender,replacement:bench[0]},cb);return;
+    multiSwitch({side,mon:defender,replacement:bench[0]},()=>{if(move.forceSwitchLock)bench[0].switchLock=move.forceSwitchLock;cb();});return;
   }
   const side=defender===me?"me":"foe",team=teamOf(side),idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
   if(idx<0||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
-  doSwitch(side,idx,cb);
+  doSwitch(side,idx,()=>{if(move.forceSwitchLock)activeOf(side).switchLock=move.forceSwitchLock;cb();});
 }
 function eeveeAttack(attacker,defender,move,img,cb){
   const targets=move.spread?(typeof multi!=="undefined"&&multi?multiLiving(birdSide(attacker)==="me"?"foe":"me"):enemyTargets(birdSide(attacker))).slice():[defender];
@@ -2459,6 +2463,8 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
   if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
+  if(attacker.id==="morpeko"&&move.morpekoPayback){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,power:move.power*2};}
+  if(attacker.id==="morpeko"&&move.morpekoSpark)move=attacker.morpekoFull?{...move,targetForceSwitch:true,forceSwitchLock:2}:{...move,paralyze:1};
   // サヤクのオーダイルのげきりゅう：HP半分以下では、かみくだくで選ぶキバの追加効果を2倍にする。
   if(attacker.id==="sayakuFeraligatr"&&attacker.abilEff==="torrent"&&attacker.curHp<=attacker.maxHp/2&&move.sayakuFang){
     announceAbility(attacker);
