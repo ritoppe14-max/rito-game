@@ -1042,7 +1042,7 @@ M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 M.mygamma={name:"マイノガンマ",type:"dragon",cat:"spec",power:90,magicGamma:true,desc:"威力90＋消費した魔力×5。魔力の消費量に応じて、さらに威力が最大2倍"};
 M.radiationSpear={name:"ホウシャズメ",type:"poison",cat:"spec",power:40,multiHit:2,radiationGain:20,desc:"威力40×2。相手の放射能ゲージ+20%。20%ごとに素早さ-1、100%で最大HP100%の特性貫通ダメージ"};
-M.gammaRadiation={name:"ガンマホウシャ",type:"poison",cat:"spec",power:10,multiHit:10,radiationGain:15,radiationChance:.5,gammaRadiation:true,desc:"威力10×10。50%で相手の放射能ゲージ+15%。同じ相手には1回しか使えない"};
+M.gammaRadiation={name:"ガンマホウシャ",type:"poison",cat:"spec",power:10,multiHit:10,magicGainPerHit:2,radiationGain:15,radiationChance:.5,gammaRadiation:true,desc:"威力10×10。10回で魔力+20%。50%で相手の放射能ゲージ+15%。同じ相手には1回しか使えない"};
 M.kokugaiSludgeWave={name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.2,spread:true,desc:"威力95の全体攻撃"};
 M.kokugaiDragonBreath={name:"りゅうのいぶき",type:"dragon",cat:"spec",power:60,paralyze:.3,kokugaiBreath:true,desc:"次のターンだけ威力2倍。相手が交代すると、交代先に威力60の追撃"};
 LEARN.kokugainoryu=["mygamma","radiationSpear","gammaRadiation","kokugaiSludgeWave","sludgebomb","hex","toxicspikes","meteor","nastyPlot","grassknot","hydropump","crunch","jawlock","acidspray","focusblast","flipturn","flamethrower","kokugaiDragonBreath","dpulse","shadowball","recover"];
@@ -1795,7 +1795,7 @@ function updateWishiwashiForm(mon,imgId){
   pushLog(`  ★ ${mon.name} は ${school?"むれたすがた":"たんどくのすがた"}に なった！`,school?"#7ad1ff":"#9fb3d6");
 }
 function renderHp(){for(const[m,f,n,imgId]of[[me,"myHp","myHpNum","myImg"],[foe,"foeHp","foeHpNum","foeImg"]]){updateWishiwashiForm(m,imgId);const el=document.getElementById(f),pc=Math.max(0,m.curHp/m.maxHp*100);el.style.width=pc+"%";el.style.background=pc>50?"var(--hp-green)":pc>20?"var(--hp-yellow)":"var(--hp-red)";document.getElementById(n).textContent=`${Math.max(0,m.curHp)} / ${m.maxHp}`;}}
-function stgText(m){const p=[];for(const k of["atk","spa","def","spd","spe"]){const s=m.stages[k];if(s)p.push(`${STAT_JP[k]}${s>0?"+":""}${s}`);}const a=[];if(m.iceShieldHp>0)a.push("氷塊シールド "+m.iceShieldHp);if(m.birdHail)a.push("あられ状態");if(m.birdFlameMult>1)a.push("攻撃×"+m.birdFlameMult.toFixed(2));if(m.birdSpdMult<1)a.push("特防×"+m.birdSpdMult.toFixed(2));if(m.birdNextSure||m.birdSureTurns>0)a.push("必中");if(m.volcanoTurns>0)a.push("火山強化 残り"+m.volcanoTurns+"ターン");if(m.confusionTurns>0)a.push("混乱 残り"+m.confusionTurns+"ターン");if(p.length)a.push("能力 "+p.join(" "));if(m.status)a.push("状態 "+statusName(m.status));return a.join(" / ");}
+function stgText(m){const p=[];for(const k of["atk","spa","def","spd","spe"]){const s=m.stages[k];if(s)p.push(`${STAT_JP[k]}${s>0?"+":""}${s}`);}const a=[];if(m.iceShieldHp>0)a.push("氷塊シールド "+m.iceShieldHp);if(m.birdHail)a.push("あられ状態");if(m.birdFlameMult>1)a.push("攻撃×"+m.birdFlameMult.toFixed(2));if(m.birdSpdMult<1)a.push("特防×"+m.birdSpdMult.toFixed(2));if(m.birdNextSure||m.birdSureTurns>0)a.push("必中");if(m.volcanoTurns>0)a.push("火山強化 残り"+m.volcanoTurns+"ターン");if(m.confusionTurns>0)a.push("混乱 残り"+m.confusionTurns+"ターン");if(m.radiationGauge>0)a.push("☢ 放射能 "+m.radiationGauge+"%");if(p.length)a.push("能力 "+p.join(" "));if(m.status)a.push("状態 "+statusName(m.status));return a.join(" / ");}
 function statusName(s){return s==="freeze"?"こおり":s==="burn"?"やけど":s==="poison"?"どく":s==="toxic"?"もうどく":s==="sleep"?"ねむり":s==="hypersleep"?"超眠気":s==="paralyze"?"まひ":"";}
 function renderStages(){document.getElementById("myStg").textContent=stgText(me);document.getElementById("foeStg").textContent=stgText(foe);}
 function renderDots(){
@@ -1894,10 +1894,10 @@ function applyEntry(m,imgId,cb){
 
 // ===== ダメージ計算 =====
 function electroBallPower(attacker,defender){return Math.max(20,Math.min(120,Math.floor(30*effSpeed(attacker)/Math.max(1,effSpeed(defender)))));}
-function gainMagic(mon,label){
+function gainMagic(mon,label,amount=10){
   if(!mon||mon.abilEff!=="magicGauge")return;
   const before=mon.magicGauge||0;
-  mon.magicGauge=Math.min(100,before+10);
+  mon.magicGauge=Math.min(100,before+amount);
   if(mon.magicGauge>before){announceAbility(mon);pushLog(`  ★ ${mon.name} の まりょく！ ${label}で魔力${mon.magicGauge}%（+${mon.magicGauge-before}%）`,'#b061ff');}
 }
 function addRadiation(target,gain){
@@ -2723,7 +2723,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.preTargetDrop&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),move.preTargetDrop);
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
   const acted=attacker.acted||0; attacker.acted=acted+1;if(attacker.abilEff==="garakuFury"&&move.cat!=="status")attacker.garakuAttackCount=(attacker.garakuAttackCount||0)+1;
-  if(attacker.abilEff==="magicGauge"&&move.cat!=="status"&&move.power>0){gainMagic(attacker,"攻撃");const spend=Math.max(0,Math.min(attacker.magicGauge||0,move.magicSpend||0));if(spend>0){attacker.magicGauge-=spend;move.magicSpend=spend;pushLog(`  └ 魔力を${spend}%消費した。残り${attacker.magicGauge}%`,'#b061ff');}}
+  if(attacker.abilEff==="magicGauge"&&move.cat!=="status"&&move.power>0){gainMagic(attacker,"攻撃",move.magicGainPerHit||10);const spend=Math.max(0,Math.min(attacker.magicGauge||0,move.magicSpend||0));if(spend>0){attacker.magicGauge-=spend;move.magicSpend=spend;pushLog(`  └ 魔力を${spend}%消費した。残り${attacker.magicGauge}%`,'#b061ff');}}
   if(attacker.abilEff==="gulpMissile"&&!attacker.isDynamax&&["なみのり","ダイビング"].includes(move.name)){
     announceAbility(attacker);
     attacker.gulpReady=true;pushLog(`  ★ ${attacker.name} は うのミサイルを構えた！`,"#7ad1ff");
