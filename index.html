@@ -747,6 +747,7 @@ SPECIES.push(S("umisasoru","ウミサソル","image/image/ウミサソル.png",[
 SPECIES.push(S("hekopuon","ヘコプオン","image/image/ヘコプオン.png",["water","dark"],{hp:128,atk:137,def:85,spa:67,spd:85,spe:102},"sawbladeFangs",["waterfang","thunderfang","firefang","icefang"]));
 SPECIES.push(S("seerakasumon","シーラカスモン","image/image/シーラカスモン.png",["water","ice"],{hp:150,atk:60,def:130,spa:100,spd:74,spe:85},"strongjaw",["wavecrash","hydropump","crunch","icebeam"]));
 SPECIES.push(S("ryugainosogyo","リュウガイノソギョ","image/image/リュウガイノソギョ.png",["water"],{hp:93,atk:63,def:132,spa:92,spd:132,spe:86},"levitate",["frostbreath","hydropump","waterpulse","psychic"]));
+SPECIES.push(S("rivalKai","ライバルカイ","image/image/ライバルカイ.png",["water","ghost"],{hp:50,atk:123,def:100,spa:73,spd:100,spe:112},"strongjaw",["wavecrash","crunch","icefang","aquajet"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -810,6 +811,7 @@ const LEARN={
   hekopuon:["waterfang","thunderfang","firefang","icefang","crunch","bite","waterfall","psychicfangs","aquajet","darkpulse","dragondance"],
   seerakasumon:["wavecrash","hydropump","crunch","icebeam","fishiousrend","frozenBite","nastyPlot","calmMind","agility","thunderfang","thunderbolt","grassknot","sunnyday","snowfall","darkpulse","flashcannon","blizzard","hydrocannon"],
   ryugainosogyo:["frostbreath","hydropump","waterpulse","psychic","thunderwave","calmMind","raincaller","bugbuzz","icebeam","blizzard","slam","aquacutter","lunge","drillniner","swordsdance"],
+  rivalKai:["wavecrash","crunch","icefang","aquajet"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -959,6 +961,7 @@ ABILS.umisasoru=["sharpness","swiftswim"];
 ABILS.hekopuon=["sawbladeFangs"];
 ABILS.seerakasumon=["strongjaw","swiftswim"];
 ABILS.ryugainosogyo=["levitate","sapsipperSpa"];
+ABILS.rivalKai=["strongjaw","swiftswim"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
