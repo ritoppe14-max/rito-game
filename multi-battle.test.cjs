@@ -554,6 +554,7 @@ vm.runInContext(`
   fifthUser.usedFifthSlot=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.protectActive=true;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp,'Fifth move bypasses Protect');
   fifthUser.usedFifthSlot=false;fifthTarget.protectActive=false;fifthTarget.curHp=fifthTarget.maxHp;fifthTarget.subHp=100000;attack(fifthUser,fifthTarget,testFifth,'foeImg',()=>{});check(fifthTarget.curHp<fifthTarget.maxHp&&fifthTarget.subHp===100000,'Fifth move bypasses Substitute');
   const sayaku=makeMon(SP_BY_ID.sayakuFeraligatr,'none','p1'),sayakuTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(['trailblaze','ironhead','rockslide','earthquake'].every(k=>SPECIES[SP_BY_ID.sayakuFeraligatr].learnset.includes(k)&&M[k]),'Sayaku Feraligatr learns Trailblaze, Iron Head, Rock Slide and Earthquake');
   const savedSayakuRandom=Math.random;Math.random=()=>.9;
   me=sayaku;foe=sayakuTarget;myTeam=[sayaku];foeTeam=[sayakuTarget];sayaku.curHp=Math.floor(sayaku.maxHp/2);sayakuTarget.maxHp=sayakuTarget.curHp=100000;
   const sayakuStartHp=sayaku.curHp,sayakuRecoverDamage=calcDamage(sayaku,sayakuTarget,M.sayakuRecoverFang,false).dmg;attack(sayaku,sayakuTarget,M.sayakuRecoverFang,'foeImg',()=>{});check(sayaku.curHp===Math.min(sayaku.maxHp,sayakuStartHp+sayakuRecoverDamage),'Sayaku Torrent doubles Recover Fang healing below half HP');
