@@ -252,6 +252,7 @@ const ABIL={
   roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electromorphosis:{name:"でんきにかえる",eff:"electromorphosis"}, windpower:{name:"ふうりょくでんき",eff:"windpower"}, static:{name:"せいでんき",eff:null}, hustle:{name:"はりきり",eff:"hustle"}, flowerveil:{name:"フラワーベール",eff:null}, yogapower:{name:"ヨガパワー",eff:"hugepower"}, guarddog:{name:"ばんけん",eff:"guarddog"}, oblivious:{name:"どんかん",eff:null}, sapsipper:{name:"そうしょく",eff:null}, sapsipperSpa:{name:"そうしょく",eff:"sapsipperSpa"}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, rockhead:{name:"いしあたま",eff:"rockhead"}, serenegrace:{name:"てんのめぐみ",eff:null}, springconfusion:{name:"かんふしょう",eff:"springconfusion"}, garakuFury:{name:"もえあがるいかり",eff:"garakuFury"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
+  poisonfangAbility:{name:"どくのキバ",eff:"poisonfangAbility"},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
@@ -292,6 +293,7 @@ ABIL.steelknight={name:"はがねのきし",eff:"steelknight"};
 ABIL.rottenfeast={name:"ふはいたべ",eff:"rottenfeast"};
 ABIL.waterbubble={name:"すいほう",eff:"waterbubble"};
 ABDESC.waterbubble="みず技の威力が2倍。やけど状態にならない";
+ABDESC.poisonfangAbility="攻撃を命中させると、毒・鋼タイプにも100%でどく状態にする";
 ABIL.gulpMissile={name:"うのミサイル",eff:"gulpMissile"};
 ABIL.hustle={name:"はりきり",eff:"hustle"};
 ABIL.schooling={name:"ぎょぐん",eff:"schooling"};
@@ -756,6 +758,7 @@ SPECIES.push(S("rivalKai","ライバルカイ","image/image/ライバルカイ.p
 SPECIES.push(S("oomizutengu","オオミズテング","image/image/オオミズテング.png",["water","electric"],{hp:85,atk:85,def:85,spa:105,spd:85,spe:85},"electromorphosis",["hydropump","thunderbolt","waterpulse","thunderwave"]));
 SPECIES.push(S("ooguchizanzame","オオグチザンザメ","image/image/オオグチザンザメ.png",["water"],{hp:165,atk:95,def:105,spa:85,spd:65,spe:45},"strongjaw",["wavecrash","crunch","icefang","aquajet"]));
 SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",["water","steel"],{hp:135,atk:75,def:145,spa:64,spd:73,spe:23},"rottenfeast",["waterfall","ironhead","crunch","aquajet"]));
+SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -823,6 +826,7 @@ const LEARN={
   oomizutengu:["hydropump","thunderbolt","waterpulse","thunderwave","surf","voltswitch","thunder","electroball","calmMind","raincaller"],
   ooguchizanzame:["wavecrash","crunch","icefang","aquajet","waterfall","hydropump","icebeam","psychicfangs","bite","jawlock","dragondance"],
   gosokudan:["waterfall","ironhead","crunch","aquajet","wavecrash","hydropump","icebeam","flashcannon","swordsdance","irondefense"],
+  hougaisougyo:["sludgewave2","hydropump","waterpulse","icebeam","surf","scald","darkpulse","thunderbolt","calmMind","toxic"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -976,6 +980,7 @@ ABILS.rivalKai=["strongjaw","swiftswim"];
 ABILS.oomizutengu=["electromorphosis"];
 ABILS.ooguchizanzame=["strongjaw","thickfat"];
 ABILS.gosokudan=["rottenfeast","waterbubble"];
+ABILS.hougaisougyo=["poisonfangAbility"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2945,6 +2950,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(!sheer&&move.freeze&&effectTarget.curHp>0&&Math.random()<move.freeze) applyStatus(effectTarget,"freeze",effectSource);
     if(!sheer&&move.burn&&effectTarget.curHp>0&&Math.random()<move.burn) applyStatus(effectTarget,"burn",effectSource);
     if(!sheer&&move.poison&&effectTarget.curHp>0&&Math.random()<move.poison) applyStatus(effectTarget,"poison",effectSource);
+    if(attacker.abilEff==="poisonfangAbility"&&actualDamage>0&&effectTarget.curHp>0) applyStatus(effectTarget,"poison",{...attacker,abilEff:"corrosion"});
     if(!sheer&&move.paralyze&&effectTarget.curHp>0&&Math.random()<move.paralyze) applyStatus(effectTarget,"paralyze",effectSource);
     if(move.hypersleep&&effectTarget.curHp>0){
       effectTarget.status="hypersleep"; effectTarget.sleepTurns=0;
