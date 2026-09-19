@@ -290,6 +290,8 @@ ABDESC.birdStatic="攻撃を受けると50%で相手を麻痺にし、自分の�
 ABDESC.birdFlame="攻撃を当てる・受けるたび攻撃倍率×1.1（最大2倍）";
 ABIL.steelknight={name:"はがねのきし",eff:"steelknight"};
 ABIL.rottenfeast={name:"ふはいたべ",eff:"rottenfeast"};
+ABIL.waterbubble={name:"すいほう",eff:"waterbubble"};
+ABDESC.waterbubble="みず技の威力が2倍。やけど状態にならない";
 ABIL.gulpMissile={name:"うのミサイル",eff:"gulpMissile"};
 ABIL.hustle={name:"はりきり",eff:"hustle"};
 ABIL.schooling={name:"ぎょぐん",eff:"schooling"};
@@ -753,6 +755,7 @@ SPECIES.push(S("ryugainosogyo","リュウガイノソギョ","image/image/リュ
 SPECIES.push(S("rivalKai","ライバルカイ","image/image/ライバルカイ.png",["water","ghost"],{hp:50,atk:123,def:100,spa:73,spd:100,spe:112},"strongjaw",["wavecrash","crunch","icefang","aquajet"]));
 SPECIES.push(S("oomizutengu","オオミズテング","image/image/オオミズテング.png",["water","electric"],{hp:85,atk:85,def:85,spa:105,spd:85,spe:85},"electromorphosis",["hydropump","thunderbolt","waterpulse","thunderwave"]));
 SPECIES.push(S("ooguchizanzame","オオグチザンザメ","image/image/オオグチザンザメ.png",["water"],{hp:165,atk:95,def:105,spa:85,spd:65,spe:45},"strongjaw",["wavecrash","crunch","icefang","aquajet"]));
+SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",["water","steel"],{hp:135,atk:75,def:145,spa:64,spd:73,spe:23},"rottenfeast",["waterfall","ironhead","crunch","aquajet"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -819,6 +822,7 @@ const LEARN={
   rivalKai:["wavecrash","crunch","icefang","aquajet","gravevisit","burial","jawlock","dragonbreath","outrage","psychicfangs","dragondance","hyperbeam","rivalKaiHydroCannon","rivalKaiCurse"],
   oomizutengu:["hydropump","thunderbolt","waterpulse","thunderwave","surf","voltswitch","thunder","electroball","calmMind","raincaller"],
   ooguchizanzame:["wavecrash","crunch","icefang","aquajet","waterfall","hydropump","icebeam","psychicfangs","bite","jawlock","dragondance"],
+  gosokudan:["waterfall","ironhead","crunch","aquajet","wavecrash","hydropump","icebeam","flashcannon","swordsdance","irondefense"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -971,6 +975,7 @@ ABILS.ryugainosogyo=["levitate","sapsipperSpa"];
 ABILS.rivalKai=["strongjaw","swiftswim"];
 ABILS.oomizutengu=["electromorphosis"];
 ABILS.ooguchizanzame=["strongjaw","thickfat"];
+ABILS.gosokudan=["rottenfeast","waterbubble"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -1908,6 +1913,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="sharpness"&&move.cut) dmg*=1.5;
   if(move.electromorphosisBoost) dmg*=2;
   if(attacker.abilEff==="strongjaw"&&move.bite) dmg*=1.5;
+  if(attacker.abilEff==="waterbubble"&&moveType==="water") dmg*=2;
   if(move.multiBattleBoost&&battleSize>1) dmg*=1.5;
   if(move.weakBoost&&eff>1)dmg*=move.weakBoost;
   if(move.megaBonus&&defender.isMega) dmg*=2;
@@ -3063,7 +3069,7 @@ function canStatus(mon,status,source){
   if(mon.sayakuShield&&mon.blackMoonShieldHp>0)return false;
   if(mon.abilEff==="purifyingSalt"&&source?.abilEff!=="moldbreaker"){announceAbility(mon);return false;}
   if(mon.status) return false;
-  if(status==="burn"&&mon.types.includes("fire")) return false;
+  if(status==="burn"&&(mon.types.includes("fire")||mon.abilEff==="waterbubble")) return false;
   if(status==="freeze"&&mon.types.includes("ice")) return false;
   if((status==="poison"||status==="toxic")&&(mon.types.includes("poison")||mon.types.includes("steel"))&&(!source||source.abilEff!=="corrosion")) return false;
   return true;
