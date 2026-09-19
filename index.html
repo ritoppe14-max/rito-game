@@ -533,6 +533,7 @@ const M={
   morpekoSpark:{name:"スパーク",type:"electric",cat:"phys",power:75,morpekoSpark:true,desc:"はらぺこ時は確定まひ。満腹時は控えを引きずり出し、2ターン交代不能"},
   morpekoStompingTantrum:{name:"じだんだ",type:"ground",cat:"phys",power:75},
   snomBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:120,accuracy:.6,desc:"威力120・命中60%。ゆきの間は必中"},
+  auroraVeil:{name:"オーロラベール",type:"ice",cat:"status",power:0,auroraVeil:true,desc:"ゆきの間のみ成功。5ターン、味方の氷タイプが受ける攻撃ダメージを半減"},
   kuronoEruption:{name:"ふんか",type:"fire",cat:"spec",power:40,multiHit:3,spread:true,desc:"威力40×3の全体攻撃"},
   kuronoFlameWheel:{name:"かえんぐるま",type:"fire",cat:"phys",power:40,multiHit:2,sayakuShield:true,desc:"威力40×2。使用後に最大HP30%のシールド"},
   garakuFieryWrath:{name:"もえあがるいかり",type:"dark",cat:"spec",power:90,spread:true,flinch:.4},
@@ -799,6 +800,7 @@ const LEARN={
   sawsbuck:["doubleedge","woodhammer","zenheadbutt","swordsdance","wildcharge","megahorn","protect","substitute"],
   lycanroc:["stoneedge","crunch","closecombat","suckerpunch","rockslide","drillrun","playrough","protect"],
   morpeko:["morpekoAuraWheel","morpekoPayback","morpekoSpark","bulletseed","voltswitch","morpekoStompingTantrum","psychicfangs","partingshot","fakeout","crunch","thunderbolt","protect"],
+  snom:["snomBlizzard","icywind","auroraVeil","calmMind","magicalshine","airslash","bugbuzz","icebeam","protect"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -1751,6 +1753,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.cat==="phys"&&!move.ignoreAbility&&(move.ignoreAbility?null:defender.abilEff)==="birdSnow"&&(defender.birdHail||["snow","hail","freeze","ひょうけつ","ゆき","あられ"].includes(weather)||defender.status==="freeze"))defStat*=1.5;
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
   if(move.cat==="phys"&&defender.reflectTurns>0&&!isCrit)defStat*=2;
+  if(defender.auroraVeilTurns>0&&defender.types.includes("ice"))defStat*=2;
   // 進化先がいるポケモンだけが、しんかのきせきの対象。メガシンカ前は対象外。
   const evioliteEligible=new Set(["chansey","porygon2","duraludon","joltik","scyther","clobbopus","dunsparce","snom"]);
   if(defender.itemKey==="eviolite"&&!defender.isMega&&evioliteEligible.has(defender.id))defStat*=1.5;
@@ -2588,6 +2591,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.cat==="status"&&move.heiCare){ setTimeout(()=>{const host=attacker.host;if(!host||host.fainted){pushLog("  └ かいごする本体がいない！","#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*.30));host.curHp=Math.min(host.maxHp,host.curHp+h);host.careCritGuardPending=true;renderHp();renderHeis();pushLog(`  └ ${attacker.name} の かいご！ ${host.name} は HP${h}回復！ 次のターンは急所に当たらない！`,'#46d160');cb();},450); return; }
   if(move.cat==="status"&&move.tailwind){ setTimeout(()=>{const side=typeof multi!=="undefined"&&multi?(multi.slots.me.includes(attacker)?"me":"foe"):(attacker===me?"me":"foe"),members=typeof multi!=="undefined"&&multi?multi.teams[side]:(side==="me"?myTeam:foeTeam);members.filter(m=>!m.fainted).forEach(m=>m.tailwindTurns=2);pushLog(`  └ ${attacker.name} は おいかぜを起こした！ 2ターンの間、味方のすばやさが2倍！`,"#7ad1ff");cb();},450); return; }
   if(move.cat==="status"&&move.reflect){ setTimeout(()=>{attacker.reflectTurns=5;pushLog(`  └ ${attacker.name} は リフレクターを 張った！`,"#7ad1ff");cb();},450); return; }
+  if(move.auroraVeil){if(weather!=="snow"){pushLog("  └ ゆきが降っていないため失敗！","#9fb3d6");cb();return;}birdAllies(attacker).filter(m=>m.types.includes("ice")&&!m.fainted).forEach(m=>m.auroraVeilTurns=5);pushLog(`  └ ${attacker.name} は オーロラベールを張った！ 氷タイプは5ターン被ダメージ半減！`,"#7ad1ff");cb();return;}
   if(move.painSplit){setTimeout(()=>{if(defender.curHp/defender.maxHp<=attacker.curHp/attacker.maxHp){pushLog(`  └ ${defender.name} のHP割合が高くないため失敗！`,"#9fb3d6");cb();return;}defender.painSplitSource=attacker;defender.painSplitTurns=4;pushLog(`  └ ${defender.name} に いたみわけ！ 4ターン持続する！`,"#b061ff");cb();},450);return;}
   if(move.trevenantCurse){setTimeout(()=>{defender.trevenantCurseSource=attacker;pushLog(`  └ ${defender.name} に のろいをかけた！ 交代まで両者のHPが削られる！`,"#b061ff");cb();},450);return;}
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
@@ -3362,6 +3366,7 @@ function endTurn(){
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
   [me,foe].forEach(m=>{if(m&&m.outrageTurns>0){m.outrageTurns--;if(m.outrageTurns===0){m.outrageMove=null;pushLog(`  ・ ${m.name} の 暴れ状態が 終わった！`);}}
     if(m&&m.reflectTurns>0)m.reflectTurns--;
+    if(m&&m.auroraVeilTurns>0)m.auroraVeilTurns--;
     if(m&&m.falinksRightFootTurns>0)m.falinksRightFootTurns--;
     if(m&&m.falinksLeftFootTurns>0)m.falinksLeftFootTurns--;
     if(m&&m.duraludonShieldTurns>0)m.duraludonShieldTurns--;

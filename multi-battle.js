@@ -67,7 +67,7 @@ function multiEntry(s,m,cb){
 }
 function multiNext(){
   if(!multi)return;['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
-  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;});
+  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
   multiChoose('me');
 }
 function multiChoose(s){
