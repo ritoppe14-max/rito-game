@@ -1579,6 +1579,7 @@ document.getElementById("startBtn").onclick=()=>{
 // ===== バトル =====
 let myTeam=[], foeTeam=[], myA=0, foeA=0, me=null, foe=null, busy=false, weather=null, weatherTurns=0, grassTurns=0, electricTurns=0, psychicTurns=0, mistTurns=0, rayMegaBlocked=false, rayMegaActive=false;
 let mode='cpu', megaArm={me:false,foe:false}, maxArm={me:false,foe:false}, teraArm={me:false,foe:false}, maxUsed={me:false,foe:false}, teraUsed={me:false,foe:false}, turnAct={me:null,foe:null}, inputSide='me', forcedCb=null;
+function isCpuMode(){return ['cpu','stadium','tower','lunatic','lunatic2','lunatic3','lunatic4','lunatic5','dynamaxUnlock'].includes(mode);}
 function emptyHazards(){return {me:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null},foe:{rocks:0,rocksSetter:null,spikes:0,toxicSpikes:0,toxicCorrosion:false,electroweb:false,electrowebSetter:null,stickyweb:false,disaster:null}};}
 let hazards=emptyHazards();
 function sawsbuckSeasonForMonth(month){
@@ -2164,7 +2165,7 @@ function submitAction(side,action){
   // 技オブジェクトを共有参照しない。片側の選択・変化技処理がもう片側へ伝播しないようにする。
   turnAct[side]=action&&action.type==="move"?Object.assign({},action,{move:Object.assign({},action.move)}):action; clearCmd();
   if(side==="me"){
-    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock'){ turnAct.foe=cpuChoose(); doResolve(); }
+    if(isCpuMode()){ turnAct.foe=cpuChoose(); doResolve(); }
     else handoff("foe");
   }else doResolve();
 }
@@ -3142,7 +3143,7 @@ function tryEmergencyExit(side,mon,cb){
   const next=team.findIndex((p,i)=>i!==current&&!p.fainted);
   if(next<0){ cb(); return; }
   announceAbility(mon);pushLog(`  ★ ${mon.name} の ききかいひ！` ,"#ffcb05");
-    if((mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock')&&side==='foe') doSwitch(side,next,cb);
+    if(isCpuMode()&&side==='foe') doSwitch(side,next,cb);
   else requestForcedSwitch(side,cb);
 }
 
@@ -3536,7 +3537,7 @@ function endTurn(){
   const replaceMe=()=>{ meDead ? requestForcedSwitch("me", nextTurn) : nextTurn(); };
   // foe側の補充（CPUは自動 / フレンドはP2が選ぶ）
   if(foeDead){
-    if(mode==='cpu'||mode==='lunatic'||mode==='lunatic2'||mode==='lunatic3'||mode==='lunatic4'||mode==='lunatic5'||mode==='dynamaxUnlock') cpuForceReplace(replaceMe);
+    if(isCpuMode()) cpuForceReplace(replaceMe);
     else requestForcedSwitch("foe", replaceMe);
   } else replaceMe();
 }

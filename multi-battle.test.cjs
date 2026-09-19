@@ -49,6 +49,7 @@ vm.runInContext(`
   check(SP_BY_ID.empoleon!==undefined&&M.hydrocannon.power===120&&M.hydrocannon.trapTurns===3&&M.hydrocannon.trapDenom===10,'Empoleon Hydro Cannon and residual effect');
   check(SPECIES[SP_BY_ID.gabarias].megas.find(m=>m.stone==='gabariasiteZ').types.join('/')==='dragon','Mega Garchomp Z is Dragon type only');
   check(typeof startPokemonStadium==='function'&&typeof startPokemonTower==='function','Pokemon Stadium and Pokemon Tower modes are available');
+  check(['stadium','tower'].every(testMode=>{mode=testMode;return isCpuMode();}),'Stadium and Tower use CPU battle modes');
   check(towerLevel(1)===1&&towerLevel(100)===10&&towerItemChance(200)===1&&towerMegaChance(500)===.95&&towerHpMultiplier(600)===2,'Tower progression reaches the requested level, item, Mega and HP thresholds');
   check(towerStrongIds(650).join('/')==='rayquaza/latios/articuno'&&towerStrongIds(750).includes('zamazenta')&&towerStrongIds(950).includes('heatran'),'Tower legendary pools progress by floor range');
   const tower999=buildTowerFoes(999);check(tower999.map(p=>SPECIES[p.sp].id).join('/')==='hekopuon/morpeko/rayquaza'&&tower999.every(p=>p.hpMult>1),'Tower floor 999 fixes Hekopuon, Morpeko and Mega Rayquaza');
