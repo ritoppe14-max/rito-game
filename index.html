@@ -529,7 +529,7 @@ const M={
   sayakuWaterfall:{name:"たきのぼり",type:"water",cat:"phys",power:80,sayakuShield:true},
   morpekoAuraWheel:{name:"オーラぐるま",type:"electric",cat:"phys",power:70,prio:1,morpekoMove:true,morpekoSpeed:true,desc:"満腹時はでんき、はらぺこ時はあく。使用後に素早さ+1"},
   morpekoFifth:{name:"激車輪猛烈極悪電流",type:"electric",cat:"phys",power:140,prio:2,morpekoMove:true,morpekoFifth:true,ignoreDefBoost:true,desc:"威力140。満腹時はでんき、はらぺこ時はあく。相手の防御上昇を無視し、状態に応じて自分を強化"},
-  morpekoPayback:{name:"ダメおし",type:"dark",cat:"phys",power:55,morpekoPayback:true,desc:"はらぺこ時、最初に対面した相手には威力2倍"},
+  morpekoPayback:{name:"ダメおし",type:"dark",cat:"phys",power:55,morpekoPayback:true,desc:"はらぺこ時、最初に対面した相手へ2回攻撃"},
   morpekoSpark:{name:"スパーク",type:"electric",cat:"phys",power:75,morpekoSpark:true,desc:"はらぺこ時は確定まひ。満腹時は控えを引きずり出し、2ターン交代不能"},
   morpekoStompingTantrum:{name:"じだんだ",type:"ground",cat:"phys",power:75},
   snomBlizzard:{name:"ふぶき",type:"ice",cat:"spec",power:120,accuracy:.6,desc:"威力120・命中60%。ゆきの間は必中"},
@@ -2466,7 +2466,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
   if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
-  if(attacker.id==="morpeko"&&move.morpekoPayback){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,power:move.power*2};}
+  if(attacker.id==="morpeko"&&move.morpekoPayback){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2};}
   if(attacker.id==="morpeko"&&move.morpekoSpark)move=attacker.morpekoFull?{...move,targetForceSwitch:true,forceSwitchLock:2}:{...move,paralyze:1};
   // サヤクのオーダイルのげきりゅう：HP半分以下では、かみくだくで選ぶキバの追加効果を2倍にする。
   if(attacker.id==="sayakuFeraligatr"&&attacker.abilEff==="torrent"&&attacker.curHp<=attacker.maxHp/2&&move.sayakuFang){
