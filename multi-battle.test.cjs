@@ -1,7 +1,8 @@
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
 const elements=new Map();
+const storage=new Map();
 function el(id){if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',style:{},value:'',classList:{add(){},remove(){},toggle(){},contains(){return false;}},appendChild(){},insertAdjacentHTML(){},remove(){},addEventListener(){},parentElement:{appendChild(){}}});return elements.get(id);}
-const c=vm.createContext({console,Math,Set,Map,JSON,Date,document:{getElementById:el,querySelector:el,querySelectorAll:()=>[],createElement:()=>el('new'),addEventListener(){}},window:{addEventListener(){},removeEventListener(){}},localStorage:{getItem(){return null;},setItem(){}},setTimeout:fn=>fn(),clearTimeout(){},setInterval(){},clearInterval(){},alert:msg=>{throw Error(msg);}});
+const c=vm.createContext({console,Math,Set,Map,JSON,Date,document:{getElementById:el,querySelector:el,querySelectorAll:()=>[],createElement:()=>el('new'),addEventListener(){}},window:{addEventListener(){},removeEventListener(){}},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,String(v))},setTimeout:fn=>fn(),clearTimeout(){},setInterval(){},clearInterval(){},alert:msg=>{throw Error(msg);}});
 const html=fs.readFileSync('index.html','utf8');
 for(const m of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))vm.runInContext(m[1],c);
 vm.runInContext(fs.readFileSync('multi-battle.js','utf8'),c);
@@ -720,5 +721,11 @@ vm.runInContext(`
   check(nemoPawmot.isElectricTera&&nemoPawmot.typeLocked&&nemoPawmot.types.join('/')==='electric'&&teraElectricDamage>=normalElectricDamage*1.5&&!nemoTarget.isElectricTera,'Electric Tera affects only the Pokemon that Terastallized');
   attack(nemoPawmot,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(nemoPawmot.types.includes('electric'),'Electric Speed Strike preserves Electric type during Electric Tera');
   const normalNemo=makeMon(SP_BY_ID.nemoPawmot,'none','p1');me=normalNemo;foe=nemoTarget;attack(normalNemo,nemoTarget,M.electricSpeedStrike,'foeImg',()=>{});check(!normalNemo.types.includes('electric'),'Electric Speed Strike removes the user Electric type without Electric Tera');
+  const kokugainoryu=makeMon(SP_BY_ID.kokugainoryu,'none','p1'),kokugaiTarget=makeMon(SP_BY_ID.gyarados,'none','cpu');
+  check(SPECIES[SP_BY_ID.kokugainoryu].hidden&&kokugainoryu.types.join('/')==='dragon/dark'&&kokugainoryu.base.hp===110&&kokugainoryu.base.atk===70&&kokugainoryu.base.def===128&&kokugainoryu.base.spa===139&&kokugainoryu.base.spd===128&&kokugainoryu.base.spe===100&&kokugainoryu.img==='image/image/コクガイノリュウ.png'&&kokugainoryu.abilEff==='magicGauge','Kokugainoryu is hidden before unlock with requested stats and Magic');
+  localStorage.setItem('ritoCodeAiruhitorabanzai','1');refreshCodePokemonVisibility();check(!SPECIES[SP_BY_ID.kokugainoryu].hidden&&kokugainoryuUnlocked(),'Kokugainoryu unlocks through pokemon airuhitorabanzai');
+  const gammaNoMagic=calcDamage(kokugainoryu,kokugaiTarget,M.mygamma,false).dmg, gammaMagic=calcDamage(kokugainoryu,kokugaiTarget,{...M.mygamma,magicSpend:20},false).dmg;
+  check(M.mygamma.power===90&&gammaMagic>gammaNoMagic&&M.mygamma.magicGamma,'My no Gamma uses the selected magic amount for power and multiplier');
+  kokugainoryu.magicGauge=90;gainMagic(kokugainoryu,'テスト');check(kokugainoryu.magicGauge===100,'Magic gauge gains 10 percent and caps at 100');
 `,c);
 console.log('Competitive 100 moves and learnsets OK');
