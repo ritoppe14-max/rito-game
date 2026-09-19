@@ -242,7 +242,7 @@ const ABIL={
   pressure:{name:"プレッシャー",eff:null}, prankster:{name:"いたずらごころ",eff:"prankster"}, eartheater:{name:"どしょく",eff:"eartheater"}, nightmarez:{name:"ナイトメアZ",eff:"nightmarez"},
   focus:{name:"せいしんりょく",eff:"focus"}, aurashield:{name:"はどうのぼうご",eff:"aurashield"},
   unaware:{name:"てんねん",eff:"unaware"}, purifyingSalt:{name:"きよめのしお",eff:"purifyingSalt"},
-  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"}, morpekoFull:{name:"まんぷくスイッチ",eff:"morpekoFull"}, morpekoHungry:{name:"はらぺこスイッチ",eff:"morpekoHungry"}, snomScissors:{name:"はみはみハサミ",eff:"snomScissors"},
+  torrent:{name:"げきりゅう",eff:"torrent"}, blaze:{name:"もうか",eff:"blaze"}, morpekoFull:{name:"まんぷくスイッチ",eff:"morpekoFull"}, morpekoHungry:{name:"はらぺこスイッチ",eff:"morpekoHungry"}, snomScissors:{name:"はみはみハサミ",eff:"snomScissors"}, sawbladeFangs:{name:"ノコギリキバ",eff:"sawbladeFangs"},
   hugepower:{name:"ちからもち",eff:"hugepower"}, swiftswim:{name:"すいすい",eff:"swiftswim"},
   drizzle:{name:"あめふらし",eff:"drizzle"}, sandstream:{name:"すなおこし",eff:"sandstream"},
   drought:{name:"ひでり",eff:"drought"}, adaptability:{name:"てきおうりょく",eff:"adaptability"},
@@ -253,7 +253,7 @@ const ABIL={
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
-const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",snomScissors:"物理技を受けるとゆきにする（氷タイプの防御1.5倍・ふぶき必中）",hugepower:"こうげき(物理)が2倍",
+const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",snomScissors:"物理技を受けるとゆきにする（氷タイプの防御1.5倍・ふぶき必中）",sawbladeFangs:"名前にキバ／きばが付く技を、威力を変えずに2回攻撃",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
   intrepidsword:"登場時こうげき+1",
   focus:"ひるまない",aurashield:"物理技のダメージを半減",
@@ -399,7 +399,7 @@ const M={
   fishiousrend:{name:"えらがみ",type:"water",cat:"phys",power:80,firstStrike:true},
   boltbeak:{name:"でんげきくちばし",type:"electric",cat:"phys",power:80,firstStrike:true},
   iciclecrash:{name:"つららおとし",type:"ice",cat:"phys",power:85,accuracy:.9,flinch:.3},
-  icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2,bite:true},
+  icefang:{name:"こおりのキバ",type:"ice",cat:"phys",power:65,freeze:.06,flinch:.2,bite:true,sawbladeFang:true},
   icepunch:{name:"れいとうパンチ",type:"ice",cat:"phys",power:75},
   crunch:{name:"かみくだく",type:"dark",cat:"phys",power:80,targetDrop:{chance:.2,stats:{def:-1}},bite:true},
   hydreigoncrunch:{name:"かみくだく",type:"dark",cat:"phys",power:85,targetDrop:{chance:.3,stats:{def:-1}}},
@@ -508,14 +508,14 @@ const M={
   bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
   shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,desc:"必中"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
   knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
-  voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
+  voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1,bite:true,sawbladeFang:true}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   dazzlinggleam:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true}, moonblast:{name:"ムーンフォース",type:"fairy",cat:"spec",power:95,targetDrop:{chance:.3,stats:{spa:-1}}}, drainingkiss2:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75}, playnice:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
   sacredsword:{name:"せいなるつるぎ",type:"fighting",cat:"phys",power:90}, brickbreak:{name:"かわらわり",type:"fighting",cat:"phys",power:75}, vacuumwave:{name:"しんくうは",type:"fighting",cat:"spec",power:40,prio:1}, bulldoze:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, stompingtantrum:{name:"10まんばりき",type:"ground",cat:"phys",power:75},
   bugbuzz:{name:"むしのさざめき",type:"bug",cat:"spec",power:90,sound:true}, lunge:{name:"とびかかる",type:"bug",cat:"phys",power:80,targetDrop:{chance:1,stats:{atk:-1}}}, pounce:{name:"はいよるいちげき",type:"bug",cat:"phys",power:50,targetDrop:{chance:1,stats:{spe:-1}}}, meteorbeam:{name:"メテオビーム",type:"rock",cat:"spec",power:120}, rockblast:{name:"ロックブラスト",type:"rock",cat:"phys",power:25,hits:3},
   psychicnoise:{name:"サイコノイズ",type:"psychic",cat:"spec",power:75}, expandingforce:{name:"ワイドフォース",type:"psychic",cat:"spec",power:80}, psyshock:{name:"サイコショック",type:"psychic",cat:"spec",power:80,useDef:true},
   shadowSneak2:{name:"かげうち",type:"ghost",cat:"phys",power:40,prio:1}, hex:{name:"たたりめ",type:"ghost",cat:"spec",power:65,statusPower:2}, poltergeist:{name:"ポルターガイスト",type:"ghost",cat:"phys",power:110},
   flash:{name:"ひかりのかべ",type:"psychic",cat:"status",power:0}, haze:{name:"くろいきり",type:"ice",cat:"status",power:0}, helpinghand:{name:"てだすけ",type:"normal",cat:"status",power:0}, powerwhip:{name:"パワーウィップ",type:"grass",cat:"phys",power:120,accuracy:.85}, iceSpinner2:{name:"アイススピナー",type:"ice",cat:"phys",power:80},
-  aerialace:{name:"つばめがえし",type:"flying",cat:"phys",power:60}, bravebird:{name:"ブレイブバード",type:"flying",cat:"phys",power:120,recoilDamage:.33}, dualwingbeat:{name:"ダブルウイング",type:"flying",cat:"phys",power:40,hits:2}, firefang:{name:"ほのおのキバ",type:"fire",cat:"phys",power:65,burn:.1}, flareblitz:{name:"フレアドライブ",type:"fire",cat:"phys",power:120,recoilDamage:.33},
+  aerialace:{name:"つばめがえし",type:"flying",cat:"phys",power:60}, bravebird:{name:"ブレイブバード",type:"flying",cat:"phys",power:120,recoilDamage:.33}, dualwingbeat:{name:"ダブルウイング",type:"flying",cat:"phys",power:40,hits:2}, firefang:{name:"ほのおのキバ",type:"fire",cat:"phys",power:65,burn:.1,bite:true,sawbladeFang:true}, flareblitz:{name:"フレアドライブ",type:"fire",cat:"phys",power:120,recoilDamage:.33},
   scald:{name:"ねっとう",type:"water",cat:"spec",power:80,burn:.3}, muddywater:{name:"だくりゅう",type:"water",cat:"spec",power:90}, flipturn:{name:"クイックターン",type:"water",cat:"phys",power:60,switchAfter:true}, wavecrash:{name:"ウェーブタックル",type:"water",cat:"phys",power:120,recoilDamage:.33}, icywind:{name:"こごえるかぜ",type:"ice",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   armorcannon:{name:"アーマーキャノン",type:"fire",cat:"spec",power:120,selfDrop:{chance:1,stats:{def:-1,spd:-1}}}, bitterblade:{name:"むねんのつるぎ",type:"fire",cat:"phys",power:90,healDamage:.5},
   blizzard:{name:"ふぶき",type:"ice",cat:"spec",power:110,accuracy:.7}, earthquake2:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, earthpower2:{name:"だいちのちから",type:"ground",cat:"spec",power:90,targetDrop:{chance:.1,stats:{spd:-1}}}, smackdown:{name:"うちおとす",type:"rock",cat:"phys",power:50}, rocktomb2:{name:"がんせきふうじ",type:"rock",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}},
@@ -540,7 +540,7 @@ const M={
   garakuSuckerPunch:{name:"ふいうち",type:"dark",cat:"phys",power:90,prio:2,requiresStatus:true,flinch:1},
   garakuHurricane:{name:"ぼうふう",type:"flying",cat:"spec",power:90,prio:2,requiresAttack:true},
   moaroThunderKick:{name:"らいめいげり",type:"fighting",cat:"phys",power:90,targetDrop:{chance:.8,stats:{def:-1}},paralyze:.2,desc:"80%で相手の防御を下げ、20%でまひ"},
-  shadowpunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:60}, ragefist:{name:"ふんどのこぶし",type:"ghost",cat:"phys",power:50,rageFist:true,desc:"攻撃を受けるたびに威力+50（最大350）。交代で元に戻る"}, phantomforce:{name:"ゴーストダイブ",type:"ghost",cat:"phys",power:90}, psychicfangs:{name:"サイコファング",type:"psychic",cat:"phys",power:85}, futuresight:{name:"みらいよち",type:"psychic",cat:"spec",power:120}, zenheadbutt2:{name:"しねんのずつき",type:"psychic",cat:"phys",power:80,flinch:.2},
+  shadowpunch:{name:"シャドーパンチ",type:"ghost",cat:"phys",power:60}, ragefist:{name:"ふんどのこぶし",type:"ghost",cat:"phys",power:50,rageFist:true,desc:"攻撃を受けるたびに威力+50（最大350）。交代で元に戻る"}, phantomforce:{name:"ゴーストダイブ",type:"ghost",cat:"phys",power:90}, psychicfangs:{name:"サイコファング",type:"psychic",cat:"phys",power:85,bite:true,sawbladeFang:true}, futuresight:{name:"みらいよち",type:"psychic",cat:"spec",power:120}, zenheadbutt2:{name:"しねんのずつき",type:"psychic",cat:"phys",power:80,flinch:.2},
   flashcannon2:{name:"ラスターカノン",type:"steel",cat:"spec",power:80,targetDrop:{chance:.1,stats:{spd:-1}}}, heavySlam:{name:"ヘビーボンバー",type:"steel",cat:"phys",power:100}, smartstrike:{name:"スマートホーン",type:"steel",cat:"phys",power:70}, meteorMash:{name:"コメットパンチ",type:"steel",cat:"phys",power:90,selfBoost:{chance:.2,stats:{atk:1}}},
   poisonfang:{name:"どくどくのキバ",type:"poison",cat:"phys",power:50,toxic:true}, poisonTail:{name:"ポイズンテール",type:"poison",cat:"phys",power:50,poison:.3}, crosspoison:{name:"クロスポイズン",type:"poison",cat:"phys",power:70,poison:.1}, sludgewave2:{name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.1},
   aircutter:{name:"エアカッター",type:"flying",cat:"spec",power:60,spread:true,windMove:true}, tailwind:{name:"おいかぜ",type:"flying",cat:"status",power:0,tailwind:true,windMove:true,desc:"2ターンの間、味方のすばやさが2倍"}, chillingwater:{name:"ひやみず",type:"water",cat:"spec",power:50,targetDrop:{chance:1,stats:{atk:-1}}}, storedpower:{name:"アシストパワー",type:"psychic",cat:"spec",power:20}, bodypress2:{name:"ボディプレス",type:"fighting",cat:"phys",power:80,useDef:true}, lowkick:{name:"けたぐり",type:"fighting",cat:"phys",power:80},
@@ -551,7 +551,7 @@ const M={
   trevenantWoodHammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:65,multiHit:2,recoilDamage:.05,desc:"威力65×2。与えたダメージの5%を自分も受ける"},
   trevenantCurse:{name:"のろい",type:"ghost",cat:"status",power:0,trevenantCurse:true,desc:"交代まで、毎ターン自分と相手の最大HPを7%削る"},
   woodHorn:{name:"ウッドホーン",type:"grass",cat:"phys",power:60,healDamage:.2,desc:"与えたダメージの20%を回復"},
-  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2},
+  aquacutter:{name:"アクアカッター",type:"water",cat:"phys",power:70,highCrit:true,cut:true}, furycutter:{name:"れんぞくぎり",type:"bug",cat:"phys",power:40,cut:true}, aquabreak:{name:"アクアブレイク",type:"water",cat:"phys",power:85,targetDrop:{chance:.2,stats:{def:-1}}}, strugglebug:{name:"むしのていこう",type:"bug",cat:"spec",power:50,targetDrop:{chance:1,stats:{spa:-1}}}, quiverdance:{name:"ちょうのまい",type:"bug",cat:"status",power:0,selfBoost:{spa:1,spd:1,spe:1}}, confuseray:{name:"あやしいひかり",type:"ghost",cat:"status",power:0,confuseTurns:2}, waterfang:{name:"みずのキバ",type:"water",cat:"phys",power:75,bite:true,sawbladeFang:true}, bite:{name:"かみつく",type:"dark",cat:"phys",power:60,bite:true},
 };
 function catLabel(mv){return mv.cat==="phys"?"物理":mv.cat==="spec"?"特殊":"変化";}
 function statEffectStats(e){return e&&e.stats?e.stats:e;}
@@ -744,6 +744,7 @@ SPECIES.push(S("machamp","カイリキー","image/image/カイリキー.gif",["f
 SPECIES.push(S("morpeko","モルペコ","image/image/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","image/image/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
 SPECIES.push(S("umisasoru","ウミサソル","image/image/ウミサソル.png",["water","bug"],{hp:85,atk:145,def:65,spa:105,spd:65,spe:115},"sharpness",["aquacutter","nightslash","xscissor","aquajet"]));
+SPECIES.push(S("hekopuon","ヘコプオン","image/image/ヘコプオン.png",["water","dark"],{hp:128,atk:137,def:85,spa:67,spd:85,spe:102},"sawbladeFangs",["waterfang","thunderfang","firefang","icefang"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -804,6 +805,7 @@ const LEARN={
   morpeko:["morpekoAuraWheel","morpekoPayback","morpekoSpark","bulletseed","voltswitch","morpekoStompingTantrum","psychicfangs","partingshot","fakeout","crunch","thunderbolt","protect"],
   snom:["snomBlizzard","icywind","auroraVeil","calmMind","magicalshine","airslash","bugbuzz","icebeam","protect"],
   umisasoru:["aquacutter","nightslash","xscissor","furycutter","psychocut","aquajet","swordsdance","aquabreak","wavecrash","suckerpunch","lunge","strugglebug","hydropump","hydrocannon","quiverdance","bugbuzz","confuseray"],
+  hekopuon:["waterfang","thunderfang","firefang","icefang","crunch","bite","waterfall","psychicfangs","aquajet","darkpulse","dragondance"],
   nemoPawmot:["electricSpeedStrike","closecombat","machpunch","wildcharge","thunderpunch","voltswitch","protect"],
   sayakuFeraligatr:["sayakuCrunch","sayakuWaterfall","icefang","earthquake","dragondance","crunch","waterfall","protect"],
   kuronoTyphlosion:["kuronoEruption","kuronoFlameWheel","focusblast","crunch","flamethrower","fireblast","protect"],
@@ -950,6 +952,7 @@ ABILS.hippowdonF=["moxie"];
 ABILS.decidueye=["longreach"];
 ABILS.trevenant=["naturalcure","harvest"];
 ABILS.umisasoru=["sharpness","swiftswim"];
+ABILS.hekopuon=["sawbladeFangs"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2471,6 +2474,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
   if(attacker.id==="morpeko"&&move.morpekoPayback&&!move.morpekoPaybackResolved){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2,morpekoPaybackResolved:true};}
+  if(attacker.abilEff==="sawbladeFangs"&&move.sawbladeFang&&!move.sawbladeFangsResolved){announceAbility(attacker);move={...move,multiHit:2,sawbladeFangsResolved:true};}
   if(attacker.id==="morpeko"&&move.morpekoSpark)move=attacker.morpekoFull?{...move,targetForceSwitch:true,forceSwitchLock:2}:{...move,paralyze:1};
   // サヤクのオーダイルのげきりゅう：HP半分以下では、かみくだくで選ぶキバの追加効果を2倍にする。
   if(attacker.id==="sayakuFeraligatr"&&attacker.abilEff==="torrent"&&attacker.curHp<=attacker.maxHp/2&&move.sayakuFang){
