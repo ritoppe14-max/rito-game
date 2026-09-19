@@ -1488,7 +1488,7 @@ function buildCpuParty(){
   if(rag&&pel){ rag.item="ragulaajite"; }
 }
 function shuffled(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function normalSpeciesPool(){return SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]?-1:i).filter(i=>i>=0);}
+function normalSpeciesPool(){return SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]||sp.id==="kokugainoryu"?-1:i).filter(i=>i>=0);}
 function randomBattleItem(sp,megaChance=0){
   if(sp.megas?.length&&Math.random()<megaChance)return pickOne(sp.megas).stone;
   return pickOne(["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"]);
