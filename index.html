@@ -1540,13 +1540,9 @@ function resumePokemonTower(){
   if(!saved||!Number.isInteger(saved.floor)||saved.floor<1||saved.floor>999||!Array.isArray(saved.team)||saved.team.length!==3){alert("再開できるポケモンタワーのセーブデータがありません。");return;}
   battleSize=1;sixBattle=false;lunaticStage=false;mode="tower";stadiumRun=null;towerRun={floor:saved.floor,team:saved.team,foes:saved.foes||null,foesFloor:saved.foesFloor||null};startTowerFloor();
 }
-function saveAndExitTower(){
-  if(mode!=="tower"||!towerRun)return;
-  saveTowerProgress();busy=true;clearCmd();show("home");renderHome();alert(`ポケモンタワー ${towerRun.floor}階をセーブしました。ホームの「ポケモンタワーを再開」から再開できます。`);
-}
 function chooseTowerTeam(){
   if(party.length<3){alert("パーティに3体以上必要です。");return;}
-  selCtx={src:party,owner:"p1",sel:[],count:3,label:`ポケモンタワー ${towerRun.floor}階：新しく出す3体をえらぶ`,cb:()=>{towerRun.team=selCtx.sel.map(i=>party[i]);saveTowerProgress();startTowerFloor();}};
+  selCtx={src:party,owner:"p1",sel:[],count:3,label:`ポケモンタワー ${towerRun.floor}階：新しく出す3体をえらぶ`,cb:()=>{towerRun.team=selCtx.sel.map(i=>party[i]);startTowerFloor();}};
   show("preview");renderPreview();
 }
 function towerLevel(floor){return Math.min(10,Math.ceil(floor/10));}
@@ -1567,15 +1563,31 @@ function buildTowerFoes(floor){
   return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
 }
 function startTowerFloor(){
-  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=towerRun.foes&&towerRun.foesFloor===floor?towerRun.foes:buildTowerFoes(floor);towerRun.foes=foes;towerRun.foesFloor=floor;saveTowerProgress();
+  const floor=towerRun.floor;npcLevel=towerLevel(floor);const foes=towerRun.foes&&towerRun.foesFloor===floor?towerRun.foes:buildTowerFoes(floor);towerRun.foes=foes;towerRun.foesFloor=floor;
   startBattleWith(towerRun.team,[0,1,2],foes,[0,1,2]);
   pushLog(`🏰 ポケモンタワー ${floor}階（CPU Lv.${npcLevel}）`,'#ffcb05');
 }
-function towerAfterWin(){
-  if(towerRun.floor>=999){localStorage.setItem("ritoTower999Clear","1");refreshCodePokemonVisibility();saveGame();clearTowerProgress();busy=true;clearCmd();document.getElementById("endArea").classList.remove("hidden");const r=document.getElementById("resultTxt");r.textContent="🏆 ポケモンタワー999階を制覇！ コクガイノリュウが解放された！";r.style.color="var(--accent)";return;}
-  towerRun.floor++;towerRun.foes=null;towerRun.foesFloor=null;saveTowerProgress();
+let towerSavePrompt=null;
+function continueTowerAfterSaveWindow(){
+  if(!towerSavePrompt||towerSavePrompt.done)return;
+  towerSavePrompt.done=true;clearTimeout(towerSavePrompt.timer);window.removeEventListener("keydown",towerSavePrompt.keyHandler);towerSavePrompt=null;busy=false;
   if(towerRun.floor>1&&(towerRun.floor-1)%30===0){busy=true;clearCmd();const c=document.getElementById("cmd");c.innerHTML=`<div class="center sub">${towerRun.floor-1}階クリア！ 次の30階に向けて、出す3体を選び直せます。</div><div class="center"><button class="btn mega" onclick="chooseTowerTeam()">3体を選び直す</button> <button class="btn blue" onclick="startTowerFloor()">同じ3体で続ける</button></div>`;return;}
   startTowerFloor();
+}
+function confirmTowerSave(){
+  if(!towerSavePrompt||towerSavePrompt.done)return;
+  saveTowerProgress();continueTowerAfterSaveWindow();
+}
+function offerTowerSave(){
+  busy=true;clearCmd();const c=document.getElementById("cmd");
+  const keyHandler=e=>{if(e.repeat||e.code!=="Space")return;e.preventDefault();confirmTowerSave();};
+  const prompt={done:false,keyHandler,timer:null};towerSavePrompt=prompt;window.addEventListener("keydown",keyHandler);
+  prompt.timer=setTimeout(continueTowerAfterSaveWindow,10000);
+  c.innerHTML=`<div class="center sub">${towerRun.floor}階から再開できるようにしますか？（残り10秒）</div><div class="center"><button class="btn mega" onclick="confirmTowerSave()">💾 セーブしますか？</button><div class="mini">Spaceキーでもセーブして次の戦闘へ進みます。何もしなければ10秒後に保存せず進みます。</div></div>`;
+}
+function towerAfterWin(){
+  if(towerRun.floor>=999){localStorage.setItem("ritoTower999Clear","1");refreshCodePokemonVisibility();saveGame();clearTowerProgress();busy=true;clearCmd();document.getElementById("endArea").classList.remove("hidden");const r=document.getElementById("resultTxt");r.textContent="🏆 ポケモンタワー999階を制覇！ コクガイノリュウが解放された！";r.style.color="var(--accent)";return;}
+  towerRun.floor++;towerRun.foes=null;towerRun.foesFloor=null;offerTowerSave();
 }
 function renderPreview(){
     const top=document.getElementById("previewTopLabel"), foeP=document.getElementById("foePreview");
@@ -2141,7 +2153,7 @@ function renderMenu(side){
   const teraBtn=(m.id==="nemoPawmot"&&!teraUsed[side]&&!m.isElectricTera)?`<button class="btn mega ${teraArm[side]?'armed':''}" onclick="toggleTera('${side}')">${teraArm[side]?'⚡ 電気テラス準備OK':'⚡ 電気テラスタル'}</button>`:"";
   c.innerHTML=`${head}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
      <button class="btn ghost" onclick="openSwitch('${side}')">こうたい</button></div>
-     <div class="center">${megaBtn}${maxBtn}${teraBtn}${mode==='tower'?'<button class="btn ghost" onclick="saveAndExitTower()">💾 セーブして抜ける</button>':''}</div>`;
+     <div class="center">${megaBtn}${maxBtn}${teraBtn}</div>`;
 }
 function toggleMega(side){ if(busy)return; const m=activeOf(side); if(m&&m.id==="rayquaza"&&!canRayMega(m))return; megaArm[side]=!megaArm[side]; if(megaArm[side]&&(!m||(!GMAX_IDS.has(m.id)&&m.id!=="rayquaza")))maxArm[side]=false; renderMenu(side); }
 function toggleMax(side){ if(busy)return; const m=activeOf(side); maxArm[side]=!maxArm[side]; if(maxArm[side]&&(!m||!GMAX_IDS.has(m.id)))megaArm[side]=false; renderMenu(side); }
