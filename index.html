@@ -776,6 +776,7 @@ SPECIES.push(S("hokaeno","ホカエノ","image/image/ホカエノ.png",["bug","f
 SPECIES.push(S("jukain","ジュカイン","image/image/ジュカイン.gif",["grass"],{hp:70,atk:85,def:65,spa:105,spd:85,spe:120},"overgrow",["leafstorm","leafblade","dpulse","focusblast"],[{stone:"jukainite",stoneName:"ジュカインナイト",name:"メガジュカイン",img:"image/image/メガジュカイン.gif",types:["grass","dragon"],base:{hp:70,atk:110,def:75,spa:145,spd:85,spe:145},abil:"lightningrod"}]));
 SPECIES.push(S("bashamo","バシャーモ","image/image/バシャーモ.gif",["fire","fighting"],{hp:80,atk:120,def:70,spa:110,spd:70,spe:80},"blaze",["flareblitz","highjumpkick","closecombat","bravebird"],[{stone:"bashamonite",stoneName:"バシャーモナイト",name:"メガバシャーモ",img:"image/image/メガバシャーモ.gif",types:["fire","fighting"],base:{hp:80,atk:160,def:80,spa:130,spd:80,spe:100},abil:"speedboost"}]));
 SPECIES.push(S("celebi","セレビィ","image/image/セレビィ.gif",["psychic","grass"],{hp:100,atk:100,def:100,spa:100,spd:100,spe:100},"timetravel",["psychic","gigadrain","recover","batonpass"]));
+SPECIES.push(S("raichu","ライチュウ","image/image/ライチュウ.gif",["electric"],{hp:60,atk:90,def:55,spa:90,spd:80,spe:110},"static",["thunderbolt","voltswitch","icepunch","focusblast"],[{stone:"raichuniteX",stoneName:"ライチュウナイトX",name:"メガライチュウX",img:"image/image/メガライチュウX.gif",types:["electric"],base:{hp:60,atk:135,def:95,spa:90,spd:95,spe:110},abil:"speedboost"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1008,9 +1009,11 @@ ABILS.hokaeno=["flamebody"];
 ABILS.jukain=["overgrow"];
 ABILS.bashamo=["blaze","speedboost"];
 ABILS.celebi=["timetravel"];
+ABILS.raichu=["static"];
 LEARN.jukain=["leafstorm","leafblade","dpulse","focusblast","gigadrain","energyball","dragonclaw","swordsdance","protect"];
 LEARN.bashamo=["flareblitz","highjumpkick","closecombat","bravebird","firepunch","thunderpunch","swordsdance","protect"];
 LEARN.celebi=["psychic","gigadrain","recover","batonpass","leafstorm","calmMind","energyball","protect"];
+LEARN.raichu=["thunderbolt","voltswitch","icepunch","focusblast","thunderpunch","thunderwave","nastyPlot","surf","protect"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
