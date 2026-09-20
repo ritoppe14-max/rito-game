@@ -255,7 +255,7 @@ const ABIL={
   roughskin:{name:"さめはだ",eff:"roughskin"}, ironbarbs:{name:"てつのトゲ",eff:"ironbarbs"}, sandveil:{name:"すながくれ",eff:null}, sandrush:{name:"すなかき",eff:"sandrush"}, clearbody:{name:"クリアボディ",eff:null}, heavymetal:{name:"ヘビィメタル",eff:"heavymetal"}, poisonheal:{name:"ポイズンヒール",eff:"poisonheal"}, flashfire:{name:"もらいび",eff:"flashfire"}, magmaheat:{name:"マグマのこうねつ",eff:"magmaheat"}, chargeboost:{name:"ちくでん",eff:"chargeboost"}, electromorphosis:{name:"でんきにかえる",eff:"electromorphosis"}, windpower:{name:"ふうりょくでんき",eff:"windpower"}, static:{name:"せいでんき",eff:null}, hustle:{name:"はりきり",eff:"hustle"}, flowerveil:{name:"フラワーベール",eff:null}, yogapower:{name:"ヨガパワー",eff:"hugepower"}, guarddog:{name:"ばんけん",eff:"guarddog"}, oblivious:{name:"どんかん",eff:null}, sapsipper:{name:"そうしょく",eff:null}, sapsipperSpa:{name:"そうしょく",eff:"sapsipperSpa"}, electricmaker:{name:"エレキメイカー",eff:"electricmaker"},
   aerilate:{name:"スカイスキン",eff:"aerilate"}, intimidate:{name:"いかく",eff:"intimidate"}, rockhead:{name:"いしあたま",eff:"rockhead"}, serenegrace:{name:"てんのめぐみ",eff:null}, springconfusion:{name:"かんふしょう",eff:"springconfusion"}, garakuFury:{name:"もえあがるいかり",eff:"garakuFury"}, defiant:{name:"まけんき",eff:"defiant"}, parentalbond:{name:"おやこあい",eff:"parentalbond"},
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
-  poisonfangAbility:{name:"どくのキバ",eff:"poisonfangAbility"},
+  poisonfangAbility:{name:"どくのキバ",eff:"poisonfangAbility"}, poisonclaws:{name:"どくのツメ",eff:"poisonclaws"}, flamebody:{name:"ほのおのからだ",eff:"flamebody"},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
   regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
@@ -297,6 +297,8 @@ ABIL.rottenfeast={name:"ふはいたべ",eff:"rottenfeast"};
 ABIL.waterbubble={name:"すいほう",eff:"waterbubble"};
 ABDESC.waterbubble="みず技の威力が2倍。やけど状態にならない";
 ABDESC.poisonfangAbility="攻撃を命中させると、毒・鋼タイプにも100%でどく状態にする";
+ABDESC.poisonclaws="接触する物理攻撃を命中させると、85%で相手の放射能ゲージ+30%";
+ABDESC.flamebody="接触する物理攻撃を受けると、30%で相手をやけどにする";
 ABIL.gulpMissile={name:"うのミサイル",eff:"gulpMissile"};
 ABIL.hustle={name:"はりきり",eff:"hustle"};
 ABIL.schooling={name:"ぎょぐん",eff:"schooling"};
@@ -766,6 +768,9 @@ SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガ�
 SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
 SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["poison","dragon"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","gammaRadiation","dpulse"]));
 SPECIES.push(S("raikanburian","ライカンブリアン","image/image/ライカンブリアン.png",["water","fairy"],{hp:105,atk:115,def:100,spa:85,spd:100,spe:103},"sheerforce",["waterfall","playrough","icefang","crunch"]));
+SPECIES.push(S("kodoku","コドク","image/image/コドク.png",["bug","poison"],{hp:98,atk:112,def:92,spa:84,spd:163,spe:102},"poisonclaws",["poisonjab","xscissor","lunge","crunch"]));
+SPECIES.push(S("inberia","インベリア","image/image/インベリア.png",["water","dragon"],{hp:102,atk:142,def:84,spa:105,spd:74,spe:112},"sharpness",["aquacutter","dragonclaw","nightslash","liquidation"]));
+SPECIES.push(S("hokaeno","ホカエノ","image/image/ホカエノ.png",["bug","fire"],{hp:102,atk:84,def:163,spa:112,spd:92,spe:98},"flamebody",["flamethrower","bugbuzz","lunge","firewhip"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -992,6 +997,9 @@ ABILS.gosokudan=["rottenfeast","waterbubble"];
 ABILS.hougaisougyo=["poisonfangAbility"];
 ABILS.kimeironmozura=["strongjaw"];
 ABILS.raikanburian=["sheerforce"];
+ABILS.kodoku=["poisonclaws"];
+ABILS.inberia=["sharpness"];
+ABILS.hokaeno=["flamebody"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -3050,6 +3058,8 @@ function attack(attacker,defender,move,defImgId,cb){
     if(!sheer&&move.burn&&effectTarget.curHp>0&&Math.random()<move.burn) applyStatus(effectTarget,"burn",effectSource);
     if(!sheer&&move.poison&&effectTarget.curHp>0&&Math.random()<move.poison) applyStatus(effectTarget,"poison",effectSource);
     if(attacker.abilEff==="poisonfangAbility"&&actualDamage>0&&effectTarget.curHp>0) applyStatus(effectTarget,"poison",{...attacker,abilEff:"corrosion"});
+    if(attacker.abilEff==="poisonclaws"&&move.cat==="phys"&&actualDamage>0&&effectTarget.curHp>0&&Math.random()<.85)addRadiation(effectTarget,30);
+    if(defender.abilEff==="flamebody"&&move.cat==="phys"&&actualDamage>0&&attacker.curHp>0&&Math.random()<.30)applyStatus(attacker,"burn",defender);
     if(!sheer&&move.paralyze&&effectTarget.curHp>0&&Math.random()<move.paralyze) applyStatus(effectTarget,"paralyze",effectSource);
     if(move.hypersleep&&effectTarget.curHp>0){
       effectTarget.status="hypersleep"; effectTarget.sleepTurns=0;
