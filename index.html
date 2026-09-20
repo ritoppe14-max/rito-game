@@ -322,6 +322,8 @@ Object.assign(ABIL,{naturalcure:{name:"しぜんかいふく",eff:"naturalcure"}
 Object.assign(ABDESC,{naturalcure:"HPが30%以下の間、毎ターン最大HPの10%を回復（交代で終了）",harvest:"回復技の回復量+10%、毎ターン最大HPの7%を回復",multiscale:"HPが満タンのとき、受けるダメージを半減"});
 ABIL.skilllink={name:"スキルリンク",eff:"skilllink"};
 ABDESC.skilllink="連続攻撃は必ず最大回数当たる";
+ABIL.goodasgold={name:"おうごんのからだ",eff:"goodasgold"};
+ABDESC.goodasgold="相手の変化技を無効化する";
 ABIL.timetravel={name:"ときわたり",eff:"timetravel"};
 ABDESC.timetravel="相手の連続攻撃を無効化する";
 ABIL.technician={name:"テクニシャン",eff:"technician"};
@@ -782,6 +784,7 @@ SPECIES.push(S("raichu","ライチュウ","image/image/ライチュウ.gif",["el
 SPECIES.push(S("aerodactyl","プテラ","image/image/プテラ.gif",["rock","flying"],{hp:80,atk:105,def:65,spa:60,spd:75,spe:130},"berserker",["stoneedge","dualwingbeat","crunch","earthquake"]));
 SPECIES.push(S("kairyu","カイリュー","image/image/カイリュー.gif",["dragon","flying"],{hp:91,atk:134,def:95,spa:100,spd:100,spe:80},"multiscale",["meteor","hurricane","extremespeed","dragonclaw"],[{stone:"kairyuite",stoneName:"カイリュナイト",name:"メガカイリュー",img:"image/image/メガカイリュー.gif",types:["dragon","flying"],base:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100},abil:"multiscale"}]));
 SPECIES.push(S("heracross","ヘラクロス","image/image/ヘラクロス.gif",["bug","fighting"],{hp:80,atk:125,def:75,spa:40,spd:95,spe:85},"guts",["megahorn","closecombat","rockblast","bulletseed"],[{stone:"heracronite",stoneName:"ヘラクロスナイト",name:"メガヘラクロス",img:"image/image/メガヘラクロス.gif",types:["bug","fighting"],base:{hp:80,atk:185,def:115,spa:40,spd:105,spe:75},abil:"skilllink"}]));
+SPECIES.push(S("airmudo","エアームド","image/image/エアームド.gif",["steel","flying"],{hp:65,atk:80,def:140,spa:40,spd:70,spe:70},"pressure",["ironhead","bravebird","roost","spikes"],[{stone:"airmudonite",stoneName:"エアームドナイト",name:"メガエアームド",img:"image/image/メガエアームド.gif",types:["steel","flying"],base:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110},abil:"goodasgold"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1019,6 +1022,7 @@ ABILS.raichu=["static"];
 ABILS.aerodactyl=["berserker"];
 ABILS.kairyu=["multiscale"];
 ABILS.heracross=["guts"];
+ABILS.airmudo=["pressure"];
 LEARN.jukain=["leafstorm","leafblade","dpulse","focusblast","gigadrain","energyball","dragonclaw","swordsdance","protect"];
 LEARN.bashamo=["flareblitz","highjumpkick","closecombat","bravebird","firepunch","thunderpunch","swordsdance","protect"];
 LEARN.celebi=["psychic","gigadrain","recover","batonpass","leafstorm","calmMind","energyball","protect"];
@@ -1026,6 +1030,7 @@ LEARN.raichu=["thunderbolt","voltswitch","icepunch","focusblast","thunderpunch",
 LEARN.aerodactyl=["stoneedge","dualwingbeat","crunch","earthquake","rockslide","icefang","firefang","thunderfang","ironhead","roost","protect"];
 LEARN.kairyu=["meteor","hurricane","extremespeed","dragonclaw","dragondance","earthquake","firepunch","thunderpunch","icepunch","roost","protect"];
 LEARN.heracross=["megahorn","closecombat","rockblast","bulletseed","swordsdance","earthquake","stoneedge","knockoff","protect"];
+LEARN.airmudo=["ironhead","bravebird","roost","spikes","stealthrock","drillrun","whirlwind","tailwind","protect"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2719,7 +2724,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.id==="kuronoTyphlosion"&&move.cat!=="status"&&move.power>0)move={...move,healDamage:.6};
   if(attacker.abilEff==="harvest"&&(move.healDamage||move.recover||move.allyHeal))move={...move,healDamage:move.healDamage?move.healDamage+.1:move.healDamage,recover:move.recover?move.recover+.1:move.recover,allyHeal:move.allyHeal?move.allyHeal+.1:move.allyHeal};
   if(attacker.abilEff==="garakuFury"&&move.cat!=="status"&&((attacker.garakuAttackCount||0)+1)%3===0){move.flinch=1;move.garakuGuaranteedFlinch=true;}
-  if(defender&&defender.abilEff==="guarddog"&&attacker!==defender&&move.cat==="status"&&!isFriendlyMove(move)&&!move.ignoreAbility){announceAbility(defender);pushLog(`  ★ ${defender.name} の ばんけん！ ${move.name} を無効化した！`,"#ffcb05");cb();return;}
+  if(defender&&(defender.abilEff==="guarddog"||defender.abilEff==="goodasgold")&&attacker!==defender&&move.cat==="status"&&!isFriendlyMove(move)&&!move.ignoreAbility){announceAbility(defender);pushLog(`  ★ ${defender.name} の ${defender.abilName}！ ${move.name} を無効化した！`,"#ffcb05");cb();return;}
   if(attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
   if(attacker.itemKey==="mougekiScarf"){
     if(attacker.mougekiLock&&attacker.mougekiLock!==move.name){pushLog("  └ もうげきスカーフで技が固定されている！");cb();return;}
