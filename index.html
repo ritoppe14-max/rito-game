@@ -266,7 +266,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   unaware:"相手の能力上昇を無効化",purifyingSalt:"ゴースト技を半減し状態異常無効",
   swiftswim:"あめのときすばやさ2倍",drizzle:"登場時 あめを降らせる",sandstream:"登場時 すなあらしを起こす",
   drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
-  sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
+  sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍。いのちのたまの反動を受けない",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",sandrush:"すなあらしのときすばやさ2倍",clearbody:"相手の技で能力ランクを下げられない",heavymetal:"ほえる・ふきとばしなど、自分以外の技による強制交代を受けない",poisonheal:"どく・もうどく状態のとき毎ターン最大HPの1/7回復",rockhead:"反動を受ける技を使っても反動ダメージを受けない",springconfusion:"攻撃を受けると相手を2ターン混乱させる",garakuFury:"3回目ごとの攻撃で相手を必ずひるませる",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
   poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"急所のダメージが2.25倍",fluffiness:"物理攻撃で受けるダメージを半減",compoundeyes:"技の命中率が1.3倍",thickfat:"ほのお・こおり技で受けるダメージを半減",cursedbody:"(フレーバー)",shadowtag:"(フレーバー)",mirrorarmor:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",aromaveil:"味方をメンタル攻撃から守る",moldbreaker:"(フレーバー)",shellarmor:"急所に当たらない",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",chargeboost:"でんき技を使うと とくこうが1段階上がる",electromorphosis:"攻撃を受けると充電し、次に使うでんき技だけ威力2倍。交代・でんき技以外の使用で消える",windpower:"風技を受けると充電し、次に使うでんき技だけ威力2倍",lightningrod:"でんき技を無効化して、とくこうが1段階上がる",sapsipper:"くさ技を受けると無効化して攻撃が上がる",sapsipperSpa:"くさ技を無効化して特攻が1段階上がる",electricmaker:"登場時にエレキフィールドを5ターン展開",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
 
@@ -1140,7 +1140,7 @@ const ITEMS={
   akkiberry:{name:"アッキのみ",desc:"物理技を受けると 一度だけぼうぎょ+1"},
   leftovers:{name:"たべのこし",desc:"毎ターン終了時に最大HPの1/16回復"},
   pancake:{name:"パンケーキ",desc:"アローラライチュウが持つと急所率50%"},
-  orb:{name:"いのちのたま",desc:"技の威力1.3倍。毎ターンHP1/10減少"},
+  orb:{name:"いのちのたま",desc:"技の威力1.3倍。毎ターンHP1/10減少（ちからずくは反動なし）"},
   toxicorb:{name:"どくどくだま",desc:"1ターン目終了時に自分がどくになる"},
   healcrown:{name:"かいふくかんむり",desc:"与えたダメージの30%回復。最大HPと攻撃ダメージが5%増加"},
   powerband:{name:"ちからのハチマキ",desc:"すべての攻撃のダメージ10%増加。攻撃性能5%増加"},
@@ -3690,7 +3690,7 @@ function endTurn(){
   [me,foe].forEach(m=>{if(m&&!m.fainted&&m.itemKey==="leftovers"){const h=Math.max(1,Math.floor(m.maxHp/16));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ・ ${m.name} は たべのこしで ${h} 回復！`,"#46d160");}});
   applyHoleCake([me]);
   applyHoleCake([foe]);
-  [me,foe].forEach(m=>{if(m&&!m.fainted&&(m.itemKey==="orb"||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
+  [me,foe].forEach(m=>{if(m&&!m.fainted&&((m.itemKey==="orb"&&m.abilEff!=="sheerforce")||m.itemKey==="scarf")){m.curHp=Math.max(0,m.curHp-Math.max(1,Math.floor(m.maxHp/10)));pushLog(`  ・ ${m.name} は持ち物の反動でHPが減った！`,"#ff7043");}});
   if(grassTurns>0){
     [me,foe].forEach(m=>{if(m&&!m.fainted){const h=Math.max(1,Math.floor(m.maxHp/8));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ☘ ${m.name} はグラスフィールドで ${h} 回復！`,"#7ac74c");}});
     renderHp(); grassTurns--;
