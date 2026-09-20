@@ -320,6 +320,8 @@ Object.assign(ABIL,{waterabsorb:{name:"ちょすい",eff:"waterabsorb"},voltabso
 Object.assign(ABDESC,{waterabsorb:"水技を無効化し最大HPの1/4回復",voltabsorb:"電気技を無効化し最大HPの1/4回復",chlorophyll:"晴れのとき素早さ2倍",synchronize:"毒・猛毒・やけど・まひを与えた相手も同じ状態にする",snowcloak:"雪・あられのとき相手の技の命中率0.8倍"});
 Object.assign(ABIL,{naturalcure:{name:"しぜんかいふく",eff:"naturalcure"},harvest:{name:"しゅうかく",eff:"harvest"},multiscale:{name:"マルチスケイル",eff:"multiscale"}});
 Object.assign(ABDESC,{naturalcure:"HPが30%以下の間、毎ターン最大HPの10%を回復（交代で終了）",harvest:"回復技の回復量+10%、毎ターン最大HPの7%を回復",multiscale:"HPが満タンのとき、受けるダメージを半減"});
+ABIL.skilllink={name:"スキルリンク",eff:"skilllink"};
+ABDESC.skilllink="連続攻撃は必ず最大回数当たる";
 ABIL.timetravel={name:"ときわたり",eff:"timetravel"};
 ABDESC.timetravel="相手の連続攻撃を無効化する";
 ABIL.technician={name:"テクニシャン",eff:"technician"};
@@ -779,6 +781,7 @@ SPECIES.push(S("celebi","セレビィ","image/image/セレビィ.gif",["psychic"
 SPECIES.push(S("raichu","ライチュウ","image/image/ライチュウ.gif",["electric"],{hp:60,atk:90,def:55,spa:90,spd:80,spe:110},"static",["thunderbolt","voltswitch","icepunch","focusblast"],[{stone:"raichuniteX",stoneName:"ライチュウナイトX",name:"メガライチュウX",img:"image/image/メガライチュウX.gif",types:["electric"],base:{hp:60,atk:135,def:95,spa:90,spd:95,spe:110},abil:"speedboost"}]));
 SPECIES.push(S("aerodactyl","プテラ","image/image/プテラ.gif",["rock","flying"],{hp:80,atk:105,def:65,spa:60,spd:75,spe:130},"berserker",["stoneedge","dualwingbeat","crunch","earthquake"]));
 SPECIES.push(S("kairyu","カイリュー","image/image/カイリュー.gif",["dragon","flying"],{hp:91,atk:134,def:95,spa:100,spd:100,spe:80},"multiscale",["meteor","hurricane","extremespeed","dragonclaw"],[{stone:"kairyuite",stoneName:"カイリュナイト",name:"メガカイリュー",img:"image/image/メガカイリュー.gif",types:["dragon","flying"],base:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100},abil:"multiscale"}]));
+SPECIES.push(S("heracross","ヘラクロス","image/image/ヘラクロス.gif",["bug","fighting"],{hp:80,atk:125,def:75,spa:40,spd:95,spe:85},"guts",["megahorn","closecombat","rockblast","bulletseed"],[{stone:"heracronite",stoneName:"ヘラクロスナイト",name:"メガヘラクロス",img:"image/image/メガヘラクロス.gif",types:["bug","fighting"],base:{hp:80,atk:185,def:115,spa:40,spd:105,spe:75},abil:"skilllink"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1015,12 +1018,14 @@ ABILS.celebi=["timetravel"];
 ABILS.raichu=["static"];
 ABILS.aerodactyl=["berserker"];
 ABILS.kairyu=["multiscale"];
+ABILS.heracross=["guts"];
 LEARN.jukain=["leafstorm","leafblade","dpulse","focusblast","gigadrain","energyball","dragonclaw","swordsdance","protect"];
 LEARN.bashamo=["flareblitz","highjumpkick","closecombat","bravebird","firepunch","thunderpunch","swordsdance","protect"];
 LEARN.celebi=["psychic","gigadrain","recover","batonpass","leafstorm","calmMind","energyball","protect"];
 LEARN.raichu=["thunderbolt","voltswitch","icepunch","focusblast","thunderpunch","thunderwave","nastyPlot","surf","protect"];
 LEARN.aerodactyl=["stoneedge","dualwingbeat","crunch","earthquake","rockslide","icefang","firefang","thunderfang","ironhead","roost","protect"];
 LEARN.kairyu=["meteor","hurricane","extremespeed","dragonclaw","dragondance","earthquake","firepunch","thunderpunch","icepunch","roost","protect"];
+LEARN.heracross=["megahorn","closecombat","rockblast","bulletseed","swordsdance","earthquake","stoneedge","knockoff","protect"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2695,6 +2700,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
   if(attacker.id==="morpeko"&&move.morpekoPayback&&!move.morpekoPaybackResolved){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2,morpekoPaybackResolved:true};}
   if(attacker.abilEff==="sawbladeFangs"&&move.sawbladeFang&&!move.sawbladeFangsResolved){announceAbility(attacker);move={...move,multiHit:2,sawbladeFangsResolved:true};}
+  if(attacker.abilEff==="skilllink"&&move.hits&&!move.multiHit&&!move.skilllinkResolved){announceAbility(attacker);move={...move,multiHit:5,skilllinkResolved:true};}
   if(defender.abilEff==="timetravel"&&(move.multiHit||move.hits>1)&&!ignoresDefenderAbility(attacker,move)){announceAbility(defender);pushLog(`  ★ ${defender.name} の ときわたり！ ${move.name} の連続攻撃を無効化した！`,"#b061ff");cb();return;}
   if(move.gammaRadiation&&!move.gammaRadiationResolved){
     attacker.gammaRadiationTargets=attacker.gammaRadiationTargets||new Set();
