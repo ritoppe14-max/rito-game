@@ -765,6 +765,7 @@ SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",[
 SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
 SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
 SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["poison","dragon"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","gammaRadiation","dpulse"]));
+SPECIES.push(S("raikanburikan","ライカンブリカン","image/image/ライカンブリカン.png",["water","fairy"],{hp:105,atk:115,def:100,spa:85,spd:100,spe:103},"sheerforce",["waterfall","playrough","icefang","crunch"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -990,6 +991,7 @@ ABILS.ooguchizanzame=["strongjaw","thickfat"];
 ABILS.gosokudan=["rottenfeast","waterbubble"];
 ABILS.hougaisougyo=["poisonfangAbility"];
 ABILS.kimeironmozura=["strongjaw"];
+ABILS.raikanburikan=["sheerforce"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -1044,10 +1046,11 @@ M.dive={name:"ダイビング",type:"water",cat:"phys",power:80};
 LEARN.cramorant.push("dive");
 M.mygamma={name:"マイノガンマ",type:"dragon",cat:"spec",power:90,magicGamma:true,desc:"威力90＋消費した魔力×5。魔力の消費量に応じて、さらに威力が最大2倍"};
 M.radiationSpear={name:"ホウシャズメ",type:"poison",cat:"spec",power:40,multiHit:2,radiationGain:20,desc:"威力40×2。相手の放射能ゲージ+20%。20%ごとに素早さ-1、100%で最大HP100%の特性貫通ダメージ"};
-M.gammaRadiation={name:"ガンマホウシャ",type:"poison",cat:"spec",power:10,multiHit:10,magicGainPerHit:2,radiationGain:15,gammaRadiation:true,desc:"威力10×10。10回で魔力+20%。相手の放射能ゲージ+15%。同じ相手には1回しか使えない"};
+M.gammaRadiation={name:"ガンマホウシャ",type:"poison",cat:"spec",power:10,multiHit:10,magicGainPerHit:2,radiationGain:15,radiationChance:.5,radiationPerHit:true,radiationMagicPerSpend:5,gammaRadiation:true,desc:"威力10×10。10回で魔力+20%。1発ごとに50%で相手の放射能+15%。消費魔力1%ごとにさらに+5%。同じ相手には1回しか使えない"};
+M.meltdown={name:"メルトダウン",type:"poison",cat:"status",power:0,meltdown:true,desc:"自分の防御-1・素早さ+1。相手の放射能ゲージ+40%"};
 M.kokugaiSludgeWave={name:"ヘドロウェーブ",type:"poison",cat:"spec",power:95,poison:.2,spread:true,desc:"威力95の全体攻撃"};
 M.kokugaiDragonBreath={name:"りゅうのいぶき",type:"dragon",cat:"spec",power:60,paralyze:.3,kokugaiBreath:true,desc:"次のターンだけ威力2倍。相手が交代すると、交代先に威力60の追撃"};
-LEARN.kokugainoryu=["mygamma","radiationSpear","gammaRadiation","kokugaiSludgeWave","sludgebomb","hex","toxicspikes","meteor","nastyPlot","grassknot","hydropump","crunch","jawlock","acidspray","focusblast","flipturn","flamethrower","kokugaiDragonBreath","dpulse","shadowball","recover"];
+LEARN.kokugainoryu=["mygamma","radiationSpear","gammaRadiation","meltdown","kokugaiSludgeWave","sludgebomb","hex","toxicspikes","meteor","nastyPlot","grassknot","hydropump","crunch","jawlock","acidspray","focusblast","flipturn","flamethrower","kokugaiDragonBreath","dpulse","shadowball","recover"];
 ABDESC.dauntlessshield="場に出たとき防御が1段階上がる";
 ABDESC.gulpMissile="なみのり・ダイビングで構え、被弾時HP50%以上なら相手最大HP1/8＋防御低下、50%未満なら1/4＋麻痺";
 SPECIES.forEach(sp=>{ sp.learnset=(LEARN[sp.id]||sp.moves.slice()); if(!sp.learnset.includes("protect"))sp.learnset.push("protect"); if(!sp.types.some(t=>["steel","ghost","water","grass","dragon","fairy"].includes(t))&&!sp.learnset.includes("toxic"))sp.learnset.push("toxic"); sp.abils=ABILS[sp.id]||[sp.abil]; });
@@ -2127,7 +2130,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
     }
     i++; let currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove;
     // ホウシャズメの放射能ゲージは、2回攻撃全体で1回だけ上げる。
-    if(move.radiationGain&&i>1)currentMove=Object.assign({},currentMove,{radiationApplied:true});
+    if(move.radiationGain&&i>1)currentMove=Object.assign({},currentMove,{...(move.radiationPerHit?{}:{radiationApplied:true}),magicSpentApplied:true,radiationMagicSpentApplied:true});
     if((move.multiDropEvery&&i%move.multiDropEvery===0)||(move.multiDropHits&&move.multiDropHits.includes(i)))currentMove=Object.assign({},currentMove,{targetDrop:{chance:1,stats:move.multiDrop}});
     attack(attacker,defender,currentMove,defImgId,next);
   };
@@ -2654,6 +2657,8 @@ function mirrorTarget(attacker,defender,move){
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  if(attacker.radiationOverload&&move.cat!=="status"&&move.power>0&&!move.radiationGain)move={...move,radiationGain:20};
+  if(attacker.gammaRadiationGuaranteed&&move.gammaRadiation)move={...move,radiationChance:1};
   // えんかくで控えを狙った時は、場にいる相手の画像へ命中・ひんし演出を出さない。
   if(move.longReachBench)defImgId=null;
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
@@ -2726,7 +2731,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.preTargetDrop&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),move.preTargetDrop);
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
   const acted=attacker.acted||0; attacker.acted=acted+1;if(attacker.abilEff==="garakuFury"&&move.cat!=="status")attacker.garakuAttackCount=(attacker.garakuAttackCount||0)+1;
-  if(attacker.abilEff==="magicGauge"&&move.cat!=="status"&&move.power>0){gainMagic(attacker,"攻撃",move.magicGainPerHit||10);const spend=Math.max(0,Math.min(attacker.magicGauge||0,move.magicSpend||0));if(spend>0){attacker.magicGauge-=spend;move.magicSpend=spend;pushLog(`  └ 魔力を${spend}%消費した。残り${attacker.magicGauge}%`,'#b061ff');}}
+  if(attacker.abilEff==="magicGauge"&&move.cat!=="status"&&move.power>0){gainMagic(attacker,"攻撃",move.magicGainPerHit||10);const spend=move.magicSpentApplied?0:Math.max(0,Math.min(attacker.magicGauge||0,move.magicSpend||0));if(spend>0){attacker.magicGauge-=spend;move.magicSpend=spend;if(move.gammaRadiation&&spend===100){attacker.gammaRadiationGuaranteed=true;attacker.radiationOverload=true;move.radiationChance=1;pushLog(`  ★ ${attacker.name} は魔力100%を解放！ ガンマホウシャの放射能は必ず発生し、全ての攻撃技に放射能+20%！`,'#b061ff');}pushLog(`  └ 魔力を${spend}%消費した。残り${attacker.magicGauge}%`,'#b061ff');}}
   if(attacker.abilEff==="gulpMissile"&&!attacker.isDynamax&&["なみのり","ダイビング"].includes(move.name)){
     announceAbility(attacker);
     attacker.gulpReady=true;pushLog(`  ★ ${attacker.name} は うのミサイルを構えた！`,"#7ad1ff");
@@ -2796,6 +2801,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.painSplit){setTimeout(()=>{if(defender.curHp/defender.maxHp<=attacker.curHp/attacker.maxHp){pushLog(`  └ ${defender.name} のHP割合が高くないため失敗！`,"#9fb3d6");cb();return;}defender.painSplitSource=attacker;defender.painSplitTurns=4;pushLog(`  └ ${defender.name} に いたみわけ！ 4ターン持続する！`,"#b061ff");cb();},450);return;}
   if(move.trevenantCurse){setTimeout(()=>{defender.trevenantCurseSource=attacker;pushLog(`  └ ${defender.name} に のろいをかけた！ 交代まで両者のHPが削られる！`,"#b061ff");cb();},450);return;}
   if(move.rivalKaiCurse){setTimeout(()=>{const cost=Math.max(1,Math.floor(attacker.maxHp*.25));attacker.curHp=Math.max(0,attacker.curHp-cost);renderHp();pushLog(`  └ ${attacker.name} は HPを${cost}削って ${defender.name} に のろいをかけた！`,"#b061ff");if(attacker.curHp<=0){faintMon(attacker,attacker===me?"myImg":"foeImg");cb();return;}defender.rivalKaiCurseSource=attacker;cb();},450);return;}
+  if(move.meltdown){setTimeout(()=>{applyDrop(attacker,{def:-1,spe:1});addRadiation(defender,40);cb();},450);return;}
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=birdSide(defender);
@@ -2912,7 +2918,7 @@ function attack(attacker,defender,move,defImgId,cb){
     electromorphosisOnHit(attacker,defender,move,actualDamage);
     windPowerOnHit(attacker,defender,move,actualDamage);
     const effectTarget=mirrorTarget(attacker,defender,move),effectSource=effectTarget===attacker?defender:attacker;
-    if(actualDamage>0&&move.radiationGain&&!move.radiationApplied){move.radiationApplied=true;if(!move.radiationChance||Math.random()<move.radiationChance)addRadiation(defender,move.radiationGain);}
+    if(actualDamage>0&&move.radiationGain&&!move.radiationApplied){move.radiationApplied=true;if(!move.radiationChance||Math.random()<move.radiationChance)addRadiation(defender,move.radiationGain+(move.radiationMagicPerSpend||0)*(move.radiationMagicSpentApplied?0:(move.magicSpend||0)));}
     if(actualDamage>0&&move.kokugaiBreath){const doubled=attacker.kokugaiBreathDoubleTurns===1;attacker.kokugaiBreathDoubleTurns=doubled?0:2;defender.kokugaiBreathSource=attacker;pushLog(`  └ ${doubled?"りゅうのいぶきの威力は元に戻った！":"次のターン、りゅうのいぶきの威力が2倍！"}`,"#b061ff");}
     if(effectTarget===attacker&&["freeze","burn","poison","paralyze","hypersleep","flinch","targetDrop","salt","switchLock","trapTurns","soundBlock","removeItem"].some(k=>move[k]))pushLog("  ★ マジックミラーで追加効果を反射！");
     if(actualDamage>0&&(move.ignoreAbility?null:defender.abilEff)==="gulpMissile"&&defender.gulpReady){
