@@ -785,6 +785,7 @@ SPECIES.push(S("aerodactyl","プテラ","image/image/プテラ.gif",["rock","fly
 SPECIES.push(S("kairyu","カイリュー","image/image/カイリュー.gif",["dragon","flying"],{hp:91,atk:134,def:95,spa:100,spd:100,spe:80},"multiscale",["meteor","hurricane","extremespeed","dragonclaw"],[{stone:"kairyuite",stoneName:"カイリュナイト",name:"メガカイリュー",img:"image/image/メガカイリュー.gif",types:["dragon","flying"],base:{hp:91,atk:124,def:115,spa:145,spd:125,spe:100},abil:"multiscale"}]));
 SPECIES.push(S("heracross","ヘラクロス","image/image/ヘラクロス.gif",["bug","fighting"],{hp:80,atk:125,def:75,spa:40,spd:95,spe:85},"guts",["megahorn","closecombat","rockblast","bulletseed"],[{stone:"heracronite",stoneName:"ヘラクロスナイト",name:"メガヘラクロス",img:"image/image/メガヘラクロス.gif",types:["bug","fighting"],base:{hp:80,atk:185,def:115,spa:40,spd:105,spe:75},abil:"skilllink"}]));
 SPECIES.push(S("airmudo","エアームド","image/image/エアームド.gif",["steel","flying"],{hp:65,atk:80,def:140,spa:40,spd:70,spe:70},"pressure",["ironhead","bravebird","roost","spikes"],[{stone:"airmudonite",stoneName:"エアームドナイト",name:"メガエアームド",img:"image/image/メガエアームド.gif",types:["steel","flying"],base:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110},abil:"goodasgold"}]));
+SPECIES.push(S("hellgar","ヘルガー","image/image/ヘルガー.gif",["dark","fire"],{hp:75,atk:90,def:50,spa:110,spd:80,spe:95},"drought",["darkpulse","flamethrower","nastyPlot","sludgebomb"],[{stone:"hellgarite",stoneName:"ヘルガナイト",name:"メガヘルガー",img:"image/image/メガヘルガー.gif",types:["dark","fire"],base:{hp:75,atk:90,def:90,spa:140,spd:90,spe:115},abil:"sunpower"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -1023,6 +1024,7 @@ ABILS.aerodactyl=["berserker"];
 ABILS.kairyu=["multiscale"];
 ABILS.heracross=["guts"];
 ABILS.airmudo=["pressure"];
+ABILS.hellgar=["drought"];
 LEARN.jukain=["leafstorm","leafblade","dpulse","focusblast","gigadrain","energyball","dragonclaw","swordsdance","protect"];
 LEARN.bashamo=["flareblitz","highjumpkick","closecombat","bravebird","firepunch","thunderpunch","swordsdance","protect"];
 LEARN.celebi=["psychic","gigadrain","recover","batonpass","leafstorm","calmMind","energyball","protect"];
@@ -1031,6 +1033,7 @@ LEARN.aerodactyl=["stoneedge","dualwingbeat","crunch","earthquake","rockslide","
 LEARN.kairyu=["meteor","hurricane","extremespeed","dragonclaw","dragondance","earthquake","firepunch","thunderpunch","icepunch","roost","protect"];
 LEARN.heracross=["megahorn","closecombat","rockblast","bulletseed","swordsdance","earthquake","stoneedge","knockoff","protect"];
 LEARN.airmudo=["ironhead","bravebird","roost","spikes","stealthrock","drillrun","whirlwind","tailwind","protect"];
+LEARN.hellgar=["darkpulse","flamethrower","nastyPlot","sludgebomb","fireblast","crunch","suckerpunch","willowisp","protect"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
