@@ -765,7 +765,7 @@ SPECIES.push(S("gosokudan","ゴソクダン","image/image/ゴソクダン.png",[
 SPECIES.push(S("hougaisougyo","ホウガイソウギョ","image/image/ホウガイソウギョ.png",["poison","water"],{hp:74,atk:37,def:82,spa:122,spd:94,spe:117},"poisonfangAbility",["sludgewave2","hydropump","waterpulse","icebeam"]));
 SPECIES.push(S("kimeironmozura","キメイロノモズラ","image/image/キメイロノモズラ.png",["water","ground"],{hp:85,atk:124,def:98,spa:42,spd:95,spe:103},"strongjaw",["crunch","waterfall","earthquake","icefang"]));
 SPECIES.push(S("kokugainoryu","コクガイノリュウ","image/image/コクガイノリュウ.png",["poison","dragon"],{hp:110,atk:70,def:98,spa:139,spd:98,spe:100},"magicGauge",["mygamma","radiationSpear","gammaRadiation","dpulse"]));
-SPECIES.push(S("raikanburikan","ライカンブリカン","image/image/ライカンブリカン.png",["water","fairy"],{hp:105,atk:115,def:100,spa:85,spd:100,spe:103},"sheerforce",["waterfall","playrough","icefang","crunch"]));
+SPECIES.push(S("raikanburian","ライカンブリアン","image/image/ライカンブリアン.png",["water","fairy"],{hp:105,atk:115,def:100,spa:85,spd:100,spe:103},"sheerforce",["waterfall","playrough","icefang","crunch"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -991,7 +991,7 @@ ABILS.ooguchizanzame=["strongjaw","thickfat"];
 ABILS.gosokudan=["rottenfeast","waterbubble"];
 ABILS.hougaisougyo=["poisonfangAbility"];
 ABILS.kimeironmozura=["strongjaw"];
-ABILS.raikanburikan=["sheerforce"];
+ABILS.raikanburian=["sheerforce"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
