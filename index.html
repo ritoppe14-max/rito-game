@@ -1518,28 +1518,15 @@ function buildCpuParty(){
   const pool=SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]?-1:i).filter(i=>i>=0);
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   const picks=pool.slice(0,6);
-  cpuParty=picks.map(si=>{
-    const sp=SPECIES[si];
-    let item="none";
-    if(sp.id==="zacian") item="rustedsword";
-    else if((sp.id==="chansey"||sp.id==="porygon2")&&Math.random()<.95) item="eviolite";
-    else if(sp.megas.length&&Math.random()<.70) item=pickOne(sp.megas).stone;
-    else {
-      const opts=["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"];
-      item=pickOne(opts);
-    }
-    return {sp:si, item};
-  });
-  // ラグラージ＆ペリッパーが居れば、ラグラージは確定でラグラージナイト
-  const rag=cpuParty.find(p=>SPECIES[p.sp].id==="ragulaaji");
-  const pel=cpuParty.find(p=>SPECIES[p.sp].id==="pelipper");
-  if(rag&&pel){ rag.item="ragulaajite"; }
+  cpuParty=picks.map(si=>({sp:si,item:randomBattleItem(SPECIES[si])}));
 }
 function shuffled(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function normalSpeciesPool(){return SPECIES.map((sp,i)=>sp.hidden||CODE_POKEMON_UNLOCKS[sp.id]||sp.id==="kokugainoryu"?-1:i).filter(i=>i>=0);}
-function randomBattleItem(sp,megaChance=0){
+const STANDARD_CPU_ITEMS=["weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"];
+function randomBattleItem(sp,{megaChance=.8,itemChance=.9,legacyItems=false}={}){
   if(sp.megas?.length&&Math.random()<megaChance)return pickOne(sp.megas).stone;
-  return pickOne(["none","weakness","life","sitrus","orb","toxicorb","band","specs","sash","scarf","healcrown","powerband","cheatdice","firstbell","gritbelt","steadydice","eviolite"]);
+  if(itemChance<1&&Math.random()>=itemChance)return "none";
+  return pickOne(legacyItems?["none",...STANDARD_CPU_ITEMS]:STANDARD_CPU_ITEMS);
 }
 function randomBattleMoves(sp,plan="random"){
   const pool=(sp.learnset||sp.moves||[]).filter(k=>M[k]&&!M[k].fifthSlot);
@@ -1551,7 +1538,7 @@ function randomBattleMoves(sp,plan="random"){
   for(const k of pool)if(keys.length<4&&!keys.includes(k))keys.push(k);
   return keys.slice(0,4);
 }
-function randomBattleEntry(si,options={}){const sp=SPECIES[si];return {sp:si,item:randomBattleItem(sp,options.megaChance||0),moves:randomBattleMoves(sp,options.plan),hpMult:options.hpMult||1};}
+function randomBattleEntry(si,options={}){const sp=SPECIES[si];return {sp:si,item:randomBattleItem(sp,{megaChance:options.megaChance??.8,itemChance:options.itemChance??.9,legacyItems:!!options.legacyItems}),moves:randomBattleMoves(sp,options.plan),hpMult:options.hpMult||1};}
 function startPokemonStadium(){
   battleSize=1;sixBattle=false;lunaticStage=false;mode="stadium";towerRun=null;
   const ten=shuffled(normalSpeciesPool()).slice(0,10);
@@ -1559,7 +1546,7 @@ function startPokemonStadium(){
   selCtx={src:stadiumRun.roster,owner:"p1",sel:[],count:3,label:"ポケモンスタジアム：配られた10体から3体をえらぶ",cb:()=>{stadiumRun.team=selCtx.sel.map(i=>stadiumRun.roster[i]);startStadiumRound();}};
   show("preview");renderPreview();
 }
-function buildStadiumFoes(){const level=stadiumRun.round;return shuffled(normalSpeciesPool()).slice(0,3).map(si=>randomBattleEntry(si,{megaChance:Math.min(.75,.1*level)}));}
+function buildStadiumFoes(){return shuffled(normalSpeciesPool()).slice(0,3).map(si=>randomBattleEntry(si));}
 function startStadiumRound(){
   npcLevel=stadiumRun.round;stadiumRun.foes=buildStadiumFoes();
   startBattleWith(stadiumRun.team,[0,1,2],stadiumRun.foes,[0,1,2]);
@@ -1605,10 +1592,10 @@ function towerStrongIds(floor){
   return ["rayquaza","latios","zamazenta","zacian","articuno","zapdos","moltres","heatran"];
 }
 function buildTowerFoes(floor){
-  if(floor===999){return ["hekopuon","morpeko","rayquaza"].map(id=>{const si=SP_BY_ID[id],entry=randomBattleEntry(si,{megaChance:id==="rayquaza"?1:0,plan:"threePreferred",hpMult:towerHpMultiplier(floor)});if(id==="rayquaza")entry.item="rayquazanite";return entry;});}
+  if(floor===999){return ["hekopuon","morpeko","rayquaza"].map(id=>{const si=SP_BY_ID[id],entry=randomBattleEntry(si,{megaChance:id==="rayquaza"?1:0,itemChance:1,legacyItems:true,plan:"threePreferred",hpMult:towerHpMultiplier(floor)});if(id==="rayquaza")entry.item="rayquazanite";return entry;});}
   const strong=towerStrongIds(floor), plan=floor>=400?"threePreferred":floor>=300?"twoPreferred":"random", picks=shuffled(normalSpeciesPool()).slice(0,3);
   if(strong.length&&((floor<900&&floor%10===0)||(floor>=900&&floor%5===0))){const si=SP_BY_ID[pickOne(strong)];if(si!==undefined)picks[0]=si;}
-  return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
+  return picks.map(si=>{const itemChance=towerItemChance(floor), entry=randomBattleEntry(si,{megaChance:Math.random()<itemChance?towerMegaChance(floor):0,itemChance:1,legacyItems:true,plan,hpMult:towerHpMultiplier(floor)});if(Math.random()>=itemChance)entry.item="none";return entry;});
 }
 function buildTowerFoesForRun(floor){
   let state=((towerRun?.seed||0)^Math.imul(floor,0x9e3779b9))>>>0;
