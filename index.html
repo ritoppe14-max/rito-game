@@ -281,7 +281,7 @@ ABDESC.grimneigh="自分の技で相手を倒すと特攻が1段階上がる";
 ABDESC.chillingneigh="自分の技で相手を倒すと攻撃が1段階上がる";
 ABDESC.moxie="自分の技で相手を倒すと攻撃が1段階上がる";
 ABIL.berserker={name:"バーサーカー",eff:"berserker"};
-ABDESC.berserker="相手を倒すとバーサーカーセグレイブに変身。変身後は倒すたび攻撃+1段階";
+ABDESC.berserker="相手を倒すと専用のバーサーカー形態に変身。変身後は倒すたび攻撃+1段階";
 ABIL.protean={name:"へんげんじざい",eff:"proteanCopy"};
 ABDESC.protean="相手を倒すと、そのポケモンの姿・技・特性になり最大HPの50%で戦う。倒れるとマスカーニャへ戻る";
 ABIL.overgrow={name:"しんりょく",eff:"overgrow"};
@@ -777,6 +777,7 @@ SPECIES.push(S("jukain","ジュカイン","image/image/ジュカイン.gif",["gr
 SPECIES.push(S("bashamo","バシャーモ","image/image/バシャーモ.gif",["fire","fighting"],{hp:80,atk:120,def:70,spa:110,spd:70,spe:80},"blaze",["flareblitz","highjumpkick","closecombat","bravebird"],[{stone:"bashamonite",stoneName:"バシャーモナイト",name:"メガバシャーモ",img:"image/image/メガバシャーモ.gif",types:["fire","fighting"],base:{hp:80,atk:160,def:80,spa:130,spd:80,spe:100},abil:"speedboost"}]));
 SPECIES.push(S("celebi","セレビィ","image/image/セレビィ.gif",["psychic","grass"],{hp:100,atk:100,def:100,spa:100,spd:100,spe:100},"timetravel",["psychic","gigadrain","recover","batonpass"]));
 SPECIES.push(S("raichu","ライチュウ","image/image/ライチュウ.gif",["electric"],{hp:60,atk:90,def:55,spa:90,spd:80,spe:110},"static",["thunderbolt","voltswitch","icepunch","focusblast"],[{stone:"raichuniteX",stoneName:"ライチュウナイトX",name:"メガライチュウX",img:"image/image/メガライチュウX.gif",types:["electric"],base:{hp:60,atk:135,def:95,spa:90,spd:95,spe:110},abil:"speedboost"}]));
+SPECIES.push(S("aerodactyl","プテラ","image/image/プテラ.gif",["rock","flying"],{hp:80,atk:105,def:65,spa:60,spd:75,spe:130},"berserker",["stoneedge","dualwingbeat","crunch","earthquake"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -802,6 +803,7 @@ SPECIES.forEach(sp=>{
 FALINKS_HEI.forEach(hei=>{hei.base.def+=GLOBAL_DEF_SPD_BONUS;hei.base.spd+=GLOBAL_DEF_SPD_BONUS;});
 // バーサーカー化後は、ユーザー指定の最終種族値をそのまま使う。
 const BERSERKER_BAXCALIBUR={name:"バーサーカーセグレイブ",img:"image/image/バーサーカーセグレイブ.gif",types:["dragon","ice"],base:{hp:165,atk:185,def:115,spa:105,spd:101,spe:87}};
+const BERSERKER_AERODACTYL={name:"メガプテラ",img:"image/image/メガプテラ.gif",types:["rock","flying"],base:{hp:80,atk:135,def:115,spa:70,spd:125,spe:150}};
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
@@ -1010,10 +1012,12 @@ ABILS.jukain=["overgrow"];
 ABILS.bashamo=["blaze","speedboost"];
 ABILS.celebi=["timetravel"];
 ABILS.raichu=["static"];
+ABILS.aerodactyl=["berserker"];
 LEARN.jukain=["leafstorm","leafblade","dpulse","focusblast","gigadrain","energyball","dragonclaw","swordsdance","protect"];
 LEARN.bashamo=["flareblitz","highjumpkick","closecombat","bravebird","firepunch","thunderpunch","swordsdance","protect"];
 LEARN.celebi=["psychic","gigadrain","recover","batonpass","leafstorm","calmMind","energyball","protect"];
 LEARN.raichu=["thunderbolt","voltswitch","icepunch","focusblast","thunderpunch","thunderwave","nastyPlot","surf","protect"];
+LEARN.aerodactyl=["stoneedge","dualwingbeat","crunch","earthquake","rockslide","icefang","firefang","thunderfang","ironhead","roost","protect"];
 LEARN.escavalier.push("escavalierKnockoff","escavalierLunge","escavalierBulletPunch");
 // 既存の対戦用100技とは別に追加した、対戦で使いやすい40技。
 const NEW_COMPETITIVE_MOVE_40=["aquatail","irontail","superpower","drillrun","scorchingsands","explosion","gyroball","heatcrash","solarbeam","gunkshot","acidspray","mortalspin","dualchop","breakingswipe","dragonrush","lashout","assurance","mistyexplosion","terrainpulse","terablast","autotomize","agility","shellsmash","poweruppunch","trailblaze","lowsweep","metalclaw","slackoff","amnesia","stockpile","honeclaws","workup","screech","curse","bounce","fly","rockpolish","flamecharge","chargebeam","venoshock"];
@@ -2558,11 +2562,11 @@ function applyNeigh(attacker,defender){
   if(attacker.abilEff==="berserker"){
     announceAbility(attacker);
     if(!attacker.berserkerForm){
-      const form=BERSERKER_BAXCALIBUR, hpRatio=attacker.maxHp?attacker.curHp/attacker.maxHp:1;
+      const form=attacker.id==="aerodactyl"?BERSERKER_AERODACTYL:BERSERKER_BAXCALIBUR, hpRatio=attacker.maxHp?attacker.curHp/attacker.maxHp:1;
       attacker.berserkerForm=true;attacker.name=form.name;attacker.img=form.img;attacker.types=form.types.slice();attacker.base=Object.assign({},form.base);
       attacker.maxHp=Math.floor((attacker.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(attacker.itemKey==="healcrown"?1.05:1));
       attacker.curHp=Math.max(1,Math.min(attacker.maxHp,Math.round(attacker.maxHp*hpRatio)));
-      attacker.moves=attacker.moves.map(m=>m.name==="きょけんとつげき"?{...M.frozenGlaiveRush,fifthSlot:m.fifthSlot}:m);
+      if(attacker.id==="baxcalibur")attacker.moves=attacker.moves.map(m=>m.name==="きょけんとつげき"?{...M.frozenGlaiveRush,fifthSlot:m.fifthSlot}:m);
       if(attacker===me||attacker===foe)renderActive();
       renderHp();renderStages();pushLog(`  ★ ${attacker.name} に変身した！`,'#b061ff');
     }else{
