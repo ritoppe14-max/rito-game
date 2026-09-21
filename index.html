@@ -277,6 +277,7 @@ ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
 ABIL.bulletproof={name:"ぼうだん",eff:"bulletproof"};
 ABIL.infiltrator={name:"すりぬけ",eff:"infiltrator"};
 ABIL.punkrock={name:"パンクロック",eff:"punkrock"};
+ABIL.healingshift={name:"ヒーリングシフト",eff:"healingshift"};
 ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
@@ -316,6 +317,7 @@ ABDESC.bulletproof="たま・爆弾系の技を無効化";
 ABDESC.suctioncups="相手の強制交代技を無効化";
 ABDESC.infiltrator="3ターンに1回、相手の特防20%を無視して攻撃";
 ABDESC.punkrock="自分の音技を1.3倍、受ける音技を半減。ギアチェンジで電気／どくモードを切替";
+ABDESC.healingshift="控えの味方1体にくっつき、専用技を使える";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -413,7 +415,7 @@ const M={
   softboiled:{name:"タマゴうみ",type:"normal",cat:"status",power:0,recover:.50},
   surf:{name:"なみのり",type:"water",cat:"spec",power:90},
   hydropump:{name:"ハイドロポンプ",type:"water",cat:"spec",power:110},
-  hydrocannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:150,recharge:true,desc:"威力150。使用した次のターンは動けない"}, chandelureOverheat:{name:"オーバーヒート",type:"fire",cat:"spec",power:25,multiHit:4,multiPowers:[25,25,25,50],chandelureOverheat:true,desc:"威力25×3+50。次のターンは攻撃技を使えない"},
+  hydrocannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:150,recharge:true,desc:"威力150。使用した次のターンは動けない"}, chandelureOverheat:{name:"オーバーヒート",type:"fire",cat:"spec",power:25,multiHit:4,multiPowers:[25,25,25,50],chandelureOverheat:true,desc:"威力25×3+50。次のターンは攻撃技を使えない"}, healingshift:{name:"ヒーリングシフト",type:"fairy",cat:"status",power:0,healingShift:true,desc:"控えの味方1体にくっつく"}, comfeySynthesis:{name:"こうごうせい",type:"grass",cat:"status",power:0,attachedHeal:.3,requiresAttached:true,desc:"くっついた味方の最大HP30%を回復"}, comfeyMagicalLeaf:{name:"マジカルリーフ",type:"grass",cat:"spec",power:10,multiHit:5,accuracy:.95,flinch:.1,multiEffectOnce:true,requiresAttached:true,desc:"威力10×5・命中95%。10%でひるませる"},
   empoleonHydroCannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:120,trapTurns:3,trapDenom:10,trapLabel:"ハイドロカノンの激流",trapColor:"#4fc3f7",desc:"エンペルト専用：3ターン相手に激流ダメージ"},
   snipeshot:{name:"ねらいうち",type:"water",cat:"spec",power:80,forceCrit:true},
   acrobatics:{name:"アクロバット",type:"flying",cat:"phys",power:55,behindMove:true},
@@ -805,6 +807,7 @@ SPECIES.push(S("chimecho","チリーン","image/image/チリーン.gif",["psychi
 SPECIES.push(S("chandelure","シャンデラ","image/image/シャンデラ.gif",["ghost","fire"],{hp:60,atk:55,def:90,spa:145,spd:90,spe:80},"infiltrator",["shadowball","chandelureOverheat","energyball","calmMind"]));
 SPECIES.push(S("toxtricity","ストリンダー","image/image/ストリンダー.gif",["electric","poison"],{hp:75,atk:98,def:70,spa:114,spd:70,spe:75},"punkrock",["overdrive","sludgewave","boomburst","gearshift"]));
 SPECIES.push(S("delphox","マフォクシー","image/image/マフォクシー.gif",["fire","psychic"],{hp:75,atk:69,def:72,spa:114,spd:100,spe:104},"blaze",["flamethrower","psychic","shadowball","calmMind"],[{stone:"delphoxite",stoneName:"マフォクシナイト",name:"メガマフォクシー",img:"image/image/メガマフォクシー.gif",types:["fire","psychic"],base:{hp:75,atk:69,def:92,spa:154,spd:120,spe:124},abil:"magicmirror"}]));
+SPECIES.push(S("comfey","キュワワー","image/image/キュワワー.gif",["fairy"],{hp:51,atk:52,def:90,spa:82,spd:110,spe:100},"healingshift",["healingshift","comfeySynthesis","comfeyMagicalLeaf","calmMind"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -842,6 +845,7 @@ const LEARN={
   chandelure:["shadowball","chandelureOverheat","energyball","calmMind","flamethrower","fireblast","psychic","trick","protect"],
   toxtricity:["overdrive","sludgewave","boomburst","gearshift","discharge","thunderbolt","voltswitch","sludgebomb","hypervoice","protect"],
   delphox:["flamethrower","psychic","shadowball","calmMind","fireblast","mysticalfire","focusblast","energyball","trick","protect"],
+  comfey:["healingshift","comfeySynthesis","comfeyMagicalLeaf","calmMind","dazzlinggleam","drainingkiss","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -2194,6 +2198,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
       cb();return;
     }
     i++; let currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove;
+    if(move.multiEffectOnce&&i>1)currentMove=Object.assign({},currentMove,{flinch:0});
     // ホウシャズメの放射能ゲージは、2回攻撃全体で1回だけ上げる。
     if(move.radiationGain&&i>1)currentMove=Object.assign({},currentMove,{...(move.radiationPerHit?{}:{radiationApplied:true}),magicSpentApplied:true,radiationMagicSpentApplied:true});
     if((move.multiDropEvery&&i%move.multiDropEvery===0)||(move.multiDropHits&&move.multiDropHits.includes(i)))currentMove=Object.assign({},currentMove,{targetDrop:{chance:1,stats:move.multiDrop}});
@@ -2269,6 +2274,7 @@ function openMoves(side){
   m.moves.forEach((mv,i)=>{
     if(m.itemKey==="mougekiScarf"&&m.mougekiLock&&mv.name!==m.mougekiLock)return;
     if(mv.fifthSlot&&m.usedFifthSlot)return;
+    if(mv.requiresAttached&&(!m.attachedHost||m.attachedHost.fainted))return;
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
     if(m.id==="falinks"&&i===0&&m.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
@@ -2892,6 +2898,8 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.rivalKaiCurse){setTimeout(()=>{const cost=Math.max(1,Math.floor(attacker.maxHp*.25));attacker.curHp=Math.max(0,attacker.curHp-cost);renderHp();pushLog(`  └ ${attacker.name} は HPを${cost}削って ${defender.name} に のろいをかけた！`,"#b061ff");if(attacker.curHp<=0){faintMon(attacker,attacker===me?"myImg":"foeImg");cb();return;}defender.rivalKaiCurseSource=attacker;cb();},450);return;}
   if(move.meltdown){setTimeout(()=>{applyDrop(attacker,{def:-1,spe:1});addRadiation(defender,40);cb();},450);return;}
   if(move.cat==="status"&&move.gearShift){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);if(attacker.abilEff==="punkrock"){attacker.gearShiftCount=(attacker.gearShiftCount||0)+1;attacker.punkMode=attacker.gearShiftCount%2===1?"electric":"poison";announceAbility(attacker);pushLog(`  ★ ${attacker.name} は ${attacker.punkMode==="electric"?"電気":"どく"}モード！`,attacker.punkMode==="electric"?"#ffcb05":"#b061ff");}cb();},450); return; }
+  if(move.healingShift){const side=attacker===me?"me":"foe",host=teamOf(side).find(m=>m!==attacker&&!m.fainted&&m.curHp>0);if(!host){pushLog(`  └ ${attacker.name} は くっつく控えがいない！`,"#9fb3d6");cb();return;}attacker.attachedHost=host;pushLog(`  ★ ${attacker.name} は ${host.name} にくっついた！`,"#46d160");cb();return;}
+  if(move.attachedHeal){const host=attacker.attachedHost;if(!host||host.fainted){pushLog(`  └ ${attacker.name} は くっついていない！`,"#9fb3d6");cb();return;}const h=Math.max(1,Math.floor(host.maxHp*move.attachedHeal));host.curHp=Math.min(host.maxHp,host.curHp+h);renderHp();pushLog(`  └ ${host.name} のHPを ${h}回復！`,"#46d160");cb();return;}
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=birdSide(defender);
