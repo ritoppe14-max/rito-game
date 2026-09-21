@@ -281,6 +281,7 @@ ABIL.healingshift={name:"ヒーリングシフト",eff:"healingshift"};
 ABIL.queenlymajesty={name:"じょおうのいげん",eff:"queenlymajesty"};
 ABIL.megalauncher={name:"メガランチャー",eff:"megalauncher"};
 ABIL.magicguard={name:"マジックガード",eff:"magicguard"};
+ABIL.taurosforce={name:"もうれつパワー",eff:"taurosforce"};
 ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
@@ -324,6 +325,7 @@ ABDESC.healingshift="控えの味方1体にくっつき、専用技を使える"
 ABDESC.queenlymajesty="相手の優先度+1以上の攻撃技を無効化する";
 ABDESC.megalauncher="はどう技の威力を1.5倍にする";
 ABDESC.magicguard="攻撃技以外のダメージを受けない";
+ABDESC.taurosforce="すべての攻撃技を物理技として使う。はかいこうせんで倒すと反動なし";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -829,6 +831,8 @@ SPECIES.push(S("nidoqueen","ニドクイン","image/image/ニドクイン.gif",[
 SPECIES.push(S("nidoking","ニドキング","image/image/ニドキング.gif",["poison","ground"],{hp:81,atk:102,def:77,spa:85,spd:75,spe:85},"sheerforce",["earthpower","sludgewave","icebeam","thunderbolt"]));
 SPECIES.push(S("alakazam","フーディン","image/image/フーディン.gif",["psychic"],{hp:55,atk:50,def:45,spa:135,spd:95,spe:120},"magicguard",["psychic","shadowball","focusblast","calmMind"]));
 SPECIES.push(S("victreebel","ウツボット","image/image/ウツボット.gif",["grass","poison"],{hp:80,atk:105,def:65,spa:100,spd:70,spe:70},"chlorophyll",["powerwhip","sludgebomb","weatherball","sleeppowder"],[{stone:"victreebelite",stoneName:"ウツボットナイト",name:"メガウツボット",img:"image/image/メガウツボット.gif",types:["grass","poison"],base:{hp:80,atk:125,def:85,spa:120,spd:90,spe:80},abil:"chlorophyll"}]));
+SPECIES.push(S("jynx","ルージュラ","image/image/ルージュラ.gif",["ice","psychic"],{hp:65,atk:50,def:35,spa:115,spd:95,spe:95},"snowcloak",["icebeam","psychic","shadowball","lovelykiss"]));
+SPECIES.push(S("tauros","ケンタロス","image/image/ケンタロス.gif",["normal"],{hp:75,atk:100,def:95,spa:40,spd:70,spe:110},"taurosforce",["bodyslam","earthquake","stoneedge","hyperbeam"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -882,6 +886,8 @@ const LEARN={
   nidoking:["earthpower","sludgewave","icebeam","thunderbolt","flamethrower","focusblast","suckerpunch","protect"],
   alakazam:["psychic","shadowball","focusblast","calmMind","psyshock","energyball","dazzlinggleam","recover","protect"],
   victreebel:["powerwhip","sludgebomb","weatherball","sleeppowder","gigadrain","leafstorm","swordsdance","synthesis","protect"],
+  jynx:["icebeam","psychic","shadowball","lovelykiss","focusblast","calmMind","blizzard","protect"],
+  tauros:["bodyslam","earthquake","stoneedge","hyperbeam","closecombat","wildcharge","ironhead","zenheadbutt","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -2777,6 +2783,7 @@ function triggerDrampaFury(mon){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  if(attacker.abilEff==="taurosforce"&&move.cat!=="status"&&move.power>0)move={...move,cat:"phys",taurosPhysical:true};
   if(attacker.radiationOverload&&move.cat!=="status"&&move.power>0&&!move.radiationGain)move={...move,radiationGain:20};
   if(attacker.gammaRadiationGuaranteed&&move.gammaRadiation)move={...move,radiationChance:1};
   // えんかくで控えを狙った時は、場にいる相手の画像へ命中・ひんし演出を出さない。
@@ -3214,7 +3221,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(attacker.abilEff==="chargeboost"&&move.type==="electric"&&move.cat!=="status"){announceAbility(attacker);applyDrop(attacker,{spa:1});}
     if(move.removeElectricType&&attacker.curHp>0&&!attacker.isElectricTera){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
-    if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
+    if(move.recharge&&actualDamage>0&&!(attacker.abilEff==="taurosforce"&&move.name==="はかいこうせん"&&defender.curHp<=0)){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
     if(move.chandelureOverheat&&actualDamage>0){attacker.noAttackTurns=2;pushLog(`  └ ${attacker.name} は 次のターン、攻撃技を使えない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
