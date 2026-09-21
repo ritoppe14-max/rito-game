@@ -282,6 +282,7 @@ ABIL.queenlymajesty={name:"じょおうのいげん",eff:"queenlymajesty"};
 ABIL.megalauncher={name:"メガランチャー",eff:"megalauncher"};
 ABIL.magicguard={name:"マジックガード",eff:"magicguard"};
 ABIL.taurosforce={name:"もうれつパワー",eff:"taurosforce"};
+ABIL.illusion={name:"イリュージョン",eff:"illusion"};
 ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
@@ -326,6 +327,7 @@ ABDESC.queenlymajesty="相手の優先度+1以上の攻撃技を無効化する"
 ABDESC.megalauncher="はどう技の威力を1.5倍にする";
 ABDESC.magicguard="攻撃技以外のダメージを受けない";
 ABDESC.taurosforce="すべての攻撃技を物理技として使う。はかいこうせんで倒すと反動なし";
+ABDESC.illusion="(フレーバー)";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -835,6 +837,10 @@ SPECIES.push(S("jynx","ルージュラ","image/image/ルージュラ.gif",["ice"
 SPECIES.push(S("tauros","ケンタロス","image/image/ケンタロス.gif",["normal"],{hp:75,atk:100,def:95,spa:40,spd:70,spe:110},"taurosforce",["bodyslam","earthquake","stoneedge","hyperbeam"]));
 SPECIES.push(S("snorlax","カビゴン","image/image/カビゴン.gif",["normal"],{hp:160,atk:110,def:65,spa:65,spd:110,spe:30},"thickfat",["bodyslam","rest","sleeptalk","curse"]));
 SPECIES.push(S("breloom","キノガッサ","image/image/キノガッサ.gif",["grass","fighting"],{hp:60,atk:130,def:80,spa:60,spd:60,spe:70},"technician",["spore","machpunch","bulletseed","seedbomb"]));
+SPECIES.push(S("gothitelle","ゴチルゼル","image/image/ゴチルゼル.gif",["psychic"],{hp:70,atk:55,def:95,spa:95,spd:110,spe:65},"shadowtag",["psychic","shadowball","calmMind","thunderbolt"]));
+SPECIES.push(S("seismitoad","ガマゲロゲ","image/image/ガマゲロゲ.gif",["water","ground"],{hp:105,atk:95,def:75,spa:85,spd:75,spe:74},"waterabsorb",["muddywater","earthquake","sludgewave","stealthrock"]));
+SPECIES.push(S("zoroark","ゾロアーク","image/image/ゾロアーク.gif",["dark"],{hp:60,atk:105,def:60,spa:120,spd:60,spe:105},"illusion",["darkpulse","shadowball","flamethrower","nastyPlot"]));
+SPECIES.push(S("zebstrika","ゼブライカ","image/image/ゼブライカ.gif",["electric"],{hp:75,atk:100,def:63,spa:80,spd:63,spe:116},"lightningrod",["wildcharge","thunderbolt","flamecharge","voltswitch"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -892,6 +898,10 @@ const LEARN={
   tauros:["bodyslam","earthquake","stoneedge","hyperbeam","closecombat","wildcharge","ironhead","zenheadbutt","protect"],
   snorlax:["bodyslam","rest","sleeptalk","curse","crunch","earthquake","heavyslam","yawn","protect"],
   breloom:["spore","machpunch","bulletseed","seedbomb","drainpunch","closecombat","swordsdance","rocktomb","protect"],
+  gothitelle:["psychic","shadowball","calmMind","thunderbolt","darkpulse","trick","thunderwave","protect"],
+  seismitoad:["muddywater","earthquake","sludgewave","stealthrock","hydropump","icebeam","powerwhip","raindance","protect"],
+  zoroark:["darkpulse","shadowball","flamethrower","nastyPlot","focusblast","sludgebomb","uturn","protect"],
+  zebstrika:["wildcharge","thunderbolt","flamecharge","voltswitch","overheat","quickattack","thunderwave","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
