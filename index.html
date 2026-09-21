@@ -276,6 +276,7 @@ ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
 ABIL.bulletproof={name:"ぼうだん",eff:"bulletproof"};
 ABIL.infiltrator={name:"すりぬけ",eff:"infiltrator"};
+ABIL.punkrock={name:"パンクロック",eff:"punkrock"};
 ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
@@ -314,6 +315,7 @@ ABDESC.drampaRage="ちょうはつ・いばるを受けると激怒ジジーロ�
 ABDESC.bulletproof="たま・爆弾系の技を無効化";
 ABDESC.suctioncups="相手の強制交代技を無効化";
 ABDESC.infiltrator="3ターンに1回、相手の特防20%を無視して攻撃";
+ABDESC.punkrock="自分の音技を1.3倍、受ける音技を半減。ギアチェンジで電気／どくモードを切替";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -531,7 +533,7 @@ const M={
   drainingkiss:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75},
   mysticalfire:{name:"マジカルフレイム",type:"fire",cat:"spec",power:75,targetDrop:{chance:1,stats:{spa:-1}}},
   acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
-  bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true},
+  bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true}, overdrive:{name:"オーバードライブ",type:"electric",cat:"spec",power:80,sound:true}, gearshift:{name:"ギアチェンジ",type:"steel",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1,spe:2}},gearShift:true,desc:"攻撃+1・素早さ+2。ストリンダーは電気／どくモードを切り替える"},
   bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
   shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,desc:"必中"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
   knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0,tauntTurns:3}, swagger:{name:"いばる",type:"normal",cat:"status",power:0,targetBoost:{atk:2},confuseTurns:2}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
@@ -801,6 +803,7 @@ SPECIES.push(S("emboar","エンブオー","image/image/エンブオー.gif",["fi
 SPECIES.push(S("cradily","ユレイドル","image/image/ユレイドル.gif",["rock","grass"],{hp:86,atk:81,def:97,spa:81,spd:107,spe:43},"suctioncups",["gigadrain","energyball","rockslide","recover"]));
 SPECIES.push(S("chimecho","チリーン","image/image/チリーン.gif",["psychic"],{hp:75,atk:50,def:80,spa:95,spd:90,spe:65},"levitate",["psychic","shadowball","calmMind","recover"],[{stone:"chimechite",stoneName:"チリーンナイト",name:"メガチリーン",img:"image/image/メガチリーン.gif",types:["psychic","steel"],base:{hp:75,atk:50,def:110,spa:135,spd:120,spe:65},abil:"levitate"}]));
 SPECIES.push(S("chandelure","シャンデラ","image/image/シャンデラ.gif",["ghost","fire"],{hp:60,atk:55,def:90,spa:145,spd:90,spe:80},"infiltrator",["shadowball","chandelureOverheat","energyball","calmMind"]));
+SPECIES.push(S("toxtricity","ストリンダー","image/image/ストリンダー.gif",["electric","poison"],{hp:75,atk:98,def:70,spa:114,spd:70,spe:75},"punkrock",["overdrive","sludgewave","boomburst","gearshift"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -836,6 +839,7 @@ const LEARN={
   cradily:["gigadrain","energyball","rockslide","recover","earthpower","sludgebomb","stealthrock","toxic","protect"],
   chimecho:["psychic","shadowball","calmMind","recover","flashcannon","dazzlinggleam","thunderwave","protect"],
   chandelure:["shadowball","chandelureOverheat","energyball","calmMind","flamethrower","fireblast","psychic","trick","protect"],
+  toxtricity:["overdrive","sludgewave","boomburst","gearshift","discharge","thunderbolt","voltswitch","sludgebomb","hypervoice","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -1020,6 +1024,7 @@ ABILS.drampa=["drampaRage"];
 ABILS.kommoo=["bulletproof"];
 ABILS.cradily=["suctioncups"];
 ABILS.chandelure=["infiltrator"];
+ABILS.toxtricity=["punkrock"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
@@ -1773,6 +1778,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0; p.noAttackTurns=0; p.infiltratorTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   if(p.id==="morpeko"){p.morpekoBaseMaxHp=p.maxHp;p.morpekoFull=true;p.maxHp=Math.floor(p.maxHp*1.2);p.curHp=p.maxHp;}
+  if(p.id==="toxtricity"){p.punkMode="electric";p.gearShiftCount=0;p.punkParalyze=false;}
   return p;
 }
 function startBattleWith(p1party,p1sel,p2party,p2sel){
@@ -1988,6 +1994,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="morpekoHungry")atkStat*=1.2;
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(defender.abilEff==="morpekoFull")defStat*=1.2;
+  if(!move.ignoreAbility&&defender.abilEff==="punkrock"&&move.sound)defStat*=2;
   if(move.infiltratorPierce&&move.cat==="spec")defStat*=.8;
   if(move.cat==="phys"&&attacker.abilEff==="birdFlame")atkStat*=attacker.birdFlameMult||1;
   if(move.cat==="phys"&&!move.ignoreAbility&&(move.ignoreAbility?null:defender.abilEff)==="birdSnow"&&(defender.birdHail||["snow","hail","freeze","ひょうけつ","ゆき","あられ"].includes(weather)||defender.status==="freeze"))defStat*=1.5;
@@ -2008,6 +2015,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.itemKey==="powerband") atkStat*=1.05;
   if(attacker.abilEff==="supremeoverlord"){const team=attacker===me?myTeam:foeTeam;atkStat*=1+Math.min(5,team.filter(m=>m.fainted).length)*.1;}
   if(attacker.abilEff==="sheerforce"&&sheerForceBoosts(move)) atkStat*=1.3;    // ちからずく
+  if(attacker.abilEff==="punkrock"&&move.sound)atkStat*=1.3;
   if(attacker.status==="burn"&&!attacker.safeBurn&&attacker.abilEff!=="guts"&&move.cat==="phys") atkStat*=0.5;                // やけど
   if(weather==="sand"&&defender.types.includes("rock")&&move.cat==="spec") defStat*=1.5; // 砂:いわ特防↑
   if(weather==="snow"&&defender.types.includes("ice")&&move.cat==="phys") defStat*=1.5;
@@ -2097,7 +2105,7 @@ function sheerForceBoosts(move){return !!(move.targetDrop||move.flinch||move.fre
 function effSpeed(m){
   // 同じレベルで戦うため、種族値ではなく素早さ実数値を基準に比較する
   let s=Math.floor(m.base.spe*2*LEVEL/100+5)*stageMult(m.stages.spe||0);
-  if(m.status==="paralyze")s*=0.5;
+  if(m.status==="paralyze")s*=m.punkParalyze?.75:.5;
   if(m.falinksRightFootTurns>0)s*=1.1;
   if(m.abilEff==="swiftswim"&&weather==="rain")s*=2;
   if(m.abilEff==="sandrush"&&weather==="sand")s*=2;
@@ -2426,7 +2434,7 @@ function runAttacks(movers,i,done){
     if(Math.random()<0.25){ atk.status=null; renderStages(); pushLog(`  └ ${atk.name} の こおりが とけた！`,"#7ad1ff"); }
     else { atk.firstTurnReady=false; setTimeout(()=>{pushLog(`  └ ${atk.name} は こおって 動けない！`,"#9fb3d6");runAttacks(movers,i+1,done);},450); return; }
   }
-  if(atk.status==="paralyze"&&Math.random()<0.2){
+  if(atk.status==="paralyze"&&Math.random()<(atk.punkParalyze?.15:.2)){
     atk.firstTurnReady=false;
     setTimeout(()=>{pushLog(`  └ ${atk.name} は しびれて 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450);
     return;
@@ -2881,6 +2889,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.trevenantCurse){setTimeout(()=>{defender.trevenantCurseSource=attacker;pushLog(`  └ ${defender.name} に のろいをかけた！ 交代まで両者のHPが削られる！`,"#b061ff");cb();},450);return;}
   if(move.rivalKaiCurse){setTimeout(()=>{const cost=Math.max(1,Math.floor(attacker.maxHp*.25));attacker.curHp=Math.max(0,attacker.curHp-cost);renderHp();pushLog(`  └ ${attacker.name} は HPを${cost}削って ${defender.name} に のろいをかけた！`,"#b061ff");if(attacker.curHp<=0){faintMon(attacker,attacker===me?"myImg":"foeImg");cb();return;}defender.rivalKaiCurseSource=attacker;cb();},450);return;}
   if(move.meltdown){setTimeout(()=>{applyDrop(attacker,{def:-1,spe:1});addRadiation(defender,40);cb();},450);return;}
+  if(move.cat==="status"&&move.gearShift){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);if(attacker.abilEff==="punkrock"){attacker.gearShiftCount=(attacker.gearShiftCount||0)+1;attacker.punkMode=attacker.gearShiftCount%2===1?"electric":"poison";announceAbility(attacker);pushLog(`  ★ ${attacker.name} は ${attacker.punkMode==="electric"?"電気":"どく"}モード！`,attacker.punkMode==="electric"?"#ffcb05":"#b061ff");}cb();},450); return; }
   if(move.cat==="status"&&move.selfBoost){ setTimeout(()=>{tryStatEffect(attacker,move.selfBoost);cb();},450); return; }
   if(move.hazard){
     const targetSide=birdSide(defender);
@@ -3000,6 +3009,11 @@ function attack(attacker,defender,move,defImgId,cb){
     electromorphosisOnHit(attacker,defender,move,actualDamage);
     windPowerOnHit(attacker,defender,move,actualDamage);
     const effectTarget=mirrorTarget(attacker,defender,move),effectSource=effectTarget===attacker?defender:attacker;
+    if(actualDamage>0&&attacker.abilEff==="punkrock"){
+      announceAbility(attacker);
+      if((attacker.punkMode||"electric")==="electric"){applyDrop(effectTarget,{spe:-1});if(effectTarget.status==="paralyze"||applyStatus(effectTarget,"paralyze",attacker))effectTarget.punkParalyze=true;pushLog(`  ★ 電気モード！ ${effectTarget.name} の素早さ低下・弱まったまひ！`,"#ffcb05");}
+      else {applyDrop(effectTarget,{spd:-1});applyStatus(effectTarget,"poison",attacker);pushLog(`  ★ どくモード！ ${effectTarget.name} の特防低下・どく！`,"#b061ff");}
+    }
     if(actualDamage>0&&move.radiationGain&&!move.radiationApplied){move.radiationApplied=true;if(!move.radiationChance||Math.random()<move.radiationChance)addRadiation(defender,move.radiationGain+(move.radiationMagicPerSpend||0)*(move.radiationMagicSpentApplied?0:(move.magicSpend||0)));}
     if(actualDamage>0&&move.kokugaiBreath){const doubled=attacker.kokugaiBreathDoubleTurns===1;attacker.kokugaiBreathDoubleTurns=doubled?0:2;defender.kokugaiBreathSource=attacker;pushLog(`  └ ${doubled?"りゅうのいぶきの威力は元に戻った！":"次のターン、りゅうのいぶきの威力が2倍！"}`,"#b061ff");}
     if(effectTarget===attacker&&["freeze","burn","poison","paralyze","hypersleep","flinch","targetDrop","salt","switchLock","trapTurns","soundBlock","removeItem"].some(k=>move[k]))pushLog("  ★ マジックミラーで追加効果を反射！");
