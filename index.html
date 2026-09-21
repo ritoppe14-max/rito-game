@@ -275,6 +275,7 @@ ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
 ABIL.bulletproof={name:"ぼうだん",eff:"bulletproof"};
+ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
 ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
@@ -310,6 +311,7 @@ ABDESC.unburden="持ち物を持っていないと素早さ実数値が2倍";
 ABDESC.rage="HPが減ると攻撃が上がる";
 ABDESC.drampaRage="ちょうはつ・いばるを受けると激怒ジジーロンになり、全種族値+20";
 ABDESC.bulletproof="たま・爆弾系の技を無効化";
+ABDESC.suctioncups="相手の強制交代技を無効化";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -794,6 +796,7 @@ SPECIES.push(S("hellgar","ヘルガー","image/image/ヘルガー.gif",["dark","
 SPECIES.push(S("drampa","ジジーロン","image/image/ジジーロン.gif",["normal","dragon"],{hp:78,atk:60,def:85,spa:135,spd:91,spe:36},"drampaRage",["hypervoice","dpulse","flamethrower","thunderbolt"]));
 SPECIES.push(S("kommoo","ジャラランガ","image/image/ジャラランガ.gif",["dragon","fighting"],{hp:75,atk:110,def:125,spa:100,spd:105,spe:85},"bulletproof",["dragonclaw","closecombat","scaleshot","bodypress"]));
 SPECIES.push(S("emboar","エンブオー","image/image/エンブオー.gif",["fire","fighting"],{hp:110,atk:123,def:65,spa:100,spd:65,spe:65},"blaze",["flaredrive","closecombat","suckerpunch","wildcharge"],[{stone:"emboarite",stoneName:"エンブオナイト",name:"メガエンブオー",img:"image/image/メガエンブオー.gif",types:["fire","fighting"],base:{hp:110,atk:148,def:75,spa:110,spd:110,spe:75},abil:"moldbreaker"}]));
+SPECIES.push(S("cradily","ユレイドル","image/image/ユレイドル.gif",["rock","grass"],{hp:86,atk:81,def:97,spa:81,spd:107,spe:43},"suctioncups",["gigadrain","energyball","rockslide","recover"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -826,6 +829,7 @@ const LEARN={
   drampa:["hypervoice","dpulse","flamethrower","thunderbolt","icebeam","focusblast","psychic","calmMind","protect"],
   kommoo:["dragonclaw","closecombat","scaleshot","bodypress","dragondance","irondefense","earthquake","poisonjab","ironhead","flamethrower","flashcannon","protect"],
   emboar:["flaredrive","closecombat","suckerpunch","wildcharge","drainpunch","earthquake","rockslide","flamethrower","fireblast","focusblast","buildup","protect"],
+  cradily:["gigadrain","energyball","rockslide","recover","earthpower","sludgebomb","stealthrock","toxic","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -1008,6 +1012,7 @@ Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramor
 ABILS.baxcalibur=["berserker"];
 ABILS.drampa=["drampaRage"];
 ABILS.kommoo=["bulletproof"];
+ABILS.cradily=["suctioncups"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
@@ -2618,24 +2623,24 @@ function psychicForceSwitch(attacker,move,cb){
   const side=birdSide(attacker)==="me"?"foe":"me";
   const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
   if(typeof multi!=="undefined"&&multi){
-    const bench=multiBench(side).slice(), outgoing=multiLiving(side).filter(m=>ignores||(m.abilEff!=="heavymetal"&&m.abilEff!=="guarddog"));
+    const bench=multiBench(side).slice(), outgoing=multiLiving(side).filter(m=>ignores||(m.abilEff!=="heavymetal"&&m.abilEff!=="guarddog"&&m.abilEff!=="suctioncups"));
     const changes=outgoing.slice(0,bench.length).map((mon,i)=>done=>multiSwitch({side,mon,replacement:bench[i]},done));
     if(!changes.length)pushLog("  └ 交代できる控えがいないか、特性で交代を防いだ！");
     series(changes,cb);return;
   }
   const target=activeOf(side), team=teamOf(side), idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
-  if(idx<0||(!ignores&&(target.abilEff==="heavymetal"||target.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
+  if(idx<0||(!ignores&&(target.abilEff==="heavymetal"||target.abilEff==="guarddog"||target.abilEff==="suctioncups"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
   doSwitch(side,idx,()=>{if(move.forceSwitchLock)activeOf(side).switchLock=move.forceSwitchLock;cb();});
 }
 function forceOneTargetSwitch(attacker,defender,move,cb){
   const ignores=move.ignoreAbility||attacker.abilEff==="moldbreaker"||attacker.itemKey==="mougekiScarf";
   if(typeof multi!=="undefined"&&multi){
     const side=multi.slots.me.includes(defender)?"me":"foe",bench=multiBench(side);
-    if(!bench.length||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
+    if(!bench.length||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"||defender.abilEff==="suctioncups"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
     multiSwitch({side,mon:defender,replacement:bench[0]},()=>{if(move.forceSwitchLock)bench[0].switchLock=move.forceSwitchLock;cb();});return;
   }
   const side=defender===me?"me":"foe",team=teamOf(side),idx=team.findIndex((m,i)=>i!==activeIdxOf(side)&&!m.fainted&&m.curHp>0);
-  if(idx<0||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
+  if(idx<0||(!ignores&&(defender.abilEff==="heavymetal"||defender.abilEff==="guarddog"||defender.abilEff==="suctioncups"))){pushLog("  └ 相手は強制交代できない！");cb();return;}
   doSwitch(side,idx,()=>{if(move.forceSwitchLock)activeOf(side).switchLock=move.forceSwitchLock;cb();});
 }
 function eeveeAttack(attacker,defender,move,img,cb){
