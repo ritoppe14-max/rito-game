@@ -811,6 +811,7 @@ SPECIES.push(S("toxtricity","ストリンダー","image/image/ストリンダー
 SPECIES.push(S("delphox","マフォクシー","image/image/マフォクシー.gif",["fire","psychic"],{hp:75,atk:69,def:72,spa:114,spd:100,spe:104},"blaze",["flamethrower","psychic","shadowball","calmMind"],[{stone:"delphoxite",stoneName:"マフォクシナイト",name:"メガマフォクシー",img:"image/image/メガマフォクシー.gif",types:["fire","psychic"],base:{hp:75,atk:69,def:92,spa:154,spd:120,spe:124},abil:"magicmirror"}]));
 SPECIES.push(S("comfey","キュワワー","image/image/キュワワー.gif",["fairy"],{hp:51,atk:52,def:90,spa:82,spd:110,spe:100},"healingshift",["healingshift","comfeySynthesis","comfeyMagicalLeaf","calmMind"]));
 SPECIES.push(S("tsareena","アマージョ","image/image/アマージョ.gif",["grass"],{hp:72,atk:120,def:98,spa:50,spd:98,spe:72},"queenlymajesty",["tropkick","highjumpkick","powerwhip","rapidspin"]));
+SPECIES.push(S("jumpluff","ワタッコ","image/image/ワタッコ.gif",["grass","flying"],{hp:75,atk:55,def:70,spa:55,spd:95,spe:110},"chlorophyll",["acrobatics","sleeppowder","leechseed","tailwind"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -850,6 +851,7 @@ const LEARN={
   delphox:["flamethrower","psychic","shadowball","calmMind","fireblast","mysticalfire","focusblast","energyball","trick","protect"],
   comfey:["healingshift","comfeySynthesis","comfeyMagicalLeaf","calmMind","dazzlinggleam","drainingkiss","protect"],
   tsareena:["tropkick","highjumpkick","powerwhip","rapidspin","tripleaxel","playrough","knockoff","synthesis","protect"],
+  jumpluff:["acrobatics","sleeppowder","leechseed","tailwind","gigadrain","uturn","stunspore","synthesis","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
