@@ -275,6 +275,7 @@ ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
 ABIL.bulletproof={name:"ぼうだん",eff:"bulletproof"};
+ABIL.infiltrator={name:"すりぬけ",eff:"infiltrator"};
 ABIL.suctioncups={name:"きゅうばん",eff:"suctioncups"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
@@ -312,6 +313,7 @@ ABDESC.rage="HPが減ると攻撃が上がる";
 ABDESC.drampaRage="ちょうはつ・いばるを受けると激怒ジジーロンになり、全種族値+20";
 ABDESC.bulletproof="たま・爆弾系の技を無効化";
 ABDESC.suctioncups="相手の強制交代技を無効化";
+ABDESC.infiltrator="3ターンに1回、相手の特防20%を無視して攻撃";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -409,7 +411,7 @@ const M={
   softboiled:{name:"タマゴうみ",type:"normal",cat:"status",power:0,recover:.50},
   surf:{name:"なみのり",type:"water",cat:"spec",power:90},
   hydropump:{name:"ハイドロポンプ",type:"water",cat:"spec",power:110},
-  hydrocannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:150,recharge:true,desc:"威力150。使用した次のターンは動けない"},
+  hydrocannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:150,recharge:true,desc:"威力150。使用した次のターンは動けない"}, chandelureOverheat:{name:"オーバーヒート",type:"fire",cat:"spec",power:25,multiHit:4,multiPowers:[25,25,25,50],chandelureOverheat:true,desc:"威力25×3+50。次のターンは攻撃技を使えない"},
   empoleonHydroCannon:{name:"ハイドロカノン",type:"water",cat:"spec",power:120,trapTurns:3,trapDenom:10,trapLabel:"ハイドロカノンの激流",trapColor:"#4fc3f7",desc:"エンペルト専用：3ターン相手に激流ダメージ"},
   snipeshot:{name:"ねらいうち",type:"water",cat:"spec",power:80,forceCrit:true},
   acrobatics:{name:"アクロバット",type:"flying",cat:"phys",power:55,behindMove:true},
@@ -798,6 +800,7 @@ SPECIES.push(S("kommoo","ジャラランガ","image/image/ジャラランガ.gif
 SPECIES.push(S("emboar","エンブオー","image/image/エンブオー.gif",["fire","fighting"],{hp:110,atk:123,def:65,spa:100,spd:65,spe:65},"blaze",["flaredrive","closecombat","suckerpunch","wildcharge"],[{stone:"emboarite",stoneName:"エンブオナイト",name:"メガエンブオー",img:"image/image/メガエンブオー.gif",types:["fire","fighting"],base:{hp:110,atk:148,def:75,spa:110,spd:110,spe:75},abil:"moldbreaker"}]));
 SPECIES.push(S("cradily","ユレイドル","image/image/ユレイドル.gif",["rock","grass"],{hp:86,atk:81,def:97,spa:81,spd:107,spe:43},"suctioncups",["gigadrain","energyball","rockslide","recover"]));
 SPECIES.push(S("chimecho","チリーン","image/image/チリーン.gif",["psychic"],{hp:75,atk:50,def:80,spa:95,spd:90,spe:65},"levitate",["psychic","shadowball","calmMind","recover"],[{stone:"chimechite",stoneName:"チリーンナイト",name:"メガチリーン",img:"image/image/メガチリーン.gif",types:["psychic","steel"],base:{hp:75,atk:50,def:110,spa:135,spd:120,spe:65},abil:"levitate"}]));
+SPECIES.push(S("chandelure","シャンデラ","image/image/シャンデラ.gif",["ghost","fire"],{hp:60,atk:55,def:90,spa:145,spd:90,spe:80},"infiltrator",["shadowball","chandelureOverheat","energyball","calmMind"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -832,6 +835,7 @@ const LEARN={
   emboar:["flaredrive","closecombat","suckerpunch","wildcharge","drainpunch","earthquake","rockslide","flamethrower","fireblast","focusblast","buildup","protect"],
   cradily:["gigadrain","energyball","rockslide","recover","earthpower","sludgebomb","stealthrock","toxic","protect"],
   chimecho:["psychic","shadowball","calmMind","recover","flashcannon","dazzlinggleam","thunderwave","protect"],
+  chandelure:["shadowball","chandelureOverheat","energyball","calmMind","flamethrower","fireblast","psychic","trick","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -1015,6 +1019,7 @@ ABILS.baxcalibur=["berserker"];
 ABILS.drampa=["drampaRage"];
 ABILS.kommoo=["bulletproof"];
 ABILS.cradily=["suctioncups"];
+ABILS.chandelure=["infiltrator"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
@@ -1765,7 +1770,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0;
+  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0; p.noAttackTurns=0; p.infiltratorTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   if(p.id==="morpeko"){p.morpekoBaseMaxHp=p.maxHp;p.morpekoFull=true;p.maxHp=Math.floor(p.maxHp*1.2);p.curHp=p.maxHp;}
   return p;
@@ -1983,6 +1988,7 @@ function calcDamage(attacker,defender,move,isCrit){
   if(attacker.abilEff==="morpekoHungry")atkStat*=1.2;
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
   if(defender.abilEff==="morpekoFull")defStat*=1.2;
+  if(move.infiltratorPierce&&move.cat==="spec")defStat*=.8;
   if(move.cat==="phys"&&attacker.abilEff==="birdFlame")atkStat*=attacker.birdFlameMult||1;
   if(move.cat==="phys"&&!move.ignoreAbility&&(move.ignoreAbility?null:defender.abilEff)==="birdSnow"&&(defender.birdHail||["snow","hail","freeze","ひょうけつ","ゆき","あられ"].includes(weather)||defender.status==="freeze"))defStat*=1.5;
   if(move.cat==="spec")defStat*=defender.birdSpdMult||1;
@@ -2724,6 +2730,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.longReachBench)defImgId=null;
   if(move.requiresElectricType&&!attacker.types.includes("electric")){pushLog(`  └ ${attacker.name} は 電気タイプではないため ${move.name} に失敗した！`,"#9fb3d6");cb();return;}
   if(attacker.tauntTurns>0&&move.cat==="status"){pushLog(`  └ ${attacker.name} はちょうはつされていて変化技を使えない！`,"#9fb3d6");cb();return;}
+  if(attacker.noAttackTurns>0&&move.cat!=="status"&&move.power>0){pushLog(`  └ ${attacker.name} は オーバーヒートの反動で 攻撃技を使えない！`,"#9fb3d6");cb();return;}
   if(attacker.id==="morpeko"&&move.morpekoMove)move={...move,type:attacker.morpekoFull?"electric":"dark"};
   if(attacker.id==="morpeko"&&move.morpekoPayback&&!move.morpekoPaybackResolved){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2,morpekoPaybackResolved:true};}
   if(attacker.abilEff==="sawbladeFangs"&&move.sawbladeFang&&!move.sawbladeFangsResolved){announceAbility(attacker);move={...move,multiHit:2,sawbladeFangsResolved:true};}
@@ -2788,6 +2795,14 @@ function attack(attacker,defender,move,defImgId,cb){
   if(move.ritual&&attacker.usedRitual){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.ritual){attacker.usedRitual=true;attacker.ritualTurns=5;}
   if(move.sound&&attacker.soundBlocked>0){setTimeout(()=>{pushLog(`  └ ${attacker.name} は音技を封じられている！`,"#9fb3d6");cb();},350);return;}
+  if(!move.infiltratorTurnResolved&&attacker.abilEff==="infiltrator"){
+    attacker.infiltratorTurns=(attacker.infiltratorTurns||0)+1;
+    if(attacker.infiltratorTurns>=3){
+      attacker.infiltratorTurns=0;
+      if(move.cat==="spec"&&move.power>0){move={...move,infiltratorPierce:true};announceAbility(attacker);pushLog(`  ★ ${attacker.name} の すりぬけ！ 相手の特防20%を貫通！`,"#b061ff");}
+    }
+    move={...move,infiltratorTurnResolved:true};
+  }
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.fifthSlot?"usedFifthSlot":move.onceFlag||"usedPlayTogether";
   if((move.onceBattle||move.fifthSlot)&&attacker[onceFlag]){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
@@ -3139,6 +3154,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.removeElectricType&&attacker.curHp>0&&!attacker.isElectricTera){attacker.types=attacker.types.filter(type=>type!=="electric");pushLog(`  └ ${attacker.name} の 電気タイプが消えた！`,"#ffcb05");renderActive();}
     if(move.selfDrop) applyDrop(attacker,move.selfDrop);
     if(move.recharge&&actualDamage>0){attacker.rechargeTurns=1;pushLog(`  └ ${attacker.name} は 次のターン動けない！`,"#9fb3d6");}
+    if(move.chandelureOverheat&&actualDamage>0){attacker.noAttackTurns=2;pushLog(`  └ ${attacker.name} は 次のターン、攻撃技を使えない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
     if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
@@ -3664,7 +3680,7 @@ function applyTrevenantEndEffects(activeMons){
 }
 function endTurn(){
   advanceFrozenGlaiveVulnerability([...myTeam,...foeTeam]);
-  [...myTeam,...foeTeam].forEach(mon=>{if(mon.justSwitched)mon.justSwitched=false;if(mon.kokugaiBreathDoubleTurns>0)mon.kokugaiBreathDoubleTurns--;});
+  [...myTeam,...foeTeam].forEach(mon=>{if(mon.justSwitched)mon.justSwitched=false;if(mon.kokugaiBreathDoubleTurns>0)mon.kokugaiBreathDoubleTurns--;if(mon.noAttackTurns>0)mon.noAttackTurns--;});
   [...myTeam,...foeTeam].forEach(mon=>{if(mon.tailwindTurns>0)mon.tailwindTurns--;});
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});
   endDynamax(me,"myImg"); endDynamax(foe,"foeImg");
