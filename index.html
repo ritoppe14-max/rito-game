@@ -820,6 +820,11 @@ SPECIES.push(S("raticate","ラッタ","image/image/ラッタ.gif",["normal"],{hp
 SPECIES.push(S("butterfree","バタフリー","image/image/バタフリー.gif",["bug","flying"],{hp:60,atk:45,def:50,spa:90,spd:80,spe:70},"compoundeyes",["bugbuzz","aircutter","sleeppowder","quiverdance"]));
 SPECIES.push(S("beedrill","スピアー","image/image/スピアー.gif",["bug","poison"],{hp:65,atk:90,def:40,spa:45,spd:80,spe:75},"sniper",["poisonjab","xscissor","drillrun","swordsdance"]));
 SPECIES.push(S("pidgeot","ピジョット","image/image/ピジョット.gif",["normal","flying"],{hp:83,atk:80,def:75,spa:70,spd:70,spe:101},"pressure",["hurricane","airslash","bravebird","roost"]));
+SPECIES.push(S("arbok","アーボック","image/image/アーボック.gif",["poison"],{hp:60,atk:95,def:69,spa:65,spd:79,spe:80},"intimidate",["poisonjab","crunch","earthquake","glare"]));
+SPECIES.push(S("fearow","オニドリル","image/image/オニドリル.gif",["normal","flying"],{hp:65,atk:90,def:65,spa:61,spd:61,spe:100},"sniper",["drillrun","bravebird","drillpeck","uturn"]));
+SPECIES.push(S("sandslash","サンドパン","image/image/サンドパン.gif",["ground"],{hp:75,atk:100,def:110,spa:45,spd:55,spe:65},"sandveil",["earthquake","ironhead","rockslide","swordsdance"]));
+SPECIES.push(S("nidoqueen","ニドクイン","image/image/ニドクイン.gif",["poison","ground"],{hp:90,atk:92,def:87,spa:75,spd:85,spe:76},"sheerforce",["earthpower","sludgewave","icebeam","thunderbolt"]));
+SPECIES.push(S("nidoking","ニドキング","image/image/ニドキング.gif",["poison","ground"],{hp:81,atk:102,def:77,spa:85,spd:75,spe:85},"sheerforce",["earthpower","sludgewave","icebeam","thunderbolt"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -866,6 +871,11 @@ const LEARN={
   butterfree:["bugbuzz","aircutter","sleeppowder","quiverdance","hurricane","psychic","gigadrain","stunspore","protect"],
   beedrill:["poisonjab","xscissor","drillrun","swordsdance","uturn","knockoff","fellstinger","protect"],
   pidgeot:["hurricane","airslash","bravebird","roost","uturn","tailwind","heatwave","protect"],
+  arbok:["poisonjab","crunch","earthquake","glare","gunkshot","icefang","firefang","thunderfang","coil","protect"],
+  fearow:["drillrun","bravebird","drillpeck","uturn","drillpeck","quickattack","drillrun","protect"],
+  sandslash:["earthquake","ironhead","rockslide","swordsdance","rapidspin","knockoff","xscissor","protect"],
+  nidoqueen:["earthpower","sludgewave","icebeam","thunderbolt","flamethrower","stealthrock","toxicspikes","protect"],
+  nidoking:["earthpower","sludgewave","icebeam","thunderbolt","flamethrower","focusblast","suckerpunch","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
