@@ -273,6 +273,7 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
 ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
+ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
 ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
@@ -306,6 +307,7 @@ ABIL.innardsout={name:"とびだすなかみ",eff:"innardsout"};
 ABDESC.defiant="能力が下がると攻撃が2段階上がる";
 ABDESC.unburden="持ち物を持っていないと素早さ実数値が2倍";
 ABDESC.rage="HPが減ると攻撃が上がる";
+ABDESC.drampaRage="ちょうはつ・いばるを受けると激怒ジジーロンになり、全種族値+20";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -526,7 +528,7 @@ const M={
   bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true},
   bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
   shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,desc:"必中"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
-  knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
+  knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0,tauntTurns:3}, swagger:{name:"いばる",type:"normal",cat:"status",power:0,targetBoost:{atk:2},confuseTurns:2}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
   voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1,bite:true,sawbladeFang:true}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
   dazzlinggleam:{name:"マジカルシャイン",type:"fairy",cat:"spec",power:80,spread:true}, moonblast:{name:"ムーンフォース",type:"fairy",cat:"spec",power:95,targetDrop:{chance:.3,stats:{spa:-1}}}, drainingkiss2:{name:"ドレインキッス",type:"fairy",cat:"spec",power:50,healDamage:.75}, playnice:{name:"じゃれつく",type:"fairy",cat:"phys",power:90},
   sacredsword:{name:"せいなるつるぎ",type:"fighting",cat:"phys",power:90}, brickbreak:{name:"かわらわり",type:"fighting",cat:"phys",power:75}, vacuumwave:{name:"しんくうは",type:"fighting",cat:"spec",power:40,prio:1}, bulldoze:{name:"じならし",type:"ground",cat:"phys",power:60,targetDrop:{chance:1,stats:{spe:-1}}}, stompingtantrum:{name:"10まんばりき",type:"ground",cat:"phys",power:75},
@@ -787,6 +789,7 @@ SPECIES.push(S("kairyu","カイリュー","image/image/カイリュー.gif",["dr
 SPECIES.push(S("heracross","ヘラクロス","image/image/ヘラクロス.gif",["bug","fighting"],{hp:80,atk:125,def:75,spa:40,spd:95,spe:85},"guts",["megahorn","closecombat","rockblast","bulletseed"],[{stone:"heracronite",stoneName:"ヘラクロスナイト",name:"メガヘラクロス",img:"image/image/メガヘラクロス.gif",types:["bug","fighting"],base:{hp:80,atk:185,def:115,spa:40,spd:105,spe:75},abil:"skilllink"}]));
 SPECIES.push(S("airmudo","エアームド","image/image/エアームド.gif",["steel","flying"],{hp:65,atk:80,def:140,spa:40,spd:70,spe:70},"pressure",["ironhead","bravebird","roost","spikes"],[{stone:"airmudonite",stoneName:"エアームドナイト",name:"メガエアームド",img:"image/image/メガエアームド.gif",types:["steel","flying"],base:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110},abil:"goodasgold"}]));
 SPECIES.push(S("hellgar","ヘルガー","image/image/ヘルガー.gif",["dark","fire"],{hp:75,atk:90,def:50,spa:110,spd:80,spe:95},"drought",["darkpulse","flamethrower","nastyPlot","sludgebomb"],[{stone:"hellgarite",stoneName:"ヘルガナイト",name:"メガヘルガー",img:"image/image/メガヘルガー.gif",types:["dark","fire"],base:{hp:75,atk:90,def:90,spa:140,spd:90,spe:115},abil:"sunpower"}]));
+SPECIES.push(S("drampa","ジジーロン","image/image/ジジーロン.gif",["normal","dragon"],{hp:78,atk:60,def:85,spa:135,spd:91,spe:36},"drampaRage",["hypervoice","dpulse","flamethrower","thunderbolt"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -816,6 +819,7 @@ const BERSERKER_AERODACTYL={name:"メガプテラ",img:"image/image/メガプテ
 
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
+  drampa:["hypervoice","dpulse","flamethrower","thunderbolt","icebeam","focusblast","psychic","calmMind","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -996,6 +1000,7 @@ const ABILS={
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
 ABILS.baxcalibur=["berserker"];
+ABILS.drampa=["drampaRage"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
@@ -1746,7 +1751,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.infinitePower=0;
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
-  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.electricCharge=false; p.tailwindTurns=0;
+  p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   if(p.id==="morpeko"){p.morpekoBaseMaxHp=p.maxHp;p.morpekoFull=true;p.maxHp=Math.floor(p.maxHp*1.2);p.curHp=p.maxHp;}
   return p;
@@ -2685,6 +2690,17 @@ function mirrorTarget(attacker,defender,move){
   return defender;
 }
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
+function triggerDrampaFury(mon){
+  if(!mon||mon.id!=="drampa"||mon.drampaFury)return false;
+  const hpRatio=mon.maxHp>0?mon.curHp/mon.maxHp:1;
+  mon.drampaFury=true;mon.name="激怒ジジーロン";
+  Object.keys(mon.base).forEach(stat=>mon.base[stat]+=20);
+  mon.maxHp=Math.floor((mon.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(mon.itemKey==="healcrown"?1.05:1));
+  mon.curHp=Math.max(1,Math.min(mon.maxHp,Math.round(mon.maxHp*hpRatio)));
+  if(mon===me||mon===foe)renderActive();renderHp();renderStages();
+  pushLog(`  ★ ${mon.name} は激怒した！ 全種族値が20上がった！`,"#ff7043");
+  return true;
+}
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
   if(attacker.radiationOverload&&move.cat!=="status"&&move.power>0&&!move.radiationGain)move={...move,radiationGain:20};
@@ -2885,6 +2901,9 @@ function attack(attacker,defender,move,defImgId,cb){
     return;
   }
   if(move.cat==="status"){
+    if(move.tauntTurns)defender.tauntTurns=Math.max(defender.tauntTurns||0,move.tauntTurns);
+    if(move.targetBoost)applyDrop(defender,move.targetBoost);
+    if(move.tauntTurns||move.targetBoost)triggerDrampaFury(defender);
     if(move.targetDrop&&Math.random()<(move.targetDrop.chance??1))applyDrop(defender,move.targetDrop.stats);
     for(const status of ["burn","freeze","poison","paralyze"])if(move[status]&&Math.random()<move[status])applyStatus(defender,status,attacker);
     if(move.confuseTurns){defender.confusionTurns=move.confuseTurns;renderStages();pushLog(`  └ ${defender.name} は ${move.confuseTurns}ターン混乱した！`,"#b061ff");}
