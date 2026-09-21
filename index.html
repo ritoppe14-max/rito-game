@@ -834,6 +834,7 @@ SPECIES.push(S("victreebel","ウツボット","image/image/ウツボット.gif",
 SPECIES.push(S("jynx","ルージュラ","image/image/ルージュラ.gif",["ice","psychic"],{hp:65,atk:50,def:35,spa:115,spd:95,spe:95},"snowcloak",["icebeam","psychic","shadowball","lovelykiss"]));
 SPECIES.push(S("tauros","ケンタロス","image/image/ケンタロス.gif",["normal"],{hp:75,atk:100,def:95,spa:40,spd:70,spe:110},"taurosforce",["bodyslam","earthquake","stoneedge","hyperbeam"]));
 SPECIES.push(S("snorlax","カビゴン","image/image/カビゴン.gif",["normal"],{hp:160,atk:110,def:65,spa:65,spd:110,spe:30},"thickfat",["bodyslam","rest","sleeptalk","curse"]));
+SPECIES.push(S("breloom","キノガッサ","image/image/キノガッサ.gif",["grass","fighting"],{hp:60,atk:130,def:80,spa:60,spd:60,spe:70},"technician",["spore","machpunch","bulletseed","seedbomb"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -890,6 +891,7 @@ const LEARN={
   jynx:["icebeam","psychic","shadowball","lovelykiss","focusblast","calmMind","blizzard","protect"],
   tauros:["bodyslam","earthquake","stoneedge","hyperbeam","closecombat","wildcharge","ironhead","zenheadbutt","protect"],
   snorlax:["bodyslam","rest","sleeptalk","curse","crunch","earthquake","heavyslam","yawn","protect"],
+  breloom:["spore","machpunch","bulletseed","seedbomb","drainpunch","closecombat","swordsdance","rocktomb","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
