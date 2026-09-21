@@ -274,6 +274,7 @@ ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
 ABIL.rage={name:"ぎゃくじょう",eff:"rage"};
 ABIL.drampaRage={name:"ぎゃくじょう",eff:"drampaRage"};
+ABIL.bulletproof={name:"ぼうだん",eff:"bulletproof"};
 ABIL.stancechange={name:"バトルスイッチ",eff:"stancechange"};
 ABIL.grimneigh={name:"くろのいななき",eff:"grimneigh"};
 ABIL.chillingneigh={name:"しろのいななき",eff:"chillingneigh"};
@@ -308,6 +309,7 @@ ABDESC.defiant="能力が下がると攻撃が2段階上がる";
 ABDESC.unburden="持ち物を持っていないと素早さ実数値が2倍";
 ABDESC.rage="HPが減ると攻撃が上がる";
 ABDESC.drampaRage="ちょうはつ・いばるを受けると激怒ジジーロンになり、全種族値+20";
+ABDESC.bulletproof="たま・爆弾系の技を無効化";
 ABDESC.steelknight="威力65以下の技のダメージを1.5倍";
 ABDESC.rottenfeast="相手を倒すとHPが全回復";
 ABDESC.gulpMissile="なみのりで構え、被弾時に反撃";
@@ -790,6 +792,7 @@ SPECIES.push(S("heracross","ヘラクロス","image/image/ヘラクロス.gif",[
 SPECIES.push(S("airmudo","エアームド","image/image/エアームド.gif",["steel","flying"],{hp:65,atk:80,def:140,spa:40,spd:70,spe:70},"pressure",["ironhead","bravebird","roost","spikes"],[{stone:"airmudonite",stoneName:"エアームドナイト",name:"メガエアームド",img:"image/image/メガエアームド.gif",types:["steel","flying"],base:{hp:65,atk:140,def:110,spa:40,spd:100,spe:110},abil:"goodasgold"}]));
 SPECIES.push(S("hellgar","ヘルガー","image/image/ヘルガー.gif",["dark","fire"],{hp:75,atk:90,def:50,spa:110,spd:80,spe:95},"drought",["darkpulse","flamethrower","nastyPlot","sludgebomb"],[{stone:"hellgarite",stoneName:"ヘルガナイト",name:"メガヘルガー",img:"image/image/メガヘルガー.gif",types:["dark","fire"],base:{hp:75,atk:90,def:90,spa:140,spd:90,spe:115},abil:"sunpower"}]));
 SPECIES.push(S("drampa","ジジーロン","image/image/ジジーロン.gif",["normal","dragon"],{hp:78,atk:60,def:85,spa:135,spd:91,spe:36},"drampaRage",["hypervoice","dpulse","flamethrower","thunderbolt"]));
+SPECIES.push(S("kommoo","ジャラランガ","image/image/ジャラランガ.gif",["dragon","fighting"],{hp:75,atk:110,def:125,spa:100,spd:105,spe:85},"bulletproof",["dragonclaw","closecombat","scaleshot","bodypress"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -820,6 +823,7 @@ const BERSERKER_AERODACTYL={name:"メガプテラ",img:"image/image/メガプテ
 // ===== 育成用：技プール(learnset)と特性候補(abils) =====
 const LEARN={
   drampa:["hypervoice","dpulse","flamethrower","thunderbolt","icebeam","focusblast","psychic","calmMind","protect"],
+  kommoo:["dragonclaw","closecombat","scaleshot","bodypress","dragondance","irondefense","earthquake","poisonjab","ironhead","flamethrower","flashcannon","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -1001,6 +1005,7 @@ const ABILS={
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
 ABILS.baxcalibur=["berserker"];
 ABILS.drampa=["drampaRage"];
+ABILS.kommoo=["bulletproof"];
 ABILS.meowscarada=["protean"];
 ABILS.arcanineH=["intimidate","rockhead"];
 ABILS.dunsparce=["serenegrace"];
@@ -2690,6 +2695,7 @@ function mirrorTarget(attacker,defender,move){
   return defender;
 }
 function reflectableStatus(move){return move.cat==="status"&&!isFriendlyMove(move)&&!move.reflect&&!move.kingsShield&&!move.wideGuard&&!move.banetteShadow;}
+function isBulletproofMove(move){return ["focusblast","shadowball","sludgebomb","energyball","electroball","seedbomb","bulletseed","rockblast"].includes(move.key)||["きあいだま","シャドーボール","ヘドロばくだん","エナジーボール","エレキボール","タネばくだん","タネマシンガン","ロックブラスト"].includes(move.name);}
 function triggerDrampaFury(mon){
   if(!mon||mon.id!=="drampa"||mon.drampaFury)return false;
   const hpRatio=mon.maxHp>0?mon.curHp/mon.maxHp:1;
@@ -2714,6 +2720,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.abilEff==="sawbladeFangs"&&move.sawbladeFang&&!move.sawbladeFangsResolved){announceAbility(attacker);move={...move,multiHit:2,sawbladeFangsResolved:true};}
   if(attacker.abilEff==="skilllink"&&move.hits&&!move.multiHit&&!move.skilllinkResolved){announceAbility(attacker);move={...move,multiHit:5,skilllinkResolved:true};}
   if(defender.abilEff==="timetravel"&&(move.multiHit||move.hits>1)&&!ignoresDefenderAbility(attacker,move)){announceAbility(defender);pushLog(`  ★ ${defender.name} の ときわたり！ ${move.name} の連続攻撃を無効化した！`,"#b061ff");cb();return;}
+  if(defender.abilEff==="bulletproof"&&isBulletproofMove(move)&&!ignoresDefenderAbility(attacker,move)){announceAbility(defender);pushLog(`  ★ ${defender.name} のぼうだん！ ${move.name} を無効化した！`,"#b061ff");cb();return;}
   if(move.gammaRadiation&&!move.gammaRadiationResolved){
     attacker.gammaRadiationTargets=attacker.gammaRadiationTargets||new Set();
     if(attacker.gammaRadiationTargets.has(defender)){pushLog(`  └ ${attacker.name} は ${defender.name} に ガンマホウシャを もう使えない！`,"#9fb3d6");cb();return;}
