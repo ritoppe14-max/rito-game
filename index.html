@@ -816,6 +816,10 @@ SPECIES.push(S("tsareena","アマージョ","image/image/アマージョ.gif",["
 SPECIES.push(S("jumpluff","ワタッコ","image/image/ワタッコ.gif",["grass","flying"],{hp:75,atk:55,def:70,spa:55,spd:95,spe:110},"chlorophyll",["acrobatics","sleeppowder","leechseed","tailwind"]));
 SPECIES.push(S("venusaur","フシギバナ","image/image/フシギバナ.gif",["grass","poison"],{hp:80,atk:82,def:83,spa:100,spd:100,spe:80},"chlorophyll",["gigadrain","sludgebomb","earthpower","synthesis"],[{stone:"venusaurite",stoneName:"フシギバナイト",name:"メガフシギバナ",img:"image/image/メガフシギバナ.gif",types:["grass","poison"],base:{hp:80,atk:100,def:123,spa:122,spd:120,spe:80},abil:"thickfat"}]));
 SPECIES.push(S("blastoise","カメックス","image/image/カメックス.gif",["water"],{hp:79,atk:83,def:100,spa:85,spd:105,spe:78},"torrent",["hydropump","waterpulse","icebeam","darkpulse"],[{stone:"blastoisinite",stoneName:"カメックスナイト",name:"メガカメックス",img:"image/image/メガカメックス.gif",types:["water"],base:{hp:79,atk:103,def:120,spa:135,spd:115,spe:78},abil:"megalauncher"}]));
+SPECIES.push(S("raticate","ラッタ","image/image/ラッタ.gif",["normal"],{hp:55,atk:81,def:60,spa:50,spd:70,spe:97},"guts",["facade","suckerpunch","crunch","quickattack"]));
+SPECIES.push(S("butterfree","バタフリー","image/image/バタフリー.gif",["bug","flying"],{hp:60,atk:45,def:50,spa:90,spd:80,spe:70},"compoundeyes",["bugbuzz","aircutter","sleeppowder","quiverdance"]));
+SPECIES.push(S("beedrill","スピアー","image/image/スピアー.gif",["bug","poison"],{hp:65,atk:90,def:40,spa:45,spd:80,spe:75},"sniper",["poisonjab","xscissor","drillrun","swordsdance"]));
+SPECIES.push(S("pidgeot","ピジョット","image/image/ピジョット.gif",["normal","flying"],{hp:83,atk:80,def:75,spa:70,spd:70,spe:101},"pressure",["hurricane","airslash","bravebird","roost"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -858,6 +862,10 @@ const LEARN={
   jumpluff:["acrobatics","sleeppowder","leechseed","tailwind","gigadrain","uturn","stunspore","synthesis","protect"],
   venusaur:["gigadrain","sludgebomb","earthpower","synthesis","energyball","weatherball","leechseed","sleeppowder","protect"],
   blastoise:["hydropump","waterpulse","icebeam","darkpulse","surf","flashcannon","aurablast","dragonpulse","protect"],
+  raticate:["facade","suckerpunch","crunch","quickattack","doubleedge","uturn","superfang","protect"],
+  butterfree:["bugbuzz","aircutter","sleeppowder","quiverdance","hurricane","psychic","gigadrain","stunspore","protect"],
+  beedrill:["poisonjab","xscissor","drillrun","swordsdance","uturn","knockoff","fellstinger","protect"],
+  pidgeot:["hurricane","airslash","bravebird","roost","uturn","tailwind","heatwave","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
