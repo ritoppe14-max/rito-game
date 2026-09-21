@@ -797,6 +797,7 @@ SPECIES.push(S("drampa","ジジーロン","image/image/ジジーロン.gif",["no
 SPECIES.push(S("kommoo","ジャラランガ","image/image/ジャラランガ.gif",["dragon","fighting"],{hp:75,atk:110,def:125,spa:100,spd:105,spe:85},"bulletproof",["dragonclaw","closecombat","scaleshot","bodypress"]));
 SPECIES.push(S("emboar","エンブオー","image/image/エンブオー.gif",["fire","fighting"],{hp:110,atk:123,def:65,spa:100,spd:65,spe:65},"blaze",["flaredrive","closecombat","suckerpunch","wildcharge"],[{stone:"emboarite",stoneName:"エンブオナイト",name:"メガエンブオー",img:"image/image/メガエンブオー.gif",types:["fire","fighting"],base:{hp:110,atk:148,def:75,spa:110,spd:110,spe:75},abil:"moldbreaker"}]));
 SPECIES.push(S("cradily","ユレイドル","image/image/ユレイドル.gif",["rock","grass"],{hp:86,atk:81,def:97,spa:81,spd:107,spe:43},"suctioncups",["gigadrain","energyball","rockslide","recover"]));
+SPECIES.push(S("chimecho","チリーン","image/image/チリーン.gif",["psychic"],{hp:75,atk:50,def:80,spa:95,spd:90,spe:65},"levitate",["psychic","shadowball","calmMind","recover"],[{stone:"chimechite",stoneName:"チリーンナイト",name:"メガチリーン",img:"image/image/メガチリーン.gif",types:["psychic","steel"],base:{hp:75,atk:50,def:110,spa:135,spd:120,spe:65},abil:"levitate"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -830,6 +831,7 @@ const LEARN={
   kommoo:["dragonclaw","closecombat","scaleshot","bodypress","dragondance","irondefense","earthquake","poisonjab","ironhead","flamethrower","flashcannon","protect"],
   emboar:["flaredrive","closecombat","suckerpunch","wildcharge","drainpunch","earthquake","rockslide","flamethrower","fireblast","focusblast","buildup","protect"],
   cradily:["gigadrain","energyball","rockslide","recover","earthpower","sludgebomb","stealthrock","toxic","protect"],
+  chimecho:["psychic","shadowball","calmMind","recover","flashcannon","dazzlinggleam","thunderwave","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -2706,7 +2708,7 @@ function isBulletproofMove(move){return ["focusblast","shadowball","sludgebomb",
 function triggerDrampaFury(mon){
   if(!mon||mon.id!=="drampa"||mon.drampaFury)return false;
   const hpRatio=mon.maxHp>0?mon.curHp/mon.maxHp:1;
-  mon.drampaFury=true;mon.name="激怒ジジーロン";
+  mon.drampaFury=true;mon.name="激怒ジジーロン";mon.img="image/image/激怒ジジーロン.gif";
   Object.keys(mon.base).forEach(stat=>mon.base[stat]+=20);
   mon.maxHp=Math.floor((mon.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(mon.itemKey==="healcrown"?1.05:1));
   mon.curHp=Math.max(1,Math.min(mon.maxHp,Math.round(mon.maxHp*hpRatio)));
