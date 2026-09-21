@@ -544,7 +544,7 @@ const M={
   mysticalfire:{name:"マジカルフレイム",type:"fire",cat:"spec",power:75,targetDrop:{chance:1,stats:{spa:-1}}},
   acidarmor:{name:"とける",type:"poison",cat:"status",power:0,selfBoost:{chance:1,stats:{def:2}}},
   bodyslam:{name:"のしかかり",type:"normal",cat:"phys",power:85,paralyze:.3}, doubleedge:{name:"すてみタックル",type:"normal",cat:"phys",power:120,recoilDamage:.33}, facade:{name:"からげんき",type:"normal",cat:"phys",power:70,burnPower:2}, gigaimpact:{name:"ギガインパクト",type:"normal",cat:"phys",power:150}, hypervoice:{name:"ハイパーボイス",type:"normal",cat:"spec",power:90,sound:true}, boomburst:{name:"ばくおんぱ",type:"normal",cat:"spec",power:140,sound:true}, overdrive:{name:"オーバードライブ",type:"electric",cat:"spec",power:80,sound:true}, gearshift:{name:"ギアチェンジ",type:"steel",cat:"status",power:0,selfBoost:{chance:1,stats:{atk:1,spe:2}},gearShift:true,desc:"攻撃+1・素早さ+2。ストリンダーは電気／どくモードを切り替える"},
-  bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true},
+  bulletseed:{name:"タネマシンガン",type:"grass",cat:"phys",power:25,hits:3}, seedbomb:{name:"タネばくだん",type:"grass",cat:"phys",power:80}, woodhammer:{name:"ウッドハンマー",type:"grass",cat:"phys",power:120,recoilDamage:.33}, leafstorm:{name:"リーフストーム",type:"grass",cat:"spec",power:130,selfDrop:{spa:-2}}, gigadrain:{name:"ギガドレイン",type:"grass",cat:"spec",power:75,healDamage:.5}, spore:{name:"キノコのほうし",type:"grass",cat:"status",power:0,sleep:true}, flowertrick:{name:"トリックフラワー",type:"grass",cat:"phys",power:70,forceHit:true,forceCrit:true}, rest:{name:"ねむる",type:"psychic",cat:"status",power:0,rest:true}, sleeptalk:{name:"ねごと",type:"normal",cat:"status",power:0,sleeptalk:true,desc:"カビゴンがねむるを引くとHP全回復"},
   shadowStitch:{name:"かげぬい",type:"ghost",cat:"phys",power:80,forceHit:true,desc:"必中"}, decidueyeLeafStorm:{name:"リーフストーム",type:"grass",cat:"spec",power:80,prio:-1,targetForceSwitch:true,desc:"威力80・優先度-1。命中後、相手を強制交代"},
   knockoff:{name:"はたきおとす",type:"dark",cat:"phys",power:65}, foulplay:{name:"イカサマ",type:"dark",cat:"phys",power:95}, blackMoonSilence:{name:"ブラックムーンサイレンス",type:"dark",cat:"spec",power:100,blackMoon:true,desc:"交代直後の相手には威力1.8倍。自分に現在HP50%のシールド、毎ターンHP5%回復"}, partingshot:{name:"すてゼリフ",type:"dark",cat:"status",power:0,targetDrop:{chance:1,stats:{atk:-1,spa:-1}}}, snarl:{name:"バークアウト",type:"dark",cat:"spec",power:55,targetDrop:{chance:1,stats:{spa:-1}}}, taunt:{name:"ちょうはつ",type:"dark",cat:"status",power:0,tauntTurns:3}, swagger:{name:"いばる",type:"normal",cat:"status",power:0,targetBoost:{atk:2},confuseTurns:2}, encore:{name:"アンコール",type:"normal",cat:"status",power:0}, trick:{name:"トリック",type:"psychic",cat:"status",power:0},
   voltswitch:{name:"ボルトチェンジ",type:"electric",cat:"spec",power:70,switchAfter:true}, wildcharge:{name:"ワイルドボルト",type:"electric",cat:"phys",power:90,recoilDamage:.25}, thunderfang:{name:"かみなりのキバ",type:"electric",cat:"phys",power:65,paralyze:.1,bite:true,sawbladeFang:true}, discharge:{name:"ほうでん",type:"electric",cat:"spec",power:80,paralyze:.3,spread:true}, electrowebHit:{name:"エレキネット",type:"electric",cat:"spec",power:55,targetDrop:{chance:1,stats:{spe:-1}}},
@@ -833,6 +833,7 @@ SPECIES.push(S("alakazam","フーディン","image/image/フーディン.gif",["
 SPECIES.push(S("victreebel","ウツボット","image/image/ウツボット.gif",["grass","poison"],{hp:80,atk:105,def:65,spa:100,spd:70,spe:70},"chlorophyll",["powerwhip","sludgebomb","weatherball","sleeppowder"],[{stone:"victreebelite",stoneName:"ウツボットナイト",name:"メガウツボット",img:"image/image/メガウツボット.gif",types:["grass","poison"],base:{hp:80,atk:125,def:85,spa:120,spd:90,spe:80},abil:"chlorophyll"}]));
 SPECIES.push(S("jynx","ルージュラ","image/image/ルージュラ.gif",["ice","psychic"],{hp:65,atk:50,def:35,spa:115,spd:95,spe:95},"snowcloak",["icebeam","psychic","shadowball","lovelykiss"]));
 SPECIES.push(S("tauros","ケンタロス","image/image/ケンタロス.gif",["normal"],{hp:75,atk:100,def:95,spa:40,spd:70,spe:110},"taurosforce",["bodyslam","earthquake","stoneedge","hyperbeam"]));
+SPECIES.push(S("snorlax","カビゴン","image/image/カビゴン.gif",["normal"],{hp:160,atk:110,def:65,spa:65,spd:110,spe:30},"thickfat",["bodyslam","rest","sleeptalk","curse"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -888,6 +889,7 @@ const LEARN={
   victreebel:["powerwhip","sludgebomb","weatherball","sleeppowder","gigadrain","leafstorm","swordsdance","synthesis","protect"],
   jynx:["icebeam","psychic","shadowball","lovelykiss","focusblast","calmMind","blizzard","protect"],
   tauros:["bodyslam","earthquake","stoneedge","hyperbeam","closecombat","wildcharge","ironhead","zenheadbutt","protect"],
+  snorlax:["bodyslam","rest","sleeptalk","curse","crunch","earthquake","heavyslam","yawn","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
@@ -2490,7 +2492,7 @@ function runAttacks(movers,i,done){
     setTimeout(()=>{pushLog(`  └ ${atk.name} は しびれて 動けない！`,"#ffcb05");runAttacks(movers,i+1,done);},450);
     return;
   }
-  if(atk.status==="sleep"){
+  if(atk.status==="sleep"&&!m.move?.sleeptalk){
     atk.sleepTurns--;
     if(atk.sleepTurns<=0){atk.status=null;pushLog(`  └ ${atk.name} は ねむりから 起きた！`);}
     else {setTimeout(()=>{pushLog(`  └ ${atk.name} は ぐうぐう ねむっている！`,"#9fb3d6");runAttacks(movers,i+1,done);},450);return;}
@@ -2783,6 +2785,7 @@ function triggerDrampaFury(mon){
 }
 function attack(attacker,defender,move,defImgId,cb){
   move={...move,abilityContext:move.abilityContext||{}};
+  if(move.sleeptalk&&attacker.id==="snorlax"&&attacker.status==="sleep"&&Math.random()<.25){attacker.curHp=attacker.maxHp;renderHp();pushLog(`  ★ ${attacker.name} のねごと！ ねむるを引いてHP全回復！`,"#46d160");cb();return;}
   if(attacker.abilEff==="taurosforce"&&move.cat!=="status"&&move.power>0)move={...move,cat:"phys",taurosPhysical:true};
   if(attacker.radiationOverload&&move.cat!=="status"&&move.power>0&&!move.radiationGain)move={...move,radiationGain:20};
   if(attacker.gammaRadiationGuaranteed&&move.gammaRadiation)move={...move,radiationChance:1};
