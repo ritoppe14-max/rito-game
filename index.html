@@ -793,6 +793,7 @@ SPECIES.push(S("airmudo","エアームド","image/image/エアームド.gif",["s
 SPECIES.push(S("hellgar","ヘルガー","image/image/ヘルガー.gif",["dark","fire"],{hp:75,atk:90,def:50,spa:110,spd:80,spe:95},"drought",["darkpulse","flamethrower","nastyPlot","sludgebomb"],[{stone:"hellgarite",stoneName:"ヘルガナイト",name:"メガヘルガー",img:"image/image/メガヘルガー.gif",types:["dark","fire"],base:{hp:75,atk:90,def:90,spa:140,spd:90,spe:115},abil:"sunpower"}]));
 SPECIES.push(S("drampa","ジジーロン","image/image/ジジーロン.gif",["normal","dragon"],{hp:78,atk:60,def:85,spa:135,spd:91,spe:36},"drampaRage",["hypervoice","dpulse","flamethrower","thunderbolt"]));
 SPECIES.push(S("kommoo","ジャラランガ","image/image/ジャラランガ.gif",["dragon","fighting"],{hp:75,atk:110,def:125,spa:100,spd:105,spe:85},"bulletproof",["dragonclaw","closecombat","scaleshot","bodypress"]));
+SPECIES.push(S("emboar","エンブオー","image/image/エンブオー.gif",["fire","fighting"],{hp:110,atk:123,def:65,spa:100,spd:65,spe:65},"blaze",["flaredrive","closecombat","suckerpunch","wildcharge"],[{stone:"emboarite",stoneName:"エンブオナイト",name:"メガエンブオー",img:"image/image/メガエンブオー.gif",types:["fire","fighting"],base:{hp:110,atk:148,def:75,spa:110,spd:110,spe:75},abil:"moldbreaker"}]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
 const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
@@ -824,6 +825,7 @@ const BERSERKER_AERODACTYL={name:"メガプテラ",img:"image/image/メガプテ
 const LEARN={
   drampa:["hypervoice","dpulse","flamethrower","thunderbolt","icebeam","focusblast","psychic","calmMind","protect"],
   kommoo:["dragonclaw","closecombat","scaleshot","bodypress","dragondance","irondefense","earthquake","poisonjab","ironhead","flamethrower","flashcannon","protect"],
+  emboar:["flaredrive","closecombat","suckerpunch","wildcharge","drainpunch","earthquake","rockslide","flamethrower","fireblast","focusblast","buildup","protect"],
   jolteon:["thunderbolt","voltswitch","shadowball","thunderwave","divineThunder","electroball","thunder","protect"],
   gyarados:["waterfall","icefang","earthquake","dragondance","crunch","stoneedge","hydropump","surf","thunderbolt","thunder","icebeam","protect","substitute"],
   baxcalibur:["glaiveRush","iciclecrash","earthquake","swordsdance","dragonclaw","outrage","icefang","ironhead","protect"],
