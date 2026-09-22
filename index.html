@@ -1282,7 +1282,7 @@ function renderHome(){
   const hero=document.getElementById("homeHero");
   hero.innerHTML = party.length? party.filter(p=>SPECIES[p.sp]).map(p=>`<div class="mon-card" style="cursor:default"><img src="${IMG(SPECIES[p.sp].img)}"><div class="nm">${SPECIES[p.sp].name}</div><div class="mini">${(ITEMS[p.item]||ITEMS.none).name}</div></div>`).join("")
     : `<div class="sub">まだパーティがありません。「パーティを編成する」から6体えらんでね。</div>`;
-  document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>{const shown=displaySpecies(sp);return sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img src="${IMG(shown.img)}"><div class="nm">${shown.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`;}).join("");
+  document.getElementById("homeDex").innerHTML=SPECIES.map((sp,i)=>{const shown=displaySpecies(sp);return sp.hidden?"":`<div class="mon-card" onclick="showDexInfo(${i})"><img loading="lazy" decoding="async" src="${IMG(shown.img)}"><div class="nm">${shown.name}</div><div class="types">${typeTags(sp.types)}</div><div class="mini">特性を見る</div></div>`;}).join("");
 }
 function selectPartyProfile(i){
   partyProfiles[activePartyProfile]=party;
@@ -1425,7 +1425,7 @@ function renderParty(){
     const inParty=curParty.some(p=>p.sp===i);
     const full=curParty.length>=6;
     g.innerHTML+=`<div class="mon-card ${inParty?'sel':''} ${(!inParty&&full)?'dim':''}" onclick="toggleParty(${i})">
-      <img src="${IMG(shown.img)}"><div class="nm">${shown.name}</div>
+      <img loading="lazy" decoding="async" src="${IMG(shown.img)}"><div class="nm">${shown.name}</div>
       <div class="types">${typeTags(sp.types)}</div>
       <div class="mini">${spAbil(sp,owner).name}</div>
       <div class="mini">${sp.megas.length?'★メガ可':''}</div>
