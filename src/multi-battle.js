@@ -74,7 +74,7 @@ function multiNext(skipFakua=false){
     if(pending.length){series(pending.map(mon=>cb=>{const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;if(!shot||mon.fainted||shot.target.fainted){cb();return;}const oldMe=me,oldFoe=foe;if(myTeam.includes(mon)){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}attack(mon,shot.target,shot.move,multiImage(shot.target),()=>{me=oldMe;foe=oldFoe;cb();});}),()=>multiNext(true));return;}
   }
   ['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
-  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
+  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.burstHeadbandActsFirst=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
   multiChoose('me');
 }
 function multiChoose(s){
@@ -103,7 +103,7 @@ function multiConfirm(s){
   multi.actions.push(...actions);
   if(s==='me'&&mode==='friend'){document.getElementById('cmd').innerHTML='<div class="sub">プレイヤー2に交代してください</div><button class="btn" onclick="multiChoose(\'foe\')">プレイヤー2の入力へ</button>';return;}
   if(s==='me')multiLiving('foe').forEach(mon=>{
-    const options=mon.moves.filter(move=>(mon.itemKey!=='mougekiScarf'||!mon.mougekiLock||move.name===mon.mougekiLock)&&!(move.onceBattle&&mon[move.onceFlag||'usedPlayTogether'])&&!(move.fifthSlot&&mon.usedFifthSlot)).flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
+    const options=mon.moves.filter(move=>(mon.itemKey!=='mougekiScarf'||!mon.mougekiLock||move.name===mon.mougekiLock)&&(mon.itemKey!=='burstHeadband'||!mon.burstHeadbandLock||move.name===mon.burstHeadbandLock)&&!(move.onceBattle&&mon[move.onceFlag||'usedPlayTogether'])&&!(move.fifthSlot&&mon.usedFifthSlot)).flatMap(move=>{const actual=mon.electroBeamReady?M.electrobeam:move;return (actual.allyHeal||actual.allyBoost?multiLiving('foe'):multiLiving('me')).map(target=>({side:'foe',mon,type:'move',move:actual.decorateAlly?Object.assign({},actual,{allyTarget:multiLiving('foe')[0]}):actual,target}));});
     const valid=options.filter(a=>a.move.cat==='status'||calcDamage(mon,a.target,a.move,false).eff>0);
     const pool=valid.length?valid:options;
     pool.sort((a,b)=>calcDamage(mon,b.target,b.move,false).dmg-calcDamage(mon,a.target,a.move,false).dmg);
@@ -115,7 +115,7 @@ function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
   clearTrevenantLinks(a.mon);
-  a.mon.mougekiLock=null;a.mon.fakuaPendingSword=null;a.mon.fakuaBoostTurns=0;a.mon.fakuaBoostMultiplier=1;
+  a.mon.mougekiLock=null;a.mon.burstHeadbandLock=null;a.mon.fakuaPendingSword=null;a.mon.fakuaBoostTurns=0;a.mon.fakuaBoostMultiplier=1;
   a.mon.rageFistHits=0;
   a.mon.electricCharge=false;
   clearEeveeEffects(a.mon);
@@ -148,6 +148,7 @@ function multiResolve(){
     multi.actionLog[a.side].push(`${m.name} の ${a.move.name}`);renderMultiActionPanels();
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
+    m.burstHeadbandActsFirst=m.itemKey==='burstHeadband'&&!target.turnMoved;
     m.turnMoved=true;
     const actualMove=m.outrageTurns>0?(m.outrageMove||M.outrage):a.move;
     attack(m,target,actualMove,multiImage(target),()=>{

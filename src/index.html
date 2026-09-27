@@ -1273,6 +1273,7 @@ const ITEMS={
   lightstone:{name:"かるいし",desc:"攻撃・素早さ1.1倍"},
   scarf:{name:"こだわりスカーフ",desc:"素早さ実数値1.5倍。毎ターンHP1/10減少"},
   mougekiScarf:{name:"もうげきスカーフ",desc:"素早さ実数値1.5倍。使った技は交代まで固定。タイプ・特性・まもるによる無効を貫通"},
+  burstHeadband:{name:"ばくれつハチマキ",desc:"最初に使った技が交代まで固定。物理攻撃1.2倍、相手より先に行動したターンは1.5倍"},
   fakuaSword:{name:"ふとうの剣",desc:"ファクアのザシアン専用。持ち物固定"},
 };
 SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.stoneName,desc:`${sp.name}専用。${mg.name}にメガシンカ`,mega:si,form:fi}; }));
@@ -1378,7 +1379,9 @@ function openDevCode(){
   }else if(normalizedCode==="POKEMONHUXAKUA6"){
     localStorage.setItem("ritoCodeFakuaTalonflame","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.fakuaTalonflame;
-    if(!party.some(p=>SPECIES[p.sp]?.id==="fakuaTalonflame")){party.push({sp,item:"none",moves:["bravebird","flareblitz","tailwind","roost"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローを受け取った！");}
+    const owned=party.find(p=>SPECIES[p.sp]?.id==="fakuaTalonflame");
+    if(!owned){party.push({sp,item:"burstHeadband",moves:["bravebird","flareblitz","tailwind","roost"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローを受け取った！");}
+    else if(!owned.item||owned.item==="none"){owned.item="burstHeadband";partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローに ばくれつハチマキを渡した！");}
     else alert("ファクアのファイアローは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
@@ -1858,6 +1861,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.moves=moveKeys.map((k,i)=>({...M[k],fifthSlot:i===4}));
   if(BIRD_FIFTH[sp.id])p.moves=[...p.moves.slice(0,4),{...M[BIRD_FIFTH[sp.id]],fifthSlot:true}];
   p.itemKey=sp.id==="fakuaZacian"?"fakuaSword":(itemKey||"none");
+  p.burstHeadbandLock=null;p.burstHeadbandActsFirst=false;
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
   p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
@@ -2107,6 +2111,7 @@ function calcDamage(attacker,defender,move,isCrit){
     defStat=Math.min(physDef,specDef);
   }
   if(attacker.abilEff==="hugepower"&&move.cat==="phys") atkStat*=2;            // ちからもち
+  if(attacker.itemKey==="burstHeadband"&&move.cat==="phys")atkStat*=attacker.burstHeadbandActsFirst?1.5:1.2;
   if(attacker.itemKey==="powerband") atkStat*=1.05;
   if(attacker.abilEff==="supremeoverlord"){const team=attacker===me?myTeam:foeTeam;atkStat*=1+Math.min(5,team.filter(m=>m.fainted).length)*.1;}
   if(attacker.abilEff==="sheerforce"&&sheerForceBoosts(move)) atkStat*=1.3;    // ちからずく
@@ -2349,7 +2354,7 @@ function fakuaMultiOptions(mon){
     if(mon.id==="fakuaZacian"&&(move.fakuaSacredSword||move.fakuaMetalClaw||move.fakuaPlayRough||move.fakuaKingBlade)){
       const modes=move.fakuaSacredSword?[["sword4","威力20×4"],["sword6","威力20×6（20E）"]]:move.fakuaMetalClaw?[["claw70","威力70"],["claw100","75+25×2（20E）"]]:move.fakuaPlayRough?[["rough90","威力90"],["rough120","威力60×2（20E）"]]:[["king0","王獣の剣 威力50"],["king10","威力80（10E）"],["king20","威力100（20E）"],["king30","威力140（30E）"]];
       modes.forEach(([key,label])=>{const variant=fakuaModeMove(mon,move,key);if(move.fakuaKingBlade&&mon.usedFifthSlot)label+=`・再使用+20E`;result.push({value:`f:${i}:${key}`,label,disabled:(mon.fakuaEnergy||0)<(variant.fakuaEnergyCost||0)||(move.fakuaKingBlade&&mon.usedFifthSlot&&(mon.fakuaEnergy||0)<20)||(move.fifthSlot&&mon.usedFifthSlot&&!(mon.fakuaEnergy>=20))});});
-    }else result.push({value:`m${i}`,label:`${move.name}（${catLabel(move)}・威力${move.power}）`,disabled:!!((mon.electroBeamReady&&!move.chargeTurn)||(mon.itemKey==='mougekiScarf'&&mon.mougekiLock&&move.name!==mon.mougekiLock)||(move.fifthSlot&&mon.usedFifthSlot))});
+    }else result.push({value:`m${i}`,label:`${move.name}（${catLabel(move)}・威力${move.power}）`,disabled:!!((mon.electroBeamReady&&!move.chargeTurn)||(mon.itemKey==='mougekiScarf'&&mon.mougekiLock&&move.name!==mon.mougekiLock)||(mon.itemKey==='burstHeadband'&&mon.burstHeadbandLock&&move.name!==mon.burstHeadbandLock)||(move.fifthSlot&&mon.usedFifthSlot))});
   });
   if(mon.abilEff==="fakuaSword")[[5,1,1.1],[10,2,1.2],[15,3,1.3]].forEach(([cost,turns,mult])=>result.push({value:`f:boost:${cost}`,label:`ふとうのけん（${cost}E・能力×${mult}を${turns}ターン）`,disabled:(mon.fakuaEnergy||0)<cost}));
   return result;
@@ -2402,6 +2407,7 @@ function openMoves(side){
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
     if(m.itemKey==="mougekiScarf"&&m.mougekiLock&&mv.name!==m.mougekiLock)return;
+    if(m.itemKey==="burstHeadband"&&m.burstHeadbandLock&&mv.name!==m.burstHeadbandLock)return;
     if(mv.fifthSlot&&m.usedFifthSlot&&!(m.id==="fakuaZacian"&&(m.fakuaEnergy||0)>=20))return;
     if(mv.requiresAttached&&(!m.attachedHost||m.attachedHost.fainted))return;
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
@@ -2506,7 +2512,7 @@ function doResolve(){
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=!!mon.careCritGuardPending;mon.careCritGuardPending=false;});
   busy=true; clearCmd();
   [...myTeam,...foeTeam].forEach(m=>{m.protectActive=false;m.kingShieldActive=false;m.wideGuardActive=false;});
-  me.turnMoved=false; foe.turnMoved=false; me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
+  me.turnMoved=false; foe.turnMoved=false; me.burstHeadbandActsFirst=false;foe.burstHeadbandActsFirst=false;me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
   const A=turnAct.me, B=turnAct.foe;
   const phaseSwitch=(next)=>{const t=[];
     if(A.type==="switch") t.push(cb=>doSwitch("me",A.idx,cb));
@@ -2585,6 +2591,7 @@ function runAttacks(movers,i,done){
   if(atk.status==="hypersleep"&&Math.random()<.25){
     setTimeout(()=>{pushLog(`  └ ${atk.name} は 超眠気で 動けない！`,"#9fb3d6");runAttacks(movers,i+1,done);},450);return;
   }
+  atk.burstHeadbandActsFirst=atk.itemKey==="burstHeadband"&&!def.turnMoved;
   atk.turnMoved=true;
   const defSide=m.who==="me"?"foe":"me";
   if(m.move.requiresAttack&&(!turnAct[defSide]||turnAct[defSide].type!=="move"||turnAct[defSide].move.cat==="status"||turnAct[defSide].move.power<=0)){
@@ -2904,6 +2911,10 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.abilEff==="garakuFury"&&move.cat!=="status"&&((attacker.garakuAttackCount||0)+1)%3===0){move.flinch=1;move.garakuGuaranteedFlinch=true;}
   if(defender&&(defender.abilEff==="guarddog"||defender.abilEff==="goodasgold")&&attacker!==defender&&move.cat==="status"&&!isFriendlyMove(move)&&!move.ignoreAbility){announceAbility(defender);pushLog(`  ★ ${defender.name} の ${defender.abilName}！ ${move.name} を無効化した！`,"#ffcb05");cb();return;}
   if(attacker.abilEff==="moldbreaker")move={...move,ignoreAbility:true};
+  if(attacker.itemKey==="burstHeadband"){
+    if(attacker.burstHeadbandLock&&attacker.burstHeadbandLock!==move.name){pushLog(`  └ ばくれつハチマキで ${attacker.burstHeadbandLock} しか使えない！`);cb();return;}
+    attacker.burstHeadbandLock=move.name;
+  }
   if(attacker.itemKey==="mougekiScarf"){
     if(attacker.mougekiLock&&attacker.mougekiLock!==move.name){pushLog("  └ もうげきスカーフで技が固定されている！");cb();return;}
     attacker.mougekiLock=move.name;
@@ -3599,6 +3610,7 @@ function doSwitch(side,idx,cb){
   clearEeveeEffects(activeOf(side));
   clearTrevenantLinks(activeOf(side));
   activeOf(side).mougekiLock=null;
+  activeOf(side).burstHeadbandLock=null;
   activeOf(side).rageFistHits=0;
   activeOf(side).electricCharge=false;
   megaArm[side]=false;
@@ -3673,6 +3685,7 @@ function applyHazards(side,cb){
 // ===== CPU思考 =====
 function cpuChoose(){
   if(foe.itemKey==="mougekiScarf"&&foe.mougekiLock){const move=foe.moves.find(m=>m.name===foe.mougekiLock);if(move)return {type:"move",move};}
+  if(foe.itemKey==="burstHeadband"&&foe.burstHeadbandLock){const move=foe.moves.find(m=>m.name===foe.burstHeadbandLock);if(move)return {type:"move",move};}
   if(mode==='tower'&&towerRun?.floor===999&&me.justSwitched&&Math.random()<.30){
     const weakMove=foe.moves.filter(mv=>mv.cat!=="status"&&effMultiplier(mv.type,me.types)>1).sort((a,b)=>calcDamage(foe,me,b,false).dmg-calcDamage(foe,me,a,false).dmg)[0];
     if(weakMove)return {type:"move",move:weakMove};
