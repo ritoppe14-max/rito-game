@@ -258,7 +258,7 @@ const ABIL={
   toxicdebris:{name:"どくげしょう",eff:"toxicdebris"}, poisonpoint:{name:"どくのトゲ",eff:null},
   poisonfangAbility:{name:"どくのキバ",eff:"poisonfangAbility"}, poisonclaws:{name:"どくのツメ",eff:"poisonclaws"}, flamebody:{name:"ほのおのからだ",eff:"flamebody"},
   emergencyexit:{name:"ききかいひ",eff:"emergencyexit"}, sniper:{name:"スナイパー",eff:"sniper"}, fluffiness:{name:"もふもふ",eff:"fluffiness"}, compoundeyes:{name:"ふくがん",eff:"compoundeyes"}, thickfat:{name:"あついしぼう",eff:"thickfat"}, cursedbody:{name:"のろわれボディ",eff:null}, shadowtag:{name:"かげふみ",eff:null}, mirrorarmor:{name:"ミラーアーマー",eff:null}, disguise:{name:"ばけのかわ",eff:"disguise"}, contrary:{name:"あまのじゃく",eff:"contrary"}, aerolock:{name:"エアロック",eff:"aerolock"}, supremeoverlord:{name:"そうだいしょう",eff:"supremeoverlord"},
-  regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"},
+  regenerator:{name:"さいせいりょく",eff:null}, aromaveil:{name:"アロマベール",eff:null}, moldbreaker:{name:"かたやぶり",eff:null}, wandering:{name:"さまようたましい",eff:null}, shellarmor:{name:"シェルアーマー",eff:"shellarmor"}, fakuaLaprasShellArmor:{name:"シェルアーマー",eff:"shellarmor"},
 };
 const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほのお技1.5倍",galeWings:"第6世代：HPに関係なく、ひこうタイプの技の優先度が+1",morpekoFull:"HP・防御・特防が1.2倍。次のターンにはらぺこへ切替",morpekoHungry:"攻撃・特攻・素早さが1.2倍。次のターンにまんぷくへ切替",snomScissors:"物理技を受けるとゆきにする（氷タイプの防御1.5倍・ふぶき必中）",sawbladeFangs:"名前にキバ／きばが付く技を、威力を変えずに2回攻撃",hugepower:"こうげき(物理)が2倍",
   moody:"毎ターン能力がランダムに変化",pepperguard:"攻撃を受けると相手をやけど",
@@ -269,7 +269,8 @@ const ABDESC={torrent:"HP1/3以下でみず技1.5倍",blaze:"HP1/3以下でほ�
   drought:"登場時 ひざしを強くする(ほのお↑みず↓)",adaptability:"タイプ一致補正が1.3→2.0倍",sandforce:"自分のわざ1.2倍",quickdraw:"20%の確率で技の優先度+2",damp:"相手の反動ダメージ技を無効化",sunpower:"晴れのとき特攻1.5倍",
   sheerforce:"追加効果のある技は追加効果が消え、こうげき・とくこう実数値が1.3倍。いのちのたまの反動を受けない",frisk:"相手の技をランダムに1つ見抜く",dragonskin:"ノーマル技をドラゴン技にして威力1.2倍",sharpness:"切る技の威力1.5倍",levitate:"地面技・設置技を無効化",armorhide:"受けるダメージを25%軽減し5%を返す",strongjaw:"噛む技の威力1.5倍",axarts:"登場時ぼうぎょ+1",toughclaws:"物理技の威力1.3倍",grassmaker:"登場時グラスフィールド",libero:"攻撃時に技と同じタイプになる（一致1.3倍）",corrosion:"毒・鋼タイプにも毒・猛毒を入れられる",
   speedboost:"毎ターン終了時すばやさ+1",roughskin:"物理技を受けると相手に最大HPの1/8ダメージ",sandveil:"(フレーバー)",sandrush:"すなあらしのときすばやさ2倍",clearbody:"相手の技で能力ランクを下げられない",heavymetal:"ほえる・ふきとばしなど、自分以外の技による強制交代を受けない",poisonheal:"どく・もうどく状態のとき毎ターン最大HPの1/7回復",rockhead:"反動を受ける技を使っても反動ダメージを受けない",springconfusion:"攻撃を受けると相手を2ターン混乱させる",garakuFury:"3回目ごとの攻撃で相手を必ずひるませる",toxicdebris:"物理技を受けると相手の場にどくびしをまく",
-  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"急所のダメージが2.25倍",fluffiness:"物理攻撃で受けるダメージを半減",compoundeyes:"技の命中率が1.3倍",thickfat:"ほのお・こおり技で受けるダメージを半減",cursedbody:"(フレーバー)",shadowtag:"(フレーバー)",mirrorarmor:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",aromaveil:"味方をメンタル攻撃から守る",moldbreaker:"(フレーバー)",shellarmor:"急所に当たらない",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",chargeboost:"でんき技を使うと とくこうが1段階上がる",electromorphosis:"攻撃を受けると充電し、次に使うでんき技だけ威力2倍。交代・でんき技以外の使用で消える",windpower:"風技を受けると充電し、次に使うでんき技だけ威力2倍",lightningrod:"でんき技を無効化して、とくこうが1段階上がる",sapsipper:"くさ技を受けると無効化して攻撃が上がる",sapsipperSpa:"くさ技を無効化して特攻が1段階上がる",electricmaker:"登場時にエレキフィールドを5ターン展開",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
+  poisonpoint:"(フレーバー)",emergencyexit:"HPが半分以下になると控えのポケモンと交代",sniper:"急所のダメージが2.25倍",fluffiness:"物理攻撃で受けるダメージを半減",compoundeyes:"技の命中率が1.3倍",thickfat:"ほのお・こおり技で受けるダメージを半減",cursedbody:"(フレーバー)",shadowtag:"(フレーバー)",mirrorarmor:"(フレーバー)",disguise:"1回だけ攻撃ダメージを無効化",contrary:"能力変化が逆になる",aerolock:"天候の影響を無効化",supremeoverlord:"味方のひんし数に応じて攻撃・特攻が上昇",regenerator:"(フレーバー)",aromaveil:"味方をメンタル攻撃から守る",moldbreaker:"(フレーバー)",shellarmor:"急所に当たらない",fakuaLaprasShellArmor:"急所に当たらず、最大HP25%以上の一撃を1/2、50%以上を1/4、75%以上を1/8に軽減",flashfire:"ほのお技を無効化し、自分のほのお技を強化",magmaheat:"相手の地面技を無効化。ほのおタイプ以外に毎ターン最大HPの1/8、ほのおが弱点の相手には1/6のダメージ",chargeboost:"でんき技を使うと とくこうが1段階上がる",electromorphosis:"攻撃を受けると充電し、次に使うでんき技だけ威力2倍。交代・でんき技以外の使用で消える",windpower:"風技を受けると充電し、次に使うでんき技だけ威力2倍",lightningrod:"でんき技を無効化して、とくこうが1段階上がる",sapsipper:"くさ技を受けると無効化して攻撃が上がる",sapsipperSpa:"くさ技を無効化して特攻が1段階上がる",electricmaker:"登場時にエレキフィールドを5ターン展開",nightmarez:"ねむけ・ねむり・超眠気の相手に毎ターン最大HPの1/4ダメージ",prankster:"変化技の優先度+2。変化技使用時に最大HPの20%回復。受けるダメージ10%軽減",eartheater:"じめん技を無効化し、最大HPの1/4回復"};
+ABDESC.fakuaLaprasShellArmor=ABDESC.fakuaLaprasShellArmor||"急所に当たらず、最大HP25%以上の一撃を1/2、50%以上を1/4、75%以上を1/8に軽減";
 
 ABIL.defiant={name:"まけんき",eff:"defiant"};
 ABIL.unburden={name:"かるわざ",eff:"unburden"};
@@ -367,6 +368,10 @@ const M={
   fakuaAerialAce:{name:"つばめがえし",type:"flying",cat:"phys",power:60,forceHit:true,fakuaAerialAce:true,desc:"自分の残りHPが相手より多いと威力60×2回"},
   fakuaNitroCharge:{name:"ニトロチャージ",type:"fire",cat:"phys",power:85,healDamage:.3,koBoost:{spe:1},fakuaNitroCharge:true,desc:"命中時に与えたダメージの30%を回復。相手を倒すと素早さ+1、次のニトロチャージは相手を必ずやけど"},
   fakuaFlareSweeper:{name:"フレアスイーパー",type:"flying",cat:"phys",power:130,flinch:1,fifthSlot:true,fakuaFlareSweeper:true,desc:"威力130。先に行動できると威力+30。相手をひるませる"},
+  fakuaLaprasWaterPulse:{name:"みずのはどう",type:"water",cat:"spec",power:40,healDamage:1,fakuaLaprasWaterPulse:true,desc:"威力40。与えたダメージ分回復。2回目は2回、3回目以降は3回攻撃"},
+  fakuaLaprasBubbleBeam:{name:"バブルこうせん",type:"water",cat:"spec",power:70,spread:true,switchLock:2,targetDrop:{chance:1,stats:{spe:-1}},desc:"相手全体を攻撃し、2ターン交代を封じて素早さを下げる"},
+  fakuaLaprasPerishSong:{name:"ほろびのうた",type:"water",cat:"spec",power:30,multiHit:3,multiPowers:[30,30,30],fakuaLaprasPerishSong:true,desc:"威力30×3。3発目後、相手の残りHPが最大HPの30%以下なら倒す"},
+  fakuaLaprasIceBeam:{name:"れいとうビーム",type:"ice",cat:"spec",power:50,fakuaLaprasIceBeam:true,desc:"3ターン自分と味方の素早さ1.2倍。飛行・氷タイプ、ふゆう以外は3ターン後こおり"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
   bulletpunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:40,prio:1},
   hydroVortex:{name:"水流ハイドロ渦潮",type:"water",cat:"spec",power:100,eeveeMove:true,desc:"3ターン、対象に20ダメージ。自分と場の味方を毎ターン20回復"},
@@ -794,6 +799,7 @@ SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","images/�
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","images/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 SPECIES.push(S("fakuaZacian","ファクアのザシアン","images/ザシアン.gif",["fairy"],{hp:92,atk:150,def:115,spa:80,spd:115,spe:138},"fakuaSword",["fakuaHolySword","fakuaMetalClaw","fakuaPlayRough","ironhead"]));
 SPECIES.push(S("fakuaTalonflame","ファクアのファイアロー","images/ファクアのファイアロー.svg",["fire","flying"],{hp:78,atk:115,def:71,spa:74,spd:69,spe:126},"galeWings",["fakuaAerialAce","fakuaNitroCharge","bravebird","tailwind"]));
+SPECIES.push(S("fakuaLapras","ファクアのラプラス","images/ラプラス.gif",["water","ice"],{hp:130,atk:85,def:80,spa:85,spd:95,spe:60},"fakuaLaprasShellArmor",["fakuaLaprasWaterPulse","fakuaLaprasBubbleBeam","fakuaLaprasPerishSong","fakuaLaprasIceBeam"]));
 SPECIES.push(S("machamp","カイリキー","images/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","images/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","images/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
@@ -858,7 +864,7 @@ SPECIES.push(S("zoroark","ゾロアーク","images/ゾロアーク.gif",["dark"]
 SPECIES.push(S("zebstrika","ゼブライカ","images/ゼブライカ.gif",["electric"],{hp:75,atk:100,def:63,spa:80,spd:63,spe:116},"lightningrod",["wildcharge","thunderbolt","flamecharge","voltswitch"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
-const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro",fakuaZacian:"ritoCodeFakuaZacian",fakuaTalonflame:"ritoCodeFakuaTalonflame"};
+const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro",fakuaZacian:"ritoCodeFakuaZacian",fakuaTalonflame:"ritoCodeFakuaTalonflame",fakuaLapras:"ritoCodeFakuaLapras"};
 function kokugainoryuUnlocked(){return localStorage.getItem("ritoTower999Clear")==="1"||localStorage.getItem("ritoCodeAiruhitorabanzai")==="1";}
 function refreshCodePokemonVisibility(){SPECIES.forEach(sp=>{if(sp.id!=="eternatus"&&!CODE_POKEMON_UNLOCKS[sp.id]&&sp.id!=="kokugainoryu")sp.hidden=false;});Object.entries(CODE_POKEMON_UNLOCKS).forEach(([id,flag])=>{const sp=SPECIES[SP_BY_ID[id]];if(sp)sp.hidden=localStorage.getItem(flag)!=="1";});const kokugai=SPECIES[SP_BY_ID.kokugainoryu];if(kokugai)kokugai.hidden=!kokugainoryuUnlocked();}
 refreshCodePokemonVisibility();
@@ -1054,6 +1060,7 @@ const LEARN={
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
 LEARN.fakuaTalonflame=["fakuaAerialAce","fakuaNitroCharge","bravebird","flareblitz","tailwind","roost","protect"];
+LEARN.fakuaLapras=["fakuaLaprasWaterPulse","fakuaLaprasBubbleBeam","fakuaLaprasPerishSong","fakuaLaprasIceBeam","surf","hydropump","icebeam","thunderbolt","protect"];
 // ポケモン徹底攻略のSV→剣盾→サンムーンの順で確認した、専用技以外の対戦用55技。
 const COMPETITIVE_MOVE_55=["earthquake","rockslide","stoneedge","ironhead","poisonjab","crunch","suckerpunch","shadowclaw","shadowball","darkpulse","icebeam","icefang","icepunch","flamethrower","fireblast","firepunch","thunderbolt","thunder","thunderwave","energyball","focusblast","psychic","surf","hydropump","waterfall","aquajet","liquidation","crabhammer","bugbite","xscissor","megahorn","dragonclaw","meteor","dpulse","dragontail","hurricane","airslash","playrough","closecombat","bodypress","fakeout","uturn","protect","substitute","toxic","stealthrock","spikes","stickyweb","swordsdance","calmMind","nastyPlot","dragondance","irondefense","buildup","reflect"];
 // ポケモン徹底攻略のSV技リストと各ポケモン図鑑で確認した対戦用100技。
@@ -1100,6 +1107,7 @@ Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramor
 ABILS.baxcalibur=["berserker"];
 ABILS.fakuaZacian=["fakuaSword"];
 ABILS.fakuaTalonflame=["galeWings"];
+ABILS.fakuaLapras=["fakuaLaprasShellArmor"];
 ABILS.drampa=["drampaRage"];
 ABILS.kommoo=["bulletproof"];
 ABILS.cradily=["suctioncups"];
@@ -1215,7 +1223,7 @@ function createBuild(){
 }
 const builds={p1:createBuild(), p2:createBuild()};
 let trainOwner="p1";
-const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro","ritoCodeFakuaZacian","ritoCodeFakuaTalonflame","ritoTower999Clear","ritoCodeAiruhitorabanzai"];
+const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro","ritoCodeFakuaZacian","ritoCodeFakuaTalonflame","ritoCodeFakuaLapras","ritoTower999Clear","ritoCodeAiruhitorabanzai"];
 const FAKUA_ENERGY_KEY="ritoFakuaEnergy";
 function getFakuaEnergy(){const saved=localStorage.getItem(FAKUA_ENERGY_KEY);return saved===null?50:Math.max(0,Math.min(100,Math.floor(Number(saved)||0)));}
 function storeFakuaEnergy(value){const energy=Math.max(0,Math.min(100,Math.floor(Number(value)||0)));localStorage.setItem(FAKUA_ENERGY_KEY,String(energy));[...myTeam,...foeTeam].filter(mon=>mon?.id==="fakuaZacian").forEach(mon=>mon.fakuaEnergy=energy);return energy;}
@@ -1392,6 +1400,11 @@ function openDevCode(){
       if(updated){partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローの技・持ち物を更新した！");}
       else alert("ファクアのファイアローは、すでに受け取っています。");
     }
+  }else if(normalizedCode==="POKEMONHUXAKUA1"){
+    localStorage.setItem("ritoCodeFakuaLapras","1");refreshCodePokemonVisibility();
+    const sp=SP_BY_ID.fakuaLapras;
+    if(!party.some(p=>SPECIES[p.sp]?.id==="fakuaLapras")){party.push({sp,item:"none",moves:["fakuaLaprasWaterPulse","fakuaLaprasBubbleBeam","fakuaLaprasPerishSong","fakuaLaprasIceBeam"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのラプラスを受け取った！");}
+    else alert("ファクアのラプラスは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.kokugainoryu;
@@ -1882,6 +1895,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0; p.noAttackTurns=0; p.infiltratorTurns=0;
+  p.laprasWaterPulseUses=0;p.laprasSpeedTurns=0;p.laprasFreezeTurns=0;p.laprasFreezeSource=null;
   p.maxHp=Math.floor((sp.base.hp*2*LEVEL/100+LEVEL+10)*1.5*(p.itemKey==="healcrown"?1.05:1)); p.curHp=p.maxHp;  // HP実数値1.5倍
   if(p.id==="morpeko"){p.morpekoBaseMaxHp=p.maxHp;p.morpekoFull=true;p.maxHp=Math.floor(p.maxHp*1.2);p.curHp=p.maxHp;}
   if(p.id==="toxtricity"){p.punkMode="electric";p.gearShiftCount=0;p.punkParalyze=false;}
@@ -2066,6 +2080,31 @@ function applyEntry(m,imgId,cb){
 
 // ===== ダメージ計算 =====
 function electroBallPower(attacker,defender){return Math.max(20,Math.min(120,Math.floor(30*effSpeed(attacker)/Math.max(1,effSpeed(defender)))));}
+function fakuaLaprasShellDamage(damage,maxHp){
+  const ratio=damage/Math.max(1,maxHp);
+  const divisor=ratio>=.75?8:ratio>=.5?4:ratio>=.25?2:1;
+  return Math.max(1,Math.floor(damage/divisor));
+}
+function advanceFakuaLaprasEffects(mons){
+  [...new Set(mons.filter(Boolean))].forEach(mon=>{
+    if(mon.laprasSpeedTurns>0){mon.laprasSpeedTurns--;if(mon.laprasSpeedTurns===0)pushLog(`  ・ ${mon.name}たちの れいとうビームによる素早さ上昇が切れた。`,`#7ad1ff`);}
+    if(mon.laprasFreezeTurns>0){mon.laprasFreezeTurns--;if(mon.laprasFreezeTurns===0){
+      const immune=mon.types?.some(type=>type==="flying"||type==="ice")||mon.abilEff==="levitate";
+      if(!mon.fainted&&!immune&&applyStatus(mon,"freeze",mon.laprasFreezeSource))pushLog(`  ★ ${mon.name} は れいとうビームの効果で こおった！`,`#7ad1ff`);
+      else if(immune)pushLog(`  ・ ${mon.name} は飛行・氷タイプまたはふゆうのため、こおらなかった。`,`#9fb3d6`);
+      mon.laprasFreezeSource=null;
+    }}
+  });
+}
+function activateFakuaLaprasIceBeam(attacker,defender){
+  const side=typeof multi!=="undefined"&&multi?(multi.slots.me.includes(attacker)?"me":"foe"):(attacker===me?"me":"foe");
+  const allies=typeof multi!=="undefined"&&multi?multi.teams[side]:(side==="me"?myTeam:foeTeam);
+  allies.filter(mon=>mon&&!mon.fainted).forEach(mon=>mon.laprasSpeedTurns=Math.max(mon.laprasSpeedTurns||0,3));
+  if(!defender.types?.some(type=>type==="flying"||type==="ice")&&defender.abilEff!=="levitate"){
+    defender.laprasFreezeTurns=4;defender.laprasFreezeSource=attacker;
+  }
+  pushLog(`  ★ れいとうビーム！ 3ターン味方の素早さが1.2倍になった。${defender.laprasFreezeTurns?` ${defender.name}は3ターン後にこおる！`:""}`,"#7ad1ff");
+}
 function gainMagic(mon,label,amount=10){
   if(!mon||mon.abilEff!=="magicGauge")return;
   const before=mon.magicGauge||0;
@@ -2207,7 +2246,9 @@ function calcDamage(attacker,defender,move,isCrit){
   if(defender.duraludonShieldTurns>0)dmg*=2/3;
   if(attacker.volcanoTurns>0)dmg*=1.2;
   if(defender.volcanoTurns>0)dmg*=.8;
-  return {dmg: eff===0?0:Math.max(1,Math.floor(dmg)), eff, stab:stab>1};
+  const rawDamage=eff===0?0:Math.max(1,Math.floor(dmg));
+  const finalDamage=defender.id==="fakuaLapras"&&defender.abilEff==="shellarmor"?fakuaLaprasShellDamage(rawDamage,defender.maxHp):rawDamage;
+  return {dmg:finalDamage,rawDmg:rawDamage,eff,stab:stab>1};
 }
 function falinksPartInfo(defender,move){
   if(!defender||defender.id!=="falinks"||!defender.isMega)return null;
@@ -2230,6 +2271,7 @@ function effSpeed(m){
   if(m.abilEff==="unburden"&&!m.itemKey||m.abilEff==="unburden"&&m.itemKey==="none")s*=2;
   if(m.itemKey==="lightstone")s*=1.1;
   if(m.tailwindTurns>0)s*=2;
+  if(m.laprasSpeedTurns>0)s*=1.2;
   if(m.itemKey==="scarf"||m.itemKey==="mougekiScarf")s*=1.5;
   return s;
 }
@@ -2302,6 +2344,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
   let i=0;
   const next=()=>{
     if(i>=count||defender.fainted||attacker.fainted){
+      if(move.fakuaLaprasPerishSong&&!defender.fainted&&defender.curHp>0&&defender.curHp/defender.maxHp<=.30){defender.curHp=0;renderHp();pushLog(`  ★ ほろびのうた！ ${defender.name}の残りHPが30%以下になった！`,'#7ad1ff');faintMon(defender,defImgId|| (defender===me?"myImg":"foeImg"));}
       if(move.selfBoost)tryStatEffect(attacker,move.selfBoost);
       if(move.selfDrop)applyDrop(attacker,move.selfDrop);
       cb();return;
@@ -2901,6 +2944,7 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.id==="morpeko"&&move.morpekoPayback&&!move.morpekoPaybackResolved){if(!attacker.morpekoFirstTarget)attacker.morpekoFirstTarget=defender;if(!attacker.morpekoFull&&attacker.morpekoFirstTarget===defender)move={...move,multiHit:2,morpekoPaybackResolved:true};}
   if(attacker.abilEff==="sawbladeFangs"&&move.sawbladeFang&&!move.sawbladeFangsResolved){announceAbility(attacker);move={...move,multiHit:2,sawbladeFangsResolved:true};}
   if(attacker.abilEff==="skilllink"&&move.hits&&!move.multiHit&&!move.skilllinkResolved){announceAbility(attacker);move={...move,multiHit:5,skilllinkResolved:true};}
+  if(attacker.id==="fakuaLapras"&&move.fakuaLaprasWaterPulse&&!move.fakuaLaprasResolved){attacker.laprasWaterPulseUses=(attacker.laprasWaterPulseUses||0)+1;const hits=attacker.laprasWaterPulseUses===1?1:attacker.laprasWaterPulseUses===2?2:3;move={...move,multiHit:hits>1?hits:null,fakuaLaprasResolved:true};}
   if(defender.abilEff==="timetravel"&&(move.multiHit||move.hits>1)&&!ignoresDefenderAbility(attacker,move)){announceAbility(defender);pushLog(`  ★ ${defender.name} の ときわたり！ ${move.name} の連続攻撃を無効化した！`,"#b061ff");cb();return;}
   if(defender.abilEff==="bulletproof"&&isBulletproofMove(move)&&!ignoresDefenderAbility(attacker,move)){announceAbility(defender);pushLog(`  ★ ${defender.name} のぼうだん！ ${move.name} を無効化した！`,"#b061ff");cb();return;}
   if(move.gammaRadiation&&!move.gammaRadiationResolved){
@@ -3133,6 +3177,7 @@ function attack(attacker,defender,move,defImgId,cb){
   const dullFangPower=move.sayakuDullFang&&defender.justSwitched?2:1;
   const calcMove=move.burnPower&&defender.status==="burn"?Object.assign({},move,{power:move.power*move.burnPower*dullFangPower}):dullFangPower>1?Object.assign({},move,{power:move.power*dullFangPower}):move;
   const res=calcDamage(attacker,defender,calcMove,isCrit);
+  if(defender.id==="fakuaLapras"&&res.rawDmg>res.dmg){announceAbility(defender);pushLog(`  ★ シェルアーマー！大きな一撃を ${res.dmg} ダメージに抑えた！`,"#7ad1ff");}
   if(res.disguise){announceAbility(defender);defender.usedDisguise=true;renderStages();pushLog(`  ★ ${defender.name} の ばけのかわ！ 攻撃を無効化した！`,"#f0c0ff");}
   const sheer=attacker.abilEff==="sheerforce"&&sheerForceBoosts(move), extraBlocked=defender.itemKey==="cloak";
   if(res.eff===0&&!move.ignoreAbility&&((defender.abilEff==="eartheater"&&calcMove.type==="ground")||(defender.abilEff==="waterabsorb"&&calcMove.type==="water")||(defender.abilEff==="sapsipperSpa"&&calcMove.type==="grass")||(defender.abilEff==="lightningrod"&&calcMove.type==="electric"))){
@@ -3171,6 +3216,7 @@ function attack(attacker,defender,move,defImgId,cb){
   setTimeout(()=>{
     const img=defImgId&&document.getElementById(defImgId); if(img){img.classList.add("hit");setTimeout(()=>img.classList.remove("hit"),400);}
     const actualDamage=Math.min(defender.curHp,dmg);
+    if(actualDamage>0&&move.fakuaLaprasIceBeam)activateFakuaLaprasIceBeam(attacker,defender);
     if(actualDamage>0&&move.fakuaKingBlade){attacker.fakuaKingTargets=attacker.fakuaKingTargets||new Set();attacker.fakuaKingTargets.add(defender);}
     if(actualDamage>=defender.curHp&&(move.ignoreAbility?null:defender.abilEff)==="innardsout"){
       defender.innardsOutDamage=defender.curHp;
@@ -3229,7 +3275,7 @@ function attack(attacker,defender,move,defImgId,cb){
       pushLog(`  └ 割合ダメージ ${extra}！`);
     }
     if(move.healDamage&&attacker.curHp>0){
-      const h=Math.max(1,Math.floor(dmg*move.healDamage));
+      const h=Math.max(1,Math.floor((move.fakuaLaprasWaterPulse?actualDamage:dmg)*move.healDamage));
       attacker.curHp=Math.min(attacker.maxHp,attacker.curHp+h); renderHp();
       pushLog(`  └ ${attacker.name} は ${h} 回復した！`,"#46d160");
     }
@@ -3269,6 +3315,7 @@ function attack(attacker,defender,move,defImgId,cb){
         if(!sheer&&other.curHp>0){
           for(const status of ["freeze","burn","poison","paralyze"])if(move[status]&&Math.random()<move[status])applyStatus(secondary,status,secondarySource);
           if(move.targetDrop&&Math.random()<(move.targetDrop.chance??1))applyDrop(secondary,move.targetDrop.stats);
+          if(move.switchLock&&other.curHp>0)other.switchLock=move.switchLock;
           if(move.flinch&&!secondary.turnMoved&&hasPendingMove(secondary)&&Math.random()<move.flinch)secondary.flinched=true;
         }
         if(other.curHp<=0&&!other.fainted){applyNeigh(attacker,other);faintMon(other,other.isHei?`hei-${other.host===me?"me":"foe"}-${other.name}`:imgOf(attackerSide==="me"?"foe":"me"));}
@@ -3891,6 +3938,7 @@ function endTurn(skipFakua=false){
   }
   [me,foe].forEach(mon=>{if(mon?.fakuaBoostTurns>0){mon.fakuaBoostTurns--;if(mon.fakuaBoostTurns===0){mon.fakuaBoostMultiplier=1;pushLog(`  ・ ${mon.name} の ふとうのけんの強化が切れた。`,'#9fb3d6');}}});
   advanceFrozenGlaiveVulnerability([...myTeam,...foeTeam]);
+  advanceFakuaLaprasEffects([...myTeam,...foeTeam]);
   [...myTeam,...foeTeam].forEach(mon=>{if(mon.justSwitched)mon.justSwitched=false;if(mon.kokugaiBreathDoubleTurns>0)mon.kokugaiBreathDoubleTurns--;if(mon.noAttackTurns>0)mon.noAttackTurns--;});
   [...myTeam,...foeTeam].forEach(mon=>{if(mon.tailwindTurns>0)mon.tailwindTurns--;});
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=false;});

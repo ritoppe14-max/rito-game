@@ -70,6 +70,7 @@ function multiNext(skipFakua=false){
   if(!skipFakua){
     const active=[...multi.slots.me,...multi.slots.foe];
     active.forEach(mon=>{if(mon.fakuaBoostTurns>0){mon.fakuaBoostTurns--;if(mon.fakuaBoostTurns===0)mon.fakuaBoostMultiplier=1;}});
+    advanceFakuaLaprasEffects([...multi.teams.me,...multi.teams.foe]);
     const pending=[];[...myTeam,...foeTeam].forEach(mon=>{if(mon?.fakuaPendingSword){mon.fakuaPendingSword.turns--;if(mon.fakuaPendingSword.turns<=0)pending.push(mon);}});
     if(pending.length){series(pending.map(mon=>cb=>{const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;if(!shot||mon.fainted||shot.target.fainted){cb();return;}const oldMe=me,oldFoe=foe;if(myTeam.includes(mon)){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}attack(mon,shot.target,shot.move,multiImage(shot.target),()=>{me=oldMe;foe=oldFoe;cb();});}),()=>multiNext(true));return;}
   }
