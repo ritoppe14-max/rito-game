@@ -3887,3 +3887,15 @@ function finish(meWon){
 }
 </script>
 <script src="multi-battle.js?v=20260914-switch-fix"></script>
+<script>
+// 初回のオンライン起動時に、ゲーム本体とポケモン画像を端末へ保存する。
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(() => navigator.serviceWorker.ready).then(registration => {
+      const assets = ['./', './index.html', './multi-battle.js']
+        .concat((Array.isArray(SPECIES) ? SPECIES : []).map(pokemon => pokemon && pokemon.img).filter(Boolean));
+      if (registration.active) registration.active.postMessage({ type: 'cache-game-assets', assets });
+    }).catch(() => {});
+  });
+}
+</script>
