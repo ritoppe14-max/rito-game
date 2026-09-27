@@ -355,7 +355,7 @@ ABIL.magicmirror={name:"マジックミラー",eff:"magicmirror"};
 ABIL.longreach={name:"えんかく",eff:"longreach"};
 ABIL.magicGauge={name:"まりょく",eff:"magicGauge"};
 ABIL.fakuaSword={name:"ふとうのけん",eff:"fakuaSword"};
-ABDESC.fakuaSword="エナジーを使い全能力を一時強化する。初期100、撃破で10回復";
+ABDESC.fakuaSword="初期エナジー50。相手を倒すと10回復し、試合終了時に残量へ50補充。エナジーで全能力を一時強化";
 Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"かげぬいで前の相手を通常威力、控え1体を威力30%上昇で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）",magicGauge:"攻撃する・受けるたび魔力ゲージ+10%。任意の量を消費して攻撃威力を最大2倍にする"});
 const M={
   electroball:{name:"エレキボール",type:"electric",cat:"spec",power:20,electroBall:true,desc:"威力20～120。自分/相手の素早さ比×30（最低20、4倍以上で120）"},
@@ -1209,6 +1209,10 @@ function createBuild(){
 const builds={p1:createBuild(), p2:createBuild()};
 let trainOwner="p1";
 const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro","ritoCodeFakuaZacian","ritoTower999Clear","ritoCodeAiruhitorabanzai"];
+const FAKUA_ENERGY_KEY="ritoFakuaEnergy";
+function getFakuaEnergy(){const saved=localStorage.getItem(FAKUA_ENERGY_KEY);return saved===null?50:Math.max(0,Math.min(100,Math.floor(Number(saved)||0)));}
+function storeFakuaEnergy(value){const energy=Math.max(0,Math.min(100,Math.floor(Number(value)||0)));localStorage.setItem(FAKUA_ENERGY_KEY,String(energy));[...myTeam,...foeTeam].filter(mon=>mon?.id==="fakuaZacian").forEach(mon=>mon.fakuaEnergy=energy);return energy;}
+function grantFakuaMatchEnergy(){const mon=myTeam.find(candidate=>candidate?.id==="fakuaZacian");if(!mon)return;const before=mon.fakuaEnergy??getFakuaEnergy(),after=storeFakuaEnergy(before+50);pushLog(`試合終了ボーナス：ふとうのけんエナジー+${after-before}（${after}/100）`,'#b061ff');}
 function saveGame(){
   const flags={};
   SAVE_FLAGS.forEach(k=>{if(localStorage.getItem(k)==="1")flags[k]=1;});
@@ -1853,7 +1857,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.painSplitSource=null; p.painSplitTurns=0; p.trevenantCurseSource=null;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.infinitePower=0;
-  if(sp.id==="fakuaZacian"){p.fakuaEnergy=100;p.fakuaBoostTurns=0;p.fakuaBoostMultiplier=1;p.usedFifthSlot=false;p.fakuaKingTargets=new Set();}
+  if(sp.id==="fakuaZacian"){p.fakuaEnergy=getFakuaEnergy();p.fakuaBoostTurns=0;p.fakuaBoostMultiplier=1;p.usedFifthSlot=false;p.fakuaKingTargets=new Set();}
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0; p.noAttackTurns=0; p.infiltratorTurns=0;
@@ -2903,12 +2907,12 @@ function attack(attacker,defender,move,defImgId,cb){
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
   if(move.fakuaBoostCost){
     if(attacker.abilEff!=="fakuaSword"||(attacker.fakuaEnergy||0)<move.fakuaBoostCost){pushLog("  └ エナジーが足りない！","#9fb3d6");setTimeout(cb,350);return;}
-    attacker.fakuaEnergy-=move.fakuaBoostCost;attacker.fakuaBoostMultiplier=move.fakuaBoostMultiplier;attacker.fakuaBoostTurns=move.fakuaBoostTurns+1;attacker.acted=(attacker.acted||0)+1;attacker.firstTurnReady=false;
+    attacker.fakuaEnergy=storeFakuaEnergy(attacker.fakuaEnergy-move.fakuaBoostCost);attacker.fakuaBoostMultiplier=move.fakuaBoostMultiplier;attacker.fakuaBoostTurns=move.fakuaBoostTurns+1;attacker.acted=(attacker.acted||0)+1;attacker.firstTurnReady=false;
     announceAbility(attacker);pushLog(`  ★ ふとうのけん！ ${move.fakuaBoostCost}エナジー消費。全能力×${move.fakuaBoostMultiplier}（${move.fakuaBoostTurns}ターン）`,'#b061ff');renderStages();setTimeout(cb,350);return;
   }
   if(move.fakuaEnergyCost&&!move.fakuaCostPaid){
     if(attacker.abilEff!=="fakuaSword"||(attacker.fakuaEnergy||0)<move.fakuaEnergyCost){pushLog("  └ エナジーが足りない！","#9fb3d6");setTimeout(cb,350);return;}
-    attacker.fakuaEnergy-=move.fakuaEnergyCost;move={...move,fakuaCostPaid:true};pushLog(`  └ ふとうのけん：${move.fakuaEnergyCost}エナジー消費（残り${attacker.fakuaEnergy}）`,'#b061ff');
+    attacker.fakuaEnergy=storeFakuaEnergy(attacker.fakuaEnergy-move.fakuaEnergyCost);move={...move,fakuaCostPaid:true};pushLog(`  └ ふとうのけん：${move.fakuaEnergyCost}エナジー消費（残り${attacker.fakuaEnergy}）`,'#b061ff');
   }
   if(move.fakuaSacredSword&&!move.fakuaSacredResolve){
     attacker.fakuaPendingSword={target:defender,move:{...move,fakuaSacredResolve:true},turns:2};
@@ -3314,7 +3318,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.chandelureOverheat&&actualDamage>0){attacker.noAttackTurns=2;pushLog(`  └ ${attacker.name} は 次のターン、攻撃技を使えない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
-    if(defender.curHp<=0&&!defender.fainted){if(attacker.id==="fakuaZacian"&&attacker.abilEff==="fakuaSword"){const before=attacker.fakuaEnergy||0;attacker.fakuaEnergy=Math.min(100,before+10);pushLog(`  ★ ふとうのけん！ 相手を倒してエナジー+${attacker.fakuaEnergy-before}（${attacker.fakuaEnergy}/100）`,'#b061ff');}if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
+    if(defender.curHp<=0&&!defender.fainted){if(attacker.id==="fakuaZacian"&&attacker.abilEff==="fakuaSword"){const before=attacker.fakuaEnergy||0;attacker.fakuaEnergy=storeFakuaEnergy(before+10);pushLog(`  ★ ふとうのけん！ 相手を倒してエナジー+${attacker.fakuaEnergy-before}（${attacker.fakuaEnergy}/100）`,'#b061ff');}if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
     if(move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="toxicdebris"&&defender.curHp>0){
       announceAbility(defender);
@@ -3952,6 +3956,7 @@ function pickForced(side,i){
 }
 function finish(meWon){
   busy=true; clearCmd();
+  grantFakuaMatchEnergy();
   if(mode==='stadium'&&meWon){stadiumAfterWin();return;}
   if(mode==='tower'&&meWon){towerAfterWin();return;}
   if(mode==='lunatic'&&meWon) localStorage.setItem("ritoLunaticClear","1");
