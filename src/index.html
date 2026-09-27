@@ -2343,14 +2343,17 @@ function applyMaxMoveEffect(attacker,defender,move){
   if(self)applyDrop(attacker,self); if(target&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),target.stats||target);
   if(move.cureGrassStatus&&defender.status&&["poison","toxic","burn","paralyze","sleep","hypersleep"].includes(defender.status)){defender.status=null;pushLog(`  ・ ${defender.name} の状態異常が回復した！`,"#7ac74c");renderStages();}
 }
+const FAKUA_TAIL_SUCCESS_MIN=.45,FAKUA_TAIL_SUCCESS_MAX=.55,FAKUA_TAIL_SWEEP_MS=Math.round(1800/1.3);
+function fakuaTailGaugeSuccess(position){return position>=FAKUA_TAIL_SUCCESS_MIN&&position<=FAKUA_TAIL_SUCCESS_MAX;}
 function startFakuaTailGauge(attacker,cb){
-  if(attacker.owner==="cpu"){cb(Math.random()<.33);return;}
-  const cmd=document.getElementById("cmd"),started=Date.now(),period=3600;
+  if(attacker.owner==="cpu"){cb(Math.random()<FAKUA_TAIL_SUCCESS_MAX-FAKUA_TAIL_SUCCESS_MIN);return;}
+  const cmd=document.getElementById("cmd"),started=Date.now(),period=FAKUA_TAIL_SWEEP_MS*2;
   let finished=false;
   const finish=success=>{if(finished)return;finished=true;clearInterval(timer);window.removeEventListener("keydown",onKey);cmd.innerHTML="";cb(success);};
-  const judge=()=>{const phase=((Date.now()-started)%period)/period,position=phase<.5?phase*2:(1-phase)*2;finish(position>=.38&&position<=.62);};
+  const judge=()=>{const phase=((Date.now()-started)%period)/period,position=phase<.5?phase*2:(1-phase)*2;finish(fakuaTailGaugeSuccess(position));};
   const onKey=e=>{if(e.code==="Space"){e.preventDefault();judge();}};
-  cmd.innerHTML=`<div class="center sub">${attacker.name} の 尻尾判定！ 緑の場所でボタンを押そう</div><div style="position:relative;height:28px;margin:12px 10px;background:linear-gradient(90deg,#ef5350 0 38%,#38d66b 38% 62%,#ef5350 62%);border:2px solid #fff;border-radius:8px;overflow:hidden"><div style="position:absolute;top:-4px;left:0;width:8px;height:34px;background:#fff;box-shadow:0 0 8px #fff;animation:fakuaTailSweep 1.8s linear infinite alternate"></div></div><div class="center"><button class="btn blue" id="fakuaTailJudge">判定する（Space）</button></div><style>@keyframes fakuaTailSweep{from{left:0}to{left:calc(100% - 8px)}}</style>`;
+  const successMin=FAKUA_TAIL_SUCCESS_MIN*100,successMax=FAKUA_TAIL_SUCCESS_MAX*100;
+  cmd.innerHTML=`<div class="center sub">${attacker.name} の 尻尾判定！ 緑の場所でボタンを押そう</div><div style="position:relative;height:28px;margin:12px 10px;background:linear-gradient(90deg,#ef5350 0 ${successMin}%,#38d66b ${successMin}% ${successMax}%,#ef5350 ${successMax}%);border:2px solid #fff;border-radius:8px;overflow:hidden"><div style="position:absolute;top:-4px;left:0;width:8px;height:34px;background:#fff;box-shadow:0 0 8px #fff;animation:fakuaTailSweep ${FAKUA_TAIL_SWEEP_MS}ms linear infinite alternate"></div></div><div class="center"><button class="btn blue" id="fakuaTailJudge">判定する（Space）</button></div><style>@keyframes fakuaTailSweep{from{left:0}to{left:calc(100% - 8px)}}</style>`;
   document.getElementById("fakuaTailJudge").addEventListener("click",judge);
   window.addEventListener("keydown",onKey);
   const timer=setInterval(()=>{if(Date.now()-started>10000)finish(false);},150);

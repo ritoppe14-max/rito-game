@@ -801,6 +801,7 @@ vm.runInContext(`
   const fakuaMarilliData=SPECIES[SP_BY_ID.fakuaMarilli];
   check(fakuaMarilliData.hidden&&CODE_POKEMON_UNLOCKS.fakuaMarilli==='ritoCodeFakuaMarilli'&&fakuaMarilliData.img==='images/マリルリ.gif','Fakua Azumarill stays hidden until its code and uses the exact existing Marill image filename');
   check(fakuaMarilliData.base.atk===180&&fakuaMarilliData.abil==='fakuaTailPower'&&ABIL.fakuaTailPower.name==='ちからもち'&&ABILS.fakuaMarilli[0]==='fakuaTailPower','Fakua Azumarill has attack 180 and the dedicated Huge Power tail-judgment ability');
+  check(FAKUA_TAIL_SUCCESS_MIN===.45&&FAKUA_TAIL_SUCCESS_MAX===.55&&FAKUA_TAIL_SWEEP_MS===1385&&fakuaTailGaugeSuccess(.5)&&!fakuaTailGaugeSuccess(.44)&&!fakuaTailGaugeSuccess(.56),'Fakua Azumarill tail judgment uses a 10% success zone and a 1.3x faster moving bar');
   check(M.fakuaMarilliAquaTail.multiPowers.join('+')==='20+20+50'&&M.fakuaMarilliAquaTail.multiHit===3&&M.fakuaMarilliWhirlpool.cat==='status'&&M.fakuaMarilliWhirlpool.fakuaMarilliWhirlpool,'Fakua Azumarill exclusive move data matches the requested three-hit Aqua Tail and Whirlpool');
   check(['fakuaMarilliAquaTail','fakuaMarilliWhirlpool'].every(key=>fakuaMarilliData.learnset.includes(key)),'Fakua Azumarill learns both exclusive moves');
   localStorage.setItem('ritoCodeFakuaMarilli','1');refreshCodePokemonVisibility();check(!fakuaMarilliData.hidden,'Fakua Azumarill becomes visible after redeeming its unlock flag');
