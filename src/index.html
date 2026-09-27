@@ -364,6 +364,9 @@ const M={
   fakuaMetalClaw:{name:"メタルクロー",type:"steel",cat:"phys",power:70,targetDrop:{chance:1,stats:{def:-1}},fakuaMetalClaw:true},
   fakuaPlayRough:{name:"じゃれつく",type:"fairy",cat:"phys",power:90,fakuaPlayRough:true},
   fakuaKingSword:{name:"王獣の剣",type:"steel",cat:"phys",power:50,fifthSlot:true,fakuaKingBlade:true,desc:"エナジー消費0/10/20/30で威力50/80/100/140。再使用は追加20エナジー"},
+  fakuaAerialAce:{name:"つばめがえし",type:"flying",cat:"phys",power:60,forceHit:true,fakuaAerialAce:true,desc:"自分の残りHPが相手より多いと威力60×2回"},
+  fakuaNitroCharge:{name:"ニトロチャージ",type:"fire",cat:"phys",power:85,healDamage:.3,koBoost:{spe:1},fakuaNitroCharge:true,desc:"命中時に与えたダメージの30%を回復。相手を倒すと素早さ+1、次のニトロチャージは相手を必ずやけど"},
+  fakuaFlareSweeper:{name:"フレアスイーパー",type:"flying",cat:"phys",power:130,flinch:1,fifthSlot:true,fakuaFlareSweeper:true,desc:"威力130。先に行動できると威力+30。相手をひるませる"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
   bulletpunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:40,prio:1},
   hydroVortex:{name:"水流ハイドロ渦潮",type:"water",cat:"spec",power:100,eeveeMove:true,desc:"3ターン、対象に20ダメージ。自分と場の味方を毎ターン20回復"},
@@ -732,7 +735,7 @@ SPECIES.push(
  S("zapdos","サンダー","images/サンダー.gif",["electric","flying"],{hp:100,atk:100,def:95,spa:135,spd:100,spe:110},"birdStatic",["birdZapCannon","birdThunderbolt","hurricane","roost","thunderRoar"]),
  S("moltres","ファイヤー","images/ファイヤー.gif",["fire","flying"],{hp:100,atk:110,def:100,spa:135,spd:95,spe:100},"birdFlame",["birdSkyAttack","birdHeatWave","flamethrower","roost","volcanoReign"])
 );
-const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence",morpeko:"morpekoFifth",fakuaZacian:"fakuaKingSword"};
+const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence",morpeko:"morpekoFifth",fakuaZacian:"fakuaKingSword",fakuaTalonflame:"fakuaFlareSweeper"};
 SPECIES.push(
  S("spectrier","レイスポス","images/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
  S("glastrier","ブリザポス","images/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
@@ -790,7 +793,7 @@ SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","images/クロ�
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","images/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"garakuFury",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","images/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
 SPECIES.push(S("fakuaZacian","ファクアのザシアン","images/ザシアン.gif",["fairy"],{hp:92,atk:150,def:115,spa:80,spd:115,spe:138},"fakuaSword",["fakuaHolySword","fakuaMetalClaw","fakuaPlayRough","ironhead"]));
-SPECIES.push(S("fakuaTalonflame","ファクアのファイアロー","images/ファクアのファイアロー.svg",["fire","flying"],{hp:78,atk:115,def:71,spa:74,spd:69,spe:126},"galeWings",["bravebird","flareblitz","tailwind","roost"]));
+SPECIES.push(S("fakuaTalonflame","ファクアのファイアロー","images/ファクアのファイアロー.svg",["fire","flying"],{hp:78,atk:115,def:71,spa:74,spd:69,spe:126},"galeWings",["fakuaAerialAce","fakuaNitroCharge","bravebird","tailwind"]));
 SPECIES.push(S("machamp","カイリキー","images/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","images/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","images/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
@@ -1050,6 +1053,7 @@ const LEARN={
   raichuA:["risingpancake","thunderbolt","psychic","protect","focusblast","surf","nastyPlot"],
   pincurchin:["electroweb","risingvolt","thunderbolt","suckerpunch","protect","spikes","toxic"],
 };
+LEARN.fakuaTalonflame=["fakuaAerialAce","fakuaNitroCharge","bravebird","flareblitz","tailwind","roost","protect"];
 // ポケモン徹底攻略のSV→剣盾→サンムーンの順で確認した、専用技以外の対戦用55技。
 const COMPETITIVE_MOVE_55=["earthquake","rockslide","stoneedge","ironhead","poisonjab","crunch","suckerpunch","shadowclaw","shadowball","darkpulse","icebeam","icefang","icepunch","flamethrower","fireblast","firepunch","thunderbolt","thunder","thunderwave","energyball","focusblast","psychic","surf","hydropump","waterfall","aquajet","liquidation","crabhammer","bugbite","xscissor","megahorn","dragonclaw","meteor","dpulse","dragontail","hurricane","airslash","playrough","closecombat","bodypress","fakeout","uturn","protect","substitute","toxic","stealthrock","spikes","stickyweb","swordsdance","calmMind","nastyPlot","dragondance","irondefense","buildup","reflect"];
 // ポケモン徹底攻略のSV技リストと各ポケモン図鑑で確認した対戦用100技。
@@ -1380,9 +1384,14 @@ function openDevCode(){
     localStorage.setItem("ritoCodeFakuaTalonflame","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.fakuaTalonflame;
     const owned=party.find(p=>SPECIES[p.sp]?.id==="fakuaTalonflame");
-    if(!owned){party.push({sp,item:"burstHeadband",moves:["bravebird","flareblitz","tailwind","roost"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローを受け取った！");}
-    else if(!owned.item||owned.item==="none"){owned.item="burstHeadband";partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローに ばくれつハチマキを渡した！");}
-    else alert("ファクアのファイアローは、すでに受け取っています。");
+    if(!owned){party.push({sp,item:"burstHeadband",moves:["fakuaAerialAce","fakuaNitroCharge","bravebird","tailwind"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローを受け取った！");}
+    else {
+      let updated=false;
+      if(Array.isArray(owned.moves)&&owned.moves.join("|")===["bravebird","flareblitz","tailwind","roost"].join("|")){owned.moves=["fakuaAerialAce","fakuaNitroCharge","bravebird","tailwind"];updated=true;}
+      if(!owned.item||owned.item==="none"){owned.item="burstHeadband";updated=true;}
+      if(updated){partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのファイアローの技・持ち物を更新した！");}
+      else alert("ファクアのファイアローは、すでに受け取っています。");
+    }
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.kokugainoryu;
@@ -1861,7 +1870,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.moves=moveKeys.map((k,i)=>({...M[k],fifthSlot:i===4}));
   if(BIRD_FIFTH[sp.id])p.moves=[...p.moves.slice(0,4),{...M[BIRD_FIFTH[sp.id]],fifthSlot:true}];
   p.itemKey=sp.id==="fakuaZacian"?"fakuaSword":(itemKey||"none");
-  p.burstHeadbandLock=null;p.burstHeadbandActsFirst=false;
+  p.burstHeadbandLock=null;p.burstHeadbandActsFirst=false;p.actedFirstThisTurn=false;p.fakuaNitroBurnReady=false;
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
   p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
@@ -2127,6 +2136,7 @@ function calcDamage(attacker,defender,move,isCrit){
   let movePower=move.chargedPower!==undefined?move.chargedPower:(move.hpPower?Math.max(10,Math.floor(150*attacker.curHp/attacker.maxHp)):move.power);
   if(move.rageFist)movePower=Math.min(350,50+(attacker.rageFistHits||0)*50);
   if(move.electroBall&&!move.maxMove)movePower=electroBallPower(attacker,defender);
+  if(move.fakuaFlareSweeper&&attacker.actedFirstThisTurn)movePower+=30;
   if(move.noItemDouble&&(!attacker.itemKey||attacker.itemKey==="none"))movePower*=2;
   if(attacker.abilEff==="technician"&&movePower>0&&movePower<=60)movePower*=1.5;
   if(attacker.abilEff==="steelknight"&&movePower<=65) movePower*=1.5;
@@ -2512,7 +2522,7 @@ function doResolve(){
   [...myTeam,...foeTeam].forEach(mon=>{mon.careCritGuard=!!mon.careCritGuardPending;mon.careCritGuardPending=false;});
   busy=true; clearCmd();
   [...myTeam,...foeTeam].forEach(m=>{m.protectActive=false;m.kingShieldActive=false;m.wideGuardActive=false;});
-  me.turnMoved=false; foe.turnMoved=false; me.burstHeadbandActsFirst=false;foe.burstHeadbandActsFirst=false;me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
+  me.turnMoved=false; foe.turnMoved=false; me.burstHeadbandActsFirst=false;foe.burstHeadbandActsFirst=false;me.actedFirstThisTurn=false;foe.actedFirstThisTurn=false;me.hitBeforeMove=false; foe.hitBeforeMove=false; me.flinched=false; foe.flinched=false;
   const A=turnAct.me, B=turnAct.foe;
   const phaseSwitch=(next)=>{const t=[];
     if(A.type==="switch") t.push(cb=>doSwitch("me",A.idx,cb));
@@ -2591,7 +2601,8 @@ function runAttacks(movers,i,done){
   if(atk.status==="hypersleep"&&Math.random()<.25){
     setTimeout(()=>{pushLog(`  └ ${atk.name} は 超眠気で 動けない！`,"#9fb3d6");runAttacks(movers,i+1,done);},450);return;
   }
-  atk.burstHeadbandActsFirst=atk.itemKey==="burstHeadband"&&!def.turnMoved;
+  atk.actedFirstThisTurn=!def.turnMoved;
+  atk.burstHeadbandActsFirst=atk.itemKey==="burstHeadband"&&atk.actedFirstThisTurn;
   atk.turnMoved=true;
   const defSide=m.who==="me"?"foe":"me";
   if(m.move.requiresAttack&&(!turnAct[defSide]||turnAct[defSide].type!=="move"||turnAct[defSide].move.cat==="status"||turnAct[defSide].move.power<=0)){
@@ -2975,6 +2986,7 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     move={...move,infiltratorTurnResolved:true};
   }
+  if(move.fakuaAerialAce&&!move.fakuaAerialResolved){move=attacker.curHp>defender.curHp?{...move,multiHit:2,multiPowers:[60,60],multiEffectOnce:true,fakuaAerialResolved:true}:{...move,fakuaAerialResolved:true};}
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.fifthSlot?"usedFifthSlot":move.onceFlag||"usedPlayTogether";
   if((move.onceBattle||move.fifthSlot)&&attacker[onceFlag]&&!move.fakuaRepeatUse){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
@@ -3310,6 +3322,7 @@ function attack(attacker,defender,move,defImgId,cb){
       }
     }
     if(!sheer&&move.freeze&&effectTarget.curHp>0&&Math.random()<move.freeze) applyStatus(effectTarget,"freeze",effectSource);
+    if(move.fakuaNitroCharge&&attacker.fakuaNitroBurnReady&&actualDamage>0&&effectTarget.curHp>0){attacker.fakuaNitroBurnReady=false;move={...move,burn:1};}
     if(!sheer&&move.burn&&effectTarget.curHp>0&&Math.random()<move.burn) applyStatus(effectTarget,"burn",effectSource);
     if(!sheer&&move.poison&&effectTarget.curHp>0&&Math.random()<move.poison) applyStatus(effectTarget,"poison",effectSource);
     if(attacker.abilEff==="poisonfangAbility"&&actualDamage>0&&effectTarget.curHp>0) applyStatus(effectTarget,"poison",{...attacker,abilEff:"corrosion"});
@@ -3338,7 +3351,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.chandelureOverheat&&actualDamage>0){attacker.noAttackTurns=2;pushLog(`  └ ${attacker.name} は 次のターン、攻撃技を使えない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
-    if(defender.curHp<=0&&!defender.fainted){if(attacker.id==="fakuaZacian"&&attacker.abilEff==="fakuaSword"){const before=attacker.fakuaEnergy||0;attacker.fakuaEnergy=storeFakuaEnergy(before+10);pushLog(`  ★ ふとうのけん！ 相手を倒してエナジー+${attacker.fakuaEnergy-before}（${attacker.fakuaEnergy}/100）`,'#b061ff');}if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
+    if(defender.curHp<=0&&!defender.fainted){if(attacker.id==="fakuaZacian"&&attacker.abilEff==="fakuaSword"){const before=attacker.fakuaEnergy||0;attacker.fakuaEnergy=storeFakuaEnergy(before+10);pushLog(`  ★ ふとうのけん！ 相手を倒してエナジー+${attacker.fakuaEnergy-before}（${attacker.fakuaEnergy}/100）`,'#b061ff');}if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.fakuaNitroCharge)attacker.fakuaNitroBurnReady=true;if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
     if(move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="toxicdebris"&&defender.curHp>0){
       announceAbility(defender);

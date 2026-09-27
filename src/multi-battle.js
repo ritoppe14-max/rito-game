@@ -74,7 +74,7 @@ function multiNext(skipFakua=false){
     if(pending.length){series(pending.map(mon=>cb=>{const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;if(!shot||mon.fainted||shot.target.fainted){cb();return;}const oldMe=me,oldFoe=foe;if(myTeam.includes(mon)){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}attack(mon,shot.target,shot.move,multiImage(shot.target),()=>{me=oldMe;foe=oldFoe;cb();});}),()=>multiNext(true));return;}
   }
   ['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
-  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.burstHeadbandActsFirst=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
+  [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.burstHeadbandActsFirst=false;m.actedFirstThisTurn=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
   multiChoose('me');
 }
 function multiChoose(s){
@@ -148,7 +148,8 @@ function multiResolve(){
     multi.actionLog[a.side].push(`${m.name} の ${a.move.name}`);renderMultiActionPanels();
     me=a.side==='me'?m:target;foe=a.side==='foe'?m:target;
     turnAct={me:{type:'move'},foe:{type:'move'}};
-    m.burstHeadbandActsFirst=m.itemKey==='burstHeadband'&&!target.turnMoved;
+    m.actedFirstThisTurn=!target.turnMoved;
+    m.burstHeadbandActsFirst=m.itemKey==='burstHeadband'&&m.actedFirstThisTurn;
     m.turnMoved=true;
     const actualMove=m.outrageTurns>0?(m.outrageMove||M.outrage):a.move;
     attack(m,target,actualMove,multiImage(target),()=>{
