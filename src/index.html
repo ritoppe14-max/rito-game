@@ -782,6 +782,7 @@ SPECIES.push(S("sayakuFeraligatr","サヤクのオーダイル","images/サヤ�
 SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","images/クロノのバクフーン.gif",["fire"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"blaze",["kuronoEruption","kuronoFlameWheel","focusblast","crunch"]));
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","images/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"garakuFury",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","images/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
+SPECIES.push(S("fakuaZacian","ファクアのザシアン","images/ザシアン.gif",["fairy"],{hp:92,atk:150,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"]));
 SPECIES.push(S("machamp","カイリキー","images/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","images/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","images/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
@@ -846,7 +847,7 @@ SPECIES.push(S("zoroark","ゾロアーク","images/ゾロアーク.gif",["dark"]
 SPECIES.push(S("zebstrika","ゼブライカ","images/ゼブライカ.gif",["electric"],{hp:75,atk:100,def:63,spa:80,spd:63,spe:116},"lightningrod",["wildcharge","thunderbolt","flamecharge","voltswitch"]));
 const SP_BY_ID={}; SPECIES.forEach((s,i)=>SP_BY_ID[s.id]=i);
 SPECIES.find(s=>s.id==="eternatus").hidden=true;
-const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro"};
+const CODE_POKEMON_UNLOCKS={nemoPawmot:"ritoCodeNemo",sayakuFeraligatr:"ritoCodeSayaku",kuronoTyphlosion:"ritoCodeKurono",garakuMoltresG:"ritoCodeGaraku",moaroZapdosG:"ritoCodeMoaro",fakuaZacian:"ritoCodeFakuaZacian"};
 function kokugainoryuUnlocked(){return localStorage.getItem("ritoTower999Clear")==="1"||localStorage.getItem("ritoCodeAiruhitorabanzai")==="1";}
 function refreshCodePokemonVisibility(){SPECIES.forEach(sp=>{if(sp.id!=="eternatus"&&!CODE_POKEMON_UNLOCKS[sp.id]&&sp.id!=="kokugainoryu")sp.hidden=false;});Object.entries(CODE_POKEMON_UNLOCKS).forEach(([id,flag])=>{const sp=SPECIES[SP_BY_ID[id]];if(sp)sp.hidden=localStorage.getItem(flag)!=="1";});const kokugai=SPECIES[SP_BY_ID.kokugainoryu];if(kokugai)kokugai.hidden=!kokugainoryuUnlocked();}
 refreshCodePokemonVisibility();
@@ -1200,7 +1201,7 @@ function createBuild(){
 }
 const builds={p1:createBuild(), p2:createBuild()};
 let trainOwner="p1";
-const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro","ritoTower999Clear","ritoCodeAiruhitorabanzai"];
+const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ritoLunatic4Clear","ritoLunatic5Clear","ritoDynamaxClear","ritoCodeNemo","ritoCodeSayaku","ritoCodeKurono","ritoCodeGaraku","ritoCodeMoaro","ritoCodeFakuaZacian","ritoTower999Clear","ritoCodeAiruhitorabanzai"];
 function saveGame(){
   const flags={};
   SAVE_FLAGS.forEach(k=>{if(localStorage.getItem(k)==="1")flags[k]=1;});
@@ -1354,6 +1355,11 @@ function openDevCode(){
     const sp=SP_BY_ID.moaroZapdosG;
     if(!party.some(p=>SPECIES[p.sp]?.id==="moaroZapdosG")){party.push({sp,item:"none",moves:["moaroThunderKick","bravebird","closecombat","drillrun"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("モアロのガラルサンダーを受け取った！");}
     else alert("モアロのガラルサンダーは、すでに受け取っています。");
+  }else if(normalizedCode==="POKEMONHUXAKUA8"){
+    localStorage.setItem("ritoCodeFakuaZacian","1");refreshCodePokemonVisibility();
+    const sp=SP_BY_ID.fakuaZacian;
+    if(!party.some(p=>SPECIES[p.sp]?.id==="fakuaZacian")){party.push({sp,item:"none",moves:["closecombat","crunch","stoneedge","quickattack"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのザシアンを受け取った！");}
+    else alert("ファクアのザシアンは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.kokugainoryu;
