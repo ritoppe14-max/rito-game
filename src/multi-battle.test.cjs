@@ -776,7 +776,7 @@ vm.runInContext(`
 console.log('Competitive 100 moves and learnsets OK');
 vm.runInContext(`
   const fakuaLaprasIndex=SP_BY_ID.fakuaLapras,fakuaLaprasData=SPECIES[fakuaLaprasIndex];
-  check(fakuaLaprasData.hidden&&CODE_POKEMON_UNLOCKS.fakuaLapras==='ritoCodeFakuaLapras'&&fakuaLaprasData.img==='images/ラプラス.gif','Fakua Lapras is hidden before pokemon huxakua1 and has a Lapras image path');
+  check(fakuaLaprasData.hidden&&CODE_POKEMON_UNLOCKS.fakuaLapras==='ritoCodeFakuaLapras'&&fakuaLaprasData.img==='images/ファクアのラプラス.gif','Fakua Lapras is hidden before pokemon huxakua1 and uses its custom image');
   localStorage.setItem('ritoCodeFakuaLapras','1');refreshCodePokemonVisibility();
   const lapras=makeMon(fakuaLaprasIndex,'none','p1'),laprasAlly=makeMon(SP_BY_ID.gyarados,'none','p1'),laprasTarget=makeMon(SP_BY_ID.duraludon,'none','cpu');
   check(!fakuaLaprasData.hidden&&lapras.abilEff==='shellarmor'&&lapras.base.hp===130&&lapras.base.atk===85&&lapras.base.def===110&&lapras.base.spa===85&&lapras.base.spd===125&&lapras.base.spe===60,'Fakua Lapras unlocks with the standard Lapras stats and Shell Armor');
@@ -816,3 +816,8 @@ vm.runInContext(`
 `,c);
 console.log('Fakua Azumarill: code unlock, stats, tail gauge damage and Whirlpool duration OK');
 if(!fs.existsSync('images/マリルリ.gif'))throw Error('Fakua Azumarill image file is missing');
+for(const [id,img] of [['fakuaZacian','images/ファクアのザシアン(剣の王).gif'],['fakuaTalonflame','images/ファクアのファイヤロー.gif'],['fakuaLapras','images/ファクアのラプラス.gif']]){
+  const found=vm.runInContext(`SPECIES[SP_BY_ID.${id}].img`,c);
+  if(found!==img||!fs.existsSync(img))throw Error(`Image reference mismatch for ${id}: ${found}`);
+}
+console.log('Fakua distribution image files: exact source filenames verified');
