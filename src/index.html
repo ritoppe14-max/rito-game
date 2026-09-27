@@ -1911,14 +1911,18 @@ function makeMon(sp_i, itemKey, owner="p1"){
   if(p.id==="toxtricity"){p.punkMode="electric";p.gearShiftCount=0;p.punkParalyze=false;}
   return p;
 }
+function applyBattleEntry(mon,entry,owner){
+  // 通常対戦では編成・育成画面の技設定を使う。CPUの固定編成とスタジアム／タワーのランダム技だけ、対戦用entryを優先する。
+  if(entry?.moves&&(owner==="cpu"||mode==="stadium"||mode==="tower"))mon.moves=entry.moves.filter(k=>M[k]).map((k,i)=>({...M[k],fifthSlot:i===4}));
+  if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}
+}
 function startBattleWith(p1party,p1sel,p2party,p2sel){
   fakuaMarilliWhirlpools=[];
   if(battleSize>1&&(mode==='cpu'||mode==='friend'))return startMultiBattle(p1party,p1sel,p2party,p2sel);
   const foeOwner=mode==="friend" ? "p2" : "cpu";
   myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
   foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
-  const applyBattleEntry=(mon,entry)=>{if(entry?.moves)mon.moves=entry.moves.filter(k=>M[k]).map((k,i)=>({...M[k],fifthSlot:i===4}));if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}};
-  myTeam.forEach((mon,i)=>applyBattleEntry(mon,p1party[p1sel[i]]));foeTeam.forEach((mon,i)=>applyBattleEntry(mon,p2party[p2sel[i]]));
+  myTeam.forEach((mon,i)=>applyBattleEntry(mon,p1party[p1sel[i]],"p1"));foeTeam.forEach((mon,i)=>applyBattleEntry(mon,p2party[p2sel[i]],foeOwner));
   if(mode==="lunatic"||mode==="lunatic2"||mode==="lunatic3"||mode==="lunatic4"||mode==="lunatic5"||mode==="dynamaxUnlock") foeTeam.forEach((mon,i)=>{
     // 先発順や配列位置ではなくポケモンIDで固定データを割り当てる
     const fixed=p2party.find(p=>SPECIES[p.sp].id===mon.id)||p2party[p2sel[i]];

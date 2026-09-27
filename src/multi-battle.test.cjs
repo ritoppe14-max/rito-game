@@ -835,3 +835,15 @@ vm.runInContext(`
   storeFakuaEnergy(savedFakuaEnergy);
 `,c);
 console.log('Fakua Zacian: free energy boost and paid move execute in one turn');
+vm.runInContext(`
+  const savedBuildMoves=buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves.slice(),savedBattleMode=mode;
+  buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves[0]='ironhead';
+  const configuredZacian=makeMon(SP_BY_ID.fakuaZacian,'fakuaSword','p1');
+  applyBattleEntry(configuredZacian,{moves:['fakuaHolySword','fakuaMetalClaw','fakuaPlayRough','ironhead','fakuaKingSword']},'p1');
+  check(configuredZacian.moves[0].name===M.ironhead.name,'A selected Zacian move from the party build is not overwritten by the old reward-team snapshot');
+  mode='stadium';
+  applyBattleEntry(configuredZacian,{moves:['fakuaHolySword','fakuaMetalClaw','fakuaPlayRough','ironhead','fakuaKingSword']},'p1');
+  check(configuredZacian.moves[0].name===M.fakuaHolySword.name,'Stadium randomized entry moves still override the normal party build');
+  mode=savedBattleMode;buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves=savedBuildMoves;
+`,c);
+console.log('Fakua Zacian: configured party moves carry into normal battles');

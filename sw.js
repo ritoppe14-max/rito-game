@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rito-game-offline-v2';
+const CACHE_NAME = 'rito-game-offline-v3';
 const APP_SHELL = ['./', './index.html', './src/index.html', './src/multi-battle.js'];
 
 self.addEventListener('install', event => {
@@ -32,10 +32,11 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     caches.match(event.request).then(cached => {
-      const network = fetch(event.request)
+      const isPage = event.request.mode === 'navigate' || /\.html$/i.test(url.pathname);
+      const network = fetch(event.request, isPage ? { cache: 'no-cache' } : undefined)
         .then(response => storeResponse(event.request, response))
         .catch(() => cached);
-      return cached || network;
+      return isPage ? network.then(response => response || cached) : (cached || network);
     })
   );
 });
