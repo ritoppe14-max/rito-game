@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="ファクアのファイアロー">
+  <defs>
+    <linearGradient id="feather" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffdf55"/><stop offset=".48" stop-color="#ff7138"/><stop offset="1" stop-color="#d92738"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop stop-color="#ff432b"/><stop offset="1" stop-color="#ffd95b"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#flame)" d="M70 219c-6-24 14-31 13-53 17 12 20 23 16 36 15-14 13-32 8-46 29 22 32 50 15 69 28-14 35-39 25-66 35 27 40 58 20 82H87z" opacity=".9"/>
+  <path fill="url(#feather)" stroke="#762d37" stroke-width="7" stroke-linejoin="round" d="M52 153 20 96l56 22 9-84 36 62 43-53-7 69 74-18-48 53c-9 41-42 68-82 68-30 0-54-17-64-43l-42 26 23-45-37-5z"/>
+  <path fill="#f5eee1" stroke="#762d37" stroke-width="6" stroke-linejoin="round" d="m102 125 72-20-38 43-39 10z"/>
+  <path fill="#293044" d="M127 111a8 8 0 1 0 16 0 8 8 0 0 0-16 0"/>
+  <path fill="#ffd95b" stroke="#762d37" stroke-width="5" stroke-linejoin="round" d="m181 132 47 5-41 19z"/>
+  <path fill="none" stroke="#762d37" stroke-width="8" stroke-linecap="round" d="m93 197-13 28m40-24-4 31m30-39 10 27"/>
+</svg>
