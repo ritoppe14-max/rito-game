@@ -832,9 +832,12 @@ vm.runInContext(`
   attack(freeBoostZacian,freeBoostTarget,{...M.fakuaMetalClaw,power:75,multiHit:2,multiPowers:[75,25],multiEffectOnce:true,fakuaEnergyCost:20},'foeImg',()=>{});
   check(freeBoostZacian.fakuaEnergy===20&&freeBoostTarget.curHp<hpBeforeBoostedMove,'Fakua Zacian pays the move cost and still executes the selected upgraded attack');
   check(fakuaBoostConfig(10).turns===2&&!fakuaMultiOptions(freeBoostZacian).some(option=>option.value==='f:boost:10'),'Multi-battle boosts are a separate free choice from the attack action');
+  check(freeBoostZacian.fakuaEnergySpentThisBattle===30,'Fakua Zacian tracks both ability-boost and attack energy spending');
+  grantFakuaMatchEnergy();
+  check(freeBoostZacian.fakuaEnergy===100&&freeBoostZacian.fakuaEnergySpentThisBattle===0,'Ending a match refunds all spent energy and preserves the 50-energy match bonus up to the cap');
   storeFakuaEnergy(savedFakuaEnergy);
 `,c);
-console.log('Fakua Zacian: free energy boost and paid move execute in one turn');
+console.log('Fakua Zacian: energy refund and paid move execute correctly');
 vm.runInContext(`
   const savedBuildMoves=buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves.slice(),savedBattleMode=mode;
   buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves[0]='ironhead';
