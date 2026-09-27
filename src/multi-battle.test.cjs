@@ -371,7 +371,7 @@ vm.runInContext(`{
   const out=me;doSwitch('me',1,()=>{});check(!out.mougekiLock,'Switch clears move lock');
 }`,c);
 console.log('Mougeki scarf: speed, immunity/protect bypass and move lock OK');
-for(const name of ['メタグロス','メガメタグロス','シャワーズ','サンダース','ブースター','リーフィア','エーフィ','グレイシア'])assert.ok(fs.existsSync('image/image/'+name+'.gif'),'Existing image: '+name);
+for(const name of ['メタグロス','メガメタグロス','シャワーズ','サンダース','ブースター','リーフィア','エーフィ','グレイシア'])assert.ok(fs.existsSync('../image/image/'+name+'.gif'),'Existing image: '+name);
 vm.runInContext(`{
   const ids=['metagross','vaporeon','jolteon','flareon','leafeon','espeon','glaceon'];
   for(const id of ids){
@@ -432,7 +432,7 @@ vm.runInContext(`{
   multi=null;
 }`,c);
 console.log('Metagross and six Eevee evolutions: fifth slots, mega, Mold Breaker, durations, safe burn and multi forced switches OK');
-for(const name of ['ストライク','ハッサム'])assert.ok(fs.existsSync('image/image/'+name+'.gif'));
+for(const name of ['ストライク','ハッサム'])assert.ok(fs.existsSync('../image/image/'+name+'.gif'));
 vm.runInContext(`{
   multi=null;battleSize=1;mode='cpu';weather='hail';hazards=emptyHazards();
   const scyther=SPECIES[SP_BY_ID.scyther],scizor=SPECIES[SP_BY_ID.scizor];

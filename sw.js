@@ -1,5 +1,5 @@
-const CACHE_NAME = 'rito-game-offline-v1';
-const APP_SHELL = ['./', './index.html', './multi-battle.js'];
+const CACHE_NAME = 'rito-game-offline-v2';
+const APP_SHELL = ['./', './index.html', './src/index.html', './src/multi-battle.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
