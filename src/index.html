@@ -1231,6 +1231,7 @@ const SAVE_FLAGS=["ritoLunaticClear","ritoLunatic2Clear","ritoLunatic3Clear","ri
 const FAKUA_ENERGY_KEY="ritoFakuaEnergy";
 function getFakuaEnergy(){const saved=localStorage.getItem(FAKUA_ENERGY_KEY);return saved===null?50:Math.max(0,Math.min(100,Math.floor(Number(saved)||0)));}
 function storeFakuaEnergy(value){const energy=Math.max(0,Math.min(100,Math.floor(Number(value)||0)));localStorage.setItem(FAKUA_ENERGY_KEY,String(energy));[...myTeam,...foeTeam].filter(mon=>mon?.id==="fakuaZacian").forEach(mon=>mon.fakuaEnergy=energy);return energy;}
+function refillFakuaEnergyAtBattleStart(party,selected){const hasFakuaZacian=selected.some(index=>{const entry=party[index],sp=typeof entry?.sp==="number"?SPECIES[entry.sp]:SPECIES.find(candidate=>candidate.id===entry?.sp);return sp?.id==="fakuaZacian";});if(hasFakuaZacian)return storeFakuaEnergy(100);return null;}
 function grantFakuaMatchEnergy(){const mon=myTeam.find(candidate=>candidate?.id==="fakuaZacian");if(!mon)return;const before=mon.fakuaEnergy??getFakuaEnergy(),spent=Math.max(0,Math.floor(mon.fakuaEnergySpentThisBattle||0)),after=storeFakuaEnergy(before+spent+50);mon.fakuaEnergySpentThisBattle=0;pushLog(`試合終了：消費分${spent}エナジーを返却、ボーナス+50（${after}/100）`,'#b061ff');}
 function saveGame(){
   const flags={};
@@ -1917,6 +1918,7 @@ function applyBattleEntry(mon,entry,owner){
   if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}
 }
 function startBattleWith(p1party,p1sel,p2party,p2sel){
+  refillFakuaEnergyAtBattleStart(p1party,p1sel);
   fakuaMarilliWhirlpools=[];
   if(battleSize>1&&(mode==='cpu'||mode==='friend'))return startMultiBattle(p1party,p1sel,p2party,p2sel);
   const foeOwner=mode==="friend" ? "p2" : "cpu";

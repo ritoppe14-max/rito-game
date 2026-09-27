@@ -850,3 +850,11 @@ vm.runInContext(`
   mode=savedBattleMode;buildOf(SPECIES[SP_BY_ID.fakuaZacian],'p1').moves=savedBuildMoves;
 `,c);
 console.log('Fakua Zacian: configured party moves carry into normal battles');
+vm.runInContext(`
+  const savedBattleStartEnergy=getFakuaEnergy();storeFakuaEnergy(17);
+  const fakuaEntry={sp:SP_BY_ID.fakuaZacian,item:'fakuaSword'};
+  check(refillFakuaEnergyAtBattleStart([fakuaEntry],[0])===100&&getFakuaEnergy()===100,'Fakua Zacian enters every selected battle with 100 energy');
+  check(refillFakuaEnergyAtBattleStart([{sp:SP_BY_ID.duraludon,item:'none'}],[0])===null&&getFakuaEnergy()===100,'Battle start does not alter energy when Fakua Zacian was not selected');
+  storeFakuaEnergy(savedBattleStartEnergy);
+`,c);
+console.log('Fakua Zacian: battle-start energy refills to 100');
