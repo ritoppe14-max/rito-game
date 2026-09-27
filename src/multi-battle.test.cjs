@@ -822,3 +822,16 @@ for(const [id,img] of [['fakuaZacian','images/ファクアのザシアン(剣の
   if(found!==img||!fs.existsSync(img))throw Error(`Image reference mismatch for ${id}: ${found}`);
 }
 console.log('Fakua distribution image files: exact source filenames verified');
+vm.runInContext(`
+  const savedFakuaEnergy=getFakuaEnergy(),freeBoostZacian=makeMon(SP_BY_ID.fakuaZacian,'fakuaSword','p1'),freeBoostTarget=makeMon(SP_BY_ID.duraludon,'none','cpu');
+  myTeam=[freeBoostZacian];foeTeam=[freeBoostTarget];me=freeBoostZacian;foe=freeBoostTarget;turnAct={me:null,foe:null};storeFakuaEnergy(50);
+  let moveMenuReopened=false;const originalOpenMoves=openMoves;openMoves=()=>{moveMenuReopened=true;};
+  activateFakuaBoost('me',10,2,1.2);openMoves=originalOpenMoves;
+  check(freeBoostZacian.fakuaEnergy===40&&freeBoostZacian.fakuaBoostTurns===3&&freeBoostZacian.fakuaBoostMultiplier===1.2&&freeBoostZacian.acted===0&&turnAct.me===null&&moveMenuReopened,'Fakua Zacian spends energy on a free boost and can still choose a move this turn');
+  const hpBeforeBoostedMove=freeBoostTarget.curHp;
+  attack(freeBoostZacian,freeBoostTarget,{...M.fakuaMetalClaw,power:75,multiHit:2,multiPowers:[75,25],multiEffectOnce:true,fakuaEnergyCost:20},'foeImg',()=>{});
+  check(freeBoostZacian.fakuaEnergy===20&&freeBoostTarget.curHp<hpBeforeBoostedMove,'Fakua Zacian pays the move cost and still executes the selected upgraded attack');
+  check(fakuaBoostConfig(10).turns===2&&!fakuaMultiOptions(freeBoostZacian).some(option=>option.value==='f:boost:10'),'Multi-battle boosts are a separate free choice from the attack action');
+  storeFakuaEnergy(savedFakuaEnergy);
+`,c);
+console.log('Fakua Zacian: free energy boost and paid move execute in one turn');

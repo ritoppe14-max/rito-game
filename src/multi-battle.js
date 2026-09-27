@@ -84,7 +84,7 @@ function multiChoose(s){
   busy=false;inputSide=s;renderMulti();
   const enemies=multiVisible(multiOther(s)),bench=multiBench(s);
   const allies=multiLiving(s);
-  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">5枠目の技は1試合に1回だけ使え、まもる・みがわりを貫通します。じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${fakuaMultiOptions(m).map(o=>`<option value="${o.value}" ${o.disabled?'disabled':''}>${o.label}</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
+  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">5枠目の技は1試合に1回だけ使え、まもる・みがわりを貫通します。じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${fakuaMultiOptions(m).map(o=>`<option value="${o.value}" ${o.disabled?'disabled':''}>${o.label}</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select>${m.abilEff==='fakuaSword'?`<label>ふとうのけん（技選択と同じターンに発動）：<select id="multi-fakua-boost-${m.multiId}"><option value="0">使わない</option>${[[5,1,1.1],[10,2,1.2],[15,3,1.3]].map(([cost,turns,mult])=>`<option value="${cost}" ${m.fakuaEnergy<cost?'disabled':''}>${cost}E・全能力×${mult}を${turns}ターン</option>`).join('')}</select></label>`:''}<label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
 }
 function multiConfirm(s){
   if(busy||!multi)return;
@@ -92,14 +92,16 @@ function multiConfirm(s){
     const value=document.getElementById('multi-action-'+mon.multiId).value;
     if(value[0]==='s')return {side:s,mon,type:'switch',replacement:multiBench(s).find(m=>m.multiId===Number(value.slice(1)))};
     let base,move;
-    if(value.startsWith('f:')){const [,index,variant]=value.split(':');if(index==='boost'){const [cost,turns,mult]=({5:[5,1,1.1],10:[10,2,1.2],15:[15,3,1.3]})[Number(variant)];base={name:'ふとうのけん',type:'steel',cat:'status',power:0};move={...base,fakuaBoostCost:cost,fakuaBoostTurns:turns,fakuaBoostMultiplier:mult};}else{base=mon.moves[Number(index)];move=fakuaModeMove(mon,base,variant);}}else{base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(value.slice(1))];move=base;}
+    if(value.startsWith('f:')){const [,index,variant]=value.split(':');base=mon.moves[Number(index)];move=fakuaModeMove(mon,base,variant);}else{base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(value.slice(1))];move=base;}
     if(!base)return null;
     const ally=multiLiving(s).find(m=>m.multiId===Number(document.getElementById('multi-ally-'+mon.multiId).value));
     move=(move.decorateAlly||move.behindMove)?Object.assign({},move,move.decorateAlly?{allyTarget:ally}:{behindTarget:ally}):move;
     const target=(base.allyHeal||base.allyBoost)?ally:multiVisible(multiOther(s)).find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value));
-    return {side:s,mon,type:'move',move,target};
+    const boostCost=Number(document.getElementById('multi-fakua-boost-'+mon.multiId)?.value)||0;
+    return {side:s,mon,type:'move',move,target,fakuaBoost:boostCost?fakuaBoostConfig(boostCost):null};
   });
   if(actions.some(a=>!a||a.type==='switch'&&!a.replacement)){pushLog('行動を選び直してください。');multiChoose(s);return;}
+  if(actions.some(a=>a.fakuaBoost&&a.mon.fakuaEnergy<a.fakuaBoost.cost+(a.move.fakuaEnergyCost||0))){alert('技と能力強化の合計エナジーが足りません。');multiChoose(s);return;}
   const switches=actions.filter(a=>a.type==='switch');
   if(new Set(switches.map(a=>a.replacement)).size!==switches.length){alert('同じ控えを複数の場所へ出すことはできません。');return;}
   if(switches.some(a=>a.mon.switchLock>0)){alert('交代不能のポケモンがいます。');return;}
@@ -129,6 +131,7 @@ function multiSwitch(a,cb){
 }
 function multiResolve(){
   busy=true;clearCmd();
+  multi.actions.forEach(a=>{if(a.fakuaBoost)applyFakuaBoost(a.mon,a.fakuaBoost.cost,a.fakuaBoost.turns,a.fakuaBoost.mult);});
   const priority=a=>a.type==='switch'?10:a.type==='wait'?-10:movePriority(a.mon,a.move);
   const actions=multi.actions.slice().sort((a,b)=>priority(b)-priority(a)||effSpeed(b.mon)-effSpeed(a.mon));
   series(actions.map(a=>cb=>{

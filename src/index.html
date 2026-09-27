@@ -2420,7 +2420,18 @@ function nextTurn(){ turnAct={me:null,foe:null}; requestAction("me"); }
 function requestAction(side){ inputSide=side; busy=false; renderMenu(side); }
 function openFakuaBoost(side){
   const mon=activeOf(side),energy=mon.fakuaEnergy||0,c=document.getElementById("cmd");
-  c.innerHTML=`<div class="center sub">ふとうのけん：能力強化を選択（エナジー ${energy}/100）</div><div class="moves">${[[5,1,1.1],[10,2,1.2],[15,3,1.3]].map(([cost,turns,mult])=>`<button class="move" ${energy<cost?'disabled':''} onclick="submitAction('${side}',{type:'move',move:{name:'ふとうのけん',type:'steel',cat:'status',power:0,fakuaBoostCost:${cost},fakuaBoostTurns:${turns},fakuaBoostMultiplier:${mult}}})"><div class="mn">${cost}エナジー消費</div><div class="md">${turns}ターン 全能力×${mult.toFixed(1)}</div></button>`).join('')}</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
+  c.innerHTML=`<div class="center sub">ふとうのけん：能力強化（エナジー ${energy}/100）<br>強化後にこのターンの技を選べます</div><div class="moves">${[[5,1,1.1],[10,2,1.2],[15,3,1.3]].map(([cost,turns,mult])=>`<button class="move" ${energy<cost?'disabled':''} onclick="activateFakuaBoost('${side}',${cost},${turns},${mult})"><div class="mn">${cost}エナジー消費</div><div class="md">${turns}ターン 全能力×${mult.toFixed(1)}</div></button>`).join('')}</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
+}
+function applyFakuaBoost(mon,cost,turns,mult){
+  if(!mon||mon.abilEff!=="fakuaSword"||(mon.fakuaEnergy||0)<cost)return false;
+  mon.fakuaEnergy=storeFakuaEnergy(mon.fakuaEnergy-cost);mon.fakuaBoostMultiplier=mult;mon.fakuaBoostTurns=turns+1;
+  announceAbility(mon);pushLog(`  ★ ふとうのけん！ ${cost}エナジー消費。全能力×${mult}（${turns}ターン）`,'#b061ff');renderStages();return true;
+}
+function fakuaBoostConfig(cost){return ({5:{cost:5,turns:1,mult:1.1},10:{cost:10,turns:2,mult:1.2},15:{cost:15,turns:3,mult:1.3}})[Number(cost)]||null;}
+function activateFakuaBoost(side,cost,turns,mult){
+  const mon=activeOf(side);
+  if(!applyFakuaBoost(mon,cost,turns,mult)){pushLog("  └ エナジーが足りない！","#9fb3d6");renderMenu(side);return;}
+  openMoves(side);
 }
 function chooseFakuaMove(side,index){
   const mon=activeOf(side),move=mon.moves[index],energy=mon.fakuaEnergy||0,c=document.getElementById("cmd");
@@ -2449,7 +2460,6 @@ function fakuaMultiOptions(mon){
       modes.forEach(([key,label])=>{const variant=fakuaModeMove(mon,move,key);if(move.fakuaKingBlade&&mon.usedFifthSlot)label+=`・再使用+20E`;result.push({value:`f:${i}:${key}`,label,disabled:(mon.fakuaEnergy||0)<(variant.fakuaEnergyCost||0)||(move.fakuaKingBlade&&mon.usedFifthSlot&&(mon.fakuaEnergy||0)<20)||(move.fifthSlot&&mon.usedFifthSlot&&!(mon.fakuaEnergy>=20))});});
     }else result.push({value:`m${i}`,label:`${move.name}（${catLabel(move)}・威力${move.power}）`,disabled:!!((mon.electroBeamReady&&!move.chargeTurn)||(mon.itemKey==='mougekiScarf'&&mon.mougekiLock&&move.name!==mon.mougekiLock)||(mon.itemKey==='burstHeadband'&&mon.burstHeadbandLock&&move.name!==mon.burstHeadbandLock)||(move.fifthSlot&&mon.usedFifthSlot))});
   });
-  if(mon.abilEff==="fakuaSword")[[5,1,1.1],[10,2,1.2],[15,3,1.3]].forEach(([cost,turns,mult])=>result.push({value:`f:boost:${cost}`,label:`ふとうのけん（${cost}E・能力×${mult}を${turns}ターン）`,disabled:(mon.fakuaEnergy||0)<cost}));
   return result;
 }
 function renderMenu(side){
