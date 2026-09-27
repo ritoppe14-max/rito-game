@@ -797,3 +797,22 @@ vm.runInContext(`
   check(perishTarget.fainted&&perishTarget.curHp===0,'Perish Song defeats a target at or below 30% HP after its third hit');
 `,c);
 console.log('Fakua Lapras: code unlock, stats, Shell Armor and exclusive moves OK');
+vm.runInContext(`
+  const fakuaMarilliData=SPECIES[SP_BY_ID.fakuaMarilli];
+  check(fakuaMarilliData.hidden&&CODE_POKEMON_UNLOCKS.fakuaMarilli==='ritoCodeFakuaMarilli'&&fakuaMarilliData.img==='images/マリルリ.gif','Fakua Azumarill stays hidden until its code and uses the exact existing Marill image filename');
+  check(fakuaMarilliData.base.atk===146&&fakuaMarilliData.abil==='fakuaTailPower'&&ABIL.fakuaTailPower.name==='ちからもち'&&ABILS.fakuaMarilli[0]==='fakuaTailPower','Fakua Azumarill has attack 146 and the dedicated Huge Power tail-judgment ability');
+  check(M.fakuaMarilliAquaTail.multiPowers.join('+')==='20+20+50'&&M.fakuaMarilliAquaTail.multiHit===3&&M.fakuaMarilliWhirlpool.cat==='status'&&M.fakuaMarilliWhirlpool.fakuaMarilliWhirlpool,'Fakua Azumarill exclusive move data matches the requested three-hit Aqua Tail and Whirlpool');
+  check(['fakuaMarilliAquaTail','fakuaMarilliWhirlpool'].every(key=>fakuaMarilliData.learnset.includes(key)),'Fakua Azumarill learns both exclusive moves');
+  localStorage.setItem('ritoCodeFakuaMarilli','1');refreshCodePokemonVisibility();check(!fakuaMarilliData.hidden,'Fakua Azumarill becomes visible after redeeming its unlock flag');
+  const tailUser=makeMon(SP_BY_ID.fakuaMarilli,'none','p1'),tailTarget=makeMon(SP_BY_ID.duraludon,'none','cpu');
+  const tailBase=calcDamage(tailUser,tailTarget,{...M.fakuaMarilliAquaTail,power:50},false).dmg;
+  const tailSuccess=calcDamage(tailUser,tailTarget,{...M.fakuaMarilliAquaTail,power:50,fakuaTailSuccess:true},false).dmg;
+  check(tailSuccess===Math.floor(tailBase*1.3),'A successful tail judgment multiplies physical damage by 1.3, while failure keeps normal damage');
+  tailUser.curHp=tailUser.maxHp;tailTarget.maxHp=tailTarget.curHp=1000;const whirlpoolAlly=makeMon(SP_BY_ID.gyarados,'none','p1');whirlpoolAlly.maxHp=whirlpoolAlly.curHp=1000;
+  fakuaMarilliWhirlpools=[{source:tailUser,turns:3}];
+  for(let turn=0;turn<3;turn++)tickFakuaMarilliWhirlpools([tailUser,whirlpoolAlly,tailTarget]);
+  check(tailUser.curHp===tailUser.maxHp&&whirlpoolAlly.curHp===910&&tailTarget.curHp===910&&fakuaMarilliWhirlpools.length===0,'Whirlpool deals 30 damage to each other active Pokemon per turn for three turns, excluding its user');
+  fakuaMarilliWhirlpools=[];
+`,c);
+console.log('Fakua Azumarill: code unlock, stats, tail gauge damage and Whirlpool duration OK');
+if(!fs.existsSync('images/マリルリ.gif'))throw Error('Fakua Azumarill image file is missing');

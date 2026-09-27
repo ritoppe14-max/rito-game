@@ -45,6 +45,7 @@ startFriendSelect=function(){
 };
 document.getElementById('friendBattleButton').insertAdjacentHTML('afterend','<button class="btn ghost" onclick="startMultiFriend(2)">👥 ダブル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startMultiFriend(3)">👥 トリプル・フレンド対戦（同じ端末）</button><button class="btn ghost" onclick="startSixFriend()">👥 6体・フレンド対戦（同じ端末）</button>');
 function startMultiBattle(p1,sel1,p2,sel2){
+  fakuaMarilliWhirlpools=[];
   multiOriginal.show('battle');
   myTeam=sel1.map(i=>makeMon(p1[i].sp,p1[i].item,'p1'));
   foeTeam=sel2.map(i=>makeMon(p2[i].sp,p2[i].item,mode==='friend'?'p2':'cpu'));
@@ -74,6 +75,7 @@ function multiNext(skipFakua=false){
     const pending=[];[...myTeam,...foeTeam].forEach(mon=>{if(mon?.fakuaPendingSword){mon.fakuaPendingSword.turns--;if(mon.fakuaPendingSword.turns<=0)pending.push(mon);}});
     if(pending.length){series(pending.map(mon=>cb=>{const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;if(!shot||mon.fainted||shot.target.fainted){cb();return;}const oldMe=me,oldFoe=foe;if(myTeam.includes(mon)){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}attack(mon,shot.target,shot.move,multiImage(shot.target),()=>{me=oldMe;foe=oldFoe;cb();});}),()=>multiNext(true));return;}
   }
+  tickFakuaMarilliWhirlpools([...multi.slots.me,...multi.slots.foe]);
   ['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
   [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.burstHeadbandActsFirst=false;m.actedFirstThisTurn=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
   multiChoose('me');
