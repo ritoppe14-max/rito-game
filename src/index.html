@@ -354,9 +354,15 @@ ABIL.guts={name:"こんじょう",eff:"guts"};
 ABIL.magicmirror={name:"マジックミラー",eff:"magicmirror"};
 ABIL.longreach={name:"えんかく",eff:"longreach"};
 ABIL.magicGauge={name:"まりょく",eff:"magicGauge"};
+ABIL.fakuaSword={name:"ふとうのけん",eff:"fakuaSword"};
+ABDESC.fakuaSword="エナジーを使い全能力を一時強化する。初期100、撃破で10回復";
 Object.assign(ABDESC,{voltabsorb:"攻撃でダメージを受けると素早さ+1段階（1回の技につき1回）",guts:"状態異常のとき攻撃力1.5倍。やけどによる攻撃半減なし",chlorophyll:"攻撃技を使うとき、防御-1段階・攻撃+1段階（1回の技につき1回）",magicmirror:"相手の補助技と、自分への状態異常・能力低下などの追加効果を反射。攻撃ダメージは受ける",longreach:"かげぬいで前の相手を通常威力、控え1体を威力30%上昇で選んで攻撃できる",snowcloak:"素早さを下げる技を50%で無効化（ダメージ・追加効果とも無効）",magicGauge:"攻撃する・受けるたび魔力ゲージ+10%。任意の量を消費して攻撃威力を最大2倍にする"});
 const M={
   electroball:{name:"エレキボール",type:"electric",cat:"spec",power:20,electroBall:true,desc:"威力20～120。自分/相手の素早さ比×30（最低20、4倍以上で120）"},
+  fakuaHolySword:{name:"せいなる剣",type:"fighting",cat:"phys",power:20,multiHit:4,fakuaSacredSword:true,ghostPierce:true,desc:"威力20×4。20エナジーで6回攻撃。選択後2ターンで攻撃し、ゴーストにも命中"},
+  fakuaMetalClaw:{name:"メタルクロー",type:"steel",cat:"phys",power:70,targetDrop:{chance:1,stats:{def:-1}},fakuaMetalClaw:true},
+  fakuaPlayRough:{name:"じゃれつく",type:"fairy",cat:"phys",power:90,fakuaPlayRough:true},
+  fakuaKingSword:{name:"王獣の剣",type:"steel",cat:"phys",power:50,fifthSlot:true,fakuaKingBlade:true,desc:"エナジー消費0/10/20/30で威力50/80/100/140。再使用は追加20エナジー"},
   scytherDoubleWing:{name:"ダブルウィング",type:"flying",cat:"phys",power:40,multiHit:2,forceHit:true,desc:"威力40×2回。必中（まもる等による防御は有効）"},
   bulletpunch:{name:"バレットパンチ",type:"steel",cat:"phys",power:40,prio:1},
   hydroVortex:{name:"水流ハイドロ渦潮",type:"water",cat:"spec",power:100,eeveeMove:true,desc:"3ターン、対象に20ダメージ。自分と場の味方を毎ターン20回復"},
@@ -725,7 +731,7 @@ SPECIES.push(
  S("zapdos","サンダー","images/サンダー.gif",["electric","flying"],{hp:100,atk:100,def:95,spa:135,spd:100,spe:110},"birdStatic",["birdZapCannon","birdThunderbolt","hurricane","roost","thunderRoar"]),
  S("moltres","ファイヤー","images/ファイヤー.gif",["fire","flying"],{hp:100,atk:110,def:100,spa:135,spd:95,spe:100},"birdFlame",["birdSkyAttack","birdHeatWave","flamethrower","roost","volcanoReign"])
 );
-const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence",morpeko:"morpekoFifth"};
+const BIRD_FIFTH={articuno:"iceAvalanche",zapdos:"thunderRoar",moltres:"volcanoReign",umbreon:"blackMoonSilence",morpeko:"morpekoFifth",fakuaZacian:"fakuaKingSword"};
 SPECIES.push(
  S("spectrier","レイスポス","images/レイスポス.gif",["ghost"],{hp:100,atk:65,def:60,spa:145,spd:80,spe:130},"grimneigh",["shadowball","hex","nastyPlot","willowisp"]),
  S("glastrier","ブリザポス","images/ブリアボス.gif",["ice"],{hp:100,atk:145,def:130,spa:65,spd:110,spe:30},"chillingneigh",["iciclecrash","closecombat","heavySlam","swordsdance"])
@@ -782,7 +788,7 @@ SPECIES.push(S("sayakuFeraligatr","サヤクのオーダイル","images/サヤ�
 SPECIES.push(S("kuronoTyphlosion","クロノのバクフーン","images/クロノのバクフーン.gif",["fire"],{hp:78,atk:84,def:78,spa:109,spd:85,spe:100},"blaze",["kuronoEruption","kuronoFlameWheel","focusblast","crunch"]));
 SPECIES.push(S("garakuMoltresG","ガラクのガラルファイヤー","images/ガラクのガラルファイヤー.gif",["dark","flying"],{hp:90,atk:85,def:90,spa:100,spd:125,spe:90},"garakuFury",["garakuFieryWrath","garakuSuckerPunch","garakuHurricane","roost"]));
 SPECIES.push(S("moaroZapdosG","モアロのガラルサンダー","images/モアロのガラルサンダー.gif",["fighting","flying"],{hp:90,atk:125,def:90,spa:85,spd:90,spe:100},"defiant",["moaroThunderKick","bravebird","closecombat","drillrun"]));
-SPECIES.push(S("fakuaZacian","ファクアのザシアン","images/ザシアン.gif",["fairy"],{hp:92,atk:150,def:115,spa:80,spd:115,spe:138},"intrepidsword",["closecombat","crunch","stoneedge","quickattack"]));
+SPECIES.push(S("fakuaZacian","ファクアのザシアン","images/ザシアン.gif",["fairy"],{hp:92,atk:150,def:115,spa:80,spd:115,spe:138},"fakuaSword",["fakuaHolySword","fakuaMetalClaw","fakuaPlayRough","ironhead"]));
 SPECIES.push(S("machamp","カイリキー","images/カイリキー.gif",["fighting"],{hp:90,atk:130,def:80,spa:65,spd:85,spe:55},"guts",["closecombat","bulletpunch","rockslide","knockoff"]));
 SPECIES.push(S("morpeko","モルペコ","images/モルペコ.gif",["electric","dark"],{hp:58,atk:95,def:58,spa:70,spd:58,spe:97},"morpekoFull",["morpekoAuraWheel","crunch","thunderbolt","protect"]));
 SPECIES.push(S("snom","ユキハミ","images/ユキハミ.gif",["ice","bug"],{hp:90,atk:75,def:105,spa:90,spd:90,spe:60},"snomScissors",["snomBlizzard","bugbuzz","icebeam","protect"]));
@@ -1086,6 +1092,7 @@ const ABILS={
 };
 Object.assign(ABILS,{escavalier:["steelknight"],mandibuzz:["rottenfeast"],cramorant:["gulpMissile"],durant:["hustle"]});
 ABILS.baxcalibur=["berserker"];
+ABILS.fakuaZacian=["fakuaSword"];
 ABILS.drampa=["drampaRage"];
 ABILS.kommoo=["bulletproof"];
 ABILS.cradily=["suctioncups"];
@@ -1259,6 +1266,7 @@ const ITEMS={
   lightstone:{name:"かるいし",desc:"攻撃・素早さ1.1倍"},
   scarf:{name:"こだわりスカーフ",desc:"素早さ実数値1.5倍。毎ターンHP1/10減少"},
   mougekiScarf:{name:"もうげきスカーフ",desc:"素早さ実数値1.5倍。使った技は交代まで固定。タイプ・特性・まもるによる無効を貫通"},
+  fakuaSword:{name:"ふとうの剣",desc:"ファクアのザシアン専用。持ち物固定"},
 };
 SPECIES.forEach((sp,si)=>sp.megas.forEach((mg,fi)=>{ ITEMS[mg.stone]={name:mg.stoneName,desc:`${sp.name}専用。${mg.name}にメガシンカ`,mega:si,form:fi}; }));
 
@@ -1358,7 +1366,7 @@ function openDevCode(){
   }else if(normalizedCode==="POKEMONHUXAKUA8"){
     localStorage.setItem("ritoCodeFakuaZacian","1");refreshCodePokemonVisibility();
     const sp=SP_BY_ID.fakuaZacian;
-    if(!party.some(p=>SPECIES[p.sp]?.id==="fakuaZacian")){party.push({sp,item:"none",moves:["closecombat","crunch","stoneedge","quickattack"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのザシアンを受け取った！");}
+    if(!party.some(p=>SPECIES[p.sp]?.id==="fakuaZacian")){party.push({sp,item:"fakuaSword",moves:["fakuaHolySword","fakuaMetalClaw","fakuaPlayRough","ironhead","fakuaKingSword"]});partyProfiles[activePartyProfile]=party;saveGame();renderHome();alert("ファクアのザシアンを受け取った！");}
     else alert("ファクアのザシアンは、すでに受け取っています。");
   }else if(normalizedCode==="POKEMONAIRUHITORABANZAI"){
     localStorage.setItem("ritoCodeAiruhitorabanzai","1");refreshCodePokemonVisibility();
@@ -1405,13 +1413,14 @@ function renderParty(){
       const sp=SPECIES[curParty[i].sp];
       // 古い保存データに存在しないポケモンIDがあっても編成画面を止めない。
       if(!sp){curParty.splice(i,1);i--;continue;}
+      if(sp.id==="fakuaZacian")curParty[i].item="fakuaSword";
       const item=ITEMS[curParty[i].item]||ITEMS.none;
       if(!ITEMS[curParty[i].item])curParty[i].item="none";
       const savedMoves=Array.isArray(spMoves(sp,owner))?spMoves(sp,owner):sp.moves.slice();
       const movePool=[...new Set([...(sp.learnset||[]),...savedMoves])];
       // 持ち物一覧に登録されている全アイテムを選択可能にする。
       // メガストーン／ナイトもITEMSへ自動登録されているため、ここで一緒に表示する。
-      const itemKeys=Object.keys(ITEMS).filter(k=>!ITEMS[k].mega||ITEMS[k].mega===curParty[i].sp);
+      const itemKeys=sp.id==="fakuaZacian"?["fakuaSword"]:Object.keys(ITEMS).filter(k=>!ITEMS[k].mega||ITEMS[k].mega===curParty[i].sp);
       slots.innerHTML+=`<div class="pslot">
         <img src="${IMG(sp.img)}"><div style="font-size:12px;font-weight:700">${sp.name}</div>
         <div class="mini">特性：${spAbil(sp,owner).name}</div>
@@ -1469,7 +1478,7 @@ function toggleParty(i){
   saveGame(); renderParty();
 }
 function removeParty(slot){ curParty.splice(slot,1); saveGame(); renderParty(); }
-function setItem(slot,val){ curParty[slot].item=val; saveGame(); renderParty(); }
+function setItem(slot,val){ curParty[slot].item=SPECIES[curParty[slot].sp]?.id==="fakuaZacian"?"fakuaSword":val; saveGame(); renderParty(); }
 function searchItems(slot){
   const q=prompt("持ち物の頭文字をアルファベットで入力（例：I）");
   if(q===null)return;
@@ -1836,7 +1845,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   applyLycanrocForm(p);
   p.moves=moveKeys.map((k,i)=>({...M[k],fifthSlot:i===4}));
   if(BIRD_FIFTH[sp.id])p.moves=[...p.moves.slice(0,4),{...M[BIRD_FIFTH[sp.id]],fifthSlot:true}];
-  p.itemKey=itemKey||"none";
+  p.itemKey=sp.id==="fakuaZacian"?"fakuaSword":(itemKey||"none");
   const it=ITEMS[p.itemKey];
   p.stoneMatches = !!(it&&it.mega===sp_i) || (sp.id==="darkrai"&&p.itemKey==="darkrainite");
   p.megaForm = p.stoneMatches ? sp.megas[it.form] : (sp.id==="rayquaza"?sp.megas[0]:null);
@@ -1844,6 +1853,7 @@ function makeMon(sp_i, itemKey, owner="p1"){
   p.painSplitSource=null; p.painSplitTurns=0; p.trevenantCurseSource=null;
   p.stages={atk:0,spa:0,def:0,spd:0,spe:0};
   p.infinitePower=0;
+  if(sp.id==="fakuaZacian"){p.fakuaEnergy=100;p.fakuaBoostTurns=0;p.fakuaBoostMultiplier=1;p.usedFifthSlot=false;p.fakuaKingTargets=new Set();}
   p.peaceTurns=p.itemKey==="peacescroll"?3:0;
   p.usedWP=false; p.usedLife=false; p.usedSitrus=false; p.usedAkki=false; p.usedSash=false; p.usedEject=false;
   p.trapTurns=0; p.trapDenom=0; p.trapLabel=""; p.trapColor="#ff7043"; p.behindOf=null; p.switchLock=0; p.yawnTurns=0; p.sleepTurns=0; p.alolanFreezeTurns=0; p.confusionTurns=0; p.subHp=0; p.alcremieShieldHp=0; p.sweetAromaTurns=0; p.holeCakeTurns=0; p.outrageTurns=0; p.roostedTypes=null; p.reflectTurns=0; p.falinksRightFootTurns=0; p.falinksLeftFootTurns=0; p.soundBlocked=0; p.beatupUses=0; p.coachTurns=0; p.ritualTurns=0; p.usedRitual=false; p.rageFistHits=0; p.drampaFury=false; p.electricCharge=false; p.tailwindTurns=0; p.noAttackTurns=0; p.infiltratorTurns=0;
@@ -1857,7 +1867,7 @@ function startBattleWith(p1party,p1sel,p2party,p2sel){
   const foeOwner=mode==="friend" ? "p2" : "cpu";
   myTeam = p1sel.map(i=>makeMon(p1party[i].sp, p1party[i].item, "p1"));
   foeTeam = p2sel.map(i=>makeMon(p2party[i].sp, p2party[i].item, foeOwner));
-  const applyBattleEntry=(mon,entry)=>{if(entry?.moves)mon.moves=entry.moves.filter(k=>M[k]).map(k=>M[k]);if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}};
+  const applyBattleEntry=(mon,entry)=>{if(entry?.moves)mon.moves=entry.moves.filter(k=>M[k]).map((k,i)=>({...M[k],fifthSlot:i===4}));if(entry?.hpMult&&entry.hpMult!==1){mon.maxHp=Math.floor(mon.maxHp*entry.hpMult);mon.curHp=mon.maxHp;}};
   myTeam.forEach((mon,i)=>applyBattleEntry(mon,p1party[p1sel[i]]));foeTeam.forEach((mon,i)=>applyBattleEntry(mon,p2party[p2sel[i]]));
   if(mode==="lunatic"||mode==="lunatic2"||mode==="lunatic3"||mode==="lunatic4"||mode==="lunatic5"||mode==="dynamaxUnlock") foeTeam.forEach((mon,i)=>{
     // 先発順や配列位置ではなくポケモンIDで固定データを割り当てる
@@ -2061,9 +2071,11 @@ function calcDamage(attacker,defender,move,isCrit){
   if(!move.ignoreAbility&&attacker.abilEff==="unaware") defStage=0;
   if(isCrit){ if(atkStage<0)atkStage=0; if(defStage>0)defStage=0; }
   let atkStat=((move.cat==="spec")?attacker.base.spa:(move.useDef?attacker.base.def:attacker.base.atk))*stageMult(move.useDef?attacker.stages.def:atkStage);
+  if(attacker.id==="fakuaZacian"&&attacker.fakuaBoostTurns>0)atkStat*=attacker.fakuaBoostMultiplier||1;
   if(move.cat==="phys"&&!move.useDef&&attacker.abilEff==="guts"&&attacker.status)atkStat*=1.5;
   if(attacker.abilEff==="morpekoHungry")atkStat*=1.2;
   let defStat=((move.cat==="spec")?defender.base.spd:defender.base.def)*stageMult(defStage);
+  if(defender.id==="fakuaZacian"&&defender.fakuaBoostTurns>0)defStat*=defender.fakuaBoostMultiplier||1;
   if(defender.abilEff==="morpekoFull")defStat*=1.2;
   if(!move.ignoreAbility&&defender.abilEff==="punkrock"&&move.sound)defStat*=2;
   if(move.infiltratorPierce&&move.cat==="spec")defStat*=.8;
@@ -2108,13 +2120,15 @@ function calcDamage(attacker,defender,move,isCrit){
   if(move.faintBonus){const team=attacker===me?myTeam:foeTeam;movePower=Math.min(move.maxPower||movePower,movePower+team.filter(m=>m.fainted).length*move.faintBonus);}
   if(move.firstStrike&&!defender.turnMoved)movePower*=2;
   if(move.blackMoon&&defender.justSwitched)movePower*=1.8;
+  if(move.fakuaKingBlade&&attacker.fakuaKingTargets?.has(defender))movePower*=1.3;
   if(move.kokugaiBreath&&attacker.kokugaiBreathDoubleTurns===1)movePower*=2;
   if(move.magicGamma)movePower+=(move.magicSpend||0)*5;
   if(attacker.abilEff==="magicGauge"&&move.magicSpend>0)movePower*=1+Math.min(100,move.magicSpend)/100;
   let attack=atkStat*stab*movePower, defense=defender.base.hp*defStat;
   let dmg=(attack/defense)*42;
   const typeEff=effMultiplier(moveType,defender.types);
-  const rawEff=move.waterSuper&&defender.types.includes("water")?2:(attacker.itemKey==="mougekiScarf"&&typeEff===0?1:typeEff);
+  let rawEff=move.waterSuper&&defender.types.includes("water")?2:(attacker.itemKey==="mougekiScarf"&&typeEff===0?1:typeEff);
+  if(move.ghostPierce&&move.type==="fighting"&&defender.types.includes("ghost")&&rawEff===0)rawEff=effMultiplier(move.type,defender.types.filter(type=>type!=="ghost"));
   const eff=move.fairyBypass&&defender.types.includes("fairy")?2:(move.ignoreType?1:rawEff); dmg*=eff;
   if(defender.frozenGlaiveVulnerableTurns>0)dmg*=2;
   // ルナティックステージ2のメガボーマンダは弱点ダメージを4/3倍に抑える
@@ -2177,6 +2191,7 @@ function sheerForceBoosts(move){return !!(move.targetDrop||move.flinch||move.fre
 function effSpeed(m){
   // 同じレベルで戦うため、種族値ではなく素早さ実数値を基準に比較する
   let s=Math.floor(m.base.spe*2*LEVEL/100+5)*stageMult(m.stages.spe||0);
+  if(m.id==="fakuaZacian"&&m.fakuaBoostTurns>0)s*=m.fakuaBoostMultiplier||1;
   if(m.status==="paralyze")s*=m.punkParalyze?.75:.5;
   if(m.falinksRightFootTurns>0)s*=1.1;
   if(m.abilEff==="swiftswim"&&weather==="rain")s*=2;
@@ -2248,7 +2263,7 @@ function applyMaxMoveEffect(attacker,defender,move){
 }
 function runMultiHit(attacker,defender,move,defImgId,cb){
   if(move.fifthSlot){
-    if(attacker.usedFifthSlot){pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();return;}
+    if(attacker.usedFifthSlot&&!move.fakuaRepeatUse){pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();return;}
     attacker.usedFifthSlot=true;
   }
   const count=attacker.itemKey==="steadydice"?3:move.multiHit;
@@ -2264,7 +2279,7 @@ function runMultiHit(attacker,defender,move,defImgId,cb){
       cb();return;
     }
     i++; let currentMove=move.multiPowers?Object.assign({},hitMove,{power:move.multiPowers[i-1]}):hitMove;
-    if(move.multiEffectOnce&&i>1)currentMove=Object.assign({},currentMove,{flinch:0});
+    if(move.multiEffectOnce&&i>1)currentMove=Object.assign({},currentMove,{flinch:0,targetDrop:null});
     // ホウシャズメの放射能ゲージは、2回攻撃全体で1回だけ上げる。
     if(move.radiationGain&&i>1)currentMove=Object.assign({},currentMove,{...(move.radiationPerHit?{}:{radiationApplied:true}),magicSpentApplied:true,radiationMagicSpentApplied:true});
     if((move.multiDropEvery&&i%move.multiDropEvery===0)||(move.multiDropHits&&move.multiDropHits.includes(i)))currentMove=Object.assign({},currentMove,{targetDrop:{chance:1,stats:move.multiDrop}});
@@ -2292,15 +2307,50 @@ function advanceFrozenGlaiveVulnerability(mons){
 }
 function nextTurn(){ turnAct={me:null,foe:null}; requestAction("me"); }
 function requestAction(side){ inputSide=side; busy=false; renderMenu(side); }
+function openFakuaBoost(side){
+  const mon=activeOf(side),energy=mon.fakuaEnergy||0,c=document.getElementById("cmd");
+  c.innerHTML=`<div class="center sub">ふとうのけん：能力強化を選択（エナジー ${energy}/100）</div><div class="moves">${[[5,1,1.1],[10,2,1.2],[15,3,1.3]].map(([cost,turns,mult])=>`<button class="move" ${energy<cost?'disabled':''} onclick="submitAction('${side}',{type:'move',move:{name:'ふとうのけん',type:'steel',cat:'status',power:0,fakuaBoostCost:${cost},fakuaBoostTurns:${turns},fakuaBoostMultiplier:${mult}}})"><div class="mn">${cost}エナジー消費</div><div class="md">${turns}ターン 全能力×${mult.toFixed(1)}</div></button>`).join('')}</div><div class="center"><button class="btn ghost" onclick="renderMenu('${side}')">← もどる</button></div>`;
+}
+function chooseFakuaMove(side,index){
+  const mon=activeOf(side),move=mon.moves[index],energy=mon.fakuaEnergy||0,c=document.getElementById("cmd");
+  const choices=[];
+  if(move.fakuaSacredSword)choices.push({label:"せいなる剣：威力20×4",data:{...move,multiHit:4,multiPowers:[20,20,20,20],fakuaEnergyCost:0}},{label:"強化：威力20×6（20エナジー）",data:{...move,multiHit:6,multiPowers:[20,20,20,20,20,20],fakuaEnergyCost:20}});
+  if(move.fakuaMetalClaw)choices.push({label:"メタルクロー：威力70",data:{...move,power:70}},{label:"強化：威力75＋25の2回攻撃（20エナジー）",data:{...move,power:75,multiHit:2,multiPowers:[75,25],multiEffectOnce:true,fakuaEnergyCost:20}});
+  if(move.fakuaPlayRough)choices.push({label:"じゃれつく：威力90",data:{...move,power:90}},{label:"強化：威力60×2（20エナジー）",data:{...move,power:60,multiHit:2,multiPowers:[60,60],multiEffectOnce:true,targetDrop:{chance:1,stats:{def:-1}},fakuaEnergyCost:20}});
+  if(move.fakuaKingBlade){const repeated=!!mon.usedFifthSlot;[[0,50],[10,80],[20,100],[30,140]].forEach(([cost,power])=>choices.push({label:`威力${power}（${cost+(repeated?20:0)}エナジー${repeated?'・再使用分20を含む':''}）`,data:{...move,power,fakuaEnergyCost:cost+(repeated?20:0),fakuaRepeatUse:repeated}}));}
+  c.innerHTML=`<div class="center sub">技の強化を選択（エナジー ${energy}/100${move.fakuaKingBlade&&mon.usedFifthSlot?'・再使用には追加20必要':''}）</div><div class="moves">${choices.map(({label,data})=>`<button class="move" ${energy<(data.fakuaEnergyCost||0)?'disabled':''} onclick='submitAction("${side}",{type:"move",move:${JSON.stringify(data)}})'><div class="mn">${label}</div></button>`).join('')}</div><div class="center"><button class="btn ghost" onclick="openMoves('${side}')">← もどる</button></div>`;
+}
+function fakuaModeMove(mon,move,mode){
+  if(mode==="sword4")return {...move,multiHit:4,multiPowers:[20,20,20,20],fakuaEnergyCost:0};
+  if(mode==="sword6")return {...move,multiHit:6,multiPowers:[20,20,20,20,20,20],fakuaEnergyCost:20};
+  if(mode==="claw70")return {...move,power:70};
+  if(mode==="claw100")return {...move,power:75,multiHit:2,multiPowers:[75,25],multiEffectOnce:true,fakuaEnergyCost:20};
+  if(mode==="rough90")return {...move,power:90};
+  if(mode==="rough120")return {...move,power:60,multiHit:2,multiPowers:[60,60],multiEffectOnce:true,targetDrop:{chance:1,stats:{def:-1}},fakuaEnergyCost:20};
+  if(mode.startsWith("king")){const cost=Number(mode.slice(4)),power={0:50,10:80,20:100,30:140}[cost],repeat=!!mon.usedFifthSlot;return {...move,power,fakuaEnergyCost:cost+(repeat?20:0),fakuaRepeatUse:repeat};}
+  return move;
+}
+function fakuaMultiOptions(mon){
+  const result=[];
+  mon.moves.forEach((move,i)=>{
+    if(mon.id==="fakuaZacian"&&(move.fakuaSacredSword||move.fakuaMetalClaw||move.fakuaPlayRough||move.fakuaKingBlade)){
+      const modes=move.fakuaSacredSword?[["sword4","威力20×4"],["sword6","威力20×6（20E）"]]:move.fakuaMetalClaw?[["claw70","威力70"],["claw100","75+25×2（20E）"]]:move.fakuaPlayRough?[["rough90","威力90"],["rough120","威力60×2（20E）"]]:[["king0","王獣の剣 威力50"],["king10","威力80（10E）"],["king20","威力100（20E）"],["king30","威力140（30E）"]];
+      modes.forEach(([key,label])=>{const variant=fakuaModeMove(mon,move,key);if(move.fakuaKingBlade&&mon.usedFifthSlot)label+=`・再使用+20E`;result.push({value:`f:${i}:${key}`,label,disabled:(mon.fakuaEnergy||0)<(variant.fakuaEnergyCost||0)||(move.fakuaKingBlade&&mon.usedFifthSlot&&(mon.fakuaEnergy||0)<20)||(move.fifthSlot&&mon.usedFifthSlot&&!(mon.fakuaEnergy>=20))});});
+    }else result.push({value:`m${i}`,label:`${move.name}（${catLabel(move)}・威力${move.power}）`,disabled:!!((mon.electroBeamReady&&!move.chargeTurn)||(mon.itemKey==='mougekiScarf'&&mon.mougekiLock&&move.name!==mon.mougekiLock)||(move.fifthSlot&&mon.usedFifthSlot))});
+  });
+  if(mon.abilEff==="fakuaSword")[[5,1,1.1],[10,2,1.2],[15,3,1.3]].forEach(([cost,turns,mult])=>result.push({value:`f:boost:${cost}`,label:`ふとうのけん（${cost}E・能力×${mult}を${turns}ターン）`,disabled:(mon.fakuaEnergy||0)<cost}));
+  return result;
+}
 function renderMenu(side){
   const m=activeOf(side), c=document.getElementById("cmd");
   const head = mode==='friend' ? `<div class="center sub">▼ ${sideLabel(side)} の ばん（${m.name}）</div>` : "";
+  const fakuaPanel=m.abilEff==="fakuaSword"?`<div class="center mini" style="color:#f0c0ff">ふとうのけん エナジー：${m.fakuaEnergy||0}/100${m.fakuaBoostTurns>0?` ／能力×${m.fakuaBoostMultiplier} あと${m.fakuaBoostTurns}ターン`:''}</div><div class="center"><button class="btn ghost" onclick="openFakuaBoost('${side}')">ふとうのけんを発動</button></div>`:"";
   const megaBtn = (!rayMegaActive && (((!m.isMega && m.stoneMatches) || canRayMega(m)))) ?
     `<button class="btn mega ${megaArm[side]?'armed':''}" onclick="toggleMega('${side}')">${megaArm[side]?'✨ メガ準備OK':'🔮 メガシンカ'}</button>` : "";
   const maxBtn = (localStorage.getItem("ritoDynamaxClear")==="1" && !rayMegaActive && !maxUsed[side] && !m.isDynamax && m.id!=="zacian" && m.id!=="eternatus" && (!m.isMega || GMAX_IDS.has(m.id)) && m.dynamaxTurns===0) ?
     `<button class="btn mega ${maxArm[side]?'armed':''}" onclick="toggleMax('${side}')">${maxArm[side]?'✨ マックス準備OK':'🟥 マックス'}</button>` : "";
   const teraBtn=(m.id==="nemoPawmot"&&!teraUsed[side]&&!m.isElectricTera)?`<button class="btn mega ${teraArm[side]?'armed':''}" onclick="toggleTera('${side}')">${teraArm[side]?'⚡ 電気テラス準備OK':'⚡ 電気テラスタル'}</button>`:"";
-  c.innerHTML=`${head}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
+  c.innerHTML=`${head}${fakuaPanel}<div class="actrow"><button class="btn blue" onclick="openMoves('${side}')">たたかう</button>
      <button class="btn ghost" onclick="openSwitch('${side}')">こうたい</button></div>
      <div class="center">${megaBtn}${maxBtn}${teraBtn}</div>`;
 }
@@ -2339,12 +2389,13 @@ function openMoves(side){
   h+='<div class="moves">';
   m.moves.forEach((mv,i)=>{
     if(m.itemKey==="mougekiScarf"&&m.mougekiLock&&mv.name!==m.mougekiLock)return;
-    if(mv.fifthSlot&&m.usedFifthSlot)return;
+    if(mv.fifthSlot&&m.usedFifthSlot&&!(m.id==="fakuaZacian"&&(m.fakuaEnergy||0)>=20))return;
     if(mv.requiresAttached&&(!m.attachedHost||m.attachedHost.fainted))return;
     if(mv.exclusive&&mv.exclusive===m.id&&m.isMega) return;
     if(m.id==="falinks"&&i===0&&m.beatupUses>0&&mv.name==="はいすいのじん")mv=M.heicoaching;
     const shown=maxMoveFor(m,mv), efx=moveEffText(shown);
-    h+=`<button class="move" title="${shown.name}｜${TYPE_JP[shown.type]}・${catLabel(shown)}／威力${shown.power}\n${shown.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(shown.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="chooseMove('${side}',${i})">
+    const selectHandler=m.id==="fakuaZacian"&&(mv.fakuaSacredSword||mv.fakuaMetalClaw||mv.fakuaPlayRough||mv.fakuaKingBlade)?`chooseFakuaMove('${side}',${i})`:`chooseMove('${side}',${i})`;
+    h+=`<button class="move" title="${shown.name}｜${TYPE_JP[shown.type]}・${catLabel(shown)}／威力${shown.power}\n${shown.cat==="status"?"":opp.name+"には "+effLabel(effMultiplier(shown.type,opp.types))}${efx?'\n効果：'+efx:''}" onclick="${selectHandler}">
       <div class="mn">${shown.name}${shown.prio?` <span style="color:#7ad1ff;font-size:11px">⏫+${shown.prio}</span>`:''}</div>
       <div class="md"><span class="type t-${shown.type}" style="font-size:10px">${TYPE_JP[shown.type]}</span>
       <span class="cat ${shown.cat}">${catLabel(shown)}</span><span>威力${shown.power}</span></div>
@@ -2850,6 +2901,19 @@ function attack(attacker,defender,move,defImgId,cb){
     birdAttack(attacker,defender,move,defImgId,cb);return;
   }
   if(attacker.rechargeTurns>0){attacker.rechargeTurns--;pushLog(`  └ ${attacker.name} は 反動で動けない！`,"#9fb3d6");setTimeout(cb,350);return;}
+  if(move.fakuaBoostCost){
+    if(attacker.abilEff!=="fakuaSword"||(attacker.fakuaEnergy||0)<move.fakuaBoostCost){pushLog("  └ エナジーが足りない！","#9fb3d6");setTimeout(cb,350);return;}
+    attacker.fakuaEnergy-=move.fakuaBoostCost;attacker.fakuaBoostMultiplier=move.fakuaBoostMultiplier;attacker.fakuaBoostTurns=move.fakuaBoostTurns+1;attacker.acted=(attacker.acted||0)+1;attacker.firstTurnReady=false;
+    announceAbility(attacker);pushLog(`  ★ ふとうのけん！ ${move.fakuaBoostCost}エナジー消費。全能力×${move.fakuaBoostMultiplier}（${move.fakuaBoostTurns}ターン）`,'#b061ff');renderStages();setTimeout(cb,350);return;
+  }
+  if(move.fakuaEnergyCost&&!move.fakuaCostPaid){
+    if(attacker.abilEff!=="fakuaSword"||(attacker.fakuaEnergy||0)<move.fakuaEnergyCost){pushLog("  └ エナジーが足りない！","#9fb3d6");setTimeout(cb,350);return;}
+    attacker.fakuaEnergy-=move.fakuaEnergyCost;move={...move,fakuaCostPaid:true};pushLog(`  └ ふとうのけん：${move.fakuaEnergyCost}エナジー消費（残り${attacker.fakuaEnergy}）`,'#b061ff');
+  }
+  if(move.fakuaSacredSword&&!move.fakuaSacredResolve){
+    attacker.fakuaPendingSword={target:defender,move:{...move,fakuaSacredResolve:true},turns:2};
+    pushLog(`  ★ ${attacker.name} は せいなる剣を構えた！ 2ターン後に攻撃する。`,'#b061ff');setTimeout(cb,350);return;
+  }
   if(attacker.abilEff==="chlorophyll"&&move.cat!=="status"&&move.power>0&&!move.abilityContext.leafBoosted){announceAbility(attacker);move.abilityContext.leafBoosted=true;applyDrop(attacker,{def:-1,atk:1});pushLog(`  ★ ${attacker.name} のようりょくそ！`);}
   if(move.eeveeMove&&!move.eeveeResolved){eeveeAttack(attacker,defender,move,defImgId,cb);return;}
   if(!move.birdResolved&&move.cat!=="status")attacker.birdFirstAttackReady=false;
@@ -2889,7 +2953,7 @@ function attack(attacker,defender,move,defImgId,cb){
   }
   if(move.multiHit&&!attacker.isDynamax){runMultiHit(attacker,defender,move,defImgId,cb);return;}
   const onceFlag=move.fifthSlot?"usedFifthSlot":move.onceFlag||"usedPlayTogether";
-  if((move.onceBattle||move.fifthSlot)&&attacker[onceFlag]){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
+  if((move.onceBattle||move.fifthSlot)&&attacker[onceFlag]&&!move.fakuaRepeatUse){setTimeout(()=>{pushLog(`  └ ${attacker.name} は ${move.name}を もう使えない！`,"#9fb3d6");cb();},350);return;}
   if(move.onceBattle||move.fifthSlot)attacker[onceFlag]=true;
   if(move.preTargetDrop&&defender.curHp>0)applyDrop(mirrorTarget(attacker,defender,move),move.preTargetDrop);
   if(move.melt&&attacker.status==="freeze"){attacker.status=null;renderStages();pushLog(`  └ ${attacker.name} の こおりが とけた！`,"#ff7043");}
@@ -3071,6 +3135,7 @@ function attack(attacker,defender,move,defImgId,cb){
   setTimeout(()=>{
     const img=defImgId&&document.getElementById(defImgId); if(img){img.classList.add("hit");setTimeout(()=>img.classList.remove("hit"),400);}
     const actualDamage=Math.min(defender.curHp,dmg);
+    if(actualDamage>0&&move.fakuaKingBlade){attacker.fakuaKingTargets=attacker.fakuaKingTargets||new Set();attacker.fakuaKingTargets.add(defender);}
     if(actualDamage>=defender.curHp&&(move.ignoreAbility?null:defender.abilEff)==="innardsout"){
       defender.innardsOutDamage=defender.curHp;
       defender.innardsOutTarget=attacker;
@@ -3197,7 +3262,7 @@ function attack(attacker,defender,move,defImgId,cb){
     }
     if(move.soundBlock&&effectTarget.curHp>0){effectTarget.soundBlocked=move.soundBlock;pushLog(`  ・ ${effectTarget.name} は音技を ${move.soundBlock}ターン封じられた！`,"#9fb3d6");}
     if(move.beatup&&actualDamage>0)summonFalinksHeis(attacker);
-    if(move.removeItem&&actualDamage>0&&effectTarget.itemKey&&effectTarget.itemKey!=="none"){
+    if(move.removeItem&&actualDamage>0&&effectTarget.itemKey&&effectTarget.itemKey!=="none"&&effectTarget.id!=="fakuaZacian"){
       const removed=ITEMS[effectTarget.itemKey]?.name||effectTarget.itemKey;
       effectTarget.itemKey="none";effectTarget.stoneMatches=false;
       pushLog(`  └ ${effectTarget.name} の ${removed} を はたきおとした！`,"#ffcb05");
@@ -3249,7 +3314,7 @@ function attack(attacker,defender,move,defImgId,cb){
     if(move.chandelureOverheat&&actualDamage>0){attacker.noAttackTurns=2;pushLog(`  └ ${attacker.name} は 次のターン、攻撃技を使えない！`,"#9fb3d6");}
     applyNeigh(attacker,defender);
     if(move.hydreigonMeteor&&attacker.isMega) applyDrop(attacker,{spa:-1});
-    if(defender.curHp<=0&&!defender.fainted){if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
+    if(defender.curHp<=0&&!defender.fainted){if(attacker.id==="fakuaZacian"&&attacker.abilEff==="fakuaSword"){const before=attacker.fakuaEnergy||0;attacker.fakuaEnergy=Math.min(100,before+10);pushLog(`  ★ ふとうのけん！ 相手を倒してエナジー+${attacker.fakuaEnergy-before}（${attacker.fakuaEnergy}/100）`,'#b061ff');}if(move.koBoost)applyDrop(attacker,move.koBoost);if(move.onceBattle&&attacker.id==="mimikyu"){attacker.usedDisguise=false;pushLog(`  ★ ${attacker.name} の ばけのかわが 復活した！`,"#f0c0ff");}faintMon(defender,defImgId);}
     if(move.behindTarget&&typeof multiSetBehind==="function")multiSetBehind(attacker,move.behindTarget);
     if(move.cat==="phys"&&(move.ignoreAbility?null:defender.abilEff)==="toxicdebris"&&defender.curHp>0){
       announceAbility(defender);
@@ -3525,7 +3590,7 @@ function doSwitch(side,idx,cb){
   activeOf(side).electricCharge=false;
   megaArm[side]=false;
   if(side==="me"){
-    const out=me; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    const out=me; out.subHp=0; out.electroBeamReady=false; out.fakuaPendingSword=null;out.fakuaBoostTurns=0;out.fakuaBoostMultiplier=1;out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     myA=idx; me=myTeam[idx]; me.acted=0; me.firstTurnReady=true; me.flinched=false; me.turnMoved=false; me.justSwitched=true;
     pushLog(`${out.name} を ひっこめて ${me.name}！`);
@@ -3535,7 +3600,7 @@ function doSwitch(side,idx,cb){
     const img=document.getElementById("myImg");img.classList.add("switch-effect");setTimeout(()=>img.classList.remove("switch-effect"),750);
     applyHazards("me",()=>{ if(me.fainted) cb(); else applyEntry(me,"myImg",cb); });
   }else{
-    const out=foe; out.subHp=0; out.electroBeamReady=false; out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
+    const out=foe; out.subHp=0; out.electroBeamReady=false; out.fakuaPendingSword=null;out.fakuaBoostTurns=0;out.fakuaBoostMultiplier=1;out.stages={atk:0,spa:0,def:0,spd:0,spe:0};
     out.flinched=false; out.turnMoved=false; out.firstTurnReady=false;
     foeA=idx; foe=foeTeam[idx]; foe.acted=0; foe.firstTurnReady=true; foe.flinched=false; foe.turnMoved=false; foe.justSwitched=true;
     pushLog(`${mode==='friend'?'プレイヤー2は':'あいては'} ${out.name} を もどして ${foe.name} を くりだした！`);
@@ -3770,7 +3835,22 @@ function applyTrevenantEndEffects(activeMons){
   activeMons.forEach(m=>{if(!m||m.fainted)return;if(m.abilEff==="naturalcure"&&m.curHp<=m.maxHp*.30){const h=Math.max(1,Math.floor(m.maxHp*.10));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ★ ${m.name} の しぜんかいふく！ ${h}回復！`,"#46d160");}if(m.abilEff==="harvest"){const h=Math.max(1,Math.floor(m.maxHp*.07));m.curHp=Math.min(m.maxHp,m.curHp+h);pushLog(`  ★ ${m.name} の しゅうかく！ ${h}回復！`,"#46d160");}});
   renderHp();
 }
-function endTurn(){
+function endTurn(skipFakua=false){
+  if(!skipFakua){
+    const pending=[];
+    [...myTeam,...foeTeam].forEach(mon=>{if(mon?.fakuaPendingSword){mon.fakuaPendingSword.turns--;if(mon.fakuaPendingSword.turns<=0)pending.push(mon);}});
+    if(pending.length){
+      series(pending.map(mon=>cb=>{
+        const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;
+        if(!shot||mon.fainted||!shot.target||shot.target.fainted){cb();return;}
+        const oldMe=me,oldFoe=foe,side=myTeam.includes(mon)?"me":"foe";
+        if(side==="me"){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}
+        attack(mon,shot.target,shot.move,shot.target===me?"myImg":shot.target===foe?"foeImg":null,()=>{me=oldMe;foe=oldFoe;cb();});
+      }),()=>endTurn(true));
+      return;
+    }
+  }
+  [me,foe].forEach(mon=>{if(mon?.fakuaBoostTurns>0){mon.fakuaBoostTurns--;if(mon.fakuaBoostTurns===0){mon.fakuaBoostMultiplier=1;pushLog(`  ・ ${mon.name} の ふとうのけんの強化が切れた。`,'#9fb3d6');}}});
   advanceFrozenGlaiveVulnerability([...myTeam,...foeTeam]);
   [...myTeam,...foeTeam].forEach(mon=>{if(mon.justSwitched)mon.justSwitched=false;if(mon.kokugaiBreathDoubleTurns>0)mon.kokugaiBreathDoubleTurns--;if(mon.noAttackTurns>0)mon.noAttackTurns--;});
   [...myTeam,...foeTeam].forEach(mon=>{if(mon.tailwindTurns>0)mon.tailwindTurns--;});

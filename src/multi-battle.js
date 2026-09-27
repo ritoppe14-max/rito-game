@@ -65,8 +65,15 @@ function multiEntry(s,m,cb){
   if(m.id==='metagross'&&m.stoneMatches&&!m.isMega){doMega(m,multiImage(m),cb);return;}
   applyEntry(m,multiImage(m),cb);
 }
-function multiNext(){
-  if(!multi)return;['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
+function multiNext(skipFakua=false){
+  if(!multi)return;
+  if(!skipFakua){
+    const active=[...multi.slots.me,...multi.slots.foe];
+    active.forEach(mon=>{if(mon.fakuaBoostTurns>0){mon.fakuaBoostTurns--;if(mon.fakuaBoostTurns===0)mon.fakuaBoostMultiplier=1;}});
+    const pending=[];[...myTeam,...foeTeam].forEach(mon=>{if(mon?.fakuaPendingSword){mon.fakuaPendingSword.turns--;if(mon.fakuaPendingSword.turns<=0)pending.push(mon);}});
+    if(pending.length){series(pending.map(mon=>cb=>{const shot=mon.fakuaPendingSword;mon.fakuaPendingSword=null;if(!shot||mon.fainted||shot.target.fainted){cb();return;}const oldMe=me,oldFoe=foe;if(myTeam.includes(mon)){me=mon;foe=shot.target;}else{foe=mon;me=shot.target;}attack(mon,shot.target,shot.move,multiImage(shot.target),()=>{me=oldMe;foe=oldFoe;cb();});}),()=>multiNext(true));return;}
+  }
+  ['me','foe'].forEach(s=>{const target=multiVisible(multiOther(s))[0];multiLiving(s).filter(m=>m.id==='morpeko'&&!m.fainted).forEach(m=>switchMorpeko(m,target));});multi.round++;multi.actions=[];multi.actionLog={me:[],foe:[]};renderMultiActionPanels();
   [...multiLiving('me'),...multiLiving('foe')].forEach(m=>{m.turnMoved=false;m.flinched=false;m.protectActive=false;m.hitBeforeMove=false;if(m.protectCooldown>0)m.protectCooldown--;if(m.auroraVeilTurns>0)m.auroraVeilTurns--;});
   multiChoose('me');
 }
@@ -74,17 +81,18 @@ function multiChoose(s){
   busy=false;inputSide=s;renderMulti();
   const enemies=multiVisible(multiOther(s)),bench=multiBench(s);
   const allies=multiLiving(s);
-  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">5枠目の技は1試合に1回だけ使え、まもる・みがわりを貫通します。じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${m.moves.map((mv,i)=>`<option value="m${i}" ${(m.electroBeamReady&&!mv.chargeTurn)||(m.itemKey==='mougekiScarf'&&m.mougekiLock&&mv.name!==m.mougekiLock)||(mv.fifthSlot&&m.usedFifthSlot)?'disabled':''}>${mv.name}（${catLabel(mv)}・威力${mv.power}）</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
+  document.getElementById('cmd').innerHTML=`<div class="sub">${sideLabel(s)}：全員の技と対象を選択（${multi.round}ターン目）<br><span class="mini">5枠目の技は1試合に1回だけ使え、まもる・みがわりを貫通します。じこさいせい・デコレーション、アクロバット・とどめばりの後ろに回る対象は「味方対象」を選んでください。</span></div>`+allies.map(m=>`<div class="mon-card"><div>${m.name}</div><select id="multi-action-${m.multiId}">${fakuaMultiOptions(m).map(o=>`<option value="${o.value}" ${o.disabled?'disabled':''}>${o.label}</option>`).join('')}${bench.map(b=>`<option value="s${b.multiId}">交代：${b.name}</option>`).join('')}</select><label>攻撃対象：<select id="multi-target-${m.multiId}">${enemies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label><label style="color:#7ad1ff;font-weight:700">味方対象：<select id="multi-ally-${m.multiId}">${allies.map(t=>`<option value="${t.multiId}">${t.name} HP${t.curHp}</option>`).join('')}</select></label></div>`).join('')+`<button class="btn" onclick="multiConfirm('${s}')">全員の行動を決定</button>`;
 }
 function multiConfirm(s){
   if(busy||!multi)return;
   const actions=multiLiving(s).map(mon=>{
     const value=document.getElementById('multi-action-'+mon.multiId).value;
     if(value[0]==='s')return {side:s,mon,type:'switch',replacement:multiBench(s).find(m=>m.multiId===Number(value.slice(1)))};
-    const base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(value.slice(1))];
+    let base,move;
+    if(value.startsWith('f:')){const [,index,variant]=value.split(':');if(index==='boost'){const [cost,turns,mult]=({5:[5,1,1.1],10:[10,2,1.2],15:[15,3,1.3]})[Number(variant)];base={name:'ふとうのけん',type:'steel',cat:'status',power:0};move={...base,fakuaBoostCost:cost,fakuaBoostTurns:turns,fakuaBoostMultiplier:mult};}else{base=mon.moves[Number(index)];move=fakuaModeMove(mon,base,variant);}}else{base=mon.electroBeamReady?M.electrobeam:mon.moves[Number(value.slice(1))];move=base;}
     if(!base)return null;
     const ally=multiLiving(s).find(m=>m.multiId===Number(document.getElementById('multi-ally-'+mon.multiId).value));
-    const move=(base.decorateAlly||base.behindMove)?Object.assign({},base,base.decorateAlly?{allyTarget:ally}:{behindTarget:ally}):base;
+    move=(move.decorateAlly||move.behindMove)?Object.assign({},move,move.decorateAlly?{allyTarget:ally}:{behindTarget:ally}):move;
     const target=(base.allyHeal||base.allyBoost)?ally:multiVisible(multiOther(s)).find(m=>m.multiId===Number(document.getElementById('multi-target-'+mon.multiId).value));
     return {side:s,mon,type:'move',move,target};
   });
@@ -107,7 +115,7 @@ function multiSwitch(a,cb){
   const slots=multi.slots[a.side],i=slots.indexOf(a.mon);
   if(i<0||!multiBench(a.side).includes(a.replacement)){cb();return;}
   clearTrevenantLinks(a.mon);
-  a.mon.mougekiLock=null;
+  a.mon.mougekiLock=null;a.mon.fakuaPendingSword=null;a.mon.fakuaBoostTurns=0;a.mon.fakuaBoostMultiplier=1;
   a.mon.rageFistHits=0;
   a.mon.electricCharge=false;
   clearEeveeEffects(a.mon);
